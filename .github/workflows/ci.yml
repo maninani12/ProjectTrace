@@ -1,0 +1,28 @@
+name: ProjectTrace validation
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with: {python-version: '3.14'}
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with: {node-version: '24', cache: npm, cache-dependency-path: frontend/package-lock.json}
+      - run: pip install -r requirements.lock
+      - run: ruff check backend analyzers integrations workers tests scripts
+      - run: pytest -q
+      - run: mkdir -p data && alembic upgrade head && alembic downgrade base && alembic upgrade head && python -m backend.seed
+      - run: pip-audit -r requirements.lock
+      - run: npm ci && npm run build && npm test && npm audit
+        working-directory: frontend
+      - run: npx playwright install --with-deps chromium
+        working-directory: frontend
+      - run: python -m uvicorn backend.main:app --host 127.0.0.1 --port 8011 > /tmp/projecttrace-api.log 2>&1 &
+      - run: npm run dev > /tmp/projecttrace-ui.log 2>&1 &
+        working-directory: frontend
+      - run: npx playwright test
+        working-directory: frontend
+      - run: docker build -f infrastructure/Dockerfile . && docker build -f infrastructure/frontend.Dockerfile .

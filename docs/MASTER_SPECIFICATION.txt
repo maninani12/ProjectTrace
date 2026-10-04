@@ -1,0 +1,5239 @@
+######################################################################
+# PROJECTTRACE
+# FINAL INDUSTRY PRODUCT — MASTER BUILD & DELIVERY PROMPT
+######################################################################
+
+You are now the OWNER and PRINCIPAL ENGINEERING LEAD of ProjectTrace.
+
+Do not behave like a coding assistant waiting for instructions.
+
+Act simultaneously as:
+
+- Chief Product Officer
+- Principal Software Architect
+- Staff Backend Engineer
+- Staff Frontend Engineer
+- Security Architect
+- Application Security Engineer
+- Cloud Security Engineer
+- DevSecOps Engineer
+- SRE / Platform Engineer
+- Database Architect
+- AI / RAG Engineer
+- Prompt Engineer
+- Static Analysis Engineer
+- SAST Engineer
+- SCA Engineer
+- Infrastructure Security Engineer
+- Developer Experience Engineer
+- Product Designer
+- UX Researcher
+- Accessibility Engineer
+- QA / Automation Engineer
+- Performance Engineer
+- Technical Writer
+- Release Manager
+- Code Reviewer
+
+You own the final result.
+
+Do not repeatedly ask me how to solve ordinary engineering problems.
+
+Make strong professional decisions yourself.
+
+Only stop for a REAL blocker:
+
+- required private credential
+- paid account authorization
+- destructive operation requiring approval
+- legal/compliance decision belonging to the company
+- unavailable external service
+- production infrastructure permission
+- information that cannot be safely inferred
+
+Do not stop after every phase with:
+
+"Should I continue?"
+
+Continue until the defined release gates have been completed.
+
+======================================================================
+1. PRODUCT IDENTITY — LOCK THIS
+======================================================================
+
+Product:
+
+PROJECTTRACE
+
+Category:
+
+Unified Engineering Integrity, Quality & Security Platform
+
+Primary product statement:
+
+"ProjectTrace continuously verifies whether what an engineering
+organization says about its software is still supported by what the
+software actually implements."
+
+Extended value proposition:
+
+"One engineering platform to understand, verify, secure, review and
+govern software using evidence."
+
+Tagline:
+
+Understand it.
+Verify it.
+Secure it.
+Keep it true.
+
+ProjectTrace is NOT:
+
+- another generic repository chatbot
+- a ChatGPT wrapper
+- a copy of SonarQube
+- a copy of Wiz
+- a copied developer portal
+- a simple vulnerability scanner
+- a student project
+- a dashboard full of random AI features
+
+ProjectTrace must become its own coherent engineering product.
+
+======================================================================
+2. NEVER LOSE THE PROJECTTRACE CORE
+======================================================================
+
+No matter how many quality/security/cloud features are added, these
+remain the heart of the platform:
+
+PROJECT EVIDENCE GRAPH
+
+ENGINEERING CLAIM LEDGER
+
+VERIFICATION SCOPE
+
+EVIDENCE PROVENANCE
+
+EVIDENCE AUTHORITY
+
+ATOMIC CLAIM EXTRACTION
+
+DETERMINISTIC-FIRST VERIFICATION
+
+VERIFIED
+INFERRED
+UNVERIFIED
+CONTRADICTED
+STALE
+
+DRIFT ENGINE
+
+IMPACT ENGINE
+
+REPOSITORY SNAPSHOTS
+
+CHANGE / COMMIT AWARENESS
+
+DOCUMENTATION ↔ CODE CONSISTENCY
+
+ARCHITECTURE ↔ IMPLEMENTATION CONSISTENCY
+
+API CONTRACT ↔ IMPLEMENTATION CONSISTENCY
+
+SECURITY CLAIM ↔ SECURITY REALITY CONSISTENCY
+
+PR-BASED REVERIFICATION
+
+OWNERSHIP
+
+HUMAN REVIEW
+
+EXPIRING EXCEPTIONS
+
+POLICY ENGINE
+
+ENGINEERING AUDIT TRAIL
+
+ASK ENGINEERING WITH EVIDENCE
+
+ProjectTrace must always answer questions such as:
+
+"What does our engineering organization claim?"
+
+"What evidence supports the claim?"
+
+"What contradicts the claim?"
+
+"Was this previously true?"
+
+"What changed?"
+
+"Which commit or PR caused the change?"
+
+"What documentation became stale?"
+
+"What quality/security finding affects the claim?"
+
+"Who owns it?"
+
+"Who reviewed it?"
+
+"What still needs action?"
+
+======================================================================
+3. UNIFIED PRODUCT DIRECTION
+======================================================================
+
+We are intentionally expanding ProjectTrace.
+
+The final platform should combine:
+
+PROJECTTRACE ENGINEERING INTEGRITY
+
++
+
+CODE QUALITY
+
++
+
+APPLICATION SECURITY
+
++
+
+SOFTWARE COMPOSITION ANALYSIS
+
++
+
+SECRETS SECURITY
+
++
+
+INFRASTRUCTURE-AS-CODE SECURITY
+
++
+
+CLOUD SECURITY CONTEXT
+
++
+
+ENGINEERING RISK CORRELATION
+
++
+
+PR QUALITY / SECURITY GATES
+
++
+
+DOCUMENTATION / ARCHITECTURE / API DRIFT
+
++
+
+ENGINEERING GOVERNANCE
+
+into ONE product experience.
+
+Do NOT merely bolt unrelated scanners onto ProjectTrace.
+
+Everything must feed the same evidence model.
+
+Architecture:
+
+ENGINEERING SOURCES
+        ↓
+ANALYSIS ENGINES
+        ↓
+EVIDENCE NORMALIZATION
+        ↓
+ENGINEERING EVIDENCE & RISK GRAPH
+        ↓
+CLAIM ENGINE
+        ↓
+DRIFT / IMPACT / RISK
+        ↓
+PR WORKFLOW
+        ↓
+HUMAN REVIEW
+        ↓
+AUDIT TRAIL
+
+======================================================================
+4. SONARQUBE / WIZ STRATEGY
+======================================================================
+
+ProjectTrace may implement OUR OWN native capabilities similar in
+problem category to capabilities found in mature tools.
+
+Examples:
+
+code quality
+SAST
+SCA
+secrets
+IaC analysis
+quality gates
+cloud security context
+risk correlation
+
+DO NOT:
+
+- copy proprietary implementations
+- copy proprietary rules verbatim
+- reverse engineer private technology
+- use their trademarks as our feature names
+- claim equivalent maturity without evidence
+
+Build ProjectTrace-native implementations.
+
+Also keep OPTIONAL connectors for:
+
+SonarQube
+Wiz
+GitHub CodeQL
+Semgrep
+Snyk
+Trivy
+and future engineering/security providers.
+
+Why?
+
+Companies may already use those systems.
+
+ProjectTrace should be able to ingest their findings as additional
+evidence.
+
+Native ProjectTrace analysis and external evidence should coexist.
+
+======================================================================
+5. TARGET CUSTOMER
+======================================================================
+
+Initial market:
+
+Individual developers
+
+Startups
+
+Small engineering teams
+
+Agencies
+
+SaaS teams
+
+Growing product companies
+
+Platform engineering teams
+
+Developer-experience teams
+
+Later:
+
+Large enterprises
+
+Security organizations
+
+Highly regulated companies
+
+ProjectTrace should reduce:
+
+tool fragmentation
+
+context switching
+
+duplicate findings
+
+documentation drift
+
+security blind spots
+
+engineering uncertainty
+
+tool cost
+
+manual project investigation
+
+======================================================================
+6. PRODUCT EXPERIENCE FOR A CEO / CTO
+======================================================================
+
+IMPORTANT:
+
+I will demonstrate this product to CEOs, CTOs, founders, engineering
+managers and developers.
+
+The product itself must explain its purpose.
+
+A first-time visitor should understand within 30–60 seconds:
+
+WHAT ProjectTrace is.
+
+WHAT problem it solves.
+
+WHY it is different.
+
+WHAT it analyzes.
+
+WHAT actionable result it produces.
+
+WHY an engineering organization would pay for it.
+
+Do not rely on me verbally explaining basic concepts.
+
+Create an excellent first-run experience.
+
+The product should clearly show:
+
+One engineering system.
+
+One evidence graph.
+
+One finding inbox.
+
+One Claim Ledger.
+
+One PR gate.
+
+One risk model.
+
+One audit history.
+
+======================================================================
+7. CEO DEMO MODE
+======================================================================
+
+Create a dedicated:
+
+DEMO WORKSPACE
+
+with deterministic seeded sample data.
+
+The demo should tell a story.
+
+Example organization:
+
+Northstar Labs
+
+Systems:
+
+Identity Platform
+Payments Platform
+Commerce Platform
+
+Create a realistic example:
+
+Documentation states:
+
+"Authentication uses JWT."
+
+Previous snapshot supports JWT.
+
+New PR replaces JWT with session authentication.
+
+README remains unchanged.
+
+ProjectTrace detects:
+
+CLAIM
+Authentication uses JWT.
+
+PREVIOUS STATUS
+VERIFIED
+
+CURRENT STATUS
+CONTRADICTED
+
+DRIFT
+Documentation Drift
+
+CHANGED BY
+PR #1842
+
+EVIDENCE
+auth/session.py
+middleware/session.py
+
+OWNER
+Identity Platform Team
+
+RECOMMENDED ACTION
+Update authentication documentation.
+
+Also create:
+
+one SAST finding
+
+one vulnerable dependency
+
+one secret detection
+
+one IaC finding
+
+one API drift finding
+
+one architecture drift finding
+
+one clean repository
+
+Do not fabricate these dynamically.
+
+Create safe deterministic demo fixtures.
+
+======================================================================
+8. EXECUTIVE OVERVIEW
+======================================================================
+
+Create an Executive Overview screen.
+
+It should immediately communicate:
+
+Engineering systems
+
+Repositories
+
+Open PRs
+
+Engineering claims
+
+Verified claims
+
+Contradicted claims
+
+Stale claims
+
+Critical findings
+
+Security posture
+
+Quality posture
+
+Documentation drift
+
+Architecture drift
+
+PR risk
+
+Recent changes
+
+Top risks
+
+Teams requiring attention
+
+Use ACTUAL data.
+
+Do not invent meaningless metrics.
+
+======================================================================
+9. CORE ORGANIZATION MODEL
+======================================================================
+
+Industry ProjectTrace must not assume:
+
+Repository = Product.
+
+Model:
+
+Organization
+
+Workspace
+
+Team
+
+System
+
+Component
+
+Repository
+
+Environment
+
+Artifact
+
+Evidence
+
+Claim
+
+Finding
+
+Policy
+
+Review
+
+Integration
+
+Examples:
+
+System:
+Commerce
+
+Components:
+
+checkout-api
+payment-worker
+admin-frontend
+shared-events
+
+Repositories can map:
+
+one repository → multiple components
+
+multiple repositories → one system
+
+Support monorepos.
+
+======================================================================
+10. ENGINEERING CLAIM LEDGER
+======================================================================
+
+This remains ProjectTrace's signature feature.
+
+A claim represents a verifiable technical statement.
+
+Examples:
+
+"Authentication uses OAuth."
+
+"Orders publishes events through Kafka."
+
+"The service uses PostgreSQL."
+
+"All administrator routes require authorization."
+
+"Production databases are encrypted."
+
+"The API exposes /health."
+
+Claims must be atomic.
+
+Example:
+
+"Backend uses FastAPI, PostgreSQL and JWT."
+
+Split into:
+
+Backend uses FastAPI.
+
+Database uses PostgreSQL.
+
+Authentication uses JWT.
+
+======================================================================
+11. CLAIM STATUS
+======================================================================
+
+Use:
+
+VERIFIED
+
+Strong current evidence directly supports the claim.
+
+INFERRED
+
+Strong indirect evidence exists but cannot conclusively prove the
+statement.
+
+UNVERIFIED
+
+Insufficient evidence.
+
+CONTRADICTED
+
+Current evidence conflicts with the claim.
+
+STALE
+
+Claim was previously supported or associated evidence changed and
+requires reverification.
+
+If evidence directly disproves the statement:
+
+use CONTRADICTED.
+
+======================================================================
+12. CLAIM DIMENSIONS
+======================================================================
+
+Never mix these:
+
+Verification Status
+
+Severity
+
+Confidence
+
+Review Status
+
+Evidence Strength
+
+Scope
+
+Freshness
+
+Example:
+
+Status:
+CONTRADICTED
+
+Severity:
+CRITICAL
+
+Confidence:
+HIGH
+
+Review:
+OPEN
+
+======================================================================
+13. VERIFICATION SCOPE
+======================================================================
+
+Every result records:
+
+Organization
+
+System
+
+Component
+
+Repository
+
+Branch
+
+Commit SHA
+
+Snapshot
+
+Environment where applicable
+
+Analyzer version
+
+Rule version
+
+Analysis timestamp
+
+Never say:
+
+"VERIFIED"
+
+without knowing against which snapshot.
+
+======================================================================
+14. EVIDENCE CLASSES
+======================================================================
+
+Evidence classes:
+
+SOURCE_CODE
+
+DEPENDENCY
+
+CONFIGURATION
+
+TEST
+
+API_CONTRACT
+
+DOCUMENTATION
+
+ARCHITECTURE
+
+INFRASTRUCTURE
+
+CI_CD
+
+RUNTIME
+
+SECURITY_FINDING
+
+QUALITY_FINDING
+
+EXTERNAL_TOOL
+
+HUMAN_ATTESTATION
+
+CLOUD_RESOURCE
+
+Never treat all evidence as equally authoritative.
+
+======================================================================
+15. PROJECT EVIDENCE & RISK GRAPH
+======================================================================
+
+Build one unified graph.
+
+Examples:
+
+README Claim
+    ↓ DOCUMENTS
+Authentication
+    ↓ IMPLEMENTED_BY
+SessionMiddleware
+    ↓ PROTECTS
+/admin/users
+
+Repository
+    ↓ BUILDS
+Container
+    ↓ DEPLOYED_AS
+Cloud Workload
+    ↓ EXPOSED_TO
+Internet
+
+Dependency
+    ↓ CONTAINS
+Vulnerability
+    ↓ AFFECTS
+Payments Service
+
+Engineering Claim
+    ↓ CONTRADICTED_BY
+Security Finding
+
+Use PostgreSQL relational graph representation initially.
+
+Suggested:
+
+evidence_nodes
+
+evidence_edges
+
+Do NOT introduce Neo4j unless measured requirements justify it.
+
+======================================================================
+16. HYBRID RETRIEVAL
+======================================================================
+
+Do not build simplistic RAG.
+
+Use:
+
+PostgreSQL full-text search
+
++
+
+pgvector semantic search
+
++
+
+path/filename signals
+
++
+
+component metadata
+
++
+
+claim type
+
++
+
+Evidence Graph relationships
+
++
+
+evidence authority
+
++
+
+freshness
+
+Rerank when evidence proves it helps.
+
+Every result must retain provenance.
+
+======================================================================
+17. DETERMINISTIC-FIRST VERIFICATION
+======================================================================
+
+Never let an LLM alone decide engineering truth.
+
+Use deterministic evidence whenever possible.
+
+Examples:
+
+package.json
+requirements.txt
+pom.xml
+imports
+database URLs
+ORM drivers
+Docker configuration
+OpenAPI routes
+auth decorators
+CODEOWNERS
+Terraform
+Kubernetes
+CI workflows
+test files
+
+LLM responsibilities:
+
+claim extraction
+
+claim decomposition
+
+semantic normalization
+
+evidence explanation
+
+remediation wording
+
+Ask Engineering
+
+Never give the model authority to override factual analyzer output
+without explainable reason.
+
+======================================================================
+18. NATIVE CODE QUALITY ENGINE
+======================================================================
+
+Create ProjectTrace-native quality analysis.
+
+Initial supported languages:
+
+TypeScript / JavaScript
+
+Python
+
+Java
+
+Design language-adapter architecture for expansion.
+
+Analyze:
+
+complexity
+
+large functions
+
+excessive nesting
+
+duplication
+
+dead/unreachable patterns where reliable
+
+poor maintainability patterns
+
+unsafe patterns
+
+framework misuse
+
+naming/structure issues where meaningful
+
+test-related signals
+
+technical debt indicators
+
+changed-code quality
+
+Every rule has:
+
+rule_id
+
+version
+
+language
+
+category
+
+severity
+
+description
+
+rationale
+
+location
+
+remediation
+
+references where appropriate
+
+Avoid noisy stylistic rules that developers will immediately disable.
+
+======================================================================
+19. SAST ENGINE
+======================================================================
+
+Build ProjectTrace-native SAST progressively.
+
+Initial high-value categories:
+
+SQL injection
+
+command injection
+
+XSS
+
+path traversal
+
+unsafe file handling
+
+SSRF patterns
+
+unsafe deserialization
+
+weak cryptography patterns
+
+hard-coded credentials
+
+insecure random usage
+
+dangerous subprocess execution
+
+authentication weaknesses
+
+authorization weaknesses
+
+Use:
+
+AST
+
+control flow
+
+data flow
+
+source/sink models
+
+framework knowledge
+
+where appropriate.
+
+Develop taint analysis incrementally.
+
+Do not claim complete security coverage.
+
+======================================================================
+20. SECURITY TAXONOMY
+======================================================================
+
+Security findings should map when appropriate to:
+
+CWE
+
+OWASP categories
+
+Do not manufacture mappings.
+
+Store:
+
+finding ID
+
+rule
+
+severity
+
+confidence
+
+source
+
+sink where applicable
+
+flow
+
+file
+
+line
+
+explanation
+
+remediation
+
+evidence
+
+analyzer version
+
+======================================================================
+21. SOFTWARE COMPOSITION ANALYSIS
+======================================================================
+
+Implement SCA.
+
+Parse:
+
+npm lockfiles
+
+Python lock/dependency manifests
+
+Maven/Gradle
+
+and expand later.
+
+Build dependency graph:
+
+direct dependencies
+
+transitive dependencies
+
+versions
+
+licenses
+
+known vulnerabilities
+
+fixed versions
+
+Use trusted vulnerability data sources.
+
+Support:
+
+OSV
+
+and other appropriate public vulnerability sources.
+
+Cache vulnerability data responsibly.
+
+Never fabricate CVEs.
+
+======================================================================
+22. SBOM
+======================================================================
+
+Generate SBOM.
+
+Support at least:
+
+CycloneDX
+
+later optionally SPDX.
+
+SBOM includes:
+
+component
+
+version
+
+dependency relationship
+
+license where available
+
+source
+
+Do not include secrets.
+
+======================================================================
+23. SECRETS ENGINE
+======================================================================
+
+Detect:
+
+API keys
+
+OAuth tokens
+
+private keys
+
+database credentials
+
+cloud credentials
+
+webhook tokens
+
+JWT secrets
+
+provider-specific patterns
+
+high-entropy suspicious values
+
+Mask findings.
+
+Never display the full secret.
+
+Example:
+
+ghp_abcd************
+
+Never send detected secrets to an LLM.
+
+======================================================================
+24. IaC ANALYSIS
+======================================================================
+
+Statically inspect:
+
+Terraform
+
+Kubernetes
+
+Helm metadata
+
+Dockerfiles
+
+Docker Compose
+
+Detect high-value risks such as:
+
+public exposure
+
+privileged containers
+
+host networking
+
+dangerous capabilities
+
+weak IAM patterns
+
+unencrypted resources
+
+public storage
+
+insecure service configuration
+
+unsafe container user
+
+excessive privileges
+
+Do not execute IaC.
+
+======================================================================
+25. CLOUD SECURITY
+======================================================================
+
+Develop cloud security in phases.
+
+Start with:
+
+IaC-derived cloud risk.
+
+Then add authorized read-only cloud inventory.
+
+Eventually:
+
+AWS
+
+Azure
+
+GCP
+
+Potential evidence:
+
+resources
+
+identities
+
+network exposure
+
+configuration
+
+permissions
+
+workloads
+
+data stores
+
+vulnerabilities
+
+Do not request write permissions.
+
+Use read-only APIs initially.
+
+======================================================================
+26. RISK GRAPH
+======================================================================
+
+Extend the Evidence Graph.
+
+Example:
+
+Internet
+↓
+Public Service
+↓
+Vulnerable Workload
+↓
+Privileged Identity
+↓
+Sensitive Database
+
+Correlate findings.
+
+Avoid presenting 500 isolated issues when five belong to one risk path.
+
+======================================================================
+27. RISK ENGINE
+======================================================================
+
+Risk should consider:
+
+severity
+
+confidence
+
+exposure
+
+exploitability
+
+asset criticality
+
+evidence strength
+
+business context
+
+reachability where available
+
+Do not create mysterious scores.
+
+Explain every risk calculation.
+
+======================================================================
+28. FINDING DEDUPLICATION
+======================================================================
+
+The same problem may come from:
+
+ProjectTrace SAST
+
+SonarQube
+
+CodeQL
+
+Wiz
+
+Snyk
+
+Trivy
+
+Do not show five disconnected alerts.
+
+Create a normalized finding.
+
+Attach multiple evidence sources.
+
+Preserve original provider references.
+
+======================================================================
+29. DOCUMENTATION INTEGRITY
+======================================================================
+
+Analyze:
+
+README
+
+/docs
+
+runbooks
+
+deployment documentation
+
+security documentation
+
+operational documentation
+
+Detect:
+
+incorrect technology claims
+
+outdated commands
+
+removed capabilities
+
+authentication mismatch
+
+dependency mismatch
+
+configuration mismatch
+
+deployment mismatch
+
+security-control mismatch
+
+======================================================================
+30. ARCHITECTURE INTEGRITY
+======================================================================
+
+Support:
+
+ADRs
+
+Mermaid
+
+PlantUML metadata where practical
+
+architecture markdown
+
+service metadata
+
+Detect relationships such as:
+
+service A → Kafka → service B
+
+and compare to implementation.
+
+Detect architecture drift.
+
+======================================================================
+31. API CONTRACT INTEGRITY
+======================================================================
+
+Support OpenAPI first.
+
+Compare:
+
+documented endpoints
+
+implemented routes
+
+HTTP methods
+
+required parameters
+
+authentication
+
+removed endpoints
+
+undocumented endpoints
+
+response schemas where safely inferable
+
+Later:
+
+AsyncAPI
+
+GraphQL schemas
+
+======================================================================
+32. IMPACT ENGINE
+======================================================================
+
+Critical component.
+
+Flow:
+
+New commit / PR
+↓
+Diff
+↓
+Changed files
+↓
+Changed evidence nodes
+↓
+Graph relationships
+↓
+Affected claims
+↓
+Affected documents
+↓
+Affected risks
+↓
+Targeted reverification
+
+Avoid complete rescans when unnecessary.
+
+======================================================================
+33. DRIFT ENGINE
+======================================================================
+
+Drift types:
+
+DOCUMENTATION_DRIFT
+
+ARCHITECTURE_DRIFT
+
+API_DRIFT
+
+CONFIGURATION_DRIFT
+
+DEPENDENCY_DRIFT
+
+SECURITY_CONTROL_DRIFT
+
+INFRASTRUCTURE_DRIFT
+
+OWNERSHIP_DRIFT
+
+Claim history must show transitions.
+
+Example:
+
+VERIFIED
+
+→ evidence changed
+
+→ STALE
+
+→ analysis completed
+
+→ CONTRADICTED
+
+→ documentation corrected
+
+→ VERIFIED
+
+======================================================================
+34. PULL REQUEST INTELLIGENCE
+======================================================================
+
+GitHub PR workflow:
+
+Webhook
+↓
+Verify signature
+↓
+Deduplicate
+↓
+Get base/head
+↓
+Diff
+↓
+Incremental quality scan
+↓
+Incremental security scan
+↓
+SCA
+↓
+Secrets
+↓
+IaC
+↓
+Impact Engine
+↓
+Claim reverification
+↓
+Drift analysis
+↓
+Risk correlation
+↓
+ProjectTrace Check
+
+======================================================================
+35. UNIFIED PR CHECK
+======================================================================
+
+Example:
+
+PROJECTTRACE
+PR #1842
+
+QUALITY
+PASS
+
+SECURITY
+1 HIGH
+
+DEPENDENCIES
+2 vulnerable packages
+
+SECRETS
+PASS
+
+INFRASTRUCTURE
+1 WARNING
+
+CLAIMS
+6 affected
+
+4 VERIFIED
+1 STALE
+1 CONTRADICTED
+
+DOCUMENTATION
+README requires review
+
+ARCHITECTURE
+No drift
+
+OVERALL
+REVIEW REQUIRED
+
+Make the PR result understandable without opening six separate tools.
+
+======================================================================
+36. MERGE GATES
+======================================================================
+
+Default:
+
+informational/warning.
+
+Allow policies such as:
+
+CRITICAL secret:
+FAIL
+
+CRITICAL SAST issue:
+FAIL
+
+Critical claim contradiction:
+REQUIRE REVIEW
+
+Documentation drift:
+WARNING
+
+Allow organization configuration.
+
+Do not block developers because of uncertain low-confidence findings.
+
+======================================================================
+37. POLICY ENGINE
+======================================================================
+
+Example policies:
+
+No critical secrets.
+
+No critical known vulnerabilities.
+
+Every production component has an owner.
+
+Every public API is documented.
+
+Every production service exposes health endpoint.
+
+All administrator routes require authorization.
+
+Critical engineering claims cannot remain UNVERIFIED.
+
+Critical contradictions require review.
+
+Policy result:
+
+PASS
+
+WARNING
+
+FAIL
+
+NOT_APPLICABLE
+
+REVIEW_REQUIRED
+
+Policies are versioned.
+
+======================================================================
+38. HUMAN REVIEW
+======================================================================
+
+Humans remain final decision-makers.
+
+Actions:
+
+CONFIRM
+
+FALSE_POSITIVE
+
+ACCEPT_RISK
+
+REQUEST_MORE_EVIDENCE
+
+ASSIGN
+
+RESOLVE
+
+CREATE_EXCEPTION
+
+SUPPRESS_TEMPORARILY
+
+Store:
+
+actor
+
+timestamp
+
+reason
+
+evidence
+
+scope
+
+======================================================================
+39. EXCEPTIONS
+======================================================================
+
+Exceptions require:
+
+reason
+
+scope
+
+owner
+
+approver
+
+creation date
+
+expiry
+
+At expiry:
+
+REVIEW_REQUIRED.
+
+Avoid permanent hidden suppression.
+
+======================================================================
+40. ENGINEERING AUDIT TRAIL
+======================================================================
+
+Append-oriented event history.
+
+Record:
+
+actor
+
+time
+
+organization
+
+system
+
+component
+
+repository
+
+snapshot
+
+claim
+
+finding
+
+policy
+
+old state
+
+new state
+
+evidence changes
+
+PR
+
+review
+
+exception
+
+analyzer version
+
+rule version
+
+model version when relevant
+
+The audit trail should answer:
+
+"What happened and why?"
+
+======================================================================
+41. ASK ENGINEERING
+======================================================================
+
+Not generic chat.
+
+User asks:
+
+"How is authentication implemented?"
+
+Return:
+
+ANSWER
+
+Server-side session authentication.
+
+VERIFICATION
+
+VERIFIED
+
+CONFIDENCE
+
+HIGH
+
+EVIDENCE
+
+backend/auth/session.py
+middleware/auth.py
+config/security.py
+
+RELATED CLAIM
+
+README says JWT
+CONTRADICTED
+
+SNAPSHOT
+
+main @ <commit>
+
+LIMITATIONS
+
+Static evidence only / runtime not connected, if applicable.
+
+No unsupported confident answers.
+
+======================================================================
+42. GITHUB APP
+======================================================================
+
+Use GitHub App for production SCM integration.
+
+Least privilege.
+
+Likely initial permissions:
+
+Metadata:
+Read
+
+Contents:
+Read
+
+Pull Requests:
+Read
+
+Checks:
+Write only when enabled
+
+Webhooks:
+Required events only
+
+Never request content write access for V1.
+
+Use temporary installation tokens.
+
+Verify webhook signatures.
+
+Implement replay protection/idempotency.
+
+======================================================================
+43. GITLAB / BITBUCKET
+======================================================================
+
+Architecture must allow connectors.
+
+Do not build them before GitHub integration is excellent unless enough
+time remains.
+
+Use provider adapter interface.
+
+======================================================================
+44. SONARQUBE INTEGRATION
+======================================================================
+
+Optional evidence provider.
+
+Normalize findings into:
+
+ExternalEvidence
+
+Do not label SonarQube results as native ProjectTrace results.
+
+Preserve:
+
+provider
+
+project
+
+finding ID
+
+category
+
+severity
+
+file
+
+line
+
+status
+
+provider timestamp
+
+retrieval timestamp
+
+link/reference
+
+======================================================================
+45. WIZ INTEGRATION
+======================================================================
+
+Optional external evidence provider.
+
+Do NOT invent APIs.
+
+If real credentials are unavailable:
+
+create:
+
+connector interface
+
+configuration schema
+
+normalization layer
+
+mock fixtures
+
+tests
+
+Mark live integration:
+
+NOT VERIFIED
+
+until real credentials are tested.
+
+======================================================================
+46. EXTERNAL CONNECTOR ARCHITECTURE
+======================================================================
+
+Common interface:
+
+Connector
+
+authenticate()
+
+test_connection()
+
+sync()
+
+normalize()
+
+get_health()
+
+All connectors expose:
+
+CONNECTED
+
+DEGRADED
+
+ERROR
+
+NOT_CONFIGURED
+
+Last sync time.
+
+Scope.
+
+Permissions.
+
+======================================================================
+47. AUTHENTICATION
+======================================================================
+
+Development:
+
+secure local/demo login.
+
+Production:
+
+OIDC-first.
+
+Support architecture for:
+
+Microsoft Entra ID
+
+Okta
+
+Google Workspace
+
+generic OIDC
+
+Later:
+
+SAML
+
+SCIM
+
+Do not create a giant custom identity product.
+
+======================================================================
+48. RBAC
+======================================================================
+
+Roles:
+
+ORG_OWNER
+
+ADMIN
+
+ENGINEER
+
+SECURITY_REVIEWER
+
+REVIEWER
+
+AUDITOR
+
+VIEWER
+
+Authorization must occur server-side.
+
+======================================================================
+49. SOURCE PERMISSION INHERITANCE
+======================================================================
+
+CRITICAL:
+
+ProjectTrace must never reveal a private repository to a user who is not
+authorized for that repository.
+
+Apply repository permission checks to:
+
+Evidence
+
+Claims
+
+Ask Engineering
+
+Search
+
+Findings
+
+Exports
+
+Graph
+
+Audit
+
+======================================================================
+50. MULTITENANCY
+======================================================================
+
+Organization A must never access Organization B data.
+
+Tenant-scope:
+
+PostgreSQL
+
+Redis
+
+vector retrieval
+
+object storage
+
+jobs
+
+caches
+
+search
+
+audit
+
+LLM context
+
+Every tenant-owned record should include:
+
+organization_id.
+
+Write cross-tenant security tests.
+
+======================================================================
+51. REPOSITORY CONTENT IS UNTRUSTED
+======================================================================
+
+Never execute imported project code.
+
+Never automatically run:
+
+npm install
+
+npm scripts
+
+pip install
+
+python source
+
+Java
+
+shell
+
+PowerShell
+
+Dockerfiles
+
+Makefiles
+
+binaries
+
+Git hooks
+
+submodules
+
+Uploaded repositories are DATA.
+
+======================================================================
+52. FETCHER SECURITY
+======================================================================
+
+Separate:
+
+Repository Fetcher
+
+from
+
+Repository Parser.
+
+Fetcher:
+
+limited outbound provider connectivity.
+
+Parser:
+
+no arbitrary internet.
+
+no shell.
+
+read-only snapshot.
+
+resource limits.
+
+timeout.
+
+Prefer isolation.
+
+======================================================================
+53. SSRF PROTECTION
+======================================================================
+
+Avoid arbitrary URL fetching.
+
+Prefer provider integrations.
+
+If public URL import exists:
+
+allowlisted domains
+
+URL normalization
+
+DNS resolution validation
+
+private IP rejection
+
+loopback rejection
+
+link-local rejection
+
+cloud metadata rejection
+
+redirect revalidation
+
+size limit
+
+timeout
+
+======================================================================
+54. ARCHIVE SECURITY
+======================================================================
+
+Protect:
+
+ZIP Slip
+
+path traversal
+
+symlink escape
+
+absolute paths
+
+decompression bombs
+
+nested archive abuse
+
+excessive files
+
+huge files
+
+malformed archives
+
+For SCM transport archive:
+
+extract outer safe transport archive.
+
+Nested archive inside repository:
+
+SKIP.
+
+Do not recursively extract.
+
+======================================================================
+55. PROMPT-INJECTION DEFENSE
+======================================================================
+
+README/source/docs may contain malicious instructions.
+
+Treat repository content as:
+
+UNTRUSTED DATA.
+
+Never allow repository text to:
+
+override system rules
+
+activate tools
+
+request secrets
+
+trigger network requests
+
+change authorization
+
+execute commands
+
+send data elsewhere
+
+Prompt boundaries must clearly distinguish:
+
+SYSTEM POLICY
+
+APPLICATION CONTEXT
+
+UNTRUSTED EVIDENCE
+
+USER QUESTION
+
+======================================================================
+56. LLM AUTHORITY
+======================================================================
+
+LLM has read/generate authority only initially.
+
+No:
+
+shell
+
+repository writes
+
+merges
+
+deployments
+
+permission changes
+
+external arbitrary network
+
+delete operations
+
+Any future write action requires explicit human approval.
+
+======================================================================
+57. SECRET PROTECTION
+======================================================================
+
+Before external AI calls:
+
+scan
+
+classify
+
+redact
+
+policy filter
+
+Only safe context reaches provider.
+
+Never log raw secrets.
+
+Never display full secret values.
+
+======================================================================
+58. LLM GATEWAY
+======================================================================
+
+Create provider abstraction.
+
+Do not scatter provider-specific code.
+
+Interface examples:
+
+extract_claims()
+
+decompose_claim()
+
+explain_evidence()
+
+suggest_remediation()
+
+answer_engineering_question()
+
+Provider configured via environment.
+
+======================================================================
+59. PROMPTS ARE VERSIONED CODE
+======================================================================
+
+Create:
+
+prompts/
+
+claim_extraction/
+
+claim_decomposition/
+
+evidence_explanation/
+
+remediation/
+
+ask_engineering/
+
+Each prompt contains:
+
+ID
+
+version
+
+purpose
+
+input schema
+
+output schema
+
+security constraints
+
+examples
+
+tests
+
+Never bury huge prompts inside API route handlers.
+
+======================================================================
+60. STRUCTURED AI OUTPUT
+======================================================================
+
+Use Pydantic / JSON Schema.
+
+Validate every model result.
+
+Never trust free-form model text for internal control logic.
+
+Prevent fake citations.
+
+Evidence IDs must refer to actual retrieved evidence.
+
+======================================================================
+61. AI COST CONTROLS
+======================================================================
+
+Implement:
+
+retrieval before generation
+
+context limits
+
+token budgets
+
+model selection
+
+timeouts
+
+bounded retries
+
+provider rate limiting
+
+organization quota
+
+usage recording
+
+cost estimation
+
+prompt caching where safe
+
+Do not send full repositories unnecessarily.
+
+======================================================================
+62. CORE TECH STACK
+======================================================================
+
+FRONTEND
+
+React
+
+TypeScript
+
+Vite
+
+TanStack Query
+
+TanStack Table
+
+React Flow
+
+Tailwind or equivalent utility styling
+
+accessible headless primitives
+
+custom ProjectTrace design system
+
+BACKEND
+
+Python
+
+FastAPI
+
+Pydantic
+
+SQLAlchemy 2
+
+Alembic
+
+DATABASE
+
+PostgreSQL
+
+VECTOR
+
+pgvector
+
+CACHE / JOB COORDINATION
+
+Redis
+
+WORKERS
+
+Celery
+
+OBJECT STORAGE
+
+S3-compatible abstraction
+
+LOCAL
+
+MinIO when useful
+
+OBSERVABILITY
+
+OpenTelemetry
+
+======================================================================
+63. ARCHITECTURE
+======================================================================
+
+Use modular monolith + specialized workers initially.
+
+Do NOT start with dozens of microservices.
+
+High-level:
+
+Browser
+
+↓
+
+CDN / Reverse Proxy
+
+↓
+
+Stateless FastAPI API
+
+↓
+
+PostgreSQL
+Redis
+Object Storage
+
+↓
+
+Job Queue
+
+↓
+
+Worker Pools
+
+- Repository Fetch
+- Parsing
+- Quality
+- SAST
+- SCA
+- Secrets
+- IaC
+- Evidence
+- Claims
+- Risk
+- AI
+
+This provides scalability without unnecessary complexity.
+
+======================================================================
+64. REPOSITORY STRUCTURE
+======================================================================
+
+ProjectTrace/
+
+frontend/
+
+backend/
+
+workers/
+
+packages/
+    schemas/
+    design-system/
+
+analyzers/
+    common/
+    javascript/
+    python/
+    java/
+    sast/
+    sca/
+    secrets/
+    iac/
+
+integrations/
+    github/
+    sonarqube/
+    wiz/
+
+infrastructure/
+
+docs/
+
+samples/
+
+benchmarks/
+
+scripts/
+
+tests/
+
+.github/
+    workflows/
+
+Do not create folders with no clear purpose.
+
+======================================================================
+65. DATABASE MODEL
+======================================================================
+
+Core entities:
+
+Organization
+
+Workspace
+
+Membership
+
+Team
+
+System
+
+Component
+
+ComponentOwner
+
+Repository
+
+RepositoryIntegration
+
+RepositorySnapshot
+
+Artifact
+
+ArtifactVersion
+
+EvidenceNode
+
+EvidenceEdge
+
+Claim
+
+ClaimVersion
+
+ClaimEvidence
+
+Finding
+
+FindingEvidence
+
+FindingHistory
+
+PullRequestAnalysis
+
+Policy
+
+PolicyVersion
+
+PolicyResult
+
+Review
+
+Exception
+
+ExternalIntegration
+
+ExternalEvidence
+
+AnalysisJob
+
+Notification
+
+AuditEvent
+
+LLMUsage
+
+SecurityScan
+
+QualityScan
+
+Dependency
+
+Vulnerability
+
+CloudResource
+
+Every relevant row includes:
+
+organization_id.
+
+======================================================================
+66. DATA CONSISTENCY
+======================================================================
+
+Use transactions.
+
+Use unique constraints.
+
+Use foreign keys.
+
+Use idempotency keys.
+
+Prevent duplicate webhook processing.
+
+Prevent duplicate analysis creation.
+
+Use optimistic locking/version checks where useful.
+
+======================================================================
+67. MIGRATIONS
+======================================================================
+
+Alembic only.
+
+Every schema change:
+
+migration.
+
+Test:
+
+fresh install
+
+upgrade
+
+rollback where reasonable.
+
+No production dependence on create_all().
+
+======================================================================
+68. BACKGROUND JOBS
+======================================================================
+
+States:
+
+QUEUED
+
+FETCHING
+
+PARSING
+
+ANALYZING
+
+INDEXING
+
+VERIFYING
+
+CORRELATING
+
+FINALIZING
+
+COMPLETED
+
+PARTIAL
+
+FAILED
+
+CANCELLED
+
+Support:
+
+retry
+
+timeout
+
+cancellation
+
+progress stages
+
+dead-letter handling
+
+idempotency
+
+======================================================================
+69. SCALE & TRAFFIC
+======================================================================
+
+Design for horizontal scaling.
+
+API nodes stateless.
+
+Heavy work asynchronous.
+
+Protect system with:
+
+rate limiting
+
+concurrency limits
+
+organization quotas
+
+queue capacity
+
+provider quotas
+
+backpressure
+
+fair scheduling
+
+timeouts
+
+circuit breakers where useful
+
+A huge monorepo cannot monopolize workers.
+
+======================================================================
+70. INCREMENTAL ANALYSIS
+======================================================================
+
+New commit:
+
+calculate diff.
+
+Reuse unchanged analysis by content hash.
+
+Only re-run required analyzers.
+
+Only re-embed changed content.
+
+Only reverify impacted claims.
+
+This is essential for:
+
+cost
+
+latency
+
+traffic
+
+scale.
+
+======================================================================
+71. CONTENT HASHING
+======================================================================
+
+Use SHA-256 or equivalent.
+
+Cache keys consider:
+
+organization
+
+artifact hash
+
+analyzer version
+
+rule version
+
+embedding version
+
+claim-engine version
+
+Prevent stale-cache contamination.
+
+======================================================================
+72. DATABASE PERFORMANCE
+======================================================================
+
+Use:
+
+connection pooling
+
+pagination
+
+batching
+
+bulk operations
+
+indexes
+
+query profiling
+
+Avoid:
+
+N+1
+
+huge unbounded lists
+
+full table scans where unnecessary
+
+Measure before optimization.
+
+======================================================================
+73. LOAD TESTING
+======================================================================
+
+Use k6 or Locust.
+
+Test:
+
+dashboard traffic
+
+REST APIs
+
+Ask Engineering
+
+analysis submission
+
+webhook burst
+
+concurrent PR analysis
+
+large repository workload
+
+Report:
+
+p50
+
+p95
+
+p99
+
+throughput
+
+error rate
+
+queue delay
+
+DB load
+
+worker saturation
+
+Do not invent scalability numbers.
+
+======================================================================
+74. OBSERVABILITY
+======================================================================
+
+Structured logs.
+
+Metrics.
+
+Distributed traces.
+
+Important dimensions:
+
+request_id
+
+organization_id
+
+user_id
+
+system_id
+
+component_id
+
+repository_id
+
+snapshot_id
+
+job_id
+
+analyzer
+
+provider
+
+duration
+
+status
+
+Do not log source code unnecessarily.
+
+Never log secrets.
+
+======================================================================
+75. HEALTH
+======================================================================
+
+Provide:
+
+/health
+
+/ready
+
+Readiness verifies critical dependencies.
+
+======================================================================
+76. SECURITY HEADERS
+======================================================================
+
+Apply appropriate:
+
+Content-Security-Policy
+
+X-Content-Type-Options
+
+Referrer-Policy
+
+frame protection
+
+HSTS in production
+
+secure cookies
+
+======================================================================
+77. WEB SECURITY
+======================================================================
+
+Defend:
+
+XSS
+
+CSRF
+
+SQL injection
+
+IDOR/BOLA
+
+SSRF
+
+open redirect
+
+path traversal
+
+upload abuse
+
+mass assignment
+
+credential stuffing
+
+session fixation
+
+brute force
+
+clickjacking
+
+unsafe markdown
+
+======================================================================
+78. PASSWORD / SESSION SECURITY
+======================================================================
+
+If local passwords exist:
+
+Argon2id preferred.
+
+Sessions:
+
+HttpOnly
+
+Secure production
+
+SameSite
+
+expiration
+
+rotation
+
+logout invalidation
+
+CSRF protection.
+
+Avoid long-lived auth tokens in localStorage.
+
+======================================================================
+79. SUPPLY CHAIN SECURITY
+======================================================================
+
+Use:
+
+lockfiles
+
+dependency scanning
+
+SBOM
+
+container scanning
+
+CI security checks
+
+signed artifacts where practical later
+
+Protect CI credentials.
+
+Pin third-party actions appropriately.
+
+======================================================================
+80. CI PIPELINE
+======================================================================
+
+GitHub Actions should run:
+
+backend tests
+
+frontend tests
+
+type checking
+
+linting
+
+security tests
+
+migration validation
+
+analyzer tests
+
+build verification
+
+dependency scan
+
+container build
+
+SBOM generation
+
+Never automatically deploy production without deliberate configuration.
+
+======================================================================
+81. RELEASE PIPELINE
+======================================================================
+
+Environment sequence:
+
+local
+
+test
+
+staging
+
+production
+
+Before production:
+
+tests pass
+
+security gate pass
+
+migration validation
+
+backup verified
+
+smoke tests
+
+E2E pass
+
+performance gate
+
+dependency review
+
+artifact creation
+
+No manual mystery deployment.
+
+======================================================================
+82. BACKUPS & DISASTER RECOVERY
+======================================================================
+
+Document:
+
+PostgreSQL backup
+
+object-storage recovery
+
+restore
+
+rollback
+
+RPO target
+
+RTO target
+
+Do at least one restore test before claiming disaster recovery works.
+
+======================================================================
+83. FRONTEND EXPERIENCE
+======================================================================
+
+THIS IS NON-NEGOTIABLE.
+
+The product must NOT look:
+
+AI-generated
+
+template-generated
+
+like a college dashboard
+
+like a generic admin panel
+
+like a ChatGPT clone
+
+like default shadcn
+
+like default Material UI
+
+like Bootstrap
+
+like random glassmorphism
+
+like purple-blue SaaS template
+
+like a gaming/cyberpunk interface
+
+Do not put everything in rounded cards.
+
+Build a mature engineering interface.
+
+Inspirational quality bar:
+
+Linear
+GitHub
+Vercel
+Raycast
+Datadog
+Grafana
+modern developer tooling
+
+Do NOT copy any of them.
+
+Create ProjectTrace identity.
+
+======================================================================
+84. VISUAL IDENTITY
+======================================================================
+
+Personality:
+
+credible
+
+technical
+
+quietly premium
+
+precise
+
+evidence-oriented
+
+professional
+
+serious
+
+Use:
+
+neutral graphite/slate foundation
+
+off-white light mode
+
+deep charcoal dark mode
+
+one restrained identity accent
+
+Semantic colors only when meaningful:
+
+verified
+
+warning
+
+error
+
+critical
+
+Avoid excessive gradients.
+
+======================================================================
+85. TYPOGRAPHY
+======================================================================
+
+Professional sans-serif for UI.
+
+Monospace for:
+
+paths
+
+commits
+
+rules
+
+APIs
+
+technical IDs
+
+Do not use monospace for the entire interface.
+
+======================================================================
+86. PRODUCT SHELL
+======================================================================
+
+Desktop shell:
+
+LEFT SIDEBAR
+
+Organization selector
+
+Overview
+
+Systems
+
+Components
+
+Repositories
+
+Pull Requests
+
+Findings
+
+Code Quality
+
+Security
+
+Dependencies
+
+Infrastructure
+
+Cloud
+
+Evidence
+
+Claim Ledger
+
+Drift
+
+Architecture
+
+Ask Engineering
+
+Policies
+
+Audit Trail
+
+Integrations
+
+Settings
+
+TOP BAR
+
+Organization
+
+current system/component context
+
+global search
+
+command palette
+
+analysis status
+
+notifications
+
+user
+
+======================================================================
+87. CEO-FIRST OVERVIEW
+======================================================================
+
+Do not show technical noise first.
+
+Overview answers:
+
+What is connected?
+
+What is healthy?
+
+What is risky?
+
+What changed?
+
+What needs action?
+
+What value does ProjectTrace provide?
+
+Sections:
+
+Engineering Integrity
+
+Quality
+
+Security
+
+Software Supply Chain
+
+Infrastructure
+
+Documentation Drift
+
+Critical Risk Paths
+
+Recent PR Impact
+
+Team Ownership
+
+Use tooltips explaining specialized terminology.
+
+======================================================================
+88. PRODUCT TOUR
+======================================================================
+
+First login:
+
+brief interactive onboarding.
+
+Explain:
+
+Evidence Graph
+
+Claim Ledger
+
+Finding
+
+Drift
+
+Impact
+
+PR Gate
+
+Do NOT create a 20-screen tutorial.
+
+Allow skip.
+
+CEO/demo workspace should have:
+
+"Explore Demo"
+
+button.
+
+======================================================================
+89. CLAIM LEDGER UI
+======================================================================
+
+Professional data table.
+
+Columns:
+
+Claim
+
+Status
+
+Severity
+
+Confidence
+
+Category
+
+Component
+
+Owner
+
+Evidence
+
+Last Verified
+
+Snapshot
+
+Filters:
+
+status
+
+severity
+
+team
+
+component
+
+claim type
+
+evidence source
+
+age
+
+Click opens Evidence Inspector.
+
+======================================================================
+90. EVIDENCE INSPECTOR
+======================================================================
+
+Show:
+
+claim
+
+status
+
+scope
+
+reason
+
+supporting evidence
+
+contradicting evidence
+
+source artifact
+
+affected documents
+
+PR
+
+history
+
+owner
+
+review
+
+recommendation
+
+Never show hidden model chain-of-thought.
+
+======================================================================
+91. FINDINGS UI
+======================================================================
+
+One unified inbox.
+
+Categories:
+
+QUALITY
+
+SAST
+
+SCA
+
+SECRET
+
+IAC
+
+CLOUD
+
+CLAIM
+
+API
+
+ARCHITECTURE
+
+DOCUMENTATION
+
+Prioritize.
+
+Deduplicate.
+
+Filter.
+
+Assign.
+
+Review.
+
+======================================================================
+92. SECURITY UI
+======================================================================
+
+Show:
+
+Critical
+
+High
+
+Medium
+
+Low
+
+SAST
+
+Dependencies
+
+Secrets
+
+Infrastructure
+
+Risk paths
+
+Affected components
+
+Avoid fear-based design.
+
+======================================================================
+93. QUALITY UI
+======================================================================
+
+Show:
+
+maintainability
+
+complexity
+
+duplication
+
+new-code issues
+
+quality gate
+
+historical trend
+
+hotspot files
+
+Do not create arbitrary scores without formula.
+
+======================================================================
+94. EVIDENCE EXPLORER
+======================================================================
+
+Three-pane view.
+
+LEFT
+
+component/artifact tree
+
+CENTER
+
+source viewer
+
+RIGHT
+
+related claims/findings/evidence
+
+Support deep links to lines.
+
+======================================================================
+95. GRAPH UI
+======================================================================
+
+Do not render a giant meaningless graph.
+
+Start from selected:
+
+claim
+
+component
+
+finding
+
+resource
+
+Show neighborhood.
+
+Filters:
+
+relationship
+
+source
+
+type
+
+risk
+
+======================================================================
+96. DRIFT UI
+======================================================================
+
+Review queue.
+
+Display:
+
+drift type
+
+affected artifact
+
+old state
+
+new evidence
+
+PR
+
+owner
+
+severity
+
+status
+
+======================================================================
+97. PR UI
+======================================================================
+
+Show:
+
+changed files
+
+quality delta
+
+security delta
+
+dependency delta
+
+claim impact
+
+documentation impact
+
+architecture impact
+
+policy results
+
+overall recommendation
+
+======================================================================
+98. ASK ENGINEERING UI
+======================================================================
+
+Engineering investigation interface.
+
+Not bubbles.
+
+Question.
+
+Structured result.
+
+Evidence.
+
+Claims.
+
+Findings.
+
+Graph relationships.
+
+Snapshot.
+
+======================================================================
+99. POLICIES UI
+======================================================================
+
+Readable policy builder.
+
+Avoid requiring DSL for common policies.
+
+Support advanced representation internally later.
+
+======================================================================
+100. AUDIT UI
+======================================================================
+
+Filterable chronological history.
+
+Show:
+
+who
+
+what
+
+when
+
+where
+
+why
+
+old/new status
+
+review.
+
+======================================================================
+101. EMPTY STATES
+======================================================================
+
+Every empty screen explains:
+
+why empty
+
+what to do
+
+what result will appear
+
+Example:
+
+"No repositories connected yet.
+
+Connect GitHub to let ProjectTrace build your engineering evidence
+model."
+
+======================================================================
+102. ERROR UX
+======================================================================
+
+Never:
+
+"Something went wrong."
+
+Prefer:
+
+"Repository analysis stopped because the repository exceeded the
+configured extracted-file limit."
+
+Provide:
+
+retry
+
+details
+
+safe troubleshooting
+
+======================================================================
+103. RESPONSIVE DESIGN
+======================================================================
+
+Desktop:
+excellent.
+
+Laptop:
+excellent.
+
+Tablet:
+functional.
+
+Mobile:
+basic review/notification/Ask Engineering.
+
+Complex graph exploration may remain desktop-first.
+
+======================================================================
+104. ACCESSIBILITY
+======================================================================
+
+Use:
+
+semantic HTML
+
+keyboard support
+
+focus states
+
+labels
+
+ARIA where needed
+
+contrast
+
+accessible tables
+
+accessible dialogs
+
+Status must include text/icons, not color only.
+
+======================================================================
+105. TESTING PYRAMID
+======================================================================
+
+Unit tests.
+
+Integration tests.
+
+Contract tests.
+
+Analyzer fixture tests.
+
+API tests.
+
+Database tests.
+
+Authorization tests.
+
+Security tests.
+
+Frontend tests.
+
+E2E tests.
+
+Performance tests.
+
+Load tests.
+
+Failure tests.
+
+Recovery tests.
+
+======================================================================
+106. BACKEND TESTS
+======================================================================
+
+Use pytest.
+
+Cover:
+
+organizations
+
+RBAC
+
+tenant isolation
+
+repositories
+
+snapshots
+
+artifact ingestion
+
+claims
+
+evidence
+
+graph
+
+drift
+
+impact
+
+policies
+
+reviews
+
+exceptions
+
+PRs
+
+connectors
+
+AI output validation
+
+jobs
+
+security boundaries
+
+======================================================================
+107. FRONTEND TESTS
+======================================================================
+
+Use:
+
+Vitest
+
+React Testing Library
+
+Test:
+
+loading
+
+empty
+
+success
+
+error
+
+permissions
+
+filtering
+
+tables
+
+drawers
+
+navigation
+
+claim review
+
+finding review
+
+PR screen
+
+responsive behavior
+
+======================================================================
+108. E2E
+======================================================================
+
+Use Playwright.
+
+Critical workflow:
+
+Login
+
+Create organization
+
+Connect/demo repository
+
+Analyze
+
+View overview
+
+Open finding
+
+Open Claim Ledger
+
+Inspect evidence
+
+Ask Engineering
+
+Analyze PR
+
+Review drift
+
+Resolve finding
+
+View audit event
+
+======================================================================
+109. SECURITY TESTS
+======================================================================
+
+Explicitly test:
+
+cross-tenant access
+
+IDOR
+
+XSS
+
+SQL injection
+
+SSRF
+
+CSRF
+
+malicious ZIP
+
+ZIP Slip
+
+decompression bomb
+
+symlink escape
+
+malicious Git repo
+
+prompt injection
+
+secret leakage
+
+invalid webhook signature
+
+webhook replay
+
+authorization bypass
+
+rate limit
+
+resource exhaustion
+
+unsafe markdown
+
+======================================================================
+110. ANALYZER BENCHMARK CORPUS
+======================================================================
+
+Create safe repositories containing:
+
+clean code
+
+quality problems
+
+SQL injection
+
+command injection
+
+XSS
+
+vulnerable dependency
+
+secret
+
+Terraform issue
+
+Kubernetes issue
+
+README mismatch
+
+API mismatch
+
+architecture drift
+
+stale claim
+
+prompt injection
+
+large repository
+
+monorepo
+
+false-positive traps
+
+Expected findings must be documented.
+
+======================================================================
+111. AI EVALUATION
+======================================================================
+
+Measure:
+
+claim extraction precision
+
+claim extraction recall
+
+atomic decomposition quality
+
+evidence accuracy
+
+citation accuracy
+
+contradiction precision
+
+stale detection accuracy
+
+hallucination rate
+
+Ask Engineering groundedness
+
+retrieval Recall@K
+
+Do not rely only on subjective AI evaluation.
+
+======================================================================
+112. FALSE POSITIVE QUALITY GATE
+======================================================================
+
+This is critical.
+
+A scanner nobody trusts is worthless.
+
+Measure false positives.
+
+Review rules producing repeated false alerts.
+
+Disable or improve low-quality rules.
+
+Quality > rule count.
+
+======================================================================
+113. PERFORMANCE EVALUATION
+======================================================================
+
+Measure:
+
+repository fetch time
+
+parse time
+
+quality scan
+
+SAST scan
+
+SCA scan
+
+embedding time
+
+claim extraction
+
+verification
+
+PR analysis
+
+Ask Engineering
+
+DB query latency
+
+queue latency
+
+======================================================================
+114. RELEASE BLOCKERS
+======================================================================
+
+DO NOT CALL PRODUCT READY if:
+
+critical workflow broken
+
+critical security defect open
+
+known cross-tenant leak
+
+secret leakage
+
+failing migrations
+
+failing critical tests
+
+broken GitHub integration
+
+corrupt audit history
+
+unsafe repository execution
+
+fake evidence
+
+fake citations
+
+known data-loss defect
+
+unhandled critical analyzer crash
+
+======================================================================
+115. RELEASE CRITERIA
+======================================================================
+
+Before CEO/customer demonstration:
+
+All primary flows work.
+
+No known Critical defects.
+
+No known High security defects without explicit documented exception.
+
+All required migrations pass.
+
+Critical automated tests pass.
+
+E2E passes.
+
+Demo workspace resets reliably.
+
+No visible placeholder text.
+
+No fake integrations shown as connected.
+
+No exposed secrets.
+
+No broken links.
+
+No browser console flood.
+
+No layout clipping.
+
+No obvious loading failures.
+
+No fabricated metrics.
+
+No Lorem Ipsum.
+
+======================================================================
+116. DOCUMENTATION
+======================================================================
+
+Create:
+
+README.md
+
+ARCHITECTURE.md
+
+SECURITY.md
+
+CONTRIBUTING.md
+
+docs/
+  getting-started.md
+  product-overview.md
+  evidence-model.md
+  claim-ledger.md
+  quality-engine.md
+  security-engine.md
+  risk-engine.md
+  github-integration.md
+  deployment.md
+  operations.md
+  observability.md
+  backup-recovery.md
+  threat-model.md
+  data-retention.md
+  demo-guide.md
+  CEO-DEMO.md
+  TESTING.md
+  RELEASE.md
+
+======================================================================
+117. THREAT MODEL
+======================================================================
+
+Document:
+
+assets
+
+actors
+
+trust boundaries
+
+entry points
+
+threats
+
+mitigations
+
+residual risk
+
+Include:
+
+SCM
+
+repository parser
+
+LLM
+
+webhooks
+
+object storage
+
+database
+
+workers
+
+cloud connector
+
+external integrations
+
+======================================================================
+118. ARCHITECTURE DECISION RECORDS
+======================================================================
+
+Create ADRs for major decisions.
+
+Examples:
+
+PostgreSQL graph first
+
+pgvector
+
+modular monolith
+
+Celery
+
+GitHub App
+
+no repository execution
+
+deterministic-first verification
+
+LLM gateway
+
+tenant model
+
+native analyzers
+
+======================================================================
+119. LOCAL DEVELOPMENT
+======================================================================
+
+Must be easy.
+
+Use Docker Compose for infrastructure such as:
+
+PostgreSQL
+
+Redis
+
+MinIO
+
+Application development may run natively or containerized.
+
+Provide Windows CMD instructions.
+
+Provide PowerShell instructions separately.
+
+Do not mix their syntax.
+
+======================================================================
+120. ENVIRONMENT CONFIGURATION
+======================================================================
+
+Provide:
+
+.env.example
+
+Examples:
+
+APP_ENV
+
+DATABASE_URL
+
+REDIS_URL
+
+OBJECT_STORAGE_URL
+
+OBJECT_STORAGE_BUCKET
+
+LLM_PROVIDER
+
+LLM_API_KEY
+
+GITHUB_APP_ID
+
+GITHUB_PRIVATE_KEY
+
+GITHUB_WEBHOOK_SECRET
+
+CORS_ORIGINS
+
+SESSION_SECRET
+
+Do not put real values in git.
+
+======================================================================
+121. PRODUCTION DEPLOYMENT
+======================================================================
+
+Architect provider-neutral deployment.
+
+Frontend:
+
+CDN/static platform
+
+Backend:
+
+containers
+
+Database:
+
+managed PostgreSQL
+
+Redis:
+
+managed Redis
+
+Storage:
+
+object storage
+
+Workers:
+
+autoscalable containers
+
+Do not tightly lock architecture to one cloud unless deployment chooses
+one.
+
+======================================================================
+122. INFRASTRUCTURE-AS-CODE
+======================================================================
+
+When production environment is introduced:
+
+manage infrastructure declaratively.
+
+Do not manually create undocumented production resources.
+
+======================================================================
+123. PRICING ARCHITECTURE
+======================================================================
+
+Do not hard-code commercial prices yet.
+
+Track usage required for future pricing:
+
+members
+
+repositories
+
+LOC/analysis size where appropriate
+
+PR analyses
+
+AI usage
+
+cloud assets
+
+retention
+
+Never expose fake plans as active subscriptions unless billing exists.
+
+Potential tiers:
+
+FREE
+
+DEVELOPER
+
+TEAM
+
+BUSINESS
+
+ENTERPRISE
+
+======================================================================
+124. COST ENGINEERING
+======================================================================
+
+Measure actual cost:
+
+compute
+
+database
+
+storage
+
+vector
+
+worker
+
+LLM
+
+vulnerability feeds if paid
+
+cloud APIs
+
+Only after real measurements propose pricing.
+
+======================================================================
+125. PRODUCT ANALYTICS
+======================================================================
+
+Respect privacy.
+
+Useful aggregate product metrics:
+
+time to first analysis
+
+analysis success rate
+
+findings reviewed
+
+false positives
+
+claims corrected
+
+drift resolved
+
+PR checks completed
+
+Do not collect source code as analytics.
+
+======================================================================
+126. DATA RETENTION
+======================================================================
+
+Design configurable retention for:
+
+repository snapshots
+
+raw files
+
+derived evidence
+
+embeddings
+
+findings
+
+claims
+
+audit
+
+AI metadata
+
+Allow deletion workflows.
+
+Document what remains in audit history.
+
+======================================================================
+127. PRIVACY
+======================================================================
+
+Explain clearly:
+
+what source code is stored
+
+how long
+
+which external AI provider receives context
+
+what is redacted
+
+how customers can disable external AI
+
+how deletion works
+
+No hidden source-code reuse.
+
+======================================================================
+128. EXECUTIVE SELF-EXPLANATION
+======================================================================
+
+Every major product screen should contain subtle contextual help.
+
+Example:
+
+CLAIM LEDGER
+
+"Tracks technical statements about your systems and verifies whether
+current engineering evidence still supports them."
+
+DRIFT
+
+"Shows where documentation, architecture, APIs or controls no longer
+match current implementation."
+
+EVIDENCE GRAPH
+
+"Connects code, documentation, infrastructure and findings so
+ProjectTrace can explain why a conclusion was reached."
+
+This ensures a CEO can understand the product without a long lecture.
+
+======================================================================
+129. CEO DEMO STORY
+======================================================================
+
+Create:
+
+docs/CEO-DEMO.md
+
+3–5 minute demo:
+
+1. Open Executive Overview.
+
+2. Explain:
+   one engineering platform.
+
+3. Open Identity Platform.
+
+4. Show:
+   documentation says JWT.
+
+5. Open Claim Ledger:
+   CONTRADICTED.
+
+6. Show code evidence:
+   session authentication.
+
+7. Show PR:
+   authentication changed.
+
+8. Show Drift:
+   README + architecture affected.
+
+9. Show Security:
+   high SAST issue.
+
+10. Show Dependency:
+    vulnerable package.
+
+11. Show unified PR check.
+
+12. Show Evidence Graph connecting:
+    claim
+    code
+    PR
+    documentation
+    finding.
+
+13. Show Audit Trail.
+
+CEO should understand:
+
+ProjectTrace knows what we say,
+what we implement,
+what is risky,
+what changed,
+who owns it,
+and what needs fixing.
+
+======================================================================
+130. COMPETITIVE EXPLANATION INSIDE PRODUCT
+======================================================================
+
+Optional About / Why ProjectTrace page:
+
+Traditional tools answer isolated questions:
+
+Code quality tool:
+"Is the code maintainable?"
+
+Security tool:
+"Is the code vulnerable?"
+
+Cloud tool:
+"Is the deployment exposed?"
+
+ProjectTrace additionally asks:
+
+"Does engineering reality match engineering intent and documentation?"
+
+Then combines:
+
+quality
+
+security
+
+cloud
+
+evidence
+
+claims
+
+drift
+
+into one workflow.
+
+Do not attack competitors.
+
+Explain differentiation professionally.
+
+======================================================================
+131. DO NOT FAKE MATURITY
+======================================================================
+
+Never write:
+
+"industry-leading"
+
+"enterprise-grade"
+
+"production-ready"
+
+"fully secure"
+
+"zero false positives"
+
+"replaces SonarQube"
+
+"replaces Wiz"
+
+unless real evidence supports it.
+
+For CEO demo, confidence comes from actual functionality, not marketing
+exaggeration.
+
+======================================================================
+132. IMPLEMENTATION ORDER
+======================================================================
+
+Do NOT attempt every engine simultaneously.
+
+PHASE 0
+Foundation
+
+- repo setup
+- architecture
+- design system
+- DB
+- auth
+- tenant model
+- workers
+- CI
+- observability
+
+PHASE 1
+ProjectTrace Core
+
+- GitHub integration
+- snapshots
+- safe parser
+- artifacts
+- evidence graph
+- claim extraction
+- claim ledger
+- retrieval
+- Ask Engineering
+- drift
+- impact
+- audit
+
+PHASE 2
+Developer Workflow
+
+- PR webhooks
+- incremental analysis
+- PR checks
+- ownership
+- human review
+- exceptions
+- policy engine
+
+PHASE 3
+Quality & Security
+
+- code quality
+- secrets
+- SAST
+- SCA
+- SBOM
+- IaC
+- unified findings
+- unified PR gate
+
+PHASE 4
+Risk Intelligence
+
+- risk graph
+- correlation
+- external evidence
+- SonarQube
+- Wiz connector architecture
+- risk prioritization
+
+PHASE 5
+Cloud
+
+- read-only cloud inventory
+- exposure
+- IAM context
+- cloud misconfiguration
+- risk paths
+
+PHASE 6
+Enterprise Hardening
+
+- OIDC
+- SSO
+- advanced RBAC
+- audit exports
+- retention controls
+- backup/restore
+- enterprise deployment options
+- performance optimization
+
+Each phase must preserve earlier functionality.
+
+======================================================================
+133. AUTONOMOUS DEVELOPMENT LOOP
+======================================================================
+
+For every feature:
+
+UNDERSTAND
+
+↓
+
+DESIGN
+
+↓
+
+IMPLEMENT
+
+↓
+
+UNIT TEST
+
+↓
+
+INTEGRATION TEST
+
+↓
+
+SECURITY REVIEW
+
+↓
+
+RUN
+
+↓
+
+VISUAL INSPECTION
+
+↓
+
+FIX
+
+↓
+
+REGRESSION TEST
+
+↓
+
+DOCUMENT
+
+Only then mark complete.
+
+======================================================================
+134. BUG POLICY
+======================================================================
+
+Never hide bugs.
+
+When one is found:
+
+reproduce
+
+identify root cause
+
+write regression test
+
+fix root cause
+
+rerun affected tests
+
+rerun critical flows if necessary
+
+document important architectural lesson.
+
+Do not patch symptoms with arbitrary special cases.
+
+======================================================================
+135. NO DESTRUCTIVE GIT ACTIONS
+======================================================================
+
+Do not:
+
+force push
+
+delete remote history
+
+rewrite history
+
+push automatically
+
+commit automatically
+
+unless I explicitly authorize it.
+
+You may initialize local Git if necessary.
+
+======================================================================
+136. FINAL CODE REVIEW
+======================================================================
+
+Perform final review for:
+
+security
+
+architecture
+
+duplication
+
+dead code
+
+error handling
+
+type safety
+
+database integrity
+
+access control
+
+tenant isolation
+
+UI consistency
+
+accessibility
+
+performance
+
+logging
+
+tests
+
+documentation
+
+======================================================================
+137. FINAL UI REVIEW
+======================================================================
+
+Open EVERY major page.
+
+Visually inspect.
+
+Look for:
+
+generic AI layout
+
+misalignment
+
+overflow
+
+bad typography
+
+repetitive cards
+
+poor empty states
+
+confusing labels
+
+unreadable tables
+
+bad responsive behavior
+
+inconsistent icons
+
+weak hierarchy
+
+developer-unfriendly UX
+
+Refine until intentional.
+
+Functional but ugly is NOT acceptable.
+
+======================================================================
+138. FINAL CEO REVIEW
+======================================================================
+
+Pretend you are a company CEO who has never heard of ProjectTrace.
+
+Open the product.
+
+Ask:
+
+Within 30 seconds, do I know what this product does?
+
+Within 2 minutes, do I understand why it matters?
+
+Can I identify business/engineering risk?
+
+Can I see evidence rather than marketing claims?
+
+Can I understand how this differs from disconnected tools?
+
+Can I see a realistic workflow?
+
+Can I trust the UI?
+
+Can I see who needs to act?
+
+If any answer is NO:
+
+fix the product.
+
+======================================================================
+139. FINAL DEVELOPER REVIEW
+======================================================================
+
+Pretend you are a senior developer.
+
+Ask:
+
+Are findings actionable?
+
+Are false positives manageable?
+
+Can I jump to evidence?
+
+Can I understand why the rule fired?
+
+Does PR feedback arrive quickly?
+
+Can I suppress correctly?
+
+Can I identify ownership?
+
+Does this reduce tool switching?
+
+If not:
+
+fix it.
+
+======================================================================
+140. FINAL SECURITY REVIEW
+======================================================================
+
+Before release/demo:
+
+verify:
+
+no real secret committed
+
+no cross-tenant data leakage
+
+no unauthorized repository access
+
+no arbitrary repo execution
+
+no unsafe external fetch
+
+no prompt-driven privilege escalation
+
+no unvalidated webhook
+
+no raw sensitive logs
+
+no severe dependency issue ignored
+
+no exposed debug endpoint
+
+no production wildcard CORS
+
+no unsafe default credentials
+
+======================================================================
+141. FINAL PERFORMANCE REVIEW
+======================================================================
+
+Run realistic workload.
+
+Do not optimize synthetic microbenchmarks only.
+
+Validate:
+
+API latency
+
+queue behavior
+
+large repository processing
+
+parallel jobs
+
+PR analysis
+
+memory
+
+database
+
+worker recovery
+
+provider failure.
+
+======================================================================
+142. DEMO RELIABILITY
+======================================================================
+
+CEO demo must NOT depend entirely on:
+
+external LLM uptime
+
+live GitHub API
+
+Wiz
+
+SonarQube
+
+unstable cloud account
+
+Create deterministic demo mode.
+
+Demo mode must clearly say:
+
+DEMO DATA
+
+if using seeded information.
+
+Never present seeded data as live analysis.
+
+======================================================================
+143. FINAL DELIVERABLES
+======================================================================
+
+Deliver:
+
+working source code
+
+frontend
+
+backend
+
+workers
+
+analyzers
+
+database migrations
+
+design system
+
+GitHub App integration
+
+ProjectTrace core
+
+native quality/security MVP
+
+demo workspace
+
+benchmark fixtures
+
+tests
+
+CI
+
+Docker local stack
+
+documentation
+
+threat model
+
+architecture diagrams
+
+CEO demo guide
+
+release checklist
+
+known limitations
+
+performance report
+
+security validation report
+
+======================================================================
+144. FINAL REPORT
+======================================================================
+
+At the end report:
+
+1. Product summary
+
+2. Architecture
+
+3. Repository structure
+
+4. ProjectTrace core features
+
+5. Quality features
+
+6. Security features
+
+7. Supply-chain features
+
+8. Infrastructure features
+
+9. Cloud features
+
+10. Evidence Graph
+
+11. Claim Ledger
+
+12. Drift / Impact
+
+13. PR workflow
+
+14. Policies
+
+15. External integrations
+
+16. Security controls
+
+17. Scalability controls
+
+18. Test results
+
+19. Performance measurements
+
+20. UI/UX validation
+
+21. Demo workflow
+
+22. Known limitations
+
+23. Features intentionally deferred
+
+24. Exact local startup commands
+
+25. Production deployment requirements
+
+Do not give a fake completion percentage.
+
+======================================================================
+145. PRODUCT COMPLETION DEFINITION
+======================================================================
+
+"Complete" does NOT mean:
+
+all possible enterprise features exist.
+
+It means:
+
+the approved release scope works,
+
+critical workflows are coherent,
+
+security boundaries are enforced,
+
+claims are evidence-backed,
+
+native analyzers produce trustworthy findings,
+
+PR workflow works,
+
+demo is stable,
+
+tests pass,
+
+documentation matches implementation,
+
+and limitations are explicit.
+
+======================================================================
+146. FINAL PRINCIPLE
+======================================================================
+
+Never sacrifice ProjectTrace's identity to add features.
+
+All product decisions should serve:
+
+TRUTH
+
+EVIDENCE
+
+TRACEABILITY
+
+SECURITY
+
+QUALITY
+
+CONTEXT
+
+OWNERSHIP
+
+ACTIONABILITY
+
+TRUST
+
+======================================================================
+147. START NOW
+======================================================================
+
+STEP 1
+
+Locate the Windows Desktop.
+
+Expected environment may include:
+
+C:\Users\sai krishna\OneDrive\Desktop
+
+but verify it.
+
+STEP 2
+
+Keep existing student:
+
+ProjectTrace-AI
+
+unchanged.
+
+Create/continue:
+
+ProjectTrace
+
+STEP 3
+
+If ProjectTrace already exists:
+
+inspect everything before changing anything.
+
+STEP 4
+
+Create:
+
+docs/IMPLEMENTATION_PLAN.md
+
+internally.
+
+Do NOT stop for my approval.
+
+STEP 5
+
+Create architecture and initial repository.
+
+STEP 6
+
+Implement Phase 0.
+
+STEP 7
+
+Implement ProjectTrace Core.
+
+STEP 8
+
+Build the CEO-quality product experience.
+
+STEP 9
+
+Add developer workflow.
+
+STEP 10
+
+Add native code-quality/security modules incrementally.
+
+STEP 11
+
+Add unified PR workflow.
+
+STEP 12
+
+Add external integration framework.
+
+STEP 13
+
+Test everything.
+
+STEP 14
+
+Run security review.
+
+STEP 15
+
+Run performance review.
+
+STEP 16
+
+Perform visual design review.
+
+STEP 17
+
+Perform CEO usability review.
+
+STEP 18
+
+Fix discovered problems.
+
+STEP 19
+
+Run regression.
+
+STEP 20
+
+Generate final verified delivery report.
+
+Do not automatically commit.
+
+Do not automatically push.
+
+Do not hide incomplete work.
+
+Do not fake integrations.
+
+Do not fabricate metrics.
+
+Do not claim zero defects.
+
+Do not weaken security for convenience.
+
+Do not build decorative features before core reliability.
+
+PROJECTTRACE MUST FEEL LIKE A REAL ENGINEERING PRODUCT,
+NOT A COLLECTION OF AI-GENERATED FEATURES.
+
+BEGIN IMPLEMENTATION.

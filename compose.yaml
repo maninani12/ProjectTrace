@@ -1,0 +1,70 @@
+name: projecttrace
+services:
+  database:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: projecttrace
+      POSTGRES_USER: projecttrace
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in your environment}
+    volumes: [postgres-data:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U projecttrace -d projecttrace"]
+      interval: 5s
+      retries: 15
+  redis:
+    image: redis:7-alpine
+    command: [redis-server, --appendonly, "yes"]
+    volumes: [redis-data:/data]
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 5s
+      retries: 15
+  migrate:
+    build: {context: ., dockerfile: infrastructure/Dockerfile}
+    environment:
+      DATABASE_URL: postgresql+psycopg://projecttrace:${POSTGRES_PASSWORD}@database/projecttrace
+    command: [alembic, upgrade, head]
+    depends_on:
+      database: {condition: service_healthy}
+  seed:
+    build: {context: ., dockerfile: infrastructure/Dockerfile}
+    environment:
+      DATABASE_URL: postgresql+psycopg://projecttrace:${POSTGRES_PASSWORD}@database/projecttrace
+    command: [python, -m, backend.seed]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+  api:
+    build: {context: ., dockerfile: infrastructure/Dockerfile}
+    environment:
+      APP_ENV: demo
+      DATABASE_URL: postgresql+psycopg://projecttrace:${POSTGRES_PASSWORD}@database/projecttrace
+      REDIS_URL: redis://redis:6379/0
+      JOB_MODE: celery
+      CORS_ORIGINS: http://127.0.0.1:5181,http://localhost:5181
+    depends_on:
+      seed: {condition: service_completed_successfully}
+      redis: {condition: service_healthy}
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+  worker:
+    build: {context: ., dockerfile: infrastructure/Dockerfile}
+    environment:
+      DATABASE_URL: postgresql+psycopg://projecttrace:${POSTGRES_PASSWORD}@database/projecttrace
+      REDIS_URL: redis://redis:6379/0
+    command: [celery, -A, workers.tasks, worker, --loglevel=INFO, --concurrency=2]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      redis: {condition: service_healthy}
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+  frontend:
+    build: {context: ., dockerfile: infrastructure/frontend.Dockerfile}
+    ports: ["127.0.0.1:5181:8080"]
+    depends_on: [api]
+volumes:
+  postgres-data:
+  redis-data:

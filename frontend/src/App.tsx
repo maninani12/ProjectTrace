@@ -1,0 +1,2250 @@
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
+import type { FormEvent, ReactNode } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+
+import {
+  Activity,
+  ArrowDownToLine,
+  ArrowRight,
+  Bell,
+  Boxes,
+  Check,
+  ChevronDown,
+  ChevronRight,
+  CircleHelp,
+  Command,
+  Database,
+  FileCode2,
+  GitBranch,
+  GitPullRequest,
+  Globe,
+  Layers,
+  LayoutDashboard,
+  ListChecks,
+  LoaderCircle,
+  LogOut,
+  Menu,
+  Network,
+  Search,
+  Settings2,
+  Shield,
+  Sparkles,
+  SquareArrowOutUpRight,
+  Terminal,
+  Upload,
+  Waypoints,
+  X,
+} from "lucide-react";
+import { api, setCSRF } from "./api";
+import type {
+  Answer,
+  Gate,
+  Identity,
+  Item,
+  Repository,
+  Workspace,
+} from "./api";
+
+const Graph = lazy(() => import("./Graph"));
+const navigation = [
+  {
+    label: "Workspace",
+    items: [
+      ["Overview", LayoutDashboard],
+      ["Systems", Boxes],
+      ["Components", Layers],
+      ["Repositories", GitBranch],
+      ["Pull Requests", GitPullRequest],
+    ],
+  },
+  {
+    label: "Analysis",
+    items: [
+      ["Findings", ListChecks],
+      ["Code Quality", FileCode2],
+      ["Security", Shield],
+      ["Dependencies", Database],
+      ["Infrastructure", Terminal],
+      ["Cloud", Globe],
+    ],
+  },
+  {
+    label: "Integrity",
+    items: [
+      ["Claim Ledger", Check],
+      ["Drift", Activity],
+      ["Architecture", Network],
+      ["Evidence", FileCode2],
+      ["Evidence Graph", Waypoints],
+      ["Ask Engineering", Sparkles],
+    ],
+  },
+  {
+    label: "Governance",
+    items: [
+      ["Policies", ListChecks],
+      ["Audit Trail", Activity],
+      ["Integrations", Boxes],
+      ["Settings", Settings2],
+    ],
+  },
+] as const;
+const descriptions: Record<string, string> = {
+  Overview:
+    "See what your engineering organization claims, what the evidence supports, and what needs attention.",
+  Systems:
+    "Connect repositories and components to the engineering systems they serve.",
+  Components:
+    "Trace ownership and verification scope across the parts of your systems.",
+  Repositories:
+    "Immutable source snapshots form the foundation of every engineering conclusion.",
+  "Pull Requests":
+    "Understand how a change affects security, engineering claims, and documentation in one review.",
+  Findings:
+    "One review queue for native analysis and external evidence, with source-level provenance.",
+  "Code Quality":
+    "Review maintainability signals from supported static analysis rules.",
+  Security:
+    "Prioritize security evidence by severity, confidence, and affected component.",
+  Dependencies:
+    "Pinned dependencies and cached vulnerability advisories, with explicit coverage.",
+  Infrastructure:
+    "Review static infrastructure configuration. Imported infrastructure is never executed.",
+  Cloud:
+    "Start with infrastructure evidence. Live cloud inventory requires an authorized read-only connection.",
+  "Claim Ledger":
+    "Tracks technical statements and verifies whether current engineering evidence still supports them.",
+  Drift:
+    "Shows where documentation, architecture, or APIs need review after implementation changes.",
+  Architecture:
+    "Compare declared system relationships with current source signals.",
+  Evidence:
+    "Explore the source artifacts behind every claim, finding, and conclusion.",
+  "Evidence Graph":
+    "Explore a focused neighborhood of claims, source artifacts, and findings.",
+  "Ask Engineering":
+    "Investigate a technical question using evidence from your authorized snapshots.",
+  Policies:
+    "Explainable, advisory gates help teams decide which changes require review.",
+  "Audit Trail":
+    "Follow who changed or reviewed an engineering conclusion, when, and why.",
+  Integrations:
+    "Provider permissions, connection status, and verification are always explicit.",
+  Settings:
+    "Manage your local experience and understand the workspace data boundary.",
+};
+export function Badge({ value }: { value?: string }) {
+  return (
+    <span
+      className={"badge " + (value || "").toLowerCase().replaceAll("_", "-")}
+    >
+      {(value || "UNKNOWN").replaceAll("_", " ")}
+    </span>
+  );
+}
+function Empty({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <div className="empty">
+      <CircleHelp size={28} />
+      <h3>{title}</h3>
+      <p>{children}</p>
+    </div>
+  );
+}
+function date(value?: string) {
+  return value
+    ? new Date(value).toLocaleString(undefined, {
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    : "—";
+}
+function label(item: Item) {
+  return item.text || item.title || item.path || item.name || item.id;
+}
+const helper = createColumnHelper<Item>();
+
+function DataTable({
+  items,
+  onOpen,
+  mode = "claim",
+}: {
+  items: Item[];
+  onOpen: (item: Item) => void;
+  mode?: string;
+}) {
+  const columns = useMemo(
+    () => [
+      helper.display({
+        id: "name",
+        header:
+          mode === "claim"
+            ? "Engineering claim"
+            : mode === "drift"
+              ? "Changed claim"
+              : "Finding",
+        cell: ({ row }) => (
+          <button className="row-link" onClick={() => onOpen(row.original)}>
+            <span>{label(row.original)}</span>
+            <small>{row.original.path || row.original.scope?.repository}</small>
+          </button>
+        ),
+      }),
+      helper.accessor("status", {
+        header: mode === "claim" ? "Verification" : "Review",
+        cell: ({ row }) => (
+          <Badge
+            value={
+              mode === "claim"
+                ? row.original.status
+                : row.original.review_status
+            }
+          />
+        ),
+      }),
+      helper.accessor("severity", {
+        header: "Severity",
+        cell: ({ getValue }) => <Badge value={getValue()} />,
+      }),
+      helper.display({
+        id: "context",
+        header: mode === "claim" ? "Confidence" : "Category",
+        cell: ({ row }) => (
+          <span>
+            {mode === "claim"
+              ? row.original.confidence
+              : row.original.category ||
+                row.original.type?.replaceAll("_", " ")}
+          </span>
+        ),
+      }),
+      helper.accessor("owner", {
+        header: "Owner",
+        cell: ({ getValue }) => (
+          <span className="subtle">{getValue() || "Unassigned"}</span>
+        ),
+      }),
+      helper.display({
+        id: "scope",
+        header: "Snapshot",
+        cell: ({ row }) => (
+          <code title={row.original.scope?.commit}>
+            {row.original.scope?.commit.slice(0, 8) || "—"}
+          </code>
+        ),
+      }),
+    ],
+    [onOpen, mode],
+  );
+  const table = useReactTable({
+    data: items,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
+  if (!items.length)
+    return (
+      <Empty title="No results in this scope">
+        Try clearing the filters or import a repository to collect more
+        evidence.
+      </Empty>
+    );
+  return (
+    <div className="table-scroll">
+      <table>
+        <thead>
+          {table.getHeaderGroups().map((g) => (
+            <tr key={g.id}>
+              {g.headers.map((h) => (
+                <th key={h.id}>
+                  {flexRender(h.column.columnDef.header, h.getContext())}
+                </th>
+              ))}
+            </tr>
+          ))}
+        </thead>
+        <tbody>
+          {table.getRowModel().rows.map((r) => (
+            <tr key={r.id}>
+              {r.getVisibleCells().map((c) => (
+                <td key={c.id}>
+                  {flexRender(c.column.columnDef.cell, c.getContext())}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function Modal({
+  title,
+  onClose,
+  children,
+  wide = false,
+}: {
+  title: string;
+  onClose: () => void;
+  children: ReactNode;
+  wide?: boolean;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const previous = document.activeElement as HTMLElement;
+    ref.current?.focus();
+    const listener = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+      if (event.key === "Tab") {
+        const nodes = Array.from(
+          ref.current?.querySelectorAll<HTMLElement>(
+            "button,input,select,textarea,a[href]",
+          ) || [],
+        );
+        const first = nodes[0],
+          last = nodes.at(-1);
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last?.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first?.focus();
+        }
+      }
+    };
+    document.addEventListener("keydown", listener);
+    return () => {
+      document.removeEventListener("keydown", listener);
+      previous?.focus();
+    };
+  }, [onClose]);
+  return (
+    <div
+      className="overlay"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div
+        className={"modal " + (wide ? "wide" : "")}
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
+        ref={ref}
+        tabIndex={-1}
+      >
+        <div className="modal-head">
+          <h2>{title}</h2>
+          <button
+            className="icon-button"
+            aria-label="Close dialog"
+            onClick={onClose}
+          >
+            <X size={20} />
+          </button>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+export default function App() {
+  const client = useQueryClient();
+  const [identity, setIdentity] = useState<Identity | null>(null);
+  const [page, setPage] = useState(
+    decodeURIComponent(location.hash.slice(1)) || "Overview",
+  );
+  const [query, setQuery] = useState("");
+  const [filter, setFilter] = useState("ALL");
+  const [repoFilter, setRepoFilter] = useState("ALL");
+  const [selected, setSelected] = useState<Item | null>(null);
+  const [importing, setImporting] = useState(false);
+  const [tour, setTour] = useState(false);
+  const [command, setCommand] = useState(false);
+  const [mobile, setMobile] = useState(false);
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [dark, setDark] = useState(localStorage.getItem("pt-theme") === "dark");
+  const workspace = useQuery({
+    queryKey: ["workspace"],
+    queryFn: () => api<Workspace>("/workspace"),
+    enabled: !!identity,
+  });
+  const data = workspace.data;
+  useEffect(() => {
+    api<Identity>("/auth/me")
+      .then((i) => {
+        setCSRF(i.csrf);
+        setIdentity(i);
+      })
+      .catch(() => {});
+  }, []);
+  useEffect(() => {
+    document.documentElement.dataset.theme = dark ? "dark" : "light";
+    localStorage.setItem("pt-theme", dark ? "dark" : "light");
+  }, [dark]);
+  useEffect(() => {
+    const fn = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+        e.preventDefault();
+        setCommand((v) => !v);
+      }
+    };
+    document.addEventListener("keydown", fn);
+    return () => document.removeEventListener("keydown", fn);
+  }, []);
+  const navigate = (target: string) => {
+    setPage(target);
+    location.hash = encodeURIComponent(target);
+    setFilter("ALL");
+    setQuery("");
+    setMobile(false);
+  };
+  useEffect(() => {
+    const fn = () =>
+      setPage(decodeURIComponent(location.hash.slice(1)) || "Overview");
+    window.addEventListener("hashchange", fn);
+    return () => window.removeEventListener("hashchange", fn);
+  }, []);
+  async function login(demo: boolean, event?: FormEvent<HTMLFormElement>) {
+    event?.preventDefault();
+    setBusy(true);
+    setError("");
+    try {
+      const fields = event ? new FormData(event.currentTarget) : null;
+      const result = await api<Identity>(
+        demo ? "/auth/demo" : "/auth/login",
+        demo
+          ? {}
+          : { email: fields?.get("email"), password: fields?.get("password") },
+      );
+      setCSRF(result.csrf);
+      setIdentity(result);
+      if (demo) setTour(true);
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+  const filtered = (items: Item[]) =>
+    items.filter(
+      (i) =>
+        (repoFilter === "ALL" ||
+          i.scope?.repository_id === repoFilter ||
+          i.repository_id === repoFilter) &&
+        (filter === "ALL" ||
+          i.status === filter ||
+          i.severity === filter ||
+          i.category === filter ||
+          i.review_status === filter) &&
+        (query === "" ||
+          JSON.stringify([label(i), i.path, i.owner, i.category])
+            .toLowerCase()
+            .includes(query.toLowerCase())),
+    );
+  const open = (item: Item) => setSelected(item);
+  if (!identity)
+    return (
+      <div className="login">
+        <div className="login-story">
+          <div className="brand">
+            <Waypoints /> ProjectTrace
+          </div>
+          <div className="eyebrow">ENGINEERING INTEGRITY</div>
+          <h1>
+            Know what’s true.
+            <br />
+            Keep it true.
+          </h1>
+          <p>
+            Connect what your team says about its software to what the software
+            actually implements.
+          </p>
+          <div className="login-chain">
+            <span>Claims</span>
+            <ArrowRight />
+            <span>Evidence</span>
+            <ArrowRight />
+            <span>Action</span>
+          </div>
+          <div className="login-foot">
+            Understand it. Verify it. Secure it. Keep it true.
+          </div>
+        </div>
+        <main className="login-form">
+          <div>
+            <span className="eyebrow">YOUR ENGINEERING WORKSPACE</span>
+            <h2>Welcome to ProjectTrace</h2>
+            <p>
+              Explore a change from engineering intent to verified evidence.
+            </p>
+            <button
+              className="primary full"
+              disabled={busy}
+              onClick={() => login(true)}
+            >
+              {busy ? (
+                <LoaderCircle className="spin" size={18} />
+              ) : (
+                <ArrowRight size={18} />
+              )}{" "}
+              Explore Northstar demo
+            </button>
+            <small className="demo-note">
+              Deterministic demo data · no account required in local demo mode
+            </small>
+            <div className="divider">or sign in to your workspace</div>
+            <form onSubmit={(e) => login(false, e)}>
+              <label>
+                Email
+                <input
+                  name="email"
+                  type="email"
+                  required
+                  autoComplete="username"
+                />
+              </label>
+              <label>
+                Password
+                <input
+                  name="password"
+                  type="password"
+                  required
+                  autoComplete="current-password"
+                />
+              </label>
+              <button className="secondary full" disabled={busy}>
+                Sign in
+              </button>
+            </form>
+            {error && (
+              <p role="alert" className="error">
+                {error}
+              </p>
+            )}
+            <small className="subtle">
+              Source code stays local. External AI is disabled.
+            </small>
+          </div>
+        </main>
+      </div>
+    );
+  return (
+    <div className="app-shell">
+      <a
+        href="#main"
+        className="skip-link"
+        onClick={(event) => {
+          event.preventDefault();
+          document.getElementById("main")?.focus();
+        }}
+      >
+        Skip to content
+      </a>
+      <aside className={"sidebar " + (mobile ? "mobile-open" : "")}>
+        <button className="brand" onClick={() => navigate("Overview")}>
+          <Waypoints size={25} />
+          <span>ProjectTrace</span>
+        </button>
+        <div className="workspace-switch">
+          <div className="org-avatar">N</div>
+          <div>
+            <strong>{data?.organization || "Northstar Labs"}</strong>
+            <small>Engineering workspace</small>
+          </div>
+          <ChevronDown size={14} />
+        </div>
+        <nav aria-label="Main navigation">
+          {navigation.map((group) => (
+            <div className="nav-group" key={group.label}>
+              <span className="nav-label">{group.label}</span>
+              {group.items.map(([name, Icon]) => (
+                <button
+                  key={name}
+                  className={"nav-item " + (page === name ? "active" : "")}
+                  aria-current={page === name ? "page" : undefined}
+                  onClick={() => navigate(name)}
+                >
+                  <Icon size={16} />
+                  <span>{name}</span>
+                  {name === "Drift" && !!data?.drift.length && (
+                    <span className="nav-count">{data.drift.length}</span>
+                  )}
+                </button>
+              ))}
+            </div>
+          ))}
+        </nav>
+        <div className="sidebar-foot">
+          <div className="avatar">DE</div>
+          <div>
+            <strong>
+              {identity.email === "demo@projecttrace.local"
+                ? "Demo engineer"
+                : identity.email.split("@")[0]}
+            </strong>
+            <small>{identity.role.replaceAll("_", " ")}</small>
+          </div>
+          <button
+            className="icon-button"
+            title="Sign out"
+            aria-label="Sign out"
+            onClick={async () => {
+              await api("/auth/logout", {});
+              client.clear();
+              setIdentity(null);
+            }}
+          >
+            <LogOut size={16} />
+          </button>
+        </div>
+      </aside>
+      <div className="main-shell">
+        <header className="topbar">
+          <button
+            className="icon-button mobile-menu"
+            aria-label="Open navigation"
+            onClick={() => setMobile(!mobile)}
+          >
+            <Menu size={20} />
+          </button>
+          <div className="breadcrumb">
+            Workspace <ChevronRight size={14} /> <strong>{page}</strong>
+          </div>
+          <div className="top-actions">
+            <button
+              className="search-button"
+              aria-label="Search workspace"
+              onClick={() => setCommand(true)}
+            >
+              <Search size={15} />
+              <span>Search evidence or navigate</span>
+              <kbd>Ctrl K</kbd>
+            </button>
+            <span className="analysis-state">
+              <i /> Analysis complete
+            </span>
+            <button
+              className="icon-button"
+              aria-label="View activity"
+              onClick={() => navigate("Audit Trail")}
+            >
+              <Bell size={18} />
+            </button>
+          </div>
+        </header>
+        {data?.demo && (
+          <div className="demo-banner">
+            <span>
+              <strong>DEMO DATA</strong> Northstar Labs · deterministic
+              repository fixtures
+            </span>
+            <button onClick={() => setTour(true)}>
+              Follow the story <ArrowRight size={13} />
+            </button>
+          </div>
+        )}
+        <main id="main" tabIndex={-1} className="content">
+          <div className="page-title">
+            <div>
+              <div className="eyebrow">
+                {page === "Overview"
+                  ? "NORTHSTAR LABS / ENGINEERING INTEGRITY"
+                  : "ENGINEERING WORKSPACE"}
+              </div>
+              <h1>
+                {page === "Overview"
+                  ? "Engineering, backed by evidence."
+                  : page}
+              </h1>
+              <p>{descriptions[page] || descriptions.Overview}</p>
+            </div>
+            <button className="secondary" onClick={() => setImporting(true)}>
+              <Upload size={15} /> Import repository
+            </button>
+          </div>
+          {workspace.isLoading ? (
+            <div className="loading">
+              <LoaderCircle className="spin" /> Loading engineering evidence…
+            </div>
+          ) : workspace.isError ? (
+            <div className="error" role="alert">
+              {workspace.error.message}
+              <button onClick={() => workspace.refetch()}>Retry</button>
+            </div>
+          ) : (
+            data && (
+              <>
+                {page === "Overview" ? (
+                  <Overview data={data} onOpen={open} navigate={navigate} />
+                ) : ["Systems", "Components", "Repositories"].includes(page) ? (
+                  <RepositoryPage
+                    data={data}
+                    page={page}
+                    navigate={navigate}
+                    onImport={() => setImporting(true)}
+                  />
+                ) : page === "Claim Ledger" || page === "Architecture" ? (
+                  <>
+                    <Filters
+                      filter={filter}
+                      setFilter={setFilter}
+                      query={query}
+                      setQuery={setQuery}
+                      repoFilter={repoFilter}
+                      setRepoFilter={setRepoFilter}
+                      repositories={data.repositories}
+                      statuses={[
+                        "VERIFIED",
+                        "INFERRED",
+                        "UNVERIFIED",
+                        "CONTRADICTED",
+                        "STALE",
+                      ]}
+                    />
+                    <div className="section-head">
+                      <h2>
+                        {page === "Architecture"
+                          ? "Architecture statements"
+                          : "Current engineering claims"}
+                      </h2>
+                      <span>
+                        {
+                          filtered(
+                            data.claim.filter(
+                              (i) =>
+                                page !== "Architecture" ||
+                                i.category === "ARCHITECTURE",
+                            ),
+                          ).length
+                        }{" "}
+                        claims
+                      </span>
+                    </div>
+                    <DataTable
+                      items={filtered(
+                        data.claim.filter(
+                          (i) =>
+                            page !== "Architecture" ||
+                            i.category === "ARCHITECTURE",
+                        ),
+                      )}
+                      onOpen={open}
+                    />
+                  </>
+                ) : [
+                    "Findings",
+                    "Security",
+                    "Code Quality",
+                    "Infrastructure",
+                  ].includes(page) ? (
+                  <>
+                    <div className="stats compact">
+                      {["CRITICAL", "HIGH", "MEDIUM", "LOW"].map((s) => (
+                        <div key={s}>
+                          <span>{s.toLowerCase()}</span>
+                          <strong>
+                            {
+                              data.finding.filter(
+                                (f) =>
+                                  f.severity === s &&
+                                  (page === "Findings" ||
+                                    (page === "Security" &&
+                                      f.category !== "QUALITY") ||
+                                    (page === "Code Quality" &&
+                                      f.category === "QUALITY") ||
+                                    (page === "Infrastructure" &&
+                                      f.category === "IAC")),
+                              ).length
+                            }
+                          </strong>
+                        </div>
+                      ))}
+                    </div>
+                    <Filters
+                      filter={filter}
+                      setFilter={setFilter}
+                      query={query}
+                      setQuery={setQuery}
+                      repoFilter={repoFilter}
+                      setRepoFilter={setRepoFilter}
+                      repositories={data.repositories}
+                      statuses={[
+                        "CRITICAL",
+                        "HIGH",
+                        "MEDIUM",
+                        "LOW",
+                        "OPEN",
+                        "CONFIRMED",
+                        "RESOLVED",
+                      ]}
+                    />
+                    <DataTable
+                      mode="finding"
+                      items={filtered(
+                        data.finding.filter(
+                          (f) =>
+                            page === "Findings" ||
+                            (page === "Security" && f.category !== "QUALITY") ||
+                            (page === "Code Quality" &&
+                              f.category === "QUALITY") ||
+                            (page === "Infrastructure" && f.category === "IAC"),
+                        ),
+                      )}
+                      onOpen={open}
+                    />
+                    {page === "Code Quality" && (
+                      <div className="context-note">
+                        Current coverage: Python AST complexity and function
+                        length; JavaScript/Java conservative security patterns.
+                        No maintainability score is invented.
+                      </div>
+                    )}
+                  </>
+                ) : page === "Drift" ? (
+                  <>
+                    <Filters
+                      filter={filter}
+                      setFilter={setFilter}
+                      query={query}
+                      setQuery={setQuery}
+                      repoFilter={repoFilter}
+                      setRepoFilter={setRepoFilter}
+                      repositories={data.repositories}
+                      statuses={[
+                        "CONTRADICTED",
+                        "UNVERIFIED",
+                        "OPEN",
+                        "RESOLVED",
+                      ]}
+                    />
+                    <DataTable
+                      mode="drift"
+                      items={filtered(data.drift)}
+                      onOpen={open}
+                    />
+                  </>
+                ) : page === "Dependencies" ? (
+                  <Dependencies data={data} onOpen={open} />
+                ) : page === "Pull Requests" ? (
+                  <PullRequests data={data} onOpen={open} />
+                ) : page === "Evidence" ? (
+                  <Evidence data={data} onOpen={open} />
+                ) : page === "Evidence Graph" ? (
+                  <Suspense
+                    fallback={
+                      <div className="loading">Loading evidence graph…</div>
+                    }
+                  >
+                    <Graph data={data} onOpen={open} />
+                  </Suspense>
+                ) : page === "Ask Engineering" ? (
+                  <Investigation data={data} onOpen={open} />
+                ) : page === "Audit Trail" ? (
+                  <AuditPage query={query} setQuery={setQuery} />
+                ) : page === "Policies" ? (
+                  <PolicyPage data={data} />
+                ) : page === "Integrations" ? (
+                  <IntegrationPage />
+                ) : page === "Cloud" ? (
+                  <>
+                    <Empty title="Live cloud inventory is not connected">
+                      Configure an authorized read-only provider to correlate
+                      deployment exposure with engineering claims. Static IaC
+                      findings are available now.
+                    </Empty>
+                    <button
+                      className="secondary"
+                      onClick={() => navigate("Infrastructure")}
+                    >
+                      Review infrastructure evidence <ArrowRight size={15} />
+                    </button>
+                  </>
+                ) : page === "Settings" ? (
+                  <div className="settings-panel">
+                    <h2>Workspace preferences</h2>
+                    <label className="toggle">
+                      <input
+                        type="checkbox"
+                        checked={dark}
+                        onChange={(e) => setDark(e.target.checked)}
+                      />{" "}
+                      Dark appearance
+                    </label>
+                    <h2>Identity & permissions</h2>
+                    <p>
+                      {identity.email} · {identity.role}
+                    </p>
+                    <p>
+                      Repository grants are enforced on the server for claims,
+                      evidence, graph, questions, and exports.
+                    </p>
+                    <h2>Data & privacy</h2>
+                    <p>
+                      Local snapshots store redacted source, SHA-256 hashes,
+                      derived claims and findings. No source is sent to external
+                      AI. Review decisions are retained in an append-oriented
+                      audit trail.
+                    </p>
+                    <div className="context-note">
+                      Local demo adapter: SQLite. Live integrations and
+                      enterprise identity are not configured. This build has not
+                      passed production deployment gates.
+                    </div>
+                  </div>
+                ) : (
+                  <Empty title="Page unavailable">
+                    Choose a page in the workspace navigation.
+                  </Empty>
+                )}
+              </>
+            )
+          )}
+        </main>
+        <footer className="footer">
+          <span>
+            <Waypoints size={13} /> Evidence first. Every conclusion has a
+            scope.
+          </span>
+          <span>Static analysis · v1.0.0</span>
+        </footer>
+      </div>
+      {selected && data && (
+        <Inspector
+          item={selected}
+          data={data}
+          onClose={() => setSelected(null)}
+          onOpen={open}
+          onUpdated={(item) => {
+            setSelected(item);
+            client.invalidateQueries({ queryKey: ["workspace"] });
+            client.invalidateQueries({ queryKey: ["audit"] });
+          }}
+        />
+      )}
+      {importing && (
+        <ImportDialog
+          onClose={() => setImporting(false)}
+          onDone={() => {
+            setImporting(false);
+            client.invalidateQueries({ queryKey: ["workspace"] });
+            navigate("Repositories");
+          }}
+        />
+      )}
+      {tour && (
+        <Modal
+          title="Follow one engineering change"
+          onClose={() => setTour(false)}
+        >
+          <div className="tour">
+            <span className="eyebrow">THE NORTHSTAR STORY</span>
+            <h3>A code change made the README untrue.</h3>
+            <p>
+              PR #1842 replaces JWT with server-side sessions. The documentation
+              still promises JWT. ProjectTrace connects the claim, current code,
+              change history, and review action.
+            </p>
+            {[
+              ["01", "See the contradicted claim", "Claim Ledger"],
+              ["02", "Inspect the PR gate", "Pull Requests"],
+              ["03", "Review the evidence graph", "Evidence Graph"],
+              ["04", "Follow the decision history", "Audit Trail"],
+            ].map(([n, title, target]) => (
+              <button
+                key={n}
+                onClick={() => {
+                  setTour(false);
+                  navigate(target);
+                }}
+              >
+                <code>{n}</code>
+                <strong>{title}</strong>
+                <ArrowRight size={17} />
+              </button>
+            ))}
+            <small className="subtle">
+              All demo findings come from safe static fixtures. No fixture is
+              executed.
+            </small>
+          </div>
+        </Modal>
+      )}
+      {command && (
+        <Modal title="Search your workspace" onClose={() => setCommand(false)}>
+          <CommandPalette
+            data={data}
+            navigate={(target) => {
+              setCommand(false);
+              navigate(target);
+            }}
+            onOpen={(item) => {
+              setCommand(false);
+              open(item);
+            }}
+          />
+        </Modal>
+      )}
+    </div>
+  );
+}
+
+function Filters({
+  filter,
+  setFilter,
+  query,
+  setQuery,
+  repoFilter,
+  setRepoFilter,
+  repositories,
+  statuses,
+}: {
+  filter: string;
+  setFilter: (s: string) => void;
+  query: string;
+  setQuery: (s: string) => void;
+  repoFilter: string;
+  setRepoFilter: (s: string) => void;
+  repositories: Repository[];
+  statuses: string[];
+}) {
+  return (
+    <div className="filters">
+      <div className="filter-input">
+        <Search size={15} />
+        <input
+          aria-label="Filter results"
+          placeholder="Filter claims, paths, or owners…"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+      </div>
+      <select
+        aria-label="Status filter"
+        value={filter}
+        onChange={(e) => setFilter(e.target.value)}
+      >
+        <option value="ALL">All statuses</option>
+        {statuses.map((s) => (
+          <option key={s} value={s}>
+            {s.replaceAll("_", " ")}
+          </option>
+        ))}
+      </select>
+      <select
+        aria-label="Repository filter"
+        value={repoFilter}
+        onChange={(e) => setRepoFilter(e.target.value)}
+      >
+        <option value="ALL">All repositories</option>
+        {repositories.map((r) => (
+          <option key={r.id} value={r.id}>
+            {r.name}
+          </option>
+        ))}
+      </select>
+      <button
+        className="text-button"
+        onClick={() => {
+          setFilter("ALL");
+          setQuery("");
+          setRepoFilter("ALL");
+        }}
+      >
+        Clear
+      </button>
+    </div>
+  );
+}
+
+function Overview({
+  data,
+  onOpen,
+  navigate,
+}: {
+  data: Workspace;
+  onOpen: (i: Item) => void;
+  navigate: (s: string) => void;
+}) {
+  const verified = data.claim.filter((c) => c.status === "VERIFIED").length;
+  const contradicted = data.claim.filter((c) => c.status === "CONTRADICTED");
+  const risk = data.finding.filter(
+    (f) =>
+      ["HIGH", "CRITICAL"].includes(f.severity || "") &&
+      f.review_status !== "RESOLVED",
+  );
+  const primary = contradicted[0];
+  const demoStory =
+    primary?.scope?.repository === "identity-api" &&
+    data.repositories.some(
+      (r) => r.id === primary.scope?.repository_id && r.provider === "DEMO",
+    );
+  return (
+    <>
+      <div className="stats">
+        <div>
+          <span>Engineering systems</span>
+          <strong>
+            {new Set(data.repositories.map((r) => r.system)).size}
+          </strong>
+          <small>{data.repositories.length} repositories in scope</small>
+        </div>
+        <div>
+          <span>Engineering claims</span>
+          <strong>{data.claim.length}</strong>
+          <small>{verified} directly verified</small>
+        </div>
+        <div>
+          <span>Claims to review</span>
+          <strong className="warning-text">
+            {data.claim.filter((c) => c.status !== "VERIFIED").length}
+          </strong>
+          <small>
+            {contradicted.length} contradicted · {data.drift.length} drift
+            events
+          </small>
+        </div>
+        <div>
+          <span>Material findings</span>
+          <strong>{risk.length}</strong>
+          <small>High or critical · static evidence</small>
+        </div>
+      </div>
+      <div className="overview-grid">
+        <section className="story-panel">
+          <div className="section-head">
+            <span className="eyebrow">ENGINEERING INTENT → REALITY</span>
+            <Badge value={primary ? "REVIEW_REQUIRED" : "PASS"} />
+          </div>
+          <h2>
+            {primary
+              ? "A change landed. The claim didn’t."
+              : "Your engineering evidence is connected."}
+          </h2>
+          <p>
+            {demoStory
+              ? "Identity Platform moved to session authentication. Its README still describes JWT. One change connects documentation integrity and security review."
+              : primary?.reason ||
+                "Explore current engineering statements and their supporting evidence."}
+          </p>
+          {primary && (
+            <>
+              <div className="claim-story">
+                <div>
+                  <small>WHAT THE DOCUMENT SAYS</small>
+                  <strong>“{primary.text}”</strong>
+                  <code>
+                    {primary.path}:{primary.line}
+                  </code>
+                </div>
+                <ArrowRight className="story-arrow" />
+                <div>
+                  <small>WHAT THE CODE CONFIGURES</small>
+                  <strong>
+                    {demoStory
+                      ? "Server-side sessions"
+                      : "Conflicting current evidence"}
+                  </strong>
+                  <code>
+                    {demoStory
+                      ? "auth/session.py:4"
+                      : data.evidence.find((e) =>
+                          primary.contradicting_ids?.includes(e.id),
+                        )?.path}
+                  </code>
+                </div>
+              </div>
+              <div className="story-bottom">
+                <span>
+                  <GitPullRequest size={15} />{" "}
+                  {demoStory ? "PR #1842" : primary.scope?.branch}{" "}
+                  <span className="subtle">· Identity Team</span>
+                </span>
+                <button className="primary" onClick={() => onOpen(primary)}>
+                  Inspect the evidence <ArrowRight size={15} />
+                </button>
+              </div>
+            </>
+          )}
+        </section>
+        <section className="integrity-panel">
+          <div className="section-head">
+            <h2>Verification coverage</h2>
+            <CircleHelp size={15} />
+          </div>
+          <div className="coverage-number">
+            {verified}
+            <span> / {data.claim.length}</span>
+          </div>
+          <p>claims directly supported by current static evidence</p>
+          <div
+            className="coverage-bar"
+            aria-label={`${verified} of ${data.claim.length} verified`}
+          >
+            {["VERIFIED", "INFERRED", "UNVERIFIED", "CONTRADICTED"].map((s) => (
+              <span
+                key={s}
+                className={s.toLowerCase()}
+                style={{
+                  flex: data.claim.filter((c) => c.status === s).length,
+                }}
+              />
+            ))}
+          </div>
+          <div className="legend">
+            {["VERIFIED", "INFERRED", "UNVERIFIED", "CONTRADICTED"].map((s) => (
+              <div key={s}>
+                <span>
+                  <i className={s.toLowerCase()} />
+                  {s.toLowerCase()}
+                </span>
+                <strong>
+                  {data.claim.filter((c) => c.status === s).length}
+                </strong>
+              </div>
+            ))}
+          </div>
+          <button
+            className="text-button"
+            onClick={() => navigate("Claim Ledger")}
+          >
+            Open Claim Ledger <ArrowRight size={14} />
+          </button>
+        </section>
+      </div>
+      <div className="section-head section-space">
+        <h2>Systems in view</h2>
+        <button className="text-button" onClick={() => navigate("Systems")}>
+          All systems <ArrowRight size={14} />
+        </button>
+      </div>
+      <div className="system-list">
+        {data.repositories.map((repo) => {
+          const claims = data.claim.filter(
+            (c) => c.scope?.repository_id === repo.id,
+          );
+          const findings = data.finding.filter(
+            (f) => f.scope?.repository_id === repo.id,
+          );
+          return (
+            <button key={repo.id} onClick={() => navigate("Repositories")}>
+              <div className="system-icon">
+                <Boxes size={20} />
+              </div>
+              <div>
+                <strong>{repo.system}</strong>
+                <small>
+                  {repo.name} · {repo.owner}
+                </small>
+              </div>
+              <span>{claims.length} claims</span>
+              <Badge
+                value={findings.length ? "REVIEW_REQUIRED" : "NO_FINDINGS"}
+              />
+              <ChevronRight size={16} />
+            </button>
+          );
+        })}
+      </div>
+      <div className="section-head section-space">
+        <h2>Priority review queue</h2>
+        <button className="text-button" onClick={() => navigate("Findings")}>
+          All findings <ArrowRight size={14} />
+        </button>
+      </div>
+      <DataTable items={risk.slice(0, 5)} mode="finding" onOpen={onOpen} />
+      <div className="context-note">
+        <Shield size={16} />
+        <span>
+          Conclusions are scoped to imported source snapshots. Runtime,
+          deployment exposure, and live provider connections are not verified.
+        </span>
+      </div>
+    </>
+  );
+}
+
+function RepositoryPage({
+  data,
+  page,
+  navigate,
+  onImport,
+}: {
+  data: Workspace;
+  page: string;
+  navigate: (s: string) => void;
+  onImport: () => void;
+}) {
+  return (
+    <>
+      <div className="section-head">
+        <h2>
+          {data.repositories.length} repositories ·{" "}
+          {new Set(data.repositories.map((r) => r.system)).size} systems
+        </h2>
+        <button className="text-button" onClick={onImport}>
+          Add source <Upload size={14} />
+        </button>
+      </div>
+      <div className="repo-grid">
+        {data.repositories.map((r) => (
+          <article className="repo-card" key={r.id}>
+            <div className="section-head">
+              <GitBranch size={21} />
+              <Badge value={r.provider} />
+            </div>
+            <h2>
+              {page === "Systems"
+                ? r.system
+                : page === "Components"
+                  ? r.component
+                  : r.name}
+            </h2>
+            <p>
+              {r.system} / {r.component}
+            </p>
+            <dl>
+              <dt>Owner</dt>
+              <dd>{r.owner}</dd>
+              <dt>Source files</dt>
+              <dd>{r.snapshot?.file_count || 0}</dd>
+              <dt>Snapshot</dt>
+              <dd>
+                <code>{r.snapshot?.commit.slice(0, 12)}</code>
+              </dd>
+              <dt>Branch</dt>
+              <dd>
+                <code>{r.snapshot?.branch}</code>
+              </dd>
+              <dt>Analysis</dt>
+              <dd>
+                <Badge value={r.snapshot?.status} />
+              </dd>
+            </dl>
+            <div className="repo-card-footer">
+              <span className="subtle">Content-addressed snapshot</span>
+              <button
+                className="text-button"
+                onClick={() => navigate("Evidence")}
+              >
+                Explore <ArrowRight size={14} />
+              </button>
+            </div>
+          </article>
+        ))}
+      </div>
+      <div className="context-note">
+        A local content digest is displayed as the snapshot identifier. It is
+        not presented as a Git commit SHA. One repository can serve multiple
+        components in the future mapping model.
+      </div>
+    </>
+  );
+}
+
+function Dependencies({
+  data,
+  onOpen,
+}: {
+  data: Workspace;
+  onOpen: (i: Item) => void;
+}) {
+  return (
+    <>
+      <div className="section-head">
+        <h2>{data.dependency.length} pinned packages</h2>
+        <span>npm lockfiles · pinned Python requirements</span>
+      </div>
+      <div className="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Package</th>
+              <th>Version</th>
+              <th>Ecosystem</th>
+              <th>Advisory coverage</th>
+              <th>Known advisories</th>
+              <th>Repository</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.dependency.map((d) => (
+              <tr key={d.id}>
+                <td>
+                  <button className="row-link" onClick={() => onOpen(d)}>
+                    {d.name}
+                    <small>
+                      {d.direct ? "Direct" : "Transitive"} dependency
+                    </small>
+                  </button>
+                </td>
+                <td>
+                  <code>{d.version}</code>
+                </td>
+                <td>{d.ecosystem}</td>
+                <td>
+                  <Badge value={d.vulnerability_status} />
+                </td>
+                <td>{d.vulnerabilities?.length || "—"}</td>
+                <td>{d.scope?.repository}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="section-head section-space">
+        <h2>Export software bill of materials</h2>
+        <span>CycloneDX 1.5</span>
+      </div>
+      <div className="export-list">
+        {data.repositories.map((r) => (
+          <a
+            className="secondary"
+            key={r.id}
+            href={"/api/sbom/" + r.snapshot.id}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <ArrowDownToLine size={15} />
+            {r.name}
+          </a>
+        ))}
+      </div>
+      <div className="context-note">
+        Cached OSV advisories are attached only to the exact queried demo
+        package version. NOT CHECKED means vulnerability status is unknown. SBOM
+        dependency relationships are limited to the parsed manifest; licenses
+        are shown only when present.
+      </div>
+    </>
+  );
+}
+
+function PullRequests({
+  data,
+  onOpen,
+}: {
+  data: Workspace;
+  onOpen: (i: Item) => void;
+}) {
+  const pr = data.pr[0];
+  const gate = useQuery({
+    queryKey: ["gate", pr?.head_id],
+    queryFn: () => api<Gate>("/gate/" + pr?.head_id),
+    enabled: !!pr,
+  });
+  if (!pr)
+    return (
+      <Empty title="No pull request analyses">
+        Connect an authorized GitHub App to ingest changes. Imported snapshots
+        can be compared through the analysis API.
+      </Empty>
+    );
+  return (
+    <>
+      <div className="pr-heading">
+        <GitPullRequest size={25} />
+        <div>
+          <h2>
+            #{pr.number} · {pr.title}
+          </h2>
+          <p>
+            {pr.scope?.repository} · {pr.owner} ·{" "}
+            {data.repositories.find((r) => r.id === pr.scope?.repository_id)
+              ?.provider === "DEMO"
+              ? "demo change"
+              : "provider analysis"}
+          </p>
+        </div>
+        <Badge value={gate.data?.overall || pr.gate?.overall} />
+      </div>
+      <div className="split-layout">
+        <section>
+          <div className="section-head">
+            <h2>Changed files</h2>
+            <span>{pr.changed_files?.length} files</span>
+          </div>
+          <div className="file-list">
+            {pr.changed_files?.map((p) => (
+              <div key={p}>
+                <FileCode2 size={16} />
+                <code>{p}</code>
+                <Badge value="CHANGED" />
+              </div>
+            ))}
+          </div>
+          <div className="section-head section-space">
+            <h2>Claim impact</h2>
+          </div>
+          <DataTable
+            items={data.claim.filter(
+              (c) => c.scope?.snapshot_id === pr.head_id,
+            )}
+            onOpen={onOpen}
+          />
+        </section>
+        <section className="gate-panel">
+          <div className="section-head">
+            <h2>ProjectTrace gate</h2>
+            <Badge value="ADVISORY" />
+          </div>
+          <p>
+            One explainable review across security and engineering integrity.
+          </p>
+          {(gate.data || pr.gate)?.results.map((r, i) => (
+            <div className="gate-result" key={i}>
+              <Badge value={r.result} />
+              <strong>{r.policy}</strong>
+              <p>{r.reason}</p>
+            </div>
+          ))}
+          <small className="subtle">
+            No check has been published to GitHub. Live integration is not
+            configured.
+          </small>
+        </section>
+      </div>
+    </>
+  );
+}
+
+function Evidence({
+  data,
+  onOpen,
+}: {
+  data: Workspace;
+  onOpen: (i: Item) => void;
+}) {
+  const [id, setId] = useState(
+    data.evidence.find((e) => e.path === "auth/session.py")?.id ||
+      data.evidence[0]?.id,
+  );
+  const node = data.evidence.find((e) => e.id === id);
+  const related = [...data.claim, ...data.finding].filter((c) =>
+    c.evidence_ids?.includes(id),
+  );
+  return (
+    <div className="evidence-layout">
+      <aside>
+        <span className="eyebrow">SOURCE ARTIFACTS</span>
+        {data.repositories.map((r) => (
+          <div className="artifact-group" key={r.id}>
+            <strong>
+              <GitBranch size={14} />
+              {r.name}
+            </strong>
+            {data.evidence
+              .filter((e) => e.scope?.repository_id === r.id)
+              .map((e) => (
+                <button
+                  key={e.id}
+                  className={id === e.id ? "selected" : ""}
+                  onClick={() => setId(e.id)}
+                >
+                  <FileCode2 size={13} />
+                  <span>{e.path}</span>
+                </button>
+              ))}
+          </div>
+        ))}
+      </aside>
+      <section className="source-panel">
+        <div className="source-heading">
+          <code>{node?.path}</code>
+          <Badge value={node?.authority} />
+        </div>
+        <Source item={node} />
+        <div className="source-scope">
+          <code>
+            {node?.scope?.branch} @ {node?.scope?.commit.slice(0, 12)}
+          </code>
+          <small>Redacted source · static evidence</small>
+        </div>
+      </section>
+      <aside className="related-panel">
+        <span className="eyebrow">CONNECTED CONCLUSIONS</span>
+        {related.length ? (
+          related.map((c) => (
+            <button
+              className="related-item"
+              key={c.id}
+              onClick={() => onOpen(c)}
+            >
+              <Badge value={c.status || c.severity} />
+              <strong>{label(c)}</strong>
+              <small>{c.category}</small>
+            </button>
+          ))
+        ) : (
+          <p className="subtle">
+            No current claim or finding is linked to this artifact.
+          </p>
+        )}
+      </aside>
+    </div>
+  );
+}
+
+function Source({ item, highlight }: { item?: Item; highlight?: number }) {
+  return (
+    <pre className="source-code">
+      {(item?.source || "No source available in this scope.")
+        .split("\n")
+        .map((line, i) => (
+          <span key={i} className={highlight === i + 1 ? "highlight" : ""}>
+            <b>{i + 1}</b>
+            <code>{line || " "}</code>
+          </span>
+        ))}
+    </pre>
+  );
+}
+
+function Investigation({
+  data,
+  onOpen,
+}: {
+  data: Workspace;
+  onOpen: (i: Item) => void;
+}) {
+  const [question, setQuestion] = useState(
+    "How is authentication implemented?",
+  );
+  const [repo, setRepo] = useState("identity");
+  const [answer, setAnswer] = useState<Answer | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  async function submit(e: FormEvent) {
+    e.preventDefault();
+    setBusy(true);
+    setError("");
+    try {
+      setAnswer(
+        await api<Answer>("/ask", { question, repository_id: repo || null }),
+      );
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+  return (
+    <>
+      <form className="investigation-form" onSubmit={submit}>
+        <label>
+          Engineering question
+          <textarea
+            aria-label="Engineering question"
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+            required
+            minLength={3}
+            maxLength={1000}
+          />
+        </label>
+        <div>
+          <select
+            aria-label="Investigation repository"
+            value={repo}
+            onChange={(e) => setRepo(e.target.value)}
+          >
+            <option value="">All authorized repositories</option>
+            {data.repositories.map((r) => (
+              <option key={r.id} value={r.id}>
+                {r.name}
+              </option>
+            ))}
+          </select>
+          <button className="primary" disabled={busy}>
+            {busy ? (
+              <LoaderCircle className="spin" size={16} />
+            ) : (
+              <Search size={16} />
+            )}{" "}
+            Investigate with evidence
+          </button>
+        </div>
+      </form>
+      {error && (
+        <p className="error" role="alert">
+          {error}
+        </p>
+      )}
+      {answer && (
+        <div className="investigation-result">
+          <div className="section-head">
+            <span className="eyebrow">EVIDENCE-BASED ANSWER</span>
+            <Badge value={answer.verification} />
+          </div>
+          <h2>{answer.answer}</h2>
+          <p className="subtle">
+            Confidence: {answer.confidence} · {answer.provider}
+          </p>
+          <div className="section-head section-space">
+            <h3>Related claims</h3>
+          </div>
+          {answer.claims.map((c) => (
+            <button
+              className="answer-claim"
+              key={c.id}
+              onClick={() => onOpen(c)}
+            >
+              <span>{c.text}</span>
+              <Badge value={c.status} />
+              <ArrowRight size={15} />
+            </button>
+          ))}
+          <div className="section-head section-space">
+            <h3>Source evidence</h3>
+          </div>
+          <div className="export-list">
+            {answer.evidence.map((e) => (
+              <button
+                className="secondary"
+                key={e.id}
+                onClick={() => onOpen(e)}
+              >
+                <FileCode2 size={15} />
+                {e.path}
+              </button>
+            ))}
+          </div>
+          <div className="context-note">{answer.limitations.join(" ")}</div>
+        </div>
+      )}
+    </>
+  );
+}
+
+function AuditPage({
+  query,
+  setQuery,
+}: {
+  query: string;
+  setQuery: (s: string) => void;
+}) {
+  const events = useQuery({
+    queryKey: ["audit"],
+    queryFn: () => api<Item[]>("/audit?limit=200"),
+  });
+  return (
+    <>
+      <div className="filters">
+        <div className="filter-input">
+          <Search size={15} />
+          <input
+            aria-label="Filter audit history"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Filter actor, action, or reason…"
+          />
+        </div>
+        <span>Most recent 200 events · append-oriented</span>
+      </div>
+      {events.isLoading ? (
+        <p>Loading history…</p>
+      ) : events.isError ? (
+        <p className="error">{events.error.message}</p>
+      ) : (
+        <div className="audit-list">
+          {events.data
+            ?.filter((e) =>
+              JSON.stringify(e).toLowerCase().includes(query.toLowerCase()),
+            )
+            .map((e) => (
+              <div key={e.id}>
+                <div className="audit-dot" />
+                <div>
+                  <strong>{e.action?.replaceAll("_", " ")}</strong>
+                  <p>
+                    {e.data?.reason ||
+                      `${e.data?.files || 0} files analyzed; ${e.data?.claims || 0} engineering claims; ${e.data?.findings || 0} findings.`}
+                  </p>
+                  <span>
+                    {e.actor} · <code>{e.repository_id}</code>
+                    {e.data?.new && (
+                      <>
+                        {" "}
+                        · {e.data?.old || "NEW"} → <Badge value={e.data.new} />
+                      </>
+                    )}
+                  </span>
+                </div>
+                <time>{date(e.created_at)}</time>
+              </div>
+            ))}
+        </div>
+      )}
+    </>
+  );
+}
+
+function PolicyPage({ data }: { data: Workspace }) {
+  return (
+    <>
+      <div className="context-note">
+        Default policy v1 · Advisory mode. A gate recommends review; it does not
+        merge or block a live GitHub PR.
+      </div>
+      <div className="policy-list">
+        {[
+          [
+            "No high-confidence critical findings",
+            "Critical severity AND high confidence",
+            "FAIL",
+          ],
+          [
+            "Review material security risks",
+            "High / critical finding in supported scope",
+            "REVIEW_REQUIRED",
+          ],
+          [
+            "Review contradicted engineering claims",
+            "Verification status is CONTRADICTED",
+            "REVIEW_REQUIRED",
+          ],
+        ].map(([title, condition, result]) => (
+          <article key={title}>
+            <div>
+              <h2>{title}</h2>
+              <p>When: {condition}</p>
+            </div>
+            <Badge value={result} />
+          </article>
+        ))}
+      </div>
+      <div className="section-head section-space">
+        <h2>Expiring exceptions</h2>
+        <span>{data.exception.length} recorded</span>
+      </div>
+      {data.exception.length ? (
+        data.exception.map((e) => (
+          <p key={e.id}>
+            {e.reason} · expires {date(e.expires_at)}
+          </p>
+        ))
+      ) : (
+        <Empty title="No exceptions recorded">
+          Administrators and security reviewers can accept scoped risk with a
+          reason and expiry. Expired exceptions no longer change the gate.
+        </Empty>
+      )}
+    </>
+  );
+}
+
+function IntegrationPage() {
+  const result = useQuery({
+    queryKey: ["integrations"],
+    queryFn: () =>
+      api<
+        {
+          name: string;
+          status: string;
+          live_verification: string;
+          permissions: string;
+          last_sync: null;
+        }[]
+      >("/integrations"),
+  });
+  return (
+    <div className="integration-list">
+      {result.isLoading ? (
+        <p>Loading provider status…</p>
+      ) : result.isError ? (
+        <p className="error">{result.error.message}</p>
+      ) : (
+        result.data?.map((i) => (
+          <article key={i.name}>
+            <div className="integration-icon">
+              <Boxes size={22} />
+            </div>
+            <div>
+              <h2>{i.name}</h2>
+              <p>{i.permissions}</p>
+              <small>
+                Live verification: {i.live_verification.replaceAll("_", " ")} ·
+                No sync recorded
+              </small>
+            </div>
+            <Badge value={i.status} />
+          </article>
+        ))
+      )}
+    </div>
+  );
+}
+
+function Inspector({
+  item,
+  data,
+  onClose,
+  onOpen,
+  onUpdated,
+}: {
+  item: Item;
+  data: Workspace;
+  onClose: () => void;
+  onOpen: (i: Item) => void;
+  onUpdated: (i: Item) => void;
+}) {
+  const [action, setAction] = useState("CONFIRM");
+  const [reason, setReason] = useState("");
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [tab, setTab] = useState("Evidence");
+  const evidence =
+    item.kind === "evidence"
+      ? [item]
+      : data.evidence.filter((e) => item.evidence_ids?.includes(e.id));
+  const canReview = ["claim", "finding", "drift", "pr"].includes(
+    item.kind || "",
+  );
+  async function review(e: FormEvent) {
+    e.preventDefault();
+    setBusy(true);
+    setError("");
+    try {
+      onUpdated(
+        await api<Item>("/record/" + item.id + "/review", {
+          action,
+          reason,
+          expected_version: item.version,
+        }),
+      );
+      setReason("");
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+  return (
+    <Modal title="Evidence inspector" onClose={onClose} wide>
+      <div className="inspector-title">
+        <div className="eyebrow">
+          {item.category || item.kind || "ENGINEERING EVIDENCE"} ·{" "}
+          {item.scope?.repository}
+        </div>
+        <h2>{label(item)}</h2>
+        <div className="inspector-badges">
+          <Badge
+            value={
+              item.status ||
+              item.severity ||
+              item.authority ||
+              item.vulnerability_status
+            }
+          />
+          {item.confidence && <span>Confidence: {item.confidence}</span>}
+          {item.review_status && <Badge value={item.review_status} />}
+        </div>
+        <p>
+          {item.reason ||
+            item.explanation ||
+            "Source evidence retained from this snapshot."}
+        </p>
+      </div>
+      <div className="inspector-scope">
+        <span>
+          <GitBranch size={14} />
+          {item.scope?.branch} @ <code>{item.scope?.commit.slice(0, 12)}</code>
+        </span>
+        <span>Owner: {item.owner || "Source artifact"}</span>
+        <span>Analyzed {date(item.scope?.analysis_at)}</span>
+      </div>
+      <div className="tabs">
+        {["Evidence", "History", ...(canReview ? ["Review"] : [])].map((t) => (
+          <button
+            className={tab === t ? "active" : ""}
+            key={t}
+            onClick={() => setTab(t)}
+          >
+            {t}
+          </button>
+        ))}
+      </div>
+      <div className="inspector-body">
+        {tab === "Evidence" ? (
+          <>
+            {evidence.length ? (
+              evidence.map((e) => (
+                <section className="evidence-block" key={e.id}>
+                  <div className="section-head">
+                    <code>{e.path}</code>
+                    <Badge
+                      value={
+                        item.contradicting_ids?.includes(e.id)
+                          ? "CONTRADICTING"
+                          : item.supporting_ids?.includes(e.id)
+                            ? "SUPPORTING"
+                            : e.authority
+                      }
+                    />
+                  </div>
+                  <Source
+                    item={e}
+                    highlight={item.path === e.path ? item.line : undefined}
+                  />
+                </section>
+              ))
+            ) : (
+              <p>
+                No source artifact is attached to this result. Review its scope
+                and analyzer limitation.
+              </p>
+            )}
+            {item.vulnerabilities?.map((v) => (
+              <p key={v.id}>
+                <a href={v.url} target="_blank" rel="noreferrer">
+                  {v.id} <SquareArrowOutUpRight size={12} />
+                </a>{" "}
+                · {v.summary}
+              </p>
+            ))}
+            {item.advisory && (
+              <a href={item.advisory.url} target="_blank" rel="noreferrer">
+                Open OSV advisory
+              </a>
+            )}
+            <div className="recommendation">
+              <strong>Recommended action</strong>
+              <p>
+                {item.recommendation ||
+                  item.remediation ||
+                  "Review the artifact together with connected claims and findings."}
+              </p>
+            </div>
+            {item.kind === "drift" && (
+              <button
+                className="secondary"
+                onClick={() => {
+                  const claim = data.claim.find(
+                    (c) =>
+                      c.id ===
+                      String((item as Item & { claim_id?: string }).claim_id),
+                  );
+                  if (claim) onOpen(claim);
+                }}
+              >
+                Inspect related claim <ArrowRight size={15} />
+              </button>
+            )}
+          </>
+        ) : tab === "History" ? (
+          <div className="audit-list">
+            {item.history?.length ? (
+              item.history.map((h, i) => (
+                <div key={i}>
+                  <div className="audit-dot" />
+                  <div>
+                    <Badge value={h.status} />
+                    <p>{h.reason}</p>
+                    <small>{date(h.at)}</small>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <Empty title="No claim transition history">
+                Human decisions are recorded in the Audit Trail. Evidence
+                artifacts are immutable within their snapshot.
+              </Empty>
+            )}
+          </div>
+        ) : (
+          <form className="review-form" onSubmit={review}>
+            <p>
+              A review records a human decision. Verification status continues
+              to reflect analyzer evidence.
+            </p>
+            <label>
+              Review action
+              <select
+                value={action}
+                onChange={(e) => setAction(e.target.value)}
+              >
+                {[
+                  "CONFIRM",
+                  "FALSE_POSITIVE",
+                  "REQUEST_MORE_EVIDENCE",
+                  "RESOLVE",
+                  "CREATE_EXCEPTION",
+                ].map((a) => (
+                  <option key={a}>{a}</option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Reason
+              <textarea
+                required
+                minLength={10}
+                maxLength={2000}
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                placeholder="Explain the decision and cite any additional evidence."
+              />
+            </label>
+            {error && (
+              <p className="error" role="alert">
+                {error}
+              </p>
+            )}
+            <button className="primary" disabled={busy}>
+              {busy ? (
+                <LoaderCircle className="spin" size={16} />
+              ) : (
+                <Check size={16} />
+              )}{" "}
+              Record review
+            </button>
+          </form>
+        )}
+      </div>
+    </Modal>
+  );
+}
+
+function ImportDialog({
+  onClose,
+  onDone,
+}: {
+  onClose: () => void;
+  onDone: () => void;
+}) {
+  const [name, setName] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+  async function submit(e: FormEvent) {
+    e.preventDefault();
+    if (!file) return;
+    setBusy(true);
+    setError("");
+    try {
+      await api(
+        "/archive/import?name=" + encodeURIComponent(name),
+        undefined,
+        file,
+      );
+      onDone();
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+  return (
+    <Modal title="Import a repository snapshot" onClose={onClose}>
+      <form className="import-form" onSubmit={submit}>
+        <p>
+          Upload a ZIP of source files. ProjectTrace scans the files as
+          untrusted data and stores redacted evidence.
+        </p>
+        <label>
+          Repository name
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+            maxLength={120}
+            pattern="[\w .-]+"
+            placeholder="checkout-api"
+          />
+        </label>
+        <label>
+          Source archive
+          <input
+            type="file"
+            accept=".zip"
+            required
+            onChange={(e) => setFile(e.target.files?.[0] || null)}
+          />
+        </label>
+        <div className="context-note">
+          10 MB total · 1,000 files · 512 KB per file. Symlinks and unsafe paths
+          are rejected. Nested archives and binaries are skipped.
+        </div>
+        {error && (
+          <p className="error" role="alert">
+            {error}
+          </p>
+        )}
+        <button className="primary" disabled={busy}>
+          {busy ? (
+            <LoaderCircle className="spin" size={16} />
+          ) : (
+            <Upload size={16} />
+          )}{" "}
+          Analyze source snapshot
+        </button>
+      </form>
+    </Modal>
+  );
+}
+
+function CommandPalette({
+  data,
+  navigate,
+  onOpen,
+}: {
+  data?: Workspace;
+  navigate: (s: string) => void;
+  onOpen: (i: Item) => void;
+}) {
+  const [q, setQ] = useState("");
+  const pages = navigation
+    .flatMap((g) => g.items.map(([name]) => name))
+    .filter((p) => p.toLowerCase().includes(q.toLowerCase()));
+  const records = q
+    ? [
+        ...(data?.claim || []),
+        ...(data?.finding || []),
+        ...(data?.evidence || []),
+      ]
+        .filter((i) => label(i).toLowerCase().includes(q.toLowerCase()))
+        .slice(0, 8)
+    : [];
+  return (
+    <div className="command-palette">
+      <div className="filter-input">
+        <Search size={18} />
+        <input
+          autoFocus
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="Search claims, files, or pages…"
+          aria-label="Search workspace"
+        />
+      </div>
+      <span className="eyebrow">PAGES</span>
+      {pages.map((p) => (
+        <button key={p} onClick={() => navigate(p)}>
+          <Command size={14} />
+          {p}
+          <ArrowRight size={14} />
+        </button>
+      ))}
+      {records.length > 0 && (
+        <span className="eyebrow">EVIDENCE & CONCLUSIONS</span>
+      )}
+      {records.map((i) => (
+        <button key={i.id} onClick={() => onOpen(i)}>
+          <FileCode2 size={14} />
+          <span>{label(i)}</span>
+          <Badge value={i.status || i.severity || i.authority} />
+        </button>
+      ))}
+    </div>
+  );
+}

@@ -1,0 +1,39 @@
+{
+  "identity": {
+    "base": {
+      "README.md": "# Identity Platform\nAuthentication uses JWT.\nBackend uses FastAPI.\nThe API exposes /health.\n",
+      "auth/session.py": "import jwt\n\ndef issue_token(user):\n    return jwt.encode({'sub': user.id}, user.signing_key, algorithm='HS256')\n",
+      "app.py": "from fastapi import FastAPI\napp = FastAPI()\n\n@app.get('/health')\ndef health():\n    return {'status': 'ok'}\n",
+      "requirements.txt": "fastapi==0.115.0\nPyJWT==2.10.1\n"
+    },
+    "head": {
+      "README.md": "# Identity Platform\nAuthentication uses JWT.\nBackend uses FastAPI.\nThe API exposes /health.\n",
+      "auth/session.py": "from starlette.middleware.sessions import SessionMiddleware\n\ndef configure_auth(app, settings):\n    app.add_middleware(SessionMiddleware, secret_key=settings.session_key, https_only=True, same_site='strict')\n",
+      "app.py": "from fastapi import FastAPI\nfrom auth.session import configure_auth\napp = FastAPI()\n\n@app.get('/health')\ndef health():\n    return {'status': 'ok'}\n",
+      "users/search.py": "def search_users(connection, name):\n    # Deliberately unsafe static benchmark; this file is never executed.\n    return connection.execute(f\"SELECT id FROM users WHERE name = '{name}'\")\n",
+      "requirements.txt": "fastapi==0.115.0\nitsdangerous==2.2.0\n",
+      "openapi.json": "{\"openapi\":\"3.1.0\",\"info\":{\"title\":\"Identity\",\"version\":\"1\"},\"paths\":{\"/health\":{\"get\":{}},\"/users/export\":{\"get\":{}}}}",
+      "deploy/pod.yaml": "apiVersion: v1\nkind: Pod\nmetadata:\n  name: identity\nspec:\n  containers:\n    - name: identity\n      image: northstar/identity:demo\n      securityContext:\n        privileged: true\n"
+    }
+  },
+  "payments": {
+    "README.md": "# Payments Platform\nDatabase uses PostgreSQL.\n",
+    "payments.py": "import psycopg\n\ndef get_invoice(connection, invoice_id):\n    return connection.execute('SELECT id FROM invoices WHERE id = %s', (invoice_id,))\n",
+    "package-lock.json": "{\"name\":\"payment-worker\",\"lockfileVersion\":3,\"packages\":{\"\":{\"dependencies\":{\"lodash\":\"4.17.20\"}},\"node_modules/lodash\":{\"version\":\"4.17.20\",\"license\":\"MIT\"}}}",
+    "config/demo.env": "# Synthetic benchmark credential; cannot authenticate to any provider.\napi_key = 'projecttrace_fixture_not_a_live_credential_12345'\n"
+  },
+  "commerce": {
+    "base": {
+      "docs/architecture.md": "# Order events\nOrders publishes events through Kafka.\n",
+      "events.py": "from kafka import KafkaProducer\n\ndef build_producer():\n    return KafkaProducer(bootstrap_servers=['broker:9092'])\n"
+    },
+    "head": {
+      "docs/architecture.md": "# Order events\nOrders publishes events through Kafka.\n",
+      "events.py": "import redis\n\ndef publish_order(client, order):\n    return client.xadd('orders', order)\n"
+    }
+  },
+  "clean": {
+    "README.md": "# Platform Status\nBackend uses FastAPI.\nThe API exposes /health.\n",
+    "app.py": "from fastapi import FastAPI\napp = FastAPI()\n\n@app.get('/health')\ndef health():\n    return {'status': 'ok'}\n"
+  }
+}

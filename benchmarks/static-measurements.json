@@ -1,0 +1,21 @@
+{
+  "environment": "Local Windows / Python 3.14; serial static analysis; no network, queue or production load",
+  "identity_head": {
+    "runs": 50,
+    "p50_ms": 0.336,
+    "p95_ms": 1.147,
+    "p99_ms": 3.108
+  },
+  "500_file_repository": {
+    "runs": 20,
+    "p50_ms": 33.98,
+    "p95_ms": 44.999,
+    "p99_ms": 44.999
+  },
+  "unchanged_500_file_incremental": {
+    "runs": 20,
+    "p50_ms": 6.505,
+    "p95_ms": 19.832,
+    "p99_ms": 19.832
+  }
+}

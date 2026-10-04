@@ -1,0 +1,19 @@
+{
+  "environment": "Local Windows; 4 concurrent clients, SQLite, seeded fixture data; not a capacity claim",
+  "workspace": {
+    "requests": 20,
+    "errors": 0,
+    "p50_ms": 31.58,
+    "p95_ms": 57.38,
+    "p99_ms": 57.38
+  },
+  "ask": {
+    "requests": 20,
+    "errors": 0,
+    "p50_ms": 21.5,
+    "p95_ms": 49.63,
+    "p99_ms": 49.63
+  },
+  "elapsed_seconds": 5.49,
+  "client_throughput_rps": 7.29
+}
