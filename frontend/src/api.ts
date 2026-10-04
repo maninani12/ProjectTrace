@@ -50,7 +50,7 @@ export type Item = {
   affected_claims?: string[];
   name?: string;
   ecosystem?: string;
-  direct?: boolean;
+  direct?: boolean | null;
   license?: string;
   vulnerability_status?: string;
   vulnerabilities?: { id: string; summary: string; url: string }[];
@@ -61,6 +61,14 @@ export type Item = {
   actor?: string;
   action?: string;
   created_at?: string;
+  state?: string;
+  started_at?: string;
+  finished_at?: string;
+  stage?: string;
+  warnings?: { message: string; path?: string; analyzer?: string }[];
+  errors?: string[];
+  origin?: string;
+  version_kind?: string;
   data?: {
     old?: string;
     new?: string;
@@ -70,7 +78,6 @@ export type Item = {
     findings?: number;
   };
   expires_at?: string;
-  state?: string;
 };
 export type Edge = {
   id: string;
@@ -97,6 +104,14 @@ export type Snapshot = {
   gate: Gate;
   scope: Scope;
   status: string;
+  base_id?: string;
+  warnings?: { message: string; path?: string }[];
+  claim_extraction?: {
+    state: string;
+    implementation: number;
+    documentation: number;
+    documentation_files: number;
+  };
 };
 export type Repository = {
   id: string;
@@ -106,6 +121,7 @@ export type Repository = {
   owner: string;
   provider: string;
   snapshot: Snapshot;
+  latest_job?: Item;
 };
 export type Workspace = {
   organization: string;
@@ -122,6 +138,8 @@ export type Workspace = {
   exception: Item[];
   job: Item[];
   limitations: string[];
+  graph_node: Item[];
+  analysis: { state: string; truncated?: boolean; warnings?: string[] };
 };
 export type Identity = {
   email: string;
@@ -168,7 +186,7 @@ export async function api<T>(
       message =
         typeof error.detail === "string"
           ? error.detail
-          : "The submitted fields are invalid.";
+          : error.detail?.message || "The submitted fields are invalid.";
     } catch {
       /* plain error */
     }

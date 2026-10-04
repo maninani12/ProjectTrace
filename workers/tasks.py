@@ -2,7 +2,7 @@ import os
 
 from celery import Celery
 
-from backend.db import Record, Repository, Session, User
+from backend.db import Record, Repository, Session, User, now
 from backend.domain import persist_analysis
 
 celery = Celery("projecttrace", broker=os.getenv("REDIS_URL", "redis://127.0.0.1:6379/0"))
@@ -33,30 +33,37 @@ def analyze_job(self, job_id):
             }
             db.commit()
             return
-        user = db.get(User, job.data["user_id"])
-        repo = db.get(Repository, job.repository_id)
-        if (
-            not user
-            or not repo
-            or user.organization_id != job.organization_id
-            or repo.organization_id != job.organization_id
-        ):
-            raise ValueError("Worker tenant scope is invalid.")
-        from backend.security import require_repo
-
-        require_repo(db, user, repo.id)
         try:
+            user = db.get(User, job.data["user_id"])
+            repo = db.get(Repository, job.repository_id)
+            if (
+                not user
+                or not repo
+                or user.organization_id != job.organization_id
+                or repo.organization_id != job.organization_id
+            ):
+                raise ValueError("Worker tenant scope is invalid.")
+            from backend.security import require_repo
+
+            require_repo(db, user, repo.id)
             job.data = {**job.data, "state": "ANALYZING"}
             db.commit()
             snapshot = persist_analysis(db, user, repo, job.data["files"])
             job.data = {k: v for k, v in job.data.items() if k != "files"} | {
-                "state": "COMPLETED",
+                "state": snapshot.data["status"],
                 "snapshot_id": snapshot.id,
+                "warnings": snapshot.data.get("warnings", []),
+                "finished_at": now(),
             }
             db.commit()
-        except ValueError:
+        except Exception as error:
             db.rollback()
             job = db.get(Record, job_id)
-            job.data = {"state": "FAILED", "reason": "Static input validation failed."}
+            job.data = {k: v for k, v in job.data.items() if k != "files"} | {
+                "state": "FAILED",
+                "reason": "Static analysis failed.",
+                "error_type": type(error).__name__,
+                "finished_at": now(),
+            }
             db.commit()
             raise

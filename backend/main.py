@@ -9,7 +9,7 @@ from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, timezone
 from typing import Literal
 
-from fastapi import FastAPI, HTTPException, Request, Response
+from fastapi import FastAPI, HTTPException, Query, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import or_, select, text
@@ -17,7 +17,8 @@ from sqlalchemy.exc import IntegrityError
 
 from analyzers.engine import MAX_TOTAL_BYTES, read_zip, redact, sbom
 from backend.db import Audit, Delivery, Grant, Organization, Record, Repository, Session, User
-from backend.domain import add, audit, persist_analysis, policy_gate, uid
+from backend.domain import add, audit, policy_gate, uid
+from backend.jobs import execute_analysis
 from backend.security import allowed_repositories, authenticate, create_session, passwords, require_repo
 
 APP_ENV = os.getenv("APP_ENV", "demo")
@@ -43,7 +44,7 @@ async def lifespan(app):
 
 app = FastAPI(
     title="ProjectTrace",
-    version="1.0.0",
+    version="1.1.0",
     lifespan=lifespan,
     docs_url=None if PRODUCTION else "/api/docs",
     openapi_url=None if PRODUCTION else "/api/openapi.json",
@@ -62,6 +63,7 @@ rate_windows = defaultdict(deque)
 async def security_boundary(request, call_next):
     started = time.perf_counter()
     request_id = uid()
+    request.state.request_id = request_id
     content_length = request.headers.get("content-length", "")
     if content_length and (not content_length.isdigit() or int(content_length) > MAX_TOTAL_BYTES + 100_000):
         return Response("Request exceeds the 10 MB limit.", status_code=413)
@@ -76,7 +78,10 @@ async def security_boundary(request, call_next):
     if request.method == "POST" and request.url.path not in {"/api/github/webhook"}:
         if request.headers.get("origin") not in ORIGINS:
             return Response("Origin is not authorized.", status_code=403)
-    key = (request.client.host if request.client else "unknown", request.url.path.startswith("/api/auth"))
+    key = (
+        request.client.host if request.client else "unknown",
+        request.method == "POST" and request.url.path in {"/api/auth/login", "/api/auth/demo", "/api/auth/register"},
+    )
     window = rate_windows[key]
     t = time.monotonic()
     while window and t - window[0] > 60:
@@ -118,6 +123,12 @@ class StrictModel(BaseModel):
 class Login(StrictModel):
     email: str = Field(max_length=200)
     password: str = Field(max_length=200)
+
+
+class Register(StrictModel):
+    email: str = Field(min_length=5, max_length=200, pattern=r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
+    password: str = Field(min_length=16, max_length=200)
+    organization: str = Field(min_length=1, max_length=120)
 
 
 class Import(StrictModel):
@@ -194,7 +205,7 @@ def current_snapshots(db, user):
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "version": "1.0.0"}
+    return {"status": "ok", "version": "1.1.0"}
 
 
 @app.get("/ready")
@@ -231,7 +242,37 @@ def login(body: Login, request: Request, response: Response):
             raise HTTPException(401, "Email or password is incorrect.")
         csrf = create_session(db, user, response, PRODUCTION, previous_token=request.cookies.get("pt_session"))
         db.commit()
-        return {"csrf": csrf, "email": user.email, "role": user.role, "demo": APP_ENV == "demo"}
+        return {
+            "csrf": csrf,
+            "email": user.email,
+            "role": user.role,
+            "demo": APP_ENV == "demo" and user.organization_id == "northstar",
+        }
+
+
+@app.post("/api/auth/register")
+def register(body: Register, request: Request, response: Response):
+    if PRODUCTION:
+        raise HTTPException(404, "Self-service local registration is disabled in production.")
+    with Session() as db:
+        if db.scalar(select(User).where(User.email == body.email.lower())):
+            raise HTTPException(409, "This local email is already registered.")
+        organization = Organization(id=uid(), name=body.organization)
+        db.add(organization)
+        db.flush()
+        user = User(
+            id=uid(),
+            organization_id=organization.id,
+            email=body.email.lower(),
+            password_hash=passwords.hash(body.password),
+            role="ORG_OWNER",
+        )
+        db.add(user)
+        db.flush()
+        audit(db, user, "WORKSPACE_CREATED", organization.id, {})
+        csrf = create_session(db, user, response)
+        db.commit()
+        return {"email": user.email, "role": user.role, "csrf": csrf, "organization": organization.name, "demo": False}
 
 
 @app.get("/api/auth/me")
@@ -243,7 +284,7 @@ def me(request: Request):
             "role": user.role,
             "csrf": session.csrf,
             "organization": db.get(Organization, user.organization_id).name,
-            "demo": APP_ENV == "demo",
+            "demo": APP_ENV == "demo" and user.organization_id == "northstar",
         }
 
 
@@ -258,12 +299,28 @@ def logout(request: Request, response: Response):
 
 
 @app.get("/api/workspace")
-def workspace(request: Request):
+def workspace(request: Request, repository_id: str | None = None):
     with Session() as db:
         user, _ = authenticate(db, request)
         repos = allowed_repositories(db, user)
+        if repository_id:
+            require_repo(db, user, repository_id)
+            repos = [repo for repo in repos if repo.id == repository_id]
         snapshots = current_snapshots(db, user)
-        records = list(db.scalars(scope_query(db, user).order_by(Record.created_at.desc()).limit(5000)))
+        snapshots = {rid: snapshot for rid, snapshot in snapshots.items() if rid in {repo.id for repo in repos}}
+        snapshot_ids = {s.id for s in snapshots.values()}
+        query = scope_query(db, user).where(
+            or_(
+                Record.kind.in_(["job", "integration", "policy"]),
+                Record.data["scope"]["snapshot_id"].as_string().in_(snapshot_ids),
+                Record.data["snapshot_id"].as_string().in_(snapshot_ids),
+            )
+        )
+        if repository_id:
+            query = query.where(or_(Record.repository_id == repository_id, Record.repository_id.is_(None)))
+        records = list(db.scalars(query.order_by(Record.created_at.desc()).limit(5001)))
+        truncated = len(records) > 5000
+        records = records[:5000]
         snapshot_ids = {s.id for s in snapshots.values()}
         current = [
             r
@@ -285,11 +342,54 @@ def workspace(request: Request):
                 "review",
                 "exception",
                 "job",
+                "graph_node",
             ]
         }
+        latest_jobs = {}
+        for record in records:
+            if record.kind == "job":
+                latest_jobs.setdefault(record.repository_id, packed(record))
+        states = [
+            latest_jobs.get(r.id, {}).get("state")
+            or (snapshots[r.id].data["status"] if r.id in snapshots else "QUEUED")
+            for r in repos
+        ]
+        state = (
+            "NO_REPOSITORY"
+            if not repos
+            else "PARTIAL"
+            if truncated
+            else next(
+                (
+                    s
+                    for s in [
+                        "FAILED",
+                        "PARTIAL",
+                        "FETCHING",
+                        "PARSING",
+                        "ANALYZING",
+                        "BUILDING_EVIDENCE",
+                        "EXTRACTING_CLAIMS",
+                        "VERIFYING",
+                        "CORRELATING",
+                        "QUEUED",
+                        "CANCELLED",
+                    ]
+                    if s in states
+                ),
+                "COMPLETED" if "COMPLETED" in states else "COMPLETED_NO_FINDINGS",
+            )
+        )
         return {
             "organization": db.get(Organization, user.organization_id).name,
-            "demo": APP_ENV == "demo",
+            "demo": APP_ENV == "demo" and user.organization_id == "northstar",
+            "analysis": {
+                "state": state,
+                "truncated": truncated,
+                "warnings": ["Workspace result limit reached; select a repository or use paginated records."]
+                if truncated
+                else [],
+            },
             "repositories": [
                 {
                     "id": r.id,
@@ -299,6 +399,7 @@ def workspace(request: Request):
                     "owner": r.owner,
                     "provider": r.provider,
                     "snapshot": packed(snapshots[r.id]) if r.id in snapshots else None,
+                    "latest_job": latest_jobs.get(r.id),
                 }
                 for r in repos
             ],
@@ -329,14 +430,15 @@ def record(record_id: str, request: Request):
 
 
 @app.get("/api/audit")
-def events(request: Request, offset: int = 0, limit: int = 100):
+def events(request: Request, offset: int = 0, limit: int = 100, repository_id: str | None = None):
     with Session() as db:
         user, _ = authenticate(db, request)
+        query = scope_query(db, user, Audit)
+        if repository_id:
+            require_repo(db, user, repository_id)
+            query = query.where(Audit.repository_id == repository_id)
         result = db.scalars(
-            scope_query(db, user, Audit)
-            .order_by(Audit.created_at.desc())
-            .offset(max(0, offset))
-            .limit(min(max(1, limit), 200))
+            query.order_by(Audit.created_at.desc()).offset(max(0, offset)).limit(min(max(1, limit), 200))
         )
         return [
             {
@@ -356,6 +458,10 @@ def events(request: Request, offset: int = 0, limit: int = 100):
 def import_repo(body: Import, request: Request):
     with Session() as db:
         user, _ = authenticate(db, request, True)
+        if user.organization_id == "northstar":
+            raise HTTPException(
+                409, "Sign in to your real organization workspace to import source; demo data remains separate."
+            )
         if len(allowed_repositories(db, user)) >= 20:
             raise HTTPException(429, "Local workspace repository quota (20) reached.")
         repo = Repository(
@@ -371,11 +477,15 @@ def import_repo(body: Import, request: Request):
         db.flush()
         db.add(Grant(user_id=user.id, repository_id=repo.id))
         try:
-            snapshot = persist_analysis(db, user, repo, body.files)
-            db.commit()
-        except (ValueError, RecursionError) as error:
-            raise HTTPException(422, str(error))
-        return {"repository_id": repo.id, "snapshot_id": snapshot.id}
+            snapshot, job = execute_analysis(
+                db, user, repo, body.files, request_id=request.state.request_id, advisory_cache=local_advisories()
+            )
+        except Exception as error:
+            raise HTTPException(
+                422 if isinstance(error, (ValueError, RecursionError)) else 500,
+                "Analysis failed; inspect the repository job for details.",
+            )
+        return {"repository_id": repo.id, "snapshot_id": snapshot.id, "job_id": job.id, "state": job.data["state"]}
 
 
 @app.post("/api/repositories/{repo_id}/analyze")
@@ -388,20 +498,121 @@ def analyze_repo(repo_id: str, body: Analyze, request: Request):
             if base.kind != "snapshot" or base.repository_id != repo.id:
                 raise HTTPException(422, "Base must be a snapshot of the same repository.")
         try:
-            snapshot = persist_analysis(db, user, repo, body.files, body.branch, body.base_id)
-            db.commit()
-        except ValueError as error:
-            raise HTTPException(422, str(error))
+            snapshot, _ = execute_analysis(
+                db,
+                user,
+                repo,
+                body.files,
+                branch=body.branch,
+                base_id=body.base_id,
+                request_id=request.state.request_id,
+                advisory_cache=local_advisories(),
+            )
+        except Exception as error:
+            raise HTTPException(
+                422 if isinstance(error, ValueError) else 500,
+                "Analysis failed; inspect the repository job for details.",
+            )
         return packed(snapshot)
 
 
 @app.post("/api/archive/import")
-async def archive_import(request: Request, name: str = "Imported repository"):
-    try:
-        files = read_zip(await request.body())
-    except (ValueError, OSError, RuntimeError, zipfile.BadZipFile) as error:
-        raise HTTPException(422, str(error))
-    return import_repo(Import(name=name, files=files), request)
+async def archive_import(
+    request: Request,
+    name: str = Query(default="Imported repository", min_length=1, max_length=120, pattern=r"^[\w .-]+$"),
+):
+    with Session() as db:
+        user, _ = authenticate(db, request, True)
+        if user.organization_id == "northstar":
+            raise HTTPException(
+                409, "Sign in to your real organization workspace to import source; demo data remains separate."
+            )
+        if len(allowed_repositories(db, user)) >= 20:
+            raise HTTPException(429, "Local workspace repository quota (20) reached.")
+        repo = Repository(
+            id=uid(),
+            organization_id=user.organization_id,
+            name=name,
+            system="Imported System",
+            component=name,
+            owner="Engineering Team",
+            provider="LOCAL",
+        )
+        db.add(repo)
+        db.flush()
+        blob = await request.body()
+        db.add(Grant(user_id=user.id, repository_id=repo.id))
+        try:
+            snapshot, job = execute_analysis(
+                db,
+                user,
+                repo,
+                lambda: read_zip(blob),
+                request_id=request.state.request_id,
+                advisory_cache=local_advisories(),
+            )
+        except Exception as error:
+            raise HTTPException(
+                422 if isinstance(error, (ValueError, OSError, RuntimeError, zipfile.BadZipFile)) else 500,
+                "Archive analysis failed; inspect the persisted repository job for details.",
+            )
+        return {"repository_id": repo.id, "snapshot_id": snapshot.id, "job_id": job.id, "state": job.data["state"]}
+
+
+@app.post("/api/repositories/{repo_id}/archive/analyze")
+async def archive_analyze(repo_id: str, request: Request, base_id: str | None = None):
+    with Session() as db:
+        user, _ = authenticate(db, request, True)
+        repo = require_repo(db, user, repo_id)
+        if user.organization_id == "northstar":
+            raise HTTPException(409, "Upload snapshots in your real workspace.")
+        if base_id:
+            base = authorized_record(db, user, base_id)
+            if base.kind != "snapshot" or base.repository_id != repo.id:
+                raise HTTPException(422, "Base must belong to this repository.")
+        else:
+            base = current_snapshots(db, user).get(repo.id)
+            base_id = base.id if base else None
+        blob = await request.body()
+        try:
+            snapshot, job = execute_analysis(
+                db,
+                user,
+                repo,
+                lambda: read_zip(blob),
+                base_id=base_id,
+                request_id=request.state.request_id,
+                advisory_cache=local_advisories(),
+            )
+        except Exception as error:
+            raise HTTPException(
+                422 if isinstance(error, (ValueError, OSError, RuntimeError, zipfile.BadZipFile)) else 500,
+                "Archive analysis failed; inspect the persisted repository job for details.",
+            )
+        return {"repository_id": repo.id, "snapshot_id": snapshot.id, "job_id": job.id, "state": job.data["state"]}
+
+
+def local_advisories():
+    from pathlib import Path
+
+    path = Path(__file__).resolve().parent.parent / "samples" / "osv-lodash.json"
+    if not path.exists():
+        return {}
+    data = json.loads(path.read_text(encoding="utf-8"))
+    return {
+        "npm:lodash@4.17.20": [
+            {
+                "id": v["id"],
+                "summary": v.get("summary", ""),
+                "url": "https://osv.dev/vulnerability/" + v["id"],
+                "affected": v.get("affected", []),
+                "severity": {"MODERATE": "MEDIUM", "HIGH": "HIGH", "LOW": "LOW", "CRITICAL": "CRITICAL"}.get(
+                    v.get("database_specific", {}).get("severity"), "UNKNOWN"
+                ),
+            }
+            for v in data.get("vulns", [])
+        ]
+    }
 
 
 @app.post("/api/record/{record_id}/review")
@@ -538,7 +749,7 @@ def ask(body: Question, request: Request):
         answer = (
             "The current static evidence configures server-side session authentication."
             if auth and auth["status"] == "CONTRADICTED" and auth["expected"] == "jwt"
-            else claims[0]["reason"]
+            else claims[0]["text"] + " " + claims[0]["reason"]
             if claims
             else "Insufficient evidence in your authorized snapshots to answer this question."
         )
@@ -562,6 +773,7 @@ def ask(body: Question, request: Request):
 
 
 @app.get("/api/integrations")
+@app.get("/api/connections")
 def integrations(request: Request):
     with Session() as db:
         user, _ = authenticate(db, request)
@@ -597,6 +809,31 @@ def integrations(request: Request):
                 "last_sync": github_data.get("last_sync"),
             }
         )
+    for row in result:
+        row["group"] = (
+            "SCM"
+            if row["name"] == "GitHub App"
+            else "External Evidence"
+            if row["name"] in {"SonarQube", "Wiz"}
+            else "Cloud Accounts"
+            if row["name"] == "Cloud inventory"
+            else "AI Providers"
+        )
+        row["optional"] = True
+        row["implementation"] = "CREDENTIAL_GATED" if row["name"] == "GitHub App" else "DEFERRED"
+    result.extend(
+        {
+            "name": name,
+            "group": "External Evidence",
+            "optional": True,
+            "implementation": "DEFERRED",
+            "status": "NOT_CONFIGURED",
+            "live_verification": "NOT_VERIFIED",
+            "permissions": "Optional external evidence adapter is not implemented.",
+            "last_sync": None,
+        }
+        for name in ["CodeQL", "Snyk", "Semgrep", "Trivy"]
+    )
     return result
 
 

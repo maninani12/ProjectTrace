@@ -77,7 +77,7 @@ test("CEO and engineer evidence workflow", async ({ page }) => {
     "Evidence Graph",
     "Policies",
     "Audit Trail",
-    "Integrations",
+    "Connections",
     "Settings",
   ]) {
     await nav

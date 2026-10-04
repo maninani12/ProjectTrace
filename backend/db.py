@@ -3,7 +3,7 @@
 import os
 from datetime import datetime, timezone
 
-from sqlalchemy import JSON, ForeignKey, String, Text, UniqueConstraint, create_engine, event
+from sqlalchemy import JSON, ForeignKey, Index, String, Text, UniqueConstraint, create_engine, event
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker
 
 
@@ -65,7 +65,10 @@ class Record(Base):
     """
 
     __tablename__ = "records"
-    __table_args__ = (UniqueConstraint("organization_id", "kind", "natural_key"),)
+    __table_args__ = (
+        UniqueConstraint("organization_id", "kind", "natural_key"),
+        Index("ix_records_scoped_current", "organization_id", "repository_id", "kind", "created_at"),
+    )
     id: Mapped[str] = mapped_column(String(80), primary_key=True)
     organization_id: Mapped[str] = mapped_column(ForeignKey("organizations.id"), index=True)
     repository_id: Mapped[str | None] = mapped_column(ForeignKey("repositories.id"), nullable=True, index=True)

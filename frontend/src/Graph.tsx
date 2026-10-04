@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ReactFlow, Background, Controls, MarkerType } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { Badge } from "./App";
@@ -13,13 +13,22 @@ export default function Graph({
   data: Workspace;
   onOpen: (i: Item) => void;
 }) {
-  const candidates = [...data.claim, ...data.finding];
+  const candidates = [
+    ...data.claim,
+    ...data.finding,
+    ...(data.graph_node || []),
+    ...data.dependency,
+  ];
   const [focus, setFocus] = useState(
     candidates.find((c) => c.status === "CONTRADICTED")?.id ||
       candidates[0]?.id ||
       "",
   );
   const [relation, setRelation] = useState("ALL");
+  useEffect(() => {
+    if (!candidates.some((c) => c.id === focus))
+      setFocus(candidates[0]?.id || "");
+  }, [candidates, focus]);
   const center = candidates.find((c) => c.id === focus);
   const edges = data.edge.filter(
     (e) =>
@@ -32,6 +41,7 @@ export default function Graph({
     ...data.finding,
     ...data.evidence,
     ...data.dependency,
+    ...(data.graph_node || []),
   ].filter((i) => connectedIds.has(i.id) || i.id === focus);
   const nodes = items.map((i, n) => ({
     id: i.id,
@@ -76,13 +86,7 @@ export default function Graph({
           onChange={(e) => setRelation(e.target.value)}
         >
           <option value="ALL">All relationships</option>
-          {[
-            "SUPPORTED_BY",
-            "CONTRADICTED_BY",
-            "DOCUMENTED_BY",
-            "DETECTED_IN",
-            "AFFECTS",
-          ].map((r) => (
+          {[...new Set(data.edge.map((e) => e.relationship))].map((r) => (
             <option key={r}>{r}</option>
           ))}
         </select>

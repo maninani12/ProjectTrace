@@ -70,6 +70,11 @@ def test_logout_invalidates_session(signed):
 
 
 def test_import_redacts_secrets(signed):
+    registered = signed.post(
+        "/api/auth/register",
+        json={"email": "real@example.com", "password": "Strong-test-password-123!", "organization": "Real workspace"},
+    )
+    signed.headers["x-csrf-token"] = registered.json()["csrf"]
     response = signed.post(
         "/api/import",
         json={
@@ -164,7 +169,16 @@ def test_security_headers_and_bad_zip(signed):
     response = signed.get("/api/workspace")
     assert response.headers["x-content-type-options"] == "nosniff"
     assert response.headers["x-frame-options"] == "DENY"
+    assert signed.post("/api/archive/import", content=b"badzip").status_code == 409
+    registered = signed.post(
+        "/api/auth/register",
+        json={"email": "real@example.com", "password": "Strong-test-password-123!", "organization": "Real workspace"},
+    )
+    signed.headers["x-csrf-token"] = registered.json()["csrf"]
     assert signed.post("/api/archive/import", content=b"badzip").status_code == 422
+    data = signed.get("/api/workspace").json()
+    assert data["analysis"]["state"] == "FAILED"
+    assert data["job"][0]["errors"]
 
 
 def test_claim_history_tracks_stale_transition(signed):

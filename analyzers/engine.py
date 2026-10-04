@@ -10,7 +10,9 @@ import zipfile
 from pathlib import PurePosixPath
 from urllib.parse import quote
 
-VERSION = "1.0.0"
+from analyzers.baseline import context_signals, implementation_claims, inventory
+
+VERSION = "1.1.0"
 MAX_FILES = 1000
 MAX_FILE_BYTES = 512_000
 MAX_TOTAL_BYTES = 10_000_000
@@ -31,10 +33,14 @@ TEXT_SUFFIXES = {
     ".xml",
     ".gradle",
     ".env",
+    ".example",
+    ".lock",
+    ".kts",
+    ".ini",
 }
 SKIP_PARTS = {"node_modules", ".git", ".venv", "venv", "dist", "build", "__pycache__"}
 SECRET_RE = re.compile(
-    r"(?i)(?:gh[pousr]_[A-Za-z0-9_]{20,}|AKIA[A-Z0-9]{16}|(?:password|api[_-]?key|secret|token)\s*[:=]\s*[\"\']([^\"\'\n]{12,})[\"\'])"
+    r"(?i)(?:gh[pousr]_[A-Za-z0-9_]{20,}|AKIA[A-Z0-9]{16}|(?:password|api[_-]?key|secret(?:_key)?|token)\s*[:=]\s*[\"\']([^\"\'\n]{12,})[\"\'])"
 )
 PRIVATE_RE = re.compile(
     r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----.*?-----END (?:RSA |EC |OPENSSH )?PRIVATE KEY-----", re.S
@@ -47,6 +53,10 @@ def hash_text(text):
 
 def redact(text):
     text = PRIVATE_RE.sub("[REDACTED PRIVATE KEY]", text)
+    text = re.sub(r"(?i)((?:postgres(?:ql)?|mysql|mongodb)(?:\+\w+)?://[^\s/:]+:)[^\s/@]+(@)", r"\1[REDACTED]\2", text)
+    text = re.sub(
+        r"(?m)^(?:[A-Z_]*(?:PASSWORD|TOKEN|SECRET|API_KEY))\s*=\s*[^\n]+$", "[REDACTED ENVIRONMENT SECRET]", text
+    )
     return SECRET_RE.sub("[REDACTED SECRET]", text)
 
 
@@ -173,6 +183,20 @@ RULES = {
         "Split independent branches into focused, tested functions.",
         None,
     ),
+    "PT-SAST-006": (
+        "SAST",
+        "MEDIUM",
+        "Dynamic HTML reaches a raw rendering sink",
+        "Escape untrusted values or use a template engine with automatic escaping.",
+        "CWE-79",
+    ),
+    "PT-SAST-007": (
+        "SAST",
+        "MEDIUM",
+        "Dynamic path reaches a filesystem response",
+        "Resolve paths under an allowlisted root and reject traversal before reading files.",
+        "CWE-22",
+    ),
     "PT-QUALITY-002": (
         "QUALITY",
         "LOW",
@@ -231,11 +255,13 @@ def python_analysis(path, source):
                 signals.append({"type": "import", "value": name, "path": path, "line": node.lineno})
         if isinstance(node, ast.Call):
             name = call_name(node.func)
-            if (
-                name.endswith(".execute")
-                and node.args
-                and isinstance(node.args[0], (ast.JoinedStr, ast.BinOp, ast.Call))
-            ):
+            argument = node.args[0] if node.args else None
+            if isinstance(argument, ast.Call) and call_name(argument.func).split(".")[-1] == "text":
+                argument = argument.args[0] if argument.args else None
+            dynamic_sql = isinstance(argument, (ast.JoinedStr, ast.BinOp)) or (
+                isinstance(argument, ast.Call) and call_name(argument.func).endswith(".format")
+            )
+            if name.endswith(".execute") and dynamic_sql:
                 findings.append(
                     finding(
                         "PT-SAST-001",
@@ -267,6 +293,35 @@ def python_analysis(path, source):
                 signals.append({"type": "auth", "value": "session", "path": path, "line": node.lineno})
             if name in {"jwt.encode", "jwt.decode"}:
                 signals.append({"type": "auth", "value": "jwt", "path": path, "line": node.lineno})
+            if name.split(".")[-1] in {"FastAPI", "Flask"}:
+                signals.append(
+                    {"type": "technology", "value": name.split(".")[-1].lower(), "path": path, "line": node.lineno}
+                )
+            if name.split(".")[-1] in {"HTMLResponse", "FileResponse"} and isinstance(
+                argument, (ast.JoinedStr, ast.BinOp)
+            ):
+                findings.append(
+                    finding(
+                        "PT-SAST-006" if name.endswith("HTMLResponse") else "PT-SAST-007",
+                        path,
+                        node.lineno,
+                        "Dynamic construction reaches a sensitive sink. External-input flow and exploitability require human review.",
+                        "MEDIUM",
+                    )
+                )
+            if name.endswith("cookies.get") and node.args:
+                signals.append({"type": "auth_hint", "value": "cookie session", "path": path, "line": node.lineno})
+        if isinstance(node, ast.Constant) and isinstance(node.value, str):
+            match = re.match(r"(postgres(?:ql)?|sqlite)(?:\+\w+)?://", node.value)
+            if match:
+                signals.append(
+                    {
+                        "type": "database",
+                        "value": "postgresql" if match.group(1).startswith("postgres") else "sqlite",
+                        "path": path,
+                        "line": node.lineno,
+                    }
+                )
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
             complexity = 1 + sum(
                 isinstance(x, (ast.If, ast.For, ast.While, ast.ExceptHandler, ast.IfExp)) for x in ast.walk(node)
@@ -409,6 +464,13 @@ def verify(claim, signals, deps):
         if relevant:
             status, explanation = "VERIFIED", "A matching route decorator exists in the current source snapshot."
     else:
+        relevant = [s for s in signals if s["type"] in {"database", "technology"} and s["value"] == expected]
+        if relevant:
+            return (
+                "VERIFIED",
+                f"Current syntax/configuration explicitly selects {expected}; runtime is unobserved.",
+                relevant,
+            )
         aliases = {
             "postgresql": ["psycopg", "asyncpg", "psycopg2"],
             "fastapi": ["fastapi"],
@@ -429,8 +491,10 @@ def verify(claim, signals, deps):
     return status, explanation, relevant
 
 
-def analyze(files, cached_analysis=None):
+def analyze(files, cached_analysis=None, progress=None):
     files = validate_files(files)
+    if progress:
+        progress("ANALYZING")
     findings, signals = [], []
     cache = {}
     reused = 0
@@ -471,6 +535,16 @@ def analyze(files, cached_analysis=None):
                             "fingerprint": hash_text(path + str(line_no)),
                         }
                     )
+                if re.search(r"\.innerHTML\s*=\s*(?![\"'`\s])", line) and not line.lstrip().startswith("//"):
+                    findings.append(
+                        finding(
+                            "PT-SAST-006",
+                            path,
+                            line_no,
+                            "A non-literal expression is assigned to innerHTML. Data flow is unproven.",
+                            "MEDIUM",
+                        )
+                    )
         for match in list(SECRET_RE.finditer(source)) + list(PRIVATE_RE.finditer(source)):
             findings.append(
                 finding(
@@ -497,13 +571,29 @@ def analyze(files, cached_analysis=None):
             "findings": findings[finding_start:],
             "signals": signals[signal_start:],
         }
-    deps = dependencies(files)
+    deps, warnings = inventory(files)
+    signals.extend(s for path, source in files.items() for s in context_signals(path, source))
+    warnings.extend(
+        {
+            "analyzer": "PARSING",
+            "path": f["path"],
+            "message": "Python source could not be parsed; analysis coverage is partial.",
+        }
+        for f in findings
+        if f["rule"] == "PT-PARSE-001"
+    )
     claims = []
-    for claim in extract_claims(files):
+    if progress:
+        progress("EXTRACTING_CLAIMS")
+    candidates = extract_claims(files)
+    if progress:
+        progress("VERIFYING")
+    for claim in candidates:
         status, reason, evidence = verify(claim, signals, deps)
         claims.append(
             {
                 **claim,
+                "origin": "DOCUMENTATION",
                 "status": status,
                 "reason": reason,
                 "signals": evidence,
@@ -512,6 +602,7 @@ def analyze(files, cached_analysis=None):
                 "review_status": "OPEN",
             }
         )
+    claims.extend(implementation_claims(signals, deps))
     # JSON OpenAPI paths are compared with extracted Python route decorators.
     for path, source in files.items():
         if path.endswith(".json"):
@@ -527,6 +618,7 @@ def analyze(files, cached_analysis=None):
                             claims.append(
                                 {
                                     "text": f"API contract includes {endpoint}.",
+                                    "origin": "DOCUMENTATION",
                                     "category": "API",
                                     "expected": endpoint,
                                     "path": path,
@@ -540,7 +632,17 @@ def analyze(files, cached_analysis=None):
                                 }
                             )
             except ValueError, TypeError, AttributeError:
-                pass
+                if "openapi" in source.lower():
+                    warnings.append(
+                        {
+                            "analyzer": "API",
+                            "path": path,
+                            "message": "OpenAPI contract could not be parsed; coverage is partial.",
+                        }
+                    )
+    if len(claims) > 1500:
+        claims = claims[:1500]
+        warnings.append({"analyzer": "CLAIMS", "message": "Claim limit reached; extraction coverage is partial."})
     return {
         "findings": findings,
         "signals": signals,
@@ -549,6 +651,8 @@ def analyze(files, cached_analysis=None):
         "files": files,
         "analysis_cache": cache,
         "reused_files": reused,
+        "warnings": warnings,
+        "documentation_files": sum(path.endswith(".md") for path in files),
     }
 
 

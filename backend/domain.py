@@ -102,6 +102,7 @@ def persist_analysis(
     advisory_cache=None,
     git_commit=None,
     pr_title=None,
+    progress=None,
 ):
     files = validate_files(files)
     digest = hash_text("\n".join(p + ":" + hash_text(t) for p, t in sorted(files.items())))
@@ -133,7 +134,11 @@ def persist_analysis(
     ):
         raise ValueError("Base snapshot does not belong to the selected repository.")
     base_data = base.data if base else {}
-    result = analyze(files, base_data.get("analysis_cache"))
+    if progress:
+        progress("PARSING")
+    result = analyze(files, base_data.get("analysis_cache"), progress)
+    if progress:
+        progress("BUILDING_EVIDENCE")
     previous_hashes = base_data.get("hashes", {})
     hashes = {p: hash_text(t) for p, t in files.items()}
     changed = sorted(p for p in set(hashes) | set(previous_hashes) if hashes.get(p) != previous_hashes.get(p))
@@ -151,7 +156,25 @@ def persist_analysis(
             "analyzer_version": VERSION,
             "base_id": base_id,
             "analysis_at": now(),
-            "status": "COMPLETED",
+            "status": "PARTIAL"
+            if result["warnings"]
+            else "COMPLETED"
+            if result["findings"]
+            else "COMPLETED_NO_FINDINGS",
+            "warnings": result["warnings"],
+            "claim_extraction": {
+                "state": "COMPLETED",
+                "implementation": sum(c.get("origin") == "IMPLEMENTATION" for c in result["claims"]),
+                "documentation": sum(c.get("origin") == "DOCUMENTATION" for c in result["claims"]),
+                "documentation_files": result["documentation_files"],
+            },
+            "analyzer_results": {
+                "files": len(files),
+                "claims": len(result["claims"]),
+                "native_findings": len(result["findings"]),
+                "dependencies": len(result["dependencies"]),
+                "reused_files": result["reused_files"],
+            },
             "file_count": len(files),
             "analysis_cache": result["analysis_cache"],
             "reused_files": result["reused_files"],
@@ -193,11 +216,13 @@ def persist_analysis(
             },
         )
         evidence[path] = node.id
-    previous_claims = {c["text"]: c for c in base_data.get("claims", [])}
+    previous_claims = {
+        (c.get("path"), c["text"], c.get("origin", "DOCUMENTATION")): c for c in base_data.get("claims", [])
+    }
     claims, findings, drifts = [], [], []
     for data in result["claims"]:
         signals = data.pop("signals")
-        previous = previous_claims.get(data["text"])
+        previous = previous_claims.get((data.get("path"), data["text"], data.get("origin", "DOCUMENTATION")))
         evidence_ids = list(dict.fromkeys([evidence[data["path"]]] + [evidence[s["path"]] for s in signals]))
         supporting = list(dict.fromkeys(evidence[s["path"]] for s in signals))
         history = (previous or {}).get("history", [])[:]
@@ -241,7 +266,7 @@ def persist_analysis(
                 "edge",
                 {"source": claim.id, "target": eid, "relationship": relation, "snapshot_id": snapshot.id},
             )
-        if data["status"] == "CONTRADICTED" or previous and previous["status"] != data["status"]:
+        if previous and previous["status"] != data["status"]:
             drift = add(
                 db,
                 user.organization_id,
@@ -249,6 +274,7 @@ def persist_analysis(
                 "drift",
                 {
                     "claim_id": claim.id,
+                    "base_id": base_id,
                     "text": data["text"],
                     "type": data["category"] + "_DRIFT"
                     if data["category"] in {"API", "ARCHITECTURE"}
@@ -265,6 +291,43 @@ def persist_analysis(
                 },
             )
             drifts.append({"id": drift.id, **drift.data})
+        if (
+            data["status"] == "CONTRADICTED"
+            or data["category"] == "API"
+            and data["origin"] == "DOCUMENTATION"
+            and data["status"] == "UNVERIFIED"
+        ):
+            record = add(
+                db,
+                user.organization_id,
+                repo.id,
+                "finding",
+                {
+                    "title": "Documentation consistency: " + data["text"],
+                    "category": "CONSISTENCY",
+                    "severity": data["severity"],
+                    "confidence": data["confidence"],
+                    "path": data["path"],
+                    "line": data["line"],
+                    "rule": "PT-CONSISTENCY-001",
+                    "explanation": data["reason"],
+                    "remediation": "Review the contract/documentation against the linked current implementation evidence.",
+                    "evidence_ids": evidence_ids,
+                    "claim_id": claim.id,
+                    "scope": scope,
+                    "owner": repo.owner,
+                    "provider": "ProjectTrace native",
+                    "review_status": "OPEN",
+                },
+            )
+            findings.append({"id": record.id, **record.data})
+            add(
+                db,
+                user.organization_id,
+                repo.id,
+                "edge",
+                {"source": record.id, "target": claim.id, "relationship": "AFFECTS", "snapshot_id": snapshot.id},
+            )
         audit(
             db,
             user,
@@ -278,6 +341,30 @@ def persist_analysis(
             },
             repo.id,
         )
+    if base:
+        current_keys = {(c.get("path"), c["text"], c.get("origin", "DOCUMENTATION")) for c in claims}
+        for key, previous in previous_claims.items():
+            if key not in current_keys:
+                record = add(
+                    db,
+                    user.organization_id,
+                    repo.id,
+                    "drift",
+                    {
+                        "text": previous["text"],
+                        "path": previous.get("path"),
+                        "type": "CLAIM_REMOVED",
+                        "old_status": previous["status"],
+                        "status": "REMOVED",
+                        "severity": "MEDIUM",
+                        "reason": "This supported claim no longer exists in the new source/documentation snapshot.",
+                        "base_id": base.id,
+                        "scope": scope,
+                        "owner": repo.owner,
+                        "review_status": "OPEN",
+                    },
+                )
+                drifts.append({"id": record.id, **record.data})
     for data in result["findings"]:
         record = add(
             db,
@@ -317,6 +404,18 @@ def persist_analysis(
         }
         dep = add(db, user.organization_id, repo.id, "dependency", data)
         deps.append({"id": dep.id, **data})
+        add(
+            db,
+            user.organization_id,
+            repo.id,
+            "edge",
+            {
+                "source": dep.id,
+                "target": evidence[d["path"]],
+                "relationship": "DECLARED_IN",
+                "snapshot_id": snapshot.id,
+            },
+        )
         for vulnerability in cached or []:
             record = add(
                 db,
@@ -351,6 +450,47 @@ def persist_analysis(
                 "edge",
                 {"source": record.id, "target": dep.id, "relationship": "AFFECTS", "snapshot_id": snapshot.id},
             )
+    if progress:
+        progress("CORRELATING")
+
+    # Persist structural graph nodes as scoped records rather than drawing invented topology.
+    def node(kind, title, **metadata):
+        return add(
+            db, user.organization_id, repo.id, "graph_node", {"class": kind, "title": title, "scope": scope, **metadata}
+        )
+
+    def edge(source, target, relationship):
+        add(
+            db,
+            user.organization_id,
+            repo.id,
+            "edge",
+            {"source": source, "target": target, "relationship": relationship, "snapshot_id": snapshot.id},
+        )
+
+    repository_node = node("REPOSITORY", repo.name)
+    component_node = node("COMPONENT", repo.component)
+    snapshot_node = node("SNAPSHOT", snapshot.id, base_id=base_id)
+    edge(repository_node.id, component_node.id, "IMPLEMENTS")
+    edge(repository_node.id, snapshot_node.id, "HAS_SNAPSHOT")
+    for path, eid in evidence.items():
+        artifact = node("ARTIFACT", path, path=path, hash=hashes[path])
+        edge(snapshot_node.id, artifact.id, "CONTAINS")
+        edge(artifact.id, eid, "HAS_FILE_EVIDENCE")
+        if path.endswith(".md"):
+            for line_no, line in enumerate(files[path].splitlines(), 1):
+                if line.startswith("#"):
+                    section = node("DOCUMENTATION_SECTION", redact(line.lstrip("# ")), path=path, line=line_no)
+                    edge(section.id, eid, "DOCUMENTED_BY")
+    for signal in result["signals"]:
+        if signal["type"] == "route":
+            endpoint = node("API_ENDPOINT", signal["value"], path=signal["path"], line=signal["line"])
+            edge(component_node.id, endpoint.id, "EXPOSES")
+            edge(endpoint.id, evidence[signal["path"]], "IMPLEMENTED_IN")
+    for claim in claims:
+        shared = [f["id"] for f in findings if set(f.get("evidence_ids", [])) & set(claim["evidence_ids"])]
+        for fid in shared[:20]:
+            edge(fid, claim["id"], "RELATED_EVIDENCE")
     gate = policy_gate(claims, findings)
     snapshot.data = {
         **snapshot.data,
@@ -360,6 +500,16 @@ def persist_analysis(
         "drifts": drifts,
         "gate": gate,
         "scope": scope,
+        "impact": {
+            "base_id": base_id,
+            "changed_files": changed,
+            "affected_claims": [
+                c["id"]
+                for c in claims
+                if base_id and set(c["evidence_ids"]) & {evidence[p] for p in changed if p in evidence}
+            ],
+        },
+        "status": "PARTIAL" if result["warnings"] else "COMPLETED" if findings else "COMPLETED_NO_FINDINGS",
     }
     if pr_number:
         add(

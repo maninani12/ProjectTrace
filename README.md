@@ -71,6 +71,10 @@ npm.cmd run test:e2e
 
 Use a dedicated temporary directory for pytest; pytest manages that directory. Browser tests require both local servers running and write human-review events into the demo workspace. The tests do not connect external services.
 
+## Repairs in version 1.1
+
+Native implementation claims populate repositories whose README uses other wording. ZIP jobs persist real completion/partial/failure states and sanitized diagnostics. The global repository selector scopes results; Upload new snapshot compares versions; initial contradictions are consistency findings. Connections lists optional enrichment separately. See docs/CURRENT_STATE_AUDIT.md and docs/REPAIR_REPORT.md for evidence and limits.
+
 ## What works
 
 - Snapshot-scoped deterministic claim extraction and verification; VERIFIED / INFERRED / UNVERIFIED / CONTRADICTED, with STALE history during reverification.

@@ -53,6 +53,34 @@ def test_safe_parameterized_sql_has_no_finding():
     )["findings"]
 
 
+def test_sqlalchemy_expressions_and_literal_text_are_not_injection():
+    result = analyze({"app.py": "db.execute(select(User).where(User.id == value))\ndb.execute(text('select 1'))"})
+    assert "PT-SAST-001" not in {f["rule"] for f in result["findings"]}
+
+
+def test_manifest_inventory_without_an_llm_and_partial_errors():
+    result = analyze(
+        {
+            "package.json": '{"dependencies":{"react":"^19.0.0"}}',
+            "pyproject.toml": '[project]\ndependencies=["fastapi>=0.115"]',
+            "poetry.lock": '[[package]]\nname="redis"\nversion="5.0.0"',
+            "pom.xml": "<project><dependencies><dependency><groupId>org.example</groupId><artifactId>demo</artifactId><version>1.2.3</version></dependency></dependencies></project>",
+            "build.gradle": "implementation 'org.example:other:2.0.0'",
+        }
+    )
+    assert {"react", "fastapi", "redis", "org.example:demo", "org.example:other"} <= {
+        d["name"] for d in result["dependencies"]
+    }
+    assert result["claims"] and all(c["origin"] == "IMPLEMENTATION" for c in result["claims"])
+    broken = analyze({"package.json": "{bad json"})
+    assert broken["warnings"] and broken["warnings"][0]["analyzer"] == "DEPENDENCIES"
+
+
+def test_secret_url_and_environment_assignment_are_redacted():
+    assert "private-password" not in redact("postgresql://user:private-password@localhost/demo")
+    assert "credential_pattern_123456" not in redact("API_KEY=credential_pattern_123456")
+
+
 @pytest.mark.parametrize(
     "source,rule",
     [

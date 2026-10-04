@@ -42,6 +42,7 @@ import {
   X,
 } from "lucide-react";
 import { api, setCSRF } from "./api";
+import { analysisLabel, scopeWorkspace, emptyMessage } from "./status";
 import type {
   Answer,
   Gate,
@@ -51,10 +52,20 @@ import type {
   Workspace,
 } from "./api";
 
+const routeSlug = (name: string) => name.toLowerCase().replaceAll(" ", "-");
+const pageFromHash = () => {
+  const value = decodeURIComponent(location.hash.slice(1));
+  return (
+    navigation
+      .flatMap((g) => g.items.map(([name]) => name))
+      .find((name) => routeSlug(name) === value || name === value) ||
+    (value.toLowerCase() === "integrations" ? "Connections" : "Overview")
+  );
+};
 const Graph = lazy(() => import("./Graph"));
 const navigation = [
   {
-    label: "Workspace",
+    label: "Engineering",
     items: [
       ["Overview", LayoutDashboard],
       ["Systems", Boxes],
@@ -64,9 +75,8 @@ const navigation = [
     ],
   },
   {
-    label: "Analysis",
+    label: "Quality & Security",
     items: [
-      ["Findings", ListChecks],
       ["Code Quality", FileCode2],
       ["Security", Shield],
       ["Dependencies", Database],
@@ -88,9 +98,15 @@ const navigation = [
   {
     label: "Governance",
     items: [
+      ["Findings", ListChecks],
       ["Policies", ListChecks],
       ["Audit Trail", Activity],
-      ["Integrations", Boxes],
+    ],
+  },
+  {
+    label: "Configuration",
+    items: [
+      ["Connections", Boxes],
       ["Settings", Settings2],
     ],
   },
@@ -134,7 +150,7 @@ const descriptions: Record<string, string> = {
     "Explainable, advisory gates help teams decide which changes require review.",
   "Audit Trail":
     "Follow who changed or reviewed an engineering conclusion, when, and why.",
-  Integrations:
+  Connections:
     "Provider permissions, connection status, and verification are always explicit.",
   Settings:
     "Manage your local experience and understand the workspace data boundary.",
@@ -176,10 +192,14 @@ function DataTable({
   items,
   onOpen,
   mode = "claim",
+  emptyTitle = "No findings detected in the supported analysis scope.",
+  emptyDetail = "Static analysis cannot establish runtime safety.",
 }: {
   items: Item[];
   onOpen: (item: Item) => void;
   mode?: string;
+  emptyTitle?: string;
+  emptyDetail?: string;
 }) {
   const columns = useMemo(
     () => [
@@ -249,13 +269,7 @@ function DataTable({
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
-  if (!items.length)
-    return (
-      <Empty title="No results in this scope">
-        Try clearing the filters or import a repository to collect more
-        evidence.
-      </Empty>
-    );
+  if (!items.length) return <Empty title={emptyTitle}>{emptyDetail}</Empty>;
   return (
     <div className="table-scroll">
       <table>
@@ -360,14 +374,13 @@ function Modal({
 export default function App() {
   const client = useQueryClient();
   const [identity, setIdentity] = useState<Identity | null>(null);
-  const [page, setPage] = useState(
-    decodeURIComponent(location.hash.slice(1)) || "Overview",
-  );
+  const [page, setPage] = useState<string>(pageFromHash());
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("ALL");
   const [repoFilter, setRepoFilter] = useState("ALL");
   const [selected, setSelected] = useState<Item | null>(null);
   const [importing, setImporting] = useState(false);
+  const [importTarget, setImportTarget] = useState("NEW");
   const [tour, setTour] = useState(false);
   const [command, setCommand] = useState(false);
   const [mobile, setMobile] = useState(false);
@@ -379,7 +392,11 @@ export default function App() {
     queryFn: () => api<Workspace>("/workspace"),
     enabled: !!identity,
   });
-  const data = workspace.data;
+  const data = useMemo(
+    () =>
+      workspace.data ? scopeWorkspace(workspace.data, repoFilter) : undefined,
+    [workspace.data, repoFilter],
+  );
   useEffect(() => {
     api<Identity>("/auth/me")
       .then((i) => {
@@ -404,14 +421,13 @@ export default function App() {
   }, []);
   const navigate = (target: string) => {
     setPage(target);
-    location.hash = encodeURIComponent(target);
+    location.hash = routeSlug(target);
     setFilter("ALL");
     setQuery("");
     setMobile(false);
   };
   useEffect(() => {
-    const fn = () =>
-      setPage(decodeURIComponent(location.hash.slice(1)) || "Overview");
+    const fn = () => setPage(pageFromHash());
     window.addEventListener("hashchange", fn);
     return () => window.removeEventListener("hashchange", fn);
   }, []);
@@ -428,6 +444,8 @@ export default function App() {
           : { email: fields?.get("email"), password: fields?.get("password") },
       );
       setCSRF(result.csrf);
+      setRepoFilter("ALL");
+      setSelected(null);
       setIdentity(result);
       if (demo) setTour(true);
     } catch (e) {
@@ -452,6 +470,9 @@ export default function App() {
             .toLowerCase()
             .includes(query.toLowerCase())),
     );
+  const tableEmpty = data
+    ? emptyMessage(page, data, query !== "" || filter !== "ALL")
+    : ["Loading analysis", ""];
   const open = (item: Item) => setSelected(item);
   if (!identity)
     return (
@@ -557,9 +578,11 @@ export default function App() {
           <span>ProjectTrace</span>
         </button>
         <div className="workspace-switch">
-          <div className="org-avatar">N</div>
+          <div className="org-avatar">
+            {data?.organization?.charAt(0) || "P"}
+          </div>
           <div>
-            <strong>{data?.organization || "Northstar Labs"}</strong>
+            <strong>{data?.organization || "ProjectTrace"}</strong>
             <small>Engineering workspace</small>
           </div>
           <ChevronDown size={14} />
@@ -631,8 +654,28 @@ export default function App() {
               <span>Search evidence or navigate</span>
               <kbd>Ctrl K</kbd>
             </button>
-            <span className="analysis-state">
-              <i /> Analysis complete
+            <select
+              aria-label="Global repository"
+              value={repoFilter}
+              onChange={(e) => {
+                setRepoFilter(e.target.value);
+                setSelected(null);
+              }}
+            >
+              <option value="ALL">All repositories</option>
+              {workspace.data?.repositories.map((r) => (
+                <option key={r.id} value={r.id}>
+                  {r.name}
+                </option>
+              ))}
+            </select>
+            <span className="analysis-state" role="status">
+              <i />{" "}
+              {workspace.isError
+                ? "Analysis data unavailable"
+                : workspace.isLoading
+                  ? "Loading analysis status"
+                  : analysisLabel(data?.analysis?.state || "UNKNOWN")}
             </span>
             <button
               className="icon-button"
@@ -659,7 +702,7 @@ export default function App() {
             <div>
               <div className="eyebrow">
                 {page === "Overview"
-                  ? "NORTHSTAR LABS / ENGINEERING INTEGRITY"
+                  ? `${data?.organization || "ProjectTrace"} / ENGINEERING INTEGRITY`
                   : "ENGINEERING WORKSPACE"}
               </div>
               <h1>
@@ -669,9 +712,18 @@ export default function App() {
               </h1>
               <p>{descriptions[page] || descriptions.Overview}</p>
             </div>
-            <button className="secondary" onClick={() => setImporting(true)}>
-              <Upload size={15} /> Import repository
-            </button>
+            {!data?.demo &&
+              (page === "Repositories" || !data?.repositories.length) && (
+                <button
+                  className="secondary"
+                  onClick={() => {
+                    setImportTarget("NEW");
+                    setImporting(true);
+                  }}
+                >
+                  <Upload size={15} /> Import repository
+                </button>
+              )}
           </div>
           {workspace.isLoading ? (
             <div className="loading">
@@ -685,14 +737,28 @@ export default function App() {
           ) : (
             data && (
               <>
-                {page === "Overview" ? (
+                {data.analysis?.warnings?.map((warning) => (
+                  <p className="error" role="alert" key={warning}>
+                    {warning}
+                  </p>
+                ))}
+                {!data.repositories.length &&
+                !["Connections", "Settings", "Audit Trail"].includes(page) ? (
+                  <Empty title="Import a repository to begin analysis.">
+                    Use Import repository to upload your own source ZIP. Native
+                    analysis works without external connections.
+                  </Empty>
+                ) : page === "Overview" ? (
                   <Overview data={data} onOpen={open} navigate={navigate} />
                 ) : ["Systems", "Components", "Repositories"].includes(page) ? (
                   <RepositoryPage
                     data={data}
                     page={page}
                     navigate={navigate}
-                    onImport={() => setImporting(true)}
+                    onImport={(repository) => {
+                      setImportTarget(repository || "NEW");
+                      setImporting(true);
+                    }}
                   />
                 ) : page === "Claim Ledger" || page === "Architecture" ? (
                   <>
@@ -732,6 +798,8 @@ export default function App() {
                       </span>
                     </div>
                     <DataTable
+                      emptyTitle={tableEmpty[0]}
+                      emptyDetail={tableEmpty[1]}
                       items={filtered(
                         data.claim.filter(
                           (i) =>
@@ -790,6 +858,8 @@ export default function App() {
                       ]}
                     />
                     <DataTable
+                      emptyTitle={tableEmpty[0]}
+                      emptyDetail={tableEmpty[1]}
                       mode="finding"
                       items={filtered(
                         data.finding.filter(
@@ -829,6 +899,8 @@ export default function App() {
                       ]}
                     />
                     <DataTable
+                      emptyTitle={tableEmpty[0]}
+                      emptyDetail={tableEmpty[1]}
                       mode="drift"
                       items={filtered(data.drift)}
                       onOpen={open}
@@ -851,13 +923,30 @@ export default function App() {
                 ) : page === "Ask Engineering" ? (
                   <Investigation data={data} onOpen={open} />
                 ) : page === "Audit Trail" ? (
-                  <AuditPage query={query} setQuery={setQuery} />
+                  <AuditPage
+                    query={query}
+                    setQuery={setQuery}
+                    repository={repoFilter}
+                  />
                 ) : page === "Policies" ? (
                   <PolicyPage data={data} />
-                ) : page === "Integrations" ? (
+                ) : page === "Connections" ? (
                   <IntegrationPage />
                 ) : page === "Cloud" ? (
                   <>
+                    <h2>IaC Evidence</h2>
+                    <p>
+                      Native static configuration evidence from the selected
+                      source snapshot.
+                    </p>
+                    <DataTable
+                      mode="finding"
+                      items={data.finding.filter((f) => f.category === "IAC")}
+                      onOpen={open}
+                      emptyTitle="No IaC risks detected in supported rules."
+                      emptyDetail="Review Infrastructure and Evidence for configuration declarations."
+                    />
+                    <h2>Live Cloud Inventory</h2>
                     <Empty title="Live cloud inventory is not connected">
                       Configure an authorized read-only provider to correlate
                       deployment exposure with engineering claims. Static IaC
@@ -916,7 +1005,7 @@ export default function App() {
             <Waypoints size={13} /> Evidence first. Every conclusion has a
             scope.
           </span>
-          <span>Static analysis · v1.0.0</span>
+          <span>Static analysis · v1.1.0</span>
         </footer>
       </div>
       {selected && data && (
@@ -934,8 +1023,14 @@ export default function App() {
       )}
       {importing && (
         <ImportDialog
+          repositories={workspace.data?.repositories || []}
+          initialTarget={importTarget}
+          onRefresh={() =>
+            client.invalidateQueries({ queryKey: ["workspace"] })
+          }
           onClose={() => setImporting(false)}
-          onDone={() => {
+          onDone={(repository) => {
+            setRepoFilter(repository);
             setImporting(false);
             client.invalidateQueries({ queryKey: ["workspace"] });
             navigate("Repositories");
@@ -1041,24 +1136,17 @@ function Filters({
           </option>
         ))}
       </select>
-      <select
-        aria-label="Repository filter"
-        value={repoFilter}
-        onChange={(e) => setRepoFilter(e.target.value)}
-      >
-        <option value="ALL">All repositories</option>
-        {repositories.map((r) => (
-          <option key={r.id} value={r.id}>
-            {r.name}
-          </option>
-        ))}
-      </select>
+      <span className="subtle">
+        {repoFilter === "ALL"
+          ? "All repositories"
+          : repositories.find((r) => r.id === repoFilter)?.name}
+      </span>
       <button
         className="text-button"
         onClick={() => {
           setFilter("ALL");
           setQuery("");
-          setRepoFilter("ALL");
+          setRepoFilter(repoFilter);
         }}
       >
         Clear
@@ -1124,11 +1212,25 @@ function Overview({
         <section className="story-panel">
           <div className="section-head">
             <span className="eyebrow">ENGINEERING INTENT → REALITY</span>
-            <Badge value={primary ? "REVIEW_REQUIRED" : "PASS"} />
+            <Badge
+              value={
+                data.analysis?.state === "PARTIAL" ||
+                data.analysis?.state === "FAILED"
+                  ? data.analysis.state
+                  : primary || risk.length
+                    ? "REVIEW_REQUIRED"
+                    : "PASS"
+              }
+            />
           </div>
           <h2>
             {primary
-              ? "A change landed. The claim didn’t."
+              ? data.drift.some(
+                  (d) =>
+                    d.scope?.repository_id === primary.scope?.repository_id,
+                )
+                ? "A change landed. The claim didn’t."
+                : "Documentation and implementation disagree."
               : "Your engineering evidence is connected."}
           </h2>
           <p>
@@ -1168,7 +1270,7 @@ function Overview({
                 <span>
                   <GitPullRequest size={15} />{" "}
                   {demoStory ? "PR #1842" : primary.scope?.branch}{" "}
-                  <span className="subtle">· Identity Team</span>
+                  <span className="subtle">· {primary.owner}</span>
                 </span>
                 <button className="primary" onClick={() => onOpen(primary)}>
                   Inspect the evidence <ArrowRight size={15} />
@@ -1283,7 +1385,7 @@ function RepositoryPage({
   data: Workspace;
   page: string;
   navigate: (s: string) => void;
-  onImport: () => void;
+  onImport: (repository?: string) => void;
 }) {
   return (
     <>
@@ -1292,56 +1394,93 @@ function RepositoryPage({
           {data.repositories.length} repositories ·{" "}
           {new Set(data.repositories.map((r) => r.system)).size} systems
         </h2>
-        <button className="text-button" onClick={onImport}>
-          Add source <Upload size={14} />
-        </button>
+        {data.demo && (
+          <span className="subtle">
+            Demo workspace · sign in to import your own source
+          </span>
+        )}
       </div>
       <div className="repo-grid">
-        {data.repositories.map((r) => (
-          <article className="repo-card" key={r.id}>
-            <div className="section-head">
-              <GitBranch size={21} />
-              <Badge value={r.provider} />
-            </div>
-            <h2>
-              {page === "Systems"
-                ? r.system
-                : page === "Components"
-                  ? r.component
-                  : r.name}
-            </h2>
-            <p>
-              {r.system} / {r.component}
-            </p>
-            <dl>
-              <dt>Owner</dt>
-              <dd>{r.owner}</dd>
-              <dt>Source files</dt>
-              <dd>{r.snapshot?.file_count || 0}</dd>
-              <dt>Snapshot</dt>
-              <dd>
-                <code>{r.snapshot?.commit.slice(0, 12)}</code>
-              </dd>
-              <dt>Branch</dt>
-              <dd>
-                <code>{r.snapshot?.branch}</code>
-              </dd>
-              <dt>Analysis</dt>
-              <dd>
-                <Badge value={r.snapshot?.status} />
-              </dd>
-            </dl>
-            <div className="repo-card-footer">
-              <span className="subtle">Content-addressed snapshot</span>
-              <button
-                className="text-button"
-                onClick={() => navigate("Evidence")}
-              >
-                Explore <ArrowRight size={14} />
-              </button>
-            </div>
-          </article>
-        ))}
+        {data.repositories
+          .filter((r) => r.snapshot)
+          .map((r) => (
+            <article className="repo-card" key={r.id}>
+              <div className="section-head">
+                <GitBranch size={21} />
+                <Badge value={r.provider} />
+              </div>
+              <h2>
+                {page === "Systems"
+                  ? r.system
+                  : page === "Components"
+                    ? r.component
+                    : r.name}
+              </h2>
+              <p>
+                {r.system} / {r.component}
+              </p>
+              <dl>
+                <dt>Owner</dt>
+                <dd>{r.owner}</dd>
+                <dt>Source files</dt>
+                <dd>{r.snapshot?.file_count || 0}</dd>
+                <dt>Snapshot</dt>
+                <dd>
+                  <code>{r.snapshot?.commit.slice(0, 12)}</code>
+                </dd>
+                <dt>Branch</dt>
+                <dd>
+                  <code>{r.snapshot?.branch}</code>
+                </dd>
+                <dt>Analysis</dt>
+                <dd>
+                  <Badge
+                    value={
+                      r.latest_job?.state || r.snapshot?.status || "QUEUED"
+                    }
+                  />
+                </dd>
+                <dt>Stage</dt>
+                <dd>
+                  {r.latest_job?.stage || r.snapshot?.status || "Not started"}
+                </dd>
+                <dt>Started</dt>
+                <dd>{date(r.latest_job?.started_at)}</dd>
+                <dt>Finished</dt>
+                <dd>{date(r.latest_job?.finished_at)}</dd>
+                <dt>Claims</dt>
+                <dd>
+                  {r.snapshot?.claim_extraction
+                    ? `${r.snapshot.claim_extraction.implementation} implementation · ${r.snapshot.claim_extraction.documentation} documentation`
+                    : "Legacy snapshot"}
+                </dd>
+              </dl>
+              {r.latest_job?.warnings?.map((w, i) => (
+                <p className="context-note" key={i}>
+                  {w.path}: {w.message}
+                </p>
+              ))}
+              {r.latest_job?.errors?.map((error) => (
+                <p className="error" role="alert" key={error}>
+                  {error}
+                </p>
+              ))}
+              {!data.demo && (
+                <button className="secondary" onClick={() => onImport(r.id)}>
+                  Upload new snapshot
+                </button>
+              )}
+              <div className="repo-card-footer">
+                <span className="subtle">Content-addressed snapshot</span>
+                <button
+                  className="text-button"
+                  onClick={() => navigate("Evidence")}
+                >
+                  Explore <ArrowRight size={14} />
+                </button>
+              </div>
+            </article>
+          ))}
       </div>
       <div className="context-note">
         A local content digest is displayed as the snapshot identifier. It is
@@ -1362,8 +1501,8 @@ function Dependencies({
   return (
     <>
       <div className="section-head">
-        <h2>{data.dependency.length} pinned packages</h2>
-        <span>npm lockfiles · pinned Python requirements</span>
+        <h2>{data.dependency.length} dependency declarations</h2>
+        <span>Manifests and lockfiles · exact versions and constraints</span>
       </div>
       <div className="table-scroll">
         <table>
@@ -1384,7 +1523,12 @@ function Dependencies({
                   <button className="row-link" onClick={() => onOpen(d)}>
                     {d.name}
                     <small>
-                      {d.direct ? "Direct" : "Transitive"} dependency
+                      {d.direct == null
+                        ? "Unknown directness"
+                        : d.direct
+                          ? "Direct"
+                          : "Transitive"}{" "}
+                      dependency
                     </small>
                   </button>
                 </td>
@@ -1421,10 +1565,10 @@ function Dependencies({
         ))}
       </div>
       <div className="context-note">
-        Cached OSV advisories are attached only to the exact queried demo
-        package version. NOT CHECKED means vulnerability status is unknown. SBOM
-        dependency relationships are limited to the parsed manifest; licenses
-        are shown only when present.
+        Cached OSV advisories are attached only to an exact known package
+        version. Version constraints remain unchecked. NOT CHECKED means
+        vulnerability status is unknown. SBOM dependency relationships are
+        limited to the parsed manifest; licenses are shown only when present.
       </div>
     </>
   );
@@ -1529,6 +1673,9 @@ function Evidence({
     data.evidence.find((e) => e.path === "auth/session.py")?.id ||
       data.evidence[0]?.id,
   );
+  useEffect(() => {
+    if (!data.evidence.some((e) => e.id === id)) setId(data.evidence[0]?.id);
+  }, [data.evidence, id]);
   const node = data.evidence.find((e) => e.id === id);
   const related = [...data.claim, ...data.finding].filter((c) =>
     c.evidence_ids?.includes(id),
@@ -1620,10 +1767,23 @@ function Investigation({
   const [question, setQuestion] = useState(
     "How is authentication implemented?",
   );
-  const [repo, setRepo] = useState("identity");
+  const [repo, setRepo] = useState(
+    data.repositories.length === 1
+      ? data.repositories[0].id
+      : data.repositories.find(
+          (r) => r.provider === "DEMO" && r.id === "identity",
+        )?.id || "",
+  );
   const [answer, setAnswer] = useState<Answer | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const scopeIds = data.repositories.map((r) => r.id).join(",");
+  useEffect(() => {
+    if (repo && !data.repositories.some((r) => r.id === repo))
+      setRepo(data.repositories.length === 1 ? data.repositories[0].id : "");
+    setAnswer(null);
+    setError("");
+  }, [scopeIds]);
   async function submit(e: FormEvent) {
     e.preventDefault();
     setBusy(true);
@@ -1729,13 +1889,21 @@ function Investigation({
 function AuditPage({
   query,
   setQuery,
+  repository,
 }: {
+  repository: string;
   query: string;
   setQuery: (s: string) => void;
 }) {
   const events = useQuery({
-    queryKey: ["audit"],
-    queryFn: () => api<Item[]>("/audit?limit=200"),
+    queryKey: ["audit", repository],
+    queryFn: () =>
+      api<Item[]>(
+        "/audit?limit=200" +
+          (repository === "ALL"
+            ? ""
+            : "&repository_id=" + encodeURIComponent(repository)),
+      ),
   });
   return (
     <>
@@ -1854,11 +2022,19 @@ function IntegrationPage() {
           live_verification: string;
           permissions: string;
           last_sync: null;
+          group: string;
+          optional: boolean;
+          implementation: string;
         }[]
-      >("/integrations"),
+      >("/connections"),
   });
   return (
     <div className="integration-list">
+      <p className="context-note">
+        ProjectTrace native analysis works independently. Connections provide
+        optional source synchronization, live cloud inventory, external
+        evidence, or AI enrichment.
+      </p>
       {result.isLoading ? (
         <p>Loading provider status…</p>
       ) : result.isError ? (
@@ -1870,8 +2046,12 @@ function IntegrationPage() {
               <Boxes size={22} />
             </div>
             <div>
+              <small>{i.group} · OPTIONAL</small>
               <h2>{i.name}</h2>
               <p>{i.permissions}</p>
+              {i.implementation === "DEFERRED" && (
+                <p>Adapter deferred in this release.</p>
+              )}
               <small>
                 Live verification: {i.live_verification.replaceAll("_", " ")} ·
                 No sync recorded
@@ -2116,12 +2296,19 @@ function Inspector({
 }
 
 function ImportDialog({
+  repositories,
+  initialTarget,
+  onRefresh,
   onClose,
   onDone,
 }: {
   onClose: () => void;
-  onDone: () => void;
+  onDone: (repository: string) => void;
+  repositories: Repository[];
+  initialTarget: string;
+  onRefresh: () => void;
 }) {
+  const [target, setTarget] = useState(initialTarget);
   const [name, setName] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState("");
@@ -2132,14 +2319,17 @@ function ImportDialog({
     setBusy(true);
     setError("");
     try {
-      await api(
-        "/archive/import?name=" + encodeURIComponent(name),
+      const result = await api<{ repository_id: string }>(
+        target === "NEW"
+          ? "/archive/import?name=" + encodeURIComponent(name)
+          : "/repositories/" + encodeURIComponent(target) + "/archive/analyze",
         undefined,
         file,
       );
-      onDone();
+      onDone(result.repository_id);
     } catch (e) {
       setError((e as Error).message);
+      onRefresh();
     } finally {
       setBusy(false);
     }
@@ -2152,16 +2342,35 @@ function ImportDialog({
           untrusted data and stores redacted evidence.
         </p>
         <label>
-          Repository name
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-            maxLength={120}
-            pattern="[\w .-]+"
-            placeholder="checkout-api"
-          />
+          Destination
+          <select
+            aria-label="Import destination"
+            value={target}
+            onChange={(e) => setTarget(e.target.value)}
+          >
+            <option value="NEW">New repository</option>
+            {repositories
+              .filter((r) => r.provider !== "DEMO")
+              .map((r) => (
+                <option key={r.id} value={r.id}>
+                  {r.name} · new snapshot
+                </option>
+              ))}
+          </select>
         </label>
+        {target === "NEW" && (
+          <label>
+            Repository name
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              maxLength={120}
+              pattern="[\w .-]+"
+              placeholder="checkout-api"
+            />
+          </label>
+        )}
         <label>
           Source archive
           <input
@@ -2186,7 +2395,9 @@ function ImportDialog({
           ) : (
             <Upload size={16} />
           )}{" "}
-          Analyze source snapshot
+          {target === "NEW"
+            ? "Analyze source snapshot"
+            : "Analyze and compare snapshot"}
         </button>
       </form>
     </Modal>

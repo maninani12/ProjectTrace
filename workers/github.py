@@ -2,10 +2,9 @@
 
 import os
 
-import httpx
 from sqlalchemy import select
 
-from backend.db import Record, Repository, Session, User
+from backend.db import Record, Repository, Session, User, now
 from backend.domain import persist_analysis
 from backend.security import require_repo
 from integrations.github.connector import GitHubApp
@@ -41,9 +40,9 @@ def github_delivery(self, job_id):
             }
             db.commit()
             return
-        actor = db.get(User, integration.data["owner_id"])
-        require_repo(db, actor, repo.id)
         try:
+            actor = db.get(User, integration.data["owner_id"])
+            require_repo(db, actor, repo.id)
             adapter = configured_app()
             job.data = {**job.data, "state": "FETCHING"}
             db.commit()
@@ -68,13 +67,20 @@ def github_delivery(self, job_id):
                 pr_title=job.data.get("pr_title"),
                 git_commit=job.data["head_sha"],
             )
-            job.data = {**job.data, "state": "COMPLETED", "snapshot_id": head.id, "check_published": False}
+            job.data = {
+                **job.data,
+                "state": head.data["status"],
+                "snapshot_id": head.id,
+                "check_published": False,
+                "warnings": head.data.get("warnings", []),
+                "finished_at": now(),
+            }
             db.commit()
             if integration.data.get("checks_enabled"):
                 check_id = adapter.publish_check(repo.name, job.data["head_sha"], head.data["gate"])
                 job.data = {**job.data, "check_published": True, "check_id": check_id}
                 db.commit()
-        except (ValueError, httpx.HTTPError) as error:
+        except Exception as error:
             db.rollback()
             job = db.get(Record, job_id)
             job.data = {
@@ -82,6 +88,7 @@ def github_delivery(self, job_id):
                 "state": "FAILED",
                 "reason": "Provider fetch, scope validation, or check publication failed.",
                 "error_type": type(error).__name__,
+                "finished_at": now(),
             }
             db.commit()
             raise

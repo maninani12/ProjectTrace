@@ -475,6 +475,24 @@ svg {
   align-items: center;
   gap: 20px;
 }
+.top-actions select {
+  width: 170px;
+  max-width: 22vw;
+  text-overflow: ellipsis;
+}
+@media (max-width: 700px) {
+  .top-actions select {
+    width: 100px;
+    max-width: 100px;
+    padding-inline: 5px;
+  }
+  .breadcrumb {
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
 .search-button {
   background: var(--bg);
   border: 1px solid var(--border);
