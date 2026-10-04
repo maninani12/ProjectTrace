@@ -138,5 +138,5 @@ class GitHubApp:
     def get_health(self):
         try:
             return self.test_connection()
-        except httpx.HTTPError, jwt.PyJWTError, ValueError:
+        except (httpx.HTTPError, jwt.PyJWTError, ValueError):
             return {"status": "ERROR", "reason": "Installation authentication or provider request failed."}

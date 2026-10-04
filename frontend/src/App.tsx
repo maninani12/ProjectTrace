@@ -2,6 +2,14 @@ import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from "react-router";
+import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
@@ -42,9 +50,20 @@ import {
   X,
 } from "lucide-react";
 import { api, setCSRF } from "./api";
-import { analysisLabel, scopeWorkspace, emptyMessage } from "./status";
+import {
+  analysisLabel,
+  scopeWorkspace,
+  emptyMessage,
+  isAnalysisActive,
+  repositoryState,
+  repositoryEngines,
+  overviewState,
+  dependencyState,
+} from "./status";
+import { routes, routeForPage, pageForRoute, legacyRoute } from "./routes";
 import type {
   Answer,
+  EngineResult,
   Gate,
   Identity,
   Item,
@@ -52,16 +71,6 @@ import type {
   Workspace,
 } from "./api";
 
-const routeSlug = (name: string) => name.toLowerCase().replaceAll(" ", "-");
-const pageFromHash = () => {
-  const value = decodeURIComponent(location.hash.slice(1));
-  return (
-    navigation
-      .flatMap((g) => g.items.map(([name]) => name))
-      .find((name) => routeSlug(name) === value || name === value) ||
-    (value.toLowerCase() === "integrations" ? "Connections" : "Overview")
-  );
-};
 const Graph = lazy(() => import("./Graph"));
 const navigation = [
   {
@@ -186,6 +195,17 @@ function date(value?: string) {
 function label(item: Item) {
   return item.text || item.title || item.path || item.name || item.id;
 }
+function isSecurityFinding(item: Item) {
+  return [
+    "SAST",
+    "SECRET",
+    "SECRETS",
+    "SCA",
+    "IAC",
+    "SECURITY",
+    "CLOUD",
+  ].includes(item.category || "");
+}
 const helper = createColumnHelper<Item>();
 
 function DataTable({
@@ -214,7 +234,12 @@ function DataTable({
         cell: ({ row }) => (
           <button className="row-link" onClick={() => onOpen(row.original)}>
             <span>{label(row.original)}</span>
-            <small>{row.original.path || row.original.scope?.repository}</small>
+            <small>
+              {row.original.path
+                ? `${row.original.path}${row.original.line ? ":" + row.original.line : ""}`
+                : row.original.scope?.repository}
+              {row.original.rule ? " · " + row.original.rule : ""}
+            </small>
           </button>
         ),
       }),
@@ -371,10 +396,47 @@ function Modal({
   );
 }
 
+function LegacyRedirect() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  useEffect(() => {
+    const target = legacyRoute(location.hash);
+    if (target) navigate(target, { replace: true });
+  }, [location.hash, navigate]);
+  return null;
+}
+
 export default function App() {
+  return (
+    <BrowserRouter>
+      <LegacyRedirect />
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <Navigate
+              to={legacyRoute(window.location.hash) || routes.Overview}
+              replace
+            />
+          }
+        />
+        <Route element={<WorkspaceApp />}>
+          {Object.values(routes).map((path) => (
+            <Route key={path} path={path} element={null} />
+          ))}
+        </Route>
+        <Route path="*" element={<Navigate to={routes.Overview} replace />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+function WorkspaceApp() {
   const client = useQueryClient();
+  const location = useLocation();
+  const routerNavigate = useNavigate();
   const [identity, setIdentity] = useState<Identity | null>(null);
-  const [page, setPage] = useState<string>(pageFromHash());
+  const page = pageForRoute(location.pathname);
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("ALL");
   const [repoFilter, setRepoFilter] = useState("ALL");
@@ -391,6 +453,12 @@ export default function App() {
     queryKey: ["workspace"],
     queryFn: () => api<Workspace>("/workspace"),
     enabled: !!identity,
+    refetchInterval: (query) =>
+      query.state.data?.repositories.some((repo) =>
+        isAnalysisActive(repositoryState(repo)),
+      )
+        ? 1500
+        : false,
   });
   const data = useMemo(
     () =>
@@ -420,17 +488,19 @@ export default function App() {
     return () => document.removeEventListener("keydown", fn);
   }, []);
   const navigate = (target: string) => {
-    setPage(target);
-    location.hash = routeSlug(target);
+    routerNavigate(routeForPage(target));
     setFilter("ALL");
     setQuery("");
     setMobile(false);
   };
   useEffect(() => {
-    const fn = () => setPage(pageFromHash());
-    window.addEventListener("hashchange", fn);
-    return () => window.removeEventListener("hashchange", fn);
-  }, []);
+    setFilter("ALL");
+    setQuery("");
+    setSelected(null);
+    setMobile(false);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, [location.pathname]);
   async function login(demo: boolean, event?: FormEvent<HTMLFormElement>) {
     event?.preventDefault();
     setBusy(true);
@@ -669,7 +739,13 @@ export default function App() {
                 </option>
               ))}
             </select>
-            <span className="analysis-state" role="status">
+            <span
+              className={
+                "analysis-state " +
+                (data?.analysis?.state || "UNKNOWN").toLowerCase()
+              }
+              role="status"
+            >
               <i />{" "}
               {workspace.isError
                 ? "Analysis data unavailable"
@@ -828,7 +904,7 @@ export default function App() {
                                   f.severity === s &&
                                   (page === "Findings" ||
                                     (page === "Security" &&
-                                      f.category !== "QUALITY") ||
+                                      isSecurityFinding(f)) ||
                                     (page === "Code Quality" &&
                                       f.category === "QUALITY") ||
                                     (page === "Infrastructure" &&
@@ -855,6 +931,8 @@ export default function App() {
                         "OPEN",
                         "CONFIRMED",
                         "RESOLVED",
+                        "FALSE_POSITIVE",
+                        "REVIEW_REQUIRED",
                       ]}
                     />
                     <DataTable
@@ -865,7 +943,7 @@ export default function App() {
                         data.finding.filter(
                           (f) =>
                             page === "Findings" ||
-                            (page === "Security" && f.category !== "QUALITY") ||
+                            (page === "Security" && isSecurityFinding(f)) ||
                             (page === "Code Quality" &&
                               f.category === "QUALITY") ||
                             (page === "Infrastructure" && f.category === "IAC"),
@@ -875,11 +953,14 @@ export default function App() {
                     />
                     {page === "Code Quality" && (
                       <div className="context-note">
-                        Current coverage: Python AST complexity and function
-                        length; JavaScript/Java conservative security patterns.
-                        No maintainability score is invented.
+                        Python uses native AST quality rules. JavaScript,
+                        TypeScript, and Java checks use conservative patterns
+                        where supported; full control-flow and data-flow
+                        analysis remain outside coverage. Open a result to
+                        inspect its rule and scope.
                       </div>
                     )}
+                    <AnalysisCoverage data={data} />
                   </>
                 ) : page === "Drift" ? (
                   <>
@@ -905,6 +986,7 @@ export default function App() {
                       items={filtered(data.drift)}
                       onOpen={open}
                     />
+                    <ImpactSummary data={data} onOpen={open} />
                   </>
                 ) : page === "Dependencies" ? (
                   <Dependencies data={data} onOpen={open} />
@@ -934,7 +1016,7 @@ export default function App() {
                   <IntegrationPage />
                 ) : page === "Cloud" ? (
                   <>
-                    <h2>IaC Evidence</h2>
+                    <h2>Native static cloud evidence</h2>
                     <p>
                       Native static configuration evidence from the selected
                       source snapshot.
@@ -943,8 +1025,8 @@ export default function App() {
                       mode="finding"
                       items={data.finding.filter((f) => f.category === "IAC")}
                       onOpen={open}
-                      emptyTitle="No IaC risks detected in supported rules."
-                      emptyDetail="Review Infrastructure and Evidence for configuration declarations."
+                      emptyTitle={tableEmpty[0]}
+                      emptyDetail={tableEmpty[1]}
                     />
                     <h2>Live Cloud Inventory</h2>
                     <Empty title="Live cloud inventory is not connected">
@@ -1005,7 +1087,7 @@ export default function App() {
             <Waypoints size={13} /> Evidence first. Every conclusion has a
             scope.
           </span>
-          <span>Static analysis · v1.1.0</span>
+          <span>Static analysis · v1.2.0</span>
         </footer>
       </div>
       {selected && data && (
@@ -1013,6 +1095,7 @@ export default function App() {
           item={selected}
           data={data}
           onClose={() => setSelected(null)}
+          role={identity.role}
           onOpen={open}
           onUpdated={(item) => {
             setSelected(item);
@@ -1169,7 +1252,7 @@ function Overview({
   const risk = data.finding.filter(
     (f) =>
       ["HIGH", "CRITICAL"].includes(f.severity || "") &&
-      f.review_status !== "RESOLVED",
+      !["RESOLVED", "FALSE_POSITIVE"].includes(f.review_status || ""),
   );
   const primary = contradicted[0];
   const demoStory =
@@ -1212,16 +1295,7 @@ function Overview({
         <section className="story-panel">
           <div className="section-head">
             <span className="eyebrow">ENGINEERING INTENT → REALITY</span>
-            <Badge
-              value={
-                data.analysis?.state === "PARTIAL" ||
-                data.analysis?.state === "FAILED"
-                  ? data.analysis.state
-                  : primary || risk.length
-                    ? "REVIEW_REQUIRED"
-                    : "PASS"
-              }
-            />
+            <Badge value={overviewState(data)} />
           </div>
           <h2>
             {primary
@@ -1293,7 +1367,13 @@ function Overview({
             className="coverage-bar"
             aria-label={`${verified} of ${data.claim.length} verified`}
           >
-            {["VERIFIED", "INFERRED", "UNVERIFIED", "CONTRADICTED"].map((s) => (
+            {[
+              "VERIFIED",
+              "INFERRED",
+              "UNVERIFIED",
+              "CONTRADICTED",
+              "STALE",
+            ].map((s) => (
               <span
                 key={s}
                 className={s.toLowerCase()}
@@ -1304,7 +1384,13 @@ function Overview({
             ))}
           </div>
           <div className="legend">
-            {["VERIFIED", "INFERRED", "UNVERIFIED", "CONTRADICTED"].map((s) => (
+            {[
+              "VERIFIED",
+              "INFERRED",
+              "UNVERIFIED",
+              "CONTRADICTED",
+              "STALE",
+            ].map((s) => (
               <div key={s}>
                 <span>
                   <i className={s.toLowerCase()} />
@@ -1351,7 +1437,15 @@ function Overview({
               </div>
               <span>{claims.length} claims</span>
               <Badge
-                value={findings.length ? "REVIEW_REQUIRED" : "NO_FINDINGS"}
+                value={
+                  !["COMPLETED", "COMPLETED_NO_FINDINGS"].includes(
+                    repositoryState(repo),
+                  )
+                    ? repositoryState(repo)
+                    : findings.length
+                      ? "REVIEW_REQUIRED"
+                      : "NO_FINDINGS_IN_SCOPE"
+                }
               />
               <ChevronRight size={16} />
             </button>
@@ -1364,7 +1458,14 @@ function Overview({
           All findings <ArrowRight size={14} />
         </button>
       </div>
-      <DataTable items={risk.slice(0, 5)} mode="finding" onOpen={onOpen} />
+      <DataTable
+        items={risk.slice(0, 5)}
+        mode="finding"
+        onOpen={onOpen}
+        emptyTitle="No high or critical findings in the current results."
+        emptyDetail="Review analyzer coverage and unchecked dependencies before drawing a security conclusion."
+      />
+      <AnalysisCoverage data={data} />
       <div className="context-note">
         <Shield size={16} />
         <span>
@@ -1401,93 +1502,309 @@ function RepositoryPage({
         )}
       </div>
       <div className="repo-grid">
-        {data.repositories
-          .filter((r) => r.snapshot)
-          .map((r) => (
-            <article className="repo-card" key={r.id}>
-              <div className="section-head">
-                <GitBranch size={21} />
-                <Badge value={r.provider} />
-              </div>
-              <h2>
-                {page === "Systems"
-                  ? r.system
-                  : page === "Components"
-                    ? r.component
-                    : r.name}
-              </h2>
-              <p>
-                {r.system} / {r.component}
+        {data.repositories.map((r) => (
+          <article className="repo-card" key={r.id}>
+            <div className="section-head">
+              <GitBranch size={21} />
+              <Badge value={r.provider} />
+            </div>
+            <h2>
+              {page === "Systems"
+                ? r.system
+                : page === "Components"
+                  ? r.component
+                  : r.name}
+            </h2>
+            <p>
+              {r.system} / {r.component}
+            </p>
+            <dl>
+              <dt>Owner</dt>
+              <dd>{r.owner}</dd>
+              <dt>Source files</dt>
+              <dd>
+                {r.snapshot ? r.snapshot.file_count : "Awaiting snapshot"}
+              </dd>
+              <dt>Snapshot</dt>
+              <dd>
+                <code>{r.snapshot?.commit.slice(0, 12) || "Not created"}</code>
+              </dd>
+              <dt>Branch</dt>
+              <dd>
+                <code>{r.snapshot?.branch || r.latest_job?.branch || "—"}</code>
+              </dd>
+              <dt>Analysis</dt>
+              <dd>
+                <Badge value={repositoryState(r)} />
+              </dd>
+              <dt>Stage</dt>
+              <dd>
+                {r.latest_job?.stage || r.snapshot?.status || "Not started"}
+              </dd>
+              <dt>Started</dt>
+              <dd>{date(r.latest_job?.started_at)}</dd>
+              <dt>Finished</dt>
+              <dd>{date(r.latest_job?.finished_at)}</dd>
+              <dt>Claims</dt>
+              <dd>
+                {r.snapshot?.claim_extraction
+                  ? `${r.snapshot.claim_extraction.implementation} implementation · ${r.snapshot.claim_extraction.documentation} documentation`
+                  : r.snapshot
+                    ? "Legacy snapshot"
+                    : "Not extracted"}
+              </dd>
+            </dl>
+            {r.latest_job?.warnings?.map((w, i) => (
+              <p className="context-note" key={i}>
+                {w.path}: {w.message}
               </p>
-              <dl>
-                <dt>Owner</dt>
-                <dd>{r.owner}</dd>
-                <dt>Source files</dt>
-                <dd>{r.snapshot?.file_count || 0}</dd>
-                <dt>Snapshot</dt>
-                <dd>
-                  <code>{r.snapshot?.commit.slice(0, 12)}</code>
-                </dd>
-                <dt>Branch</dt>
-                <dd>
-                  <code>{r.snapshot?.branch}</code>
-                </dd>
-                <dt>Analysis</dt>
-                <dd>
-                  <Badge
-                    value={
-                      r.latest_job?.state || r.snapshot?.status || "QUEUED"
-                    }
-                  />
-                </dd>
-                <dt>Stage</dt>
-                <dd>
-                  {r.latest_job?.stage || r.snapshot?.status || "Not started"}
-                </dd>
-                <dt>Started</dt>
-                <dd>{date(r.latest_job?.started_at)}</dd>
-                <dt>Finished</dt>
-                <dd>{date(r.latest_job?.finished_at)}</dd>
-                <dt>Claims</dt>
-                <dd>
-                  {r.snapshot?.claim_extraction
-                    ? `${r.snapshot.claim_extraction.implementation} implementation · ${r.snapshot.claim_extraction.documentation} documentation`
-                    : "Legacy snapshot"}
-                </dd>
-              </dl>
-              {r.latest_job?.warnings?.map((w, i) => (
-                <p className="context-note" key={i}>
-                  {w.path}: {w.message}
-                </p>
-              ))}
-              {r.latest_job?.errors?.map((error) => (
-                <p className="error" role="alert" key={error}>
-                  {error}
-                </p>
-              ))}
-              {!data.demo && (
-                <button className="secondary" onClick={() => onImport(r.id)}>
-                  Upload new snapshot
-                </button>
-              )}
-              <div className="repo-card-footer">
-                <span className="subtle">Content-addressed snapshot</span>
-                <button
-                  className="text-button"
-                  onClick={() => navigate("Evidence")}
-                >
-                  Explore <ArrowRight size={14} />
-                </button>
-              </div>
-            </article>
-          ))}
+            ))}
+            {r.latest_job?.errors?.map((error) => (
+              <p className="error" role="alert" key={error}>
+                {error}
+              </p>
+            ))}
+            {!data.demo && (
+              <button className="secondary" onClick={() => onImport(r.id)}>
+                Upload new snapshot
+              </button>
+            )}
+            <div className="repo-card-footer">
+              <span className="subtle">
+                {r.snapshot
+                  ? r.snapshot.commit_source === "GIT_SHA"
+                    ? "Provider Git revision"
+                    : "Content-addressed snapshot"
+                  : "Job output pending"}
+              </span>
+              <button
+                className="text-button"
+                onClick={() => navigate("Evidence")}
+              >
+                Explore <ArrowRight size={14} />
+              </button>
+            </div>
+          </article>
+        ))}
       </div>
       <div className="context-note">
         A local content digest is displayed as the snapshot identifier. It is
         not presented as a Git commit SHA. One repository can serve multiple
         components in the future mapping model.
       </div>
+      {page === "Repositories" && <AnalysisCoverage data={data} />}
     </>
+  );
+}
+
+export function AnalysisCoverage({ data }: { data: Workspace }) {
+  return (
+    <section
+      className="analysis-coverage"
+      aria-label="Native analyzer coverage"
+    >
+      <div className="section-head section-space">
+        <h2>Native analyzer coverage</h2>
+        <span>Reported by the analysis job</span>
+      </div>
+      {data.repositories.map((repository) => {
+        const engines = repositoryEngines(repository);
+        return (
+          <details
+            key={repository.id}
+            open={
+              data.repositories.length === 1 ||
+              ["FAILED", "PARTIAL"].includes(repositoryState(repository))
+            }
+          >
+            <summary>
+              <strong>{repository.name}</strong>
+              <Badge value={repositoryState(repository)} />
+            </summary>
+            {engines && Object.keys(engines).length ? (
+              <div className="engine-list">
+                {Object.entries(engines).map(([name, engine]) => (
+                  <EngineCoverage key={name} name={name} engine={engine} />
+                ))}
+              </div>
+            ) : (
+              <p className="subtle">
+                No per-analyzer diagnostic was recorded for this job. Aggregate
+                completion does not establish coverage of every language or
+                rule.
+              </p>
+            )}
+          </details>
+        );
+      })}
+      <p className="subtle">
+        Completed means the supported checks ran. Skipped, unchecked, failed,
+        and unsupported areas remain outside that conclusion. Static checks do
+        not establish runtime safety.
+      </p>
+    </section>
+  );
+}
+
+function EngineCoverage({
+  name,
+  engine,
+}: {
+  name: string;
+  engine: EngineResult;
+}) {
+  const coverage = Array.isArray(engine.coverage)
+    ? engine.coverage.join(" · ")
+    : engine.coverage;
+  return (
+    <div className="engine-result">
+      <div>
+        <strong>{name.replaceAll("_", " ")}</strong>
+        <Badge value={engine.state} />
+      </div>
+      {engine.supported_files != null && (
+        <p className="subtle">
+          {engine.supported_files} supported files
+          {engine.findings != null ? ` · ${engine.findings} findings` : ""}
+          {engine.declarations != null
+            ? ` · ${engine.declarations} declarations`
+            : ""}
+          {engine.analyzer_version
+            ? ` · analyzer ${engine.analyzer_version}`
+            : ""}
+        </p>
+      )}
+      {engine.checked_declarations != null && (
+        <p className="subtle">
+          {engine.checked_declarations} declarations checked ·{" "}
+          {engine.failed_declarations || 0} failed ·{" "}
+          {engine.unknown_version_declarations || 0} unknown versions ·{" "}
+          {engine.unchecked_declarations || 0} unchecked ·{" "}
+          {engine.cache_hits || 0} cache hits
+        </p>
+      )}
+      {coverage && <p>{coverage}</p>}
+      {engine.limitations?.map((limitation, index) => (
+        <p className="subtle" key={index}>
+          {limitation}
+        </p>
+      ))}
+      {engine.warnings?.map((warning, index) => (
+        <p className="subtle" key={index}>
+          {typeof warning === "string"
+            ? warning
+            : `${warning.path ? warning.path + ": " : ""}${warning.message}`}
+        </p>
+      ))}
+      {engine.errors?.map((error, index) => (
+        <p className="error" role="alert" key={index}>
+          {error}
+        </p>
+      ))}
+    </div>
+  );
+}
+
+export function ImpactSummary({
+  data,
+  onOpen,
+}: {
+  data: Workspace;
+  onOpen: (item: Item) => void;
+}) {
+  const records = [...data.claim, ...data.finding, ...data.graph_node];
+  const compared = data.repositories.filter(
+    (repository) => repository.snapshot?.impact?.base_id,
+  );
+  if (!compared.length) return null;
+  return (
+    <section className="impact-summary" aria-label="Snapshot change impact">
+      <div className="section-head section-space">
+        <h2>Snapshot change impact</h2>
+        <span>Observed graph relationships</span>
+      </div>
+      {compared.map((repository) => {
+        const impact = repository.snapshot!.impact!;
+        const affected = records.filter((record) =>
+          impact.affected_claims.includes(record.id),
+        );
+        return (
+          <article key={repository.id}>
+            <div className="section-head">
+              <h3>{repository.name}</h3>
+              <code title={impact.base_id || ""}>
+                {impact.base_id?.slice(0, 8)} →{" "}
+                {repository.snapshot!.id.slice(0, 8)}
+              </code>
+            </div>
+            <div className="impact-counts">
+              <span>
+                <strong>{impact.changed_files.length}</strong> changed files
+              </span>
+              <span>
+                <strong>{impact.affected_claims.length}</strong> affected claims
+              </span>
+              <span>
+                <strong>{impact.affected_documentation?.length || 0}</strong>{" "}
+                documentation paths
+              </span>
+              <span>
+                <strong>{impact.affected_api?.length || 0}</strong> API nodes
+              </span>
+              <span>
+                <strong>{impact.affected_findings?.length || 0}</strong>{" "}
+                findings
+              </span>
+              <span>
+                <strong>{impact.affected_policies?.length || 0}</strong>{" "}
+                policies
+              </span>
+            </div>
+            {impact.verification && (
+              <p className="subtle">
+                {impact.verification.reverified} declared claims reverified ·{" "}
+                {impact.verification.reused} declared claims reused from
+                unchanged evidence
+              </p>
+            )}
+            <details>
+              <summary>Changed source paths</summary>
+              <div className="file-list">
+                {impact.changed_files.map((path) => (
+                  <div key={path}>
+                    <FileCode2 size={14} />
+                    <code>{path}</code>
+                  </div>
+                ))}
+              </div>
+            </details>
+            {affected.map((claim) => (
+              <button
+                className="answer-claim"
+                key={claim.id}
+                onClick={() => onOpen(claim)}
+              >
+                <span>{label(claim)}</span>
+                <Badge value={claim.status} />
+                <ArrowRight size={14} />
+              </button>
+            ))}
+            {!!impact.removed_claims?.length && (
+              <p className="subtle">
+                {impact.removed_claims.length} prior claim identities
+                disappeared from this snapshot; their evidence remains in
+                snapshot history.
+              </p>
+            )}
+          </article>
+        );
+      })}
+      <p className="subtle">
+        Impact follows stored evidence relationships. Runtime calls, deployment
+        reachability, and unsupported relationships are not inferred.
+        Implementation facts are refreshed from static syntax and configuration.
+      </p>
+    </section>
   );
 }
 
@@ -1498,11 +1815,99 @@ function Dependencies({
   data: Workspace;
   onOpen: (i: Item) => void;
 }) {
+  const client = useQueryClient();
+  const [advisoryBusy, setAdvisoryBusy] = useState(false);
+  const [advisoryError, setAdvisoryError] = useState("");
+  const [advisoryNotice, setAdvisoryNotice] = useState("");
+  const snapshot =
+    data.repositories.length === 1 ? data.repositories[0].snapshot : null;
+  useEffect(() => {
+    setAdvisoryError("");
+    setAdvisoryNotice("");
+  }, [snapshot?.id]);
+  async function checkAdvisories() {
+    if (!snapshot) return;
+    setAdvisoryBusy(true);
+    setAdvisoryError("");
+    setAdvisoryNotice("");
+    try {
+      const result = await api<{ job_id: string; state: string }>(
+        "/snapshots/" + snapshot.id + "/advisories",
+        {},
+      );
+      setAdvisoryNotice(
+        result.state === "QUEUED"
+          ? "Advisory check queued. Coverage will update as the job progresses."
+          : "Advisory job status: " + result.state.replaceAll("_", " "),
+      );
+      client.invalidateQueries({ queryKey: ["workspace"] });
+    } catch (error) {
+      setAdvisoryError((error as Error).message);
+    } finally {
+      setAdvisoryBusy(false);
+    }
+  }
   return (
     <>
       <div className="section-head">
         <h2>{data.dependency.length} dependency declarations</h2>
-        <span>Manifests and lockfiles · exact versions and constraints</span>
+        <button
+          className="secondary"
+          disabled={
+            advisoryBusy || !snapshot || !data.capabilities?.advisories_enabled
+          }
+          onClick={checkAdvisories}
+        >
+          {advisoryBusy ? (
+            <LoaderCircle className="spin" size={14} />
+          ) : (
+            <Shield size={14} />
+          )}{" "}
+          Check advisories
+        </button>
+      </div>
+      {!snapshot ? (
+        <p className="subtle">
+          Select a repository with an analyzed snapshot to check advisories.
+        </p>
+      ) : !data.capabilities?.advisories_enabled ? (
+        <p className="subtle">
+          Live advisory lookup is not configured for this workspace. Cached
+          advisories and unchecked coverage remain explicit.
+        </p>
+      ) : null}
+      {advisoryError && (
+        <p className="error" role="alert">
+          {advisoryError}
+        </p>
+      )}
+      {advisoryNotice && (
+        <p className="context-note" role="status">
+          {advisoryNotice}
+        </p>
+      )}
+      <div
+        className="coverage-counts"
+        aria-label="Dependency advisory coverage"
+      >
+        {[
+          "VULNERABLE",
+          "CHECKED_NO_KNOWN_ADVISORY",
+          "NOT_CHECKED",
+          "CHECK_FAILED",
+          "UNKNOWN_VERSION",
+        ].map((state) => (
+          <span key={state}>
+            <strong>
+              {
+                data.dependency.filter(
+                  (dependency) => dependencyState(dependency) === state,
+                ).length
+              }
+            </strong>{" "}
+            {state.replaceAll("_", " ").toLowerCase()}
+          </span>
+        ))}
       </div>
       <div className="table-scroll">
         <table>
@@ -1513,6 +1918,7 @@ function Dependencies({
               <th>Ecosystem</th>
               <th>Advisory coverage</th>
               <th>Known advisories</th>
+              <th>Manifest / license</th>
               <th>Repository</th>
             </tr>
           </thead>
@@ -1534,12 +1940,31 @@ function Dependencies({
                 </td>
                 <td>
                   <code>{d.version}</code>
+                  {d.version_kind && (
+                    <small className="subtle">
+                      {" "}
+                      {d.version_kind.replaceAll("_", " ").toLowerCase()}
+                    </small>
+                  )}
                 </td>
                 <td>{d.ecosystem}</td>
                 <td>
-                  <Badge value={d.vulnerability_status} />
+                  <Badge value={dependencyState(d)} />
                 </td>
-                <td>{d.vulnerabilities?.length || "—"}</td>
+                <td>
+                  {["VULNERABLE", "CHECKED_NO_KNOWN_ADVISORY"].includes(
+                    dependencyState(d),
+                  )
+                    ? d.vulnerabilities?.length || 0
+                    : "—"}
+                </td>
+                <td>
+                  <code>{d.path}</code>
+                  <small className="subtle">
+                    {" "}
+                    {d.license || "License unknown"}
+                  </small>
+                </td>
                 <td>{d.scope?.repository}</td>
               </tr>
             ))}
@@ -1551,18 +1976,20 @@ function Dependencies({
         <span>CycloneDX 1.5</span>
       </div>
       <div className="export-list">
-        {data.repositories.map((r) => (
-          <a
-            className="secondary"
-            key={r.id}
-            href={"/api/sbom/" + r.snapshot.id}
-            target="_blank"
-            rel="noreferrer"
-          >
-            <ArrowDownToLine size={15} />
-            {r.name}
-          </a>
-        ))}
+        {data.repositories
+          .filter((r) => r.snapshot)
+          .map((r) => (
+            <a
+              className="secondary"
+              key={r.id}
+              href={"/api/sbom/" + r.snapshot!.id}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <ArrowDownToLine size={15} />
+              {r.name}
+            </a>
+          ))}
       </div>
       <div className="context-note">
         Cached OSV advisories are attached only to an exact known package
@@ -1570,6 +1997,7 @@ function Dependencies({
         vulnerability status is unknown. SBOM dependency relationships are
         limited to the parsed manifest; licenses are shown only when present.
       </div>
+      <AnalysisCoverage data={data} />
     </>
   );
 }
@@ -2046,7 +2474,10 @@ function IntegrationPage() {
               <Boxes size={22} />
             </div>
             <div>
-              <small>{i.group} · OPTIONAL</small>
+              <small>
+                {i.group}
+                {i.optional ? " · OPTIONAL" : " · SOURCE CONNECTIVITY"}
+              </small>
               <h2>{i.name}</h2>
               <p>{i.permissions}</p>
               {i.implementation === "DEFERRED" && (
@@ -2071,25 +2502,46 @@ function Inspector({
   onClose,
   onOpen,
   onUpdated,
+  role,
 }: {
   item: Item;
   data: Workspace;
   onClose: () => void;
   onOpen: (i: Item) => void;
   onUpdated: (i: Item) => void;
+  role: string;
 }) {
   const [action, setAction] = useState("CONFIRM");
   const [reason, setReason] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [owner, setOwner] = useState(item.owner || "");
+  const [expiresDays, setExpiresDays] = useState(7);
   const [tab, setTab] = useState("Evidence");
+  useEffect(() => {
+    setOwner(item.owner || "");
+    setReason("");
+    setAction("CONFIRM");
+    setTab("Evidence");
+  }, [item.id]);
+  const linkedEvidence = new Set(item.evidence_ids || []);
+  data.edge.forEach((edge) => {
+    if (edge.source === item.id) linkedEvidence.add(edge.target);
+    if (edge.target === item.id) linkedEvidence.add(edge.source);
+  });
   const evidence =
     item.kind === "evidence"
       ? [item]
-      : data.evidence.filter((e) => item.evidence_ids?.includes(e.id));
-  const canReview = ["claim", "finding", "drift", "pr"].includes(
-    item.kind || "",
-  );
+      : data.evidence.filter((e) => linkedEvidence.has(e.id));
+  const canReview =
+    [
+      "ORG_OWNER",
+      "ADMIN",
+      "ENGINEER",
+      "SECURITY_REVIEWER",
+      "REVIEWER",
+    ].includes(role) &&
+    ["claim", "finding", "drift", "pr"].includes(item.kind || "");
   async function review(e: FormEvent) {
     e.preventDefault();
     setBusy(true);
@@ -2099,6 +2551,10 @@ function Inspector({
         await api<Item>("/record/" + item.id + "/review", {
           action,
           reason,
+          ...(action === "ASSIGN" ? { owner } : {}),
+          ...(["ACCEPT_RISK", "CREATE_EXCEPTION"].includes(action)
+            ? { expires_days: expiresDays }
+            : {}),
           expected_version: item.version,
         }),
       );
@@ -2132,7 +2588,9 @@ function Inspector({
         <p>
           {item.reason ||
             item.explanation ||
-            "Source evidence retained from this snapshot."}
+            (item.kind === "graph_node"
+              ? "Graph node derived from recorded relationships in this snapshot."
+              : "Source evidence retained from this snapshot.")}
         </p>
       </div>
       <div className="inspector-scope">
@@ -2143,6 +2601,113 @@ function Inspector({
         <span>Owner: {item.owner || "Source artifact"}</span>
         <span>Analyzed {date(item.scope?.analysis_at)}</span>
       </div>
+      <dl className="inspector-metadata">
+        <dt>Snapshot</dt>
+        <dd>
+          <code>{item.scope?.snapshot_id || "Unavailable"}</code>
+        </dd>
+        {(item.rule_id || item.rule) && (
+          <>
+            <dt>Rule / version</dt>
+            <dd>
+              <code>{item.rule_id || item.rule}</code> ·{" "}
+              {item.rule_version || item.scope?.rule_version || "Not recorded"}
+            </dd>
+          </>
+        )}
+        {item.language && (
+          <>
+            <dt>Language</dt>
+            <dd>{item.language}</dd>
+          </>
+        )}
+        {item.path && (
+          <>
+            <dt>Source location</dt>
+            <dd>
+              <code>
+                {item.path}
+                {item.line
+                  ? `:${item.line}${(item.end_line || item.line_end) && (item.end_line || item.line_end) !== item.line ? "–" + (item.end_line || item.line_end) : ""}`
+                  : ""}
+              </code>
+            </dd>
+          </>
+        )}
+        {(item.analyzer_version || item.scope?.analyzer_version) && (
+          <>
+            <dt>Analyzer</dt>
+            <dd>{item.analyzer_version || item.scope?.analyzer_version}</dd>
+          </>
+        )}
+        {item.origin && (
+          <>
+            <dt>Claim origin</dt>
+            <dd>{item.origin.replaceAll("_", " ")}</dd>
+          </>
+        )}
+        {item.identity_id && (
+          <>
+            <dt>Claim identity / version</dt>
+            <dd>
+              <code>{item.identity_id}</code> · {item.claim_version || 1}
+            </dd>
+          </>
+        )}
+        {item.provider && (
+          <>
+            <dt>Evidence provider</dt>
+            <dd>{item.provider}</dd>
+          </>
+        )}
+        {item.provenance && (
+          <>
+            <dt>Graph provenance</dt>
+            <dd>
+              <Badge value={item.provenance} />
+            </dd>
+          </>
+        )}
+        {(item.secret_context || item.credential_context) && (
+          <>
+            <dt>Credential context</dt>
+            <dd>
+              <Badge value={item.secret_context || item.credential_context} />
+              <span className="subtle">
+                {" "}
+                Masked pattern; validity and runtime use are unverified.
+              </span>
+            </dd>
+          </>
+        )}
+        {item.kind === "dependency" && (
+          <>
+            <dt>Advisory coverage</dt>
+            <dd>
+              <Badge value={dependencyState(item)} />
+            </dd>
+            <dt>Declared version</dt>
+            <dd>
+              {item.version} · {item.version_kind || "Unknown version kind"}
+            </dd>
+            <dt>License</dt>
+            <dd>{item.license || "Unknown"}</dd>
+            <dt>Advisory provider / time</dt>
+            <dd>
+              {item.advisory_provider || "Not recorded"} ·{" "}
+              {date(item.advisory_checked_at)}
+            </dd>
+          </>
+        )}
+        {item.fingerprint && (
+          <>
+            <dt>Finding fingerprint</dt>
+            <dd>
+              <code>{item.fingerprint}</code>
+            </dd>
+          </>
+        )}
+      </dl>
       <div className="tabs">
         {["Evidence", "History", ...(canReview ? ["Review"] : [])].map((t) => (
           <button
@@ -2256,14 +2821,55 @@ function Inspector({
                 {[
                   "CONFIRM",
                   "FALSE_POSITIVE",
+                  "ASSIGN",
                   "REQUEST_MORE_EVIDENCE",
                   "RESOLVE",
                   "CREATE_EXCEPTION",
-                ].map((a) => (
-                  <option key={a}>{a}</option>
-                ))}
+                  "ACCEPT_RISK",
+                ]
+                  .filter(
+                    (value) =>
+                      !["ACCEPT_RISK", "CREATE_EXCEPTION"].includes(value) ||
+                      ["ADMIN", "ORG_OWNER", "SECURITY_REVIEWER"].includes(
+                        role,
+                      ),
+                  )
+                  .map((a) => (
+                    <option key={a}>{a}</option>
+                  ))}
               </select>
             </label>
+            {action === "ASSIGN" && (
+              <label>
+                Owner
+                <input
+                  value={owner}
+                  onChange={(event) => setOwner(event.target.value)}
+                  required
+                  maxLength={120}
+                  placeholder="Team or responsible engineer"
+                />
+              </label>
+            )}
+            {["ACCEPT_RISK", "CREATE_EXCEPTION"].includes(action) && (
+              <label>
+                Exception expiry in days
+                <input
+                  type="number"
+                  value={expiresDays}
+                  onChange={(event) =>
+                    setExpiresDays(Number(event.target.value))
+                  }
+                  required
+                  min={1}
+                  max={90}
+                />
+                <small className="subtle">
+                  The exception is scoped to this result and stops affecting
+                  policy after expiry.
+                </small>
+              </label>
+            )}
             <label>
               Reason
               <textarea
@@ -2319,7 +2925,7 @@ function ImportDialog({
     setBusy(true);
     setError("");
     try {
-      const result = await api<{ repository_id: string }>(
+      const result = await api<{ repository_id: string; state?: string }>(
         target === "NEW"
           ? "/archive/import?name=" + encodeURIComponent(name)
           : "/repositories/" + encodeURIComponent(target) + "/archive/analyze",

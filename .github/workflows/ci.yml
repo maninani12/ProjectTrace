@@ -12,8 +12,10 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with: {node-version: '24', cache: npm, cache-dependency-path: frontend/package-lock.json}
       - run: pip install -r requirements.lock
+      - run: python -m compileall -q backend analyzers integrations workers scripts tests
       - run: ruff check backend analyzers integrations workers tests scripts
       - run: pytest -q
+      - run: python -m scripts.benchmark_analyzers --samples 12 --output /tmp/native-benchmarks.json
       - run: mkdir -p data && alembic upgrade head && alembic downgrade base && alembic upgrade head && python -m backend.seed
       - run: pip-audit -r requirements.lock
       - run: npm ci && npm run build && npm test && npm audit

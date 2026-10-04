@@ -75,6 +75,33 @@ Use a dedicated temporary directory for pytest; pytest manages that directory. B
 
 Native implementation claims populate repositories whose README uses other wording. ZIP jobs persist real completion/partial/failure states and sanitized diagnostics. The global repository selector scopes results; Upload new snapshot compares versions; initial contradictions are consistency findings. Connections lists optional enrichment separately. See docs/CURRENT_STATE_AUDIT.md and docs/REPAIR_REPORT.md for evidence and limits.
 
+## Current version 1.2
+
+The supplied updated ZIP matched all 104 working source files before edits. Seven multi-exception handlers now use portable tuple syntax. Python 3.14 accepts the old syntax, but Python 3.11 does not; the formatter targets 3.11 syntax while the installed runtime/dependencies remain Python 3.14.
+
+Version 1.2 adds broader deterministic atomic claims, verifier-specific cache reuse, stable claim/finding identities, reverse evidence-graph impact including deleted files, rule-only analysis changes separated from software drift, independent analyzer diagnostics, additional conservative Python security/quality checks, safe lockfile inventory subsets, deduplicated SBOM/SCA findings and canonical browser routes. Northstar remains explicitly labeled demo data; real repositories and prior history remain separate.
+
+Local imports default to bounded synchronous execution. `JOB_MODE=celery` returns queued jobs immediately and sends only job IDs through Redis; worker source input is encrypted in the database, expires after 72 hours, and is removed on completion/cancellation. PostgreSQL serializes per-tenant admission; production middleware requires distributed Redis limits. Worker/Redis/PostgreSQL deployment has **not been executed on this Windows host**. See [the fresh audit](docs/CURRENT_IMPLEMENTATION_AUDIT_V2.md) and [the version 1.2 delivery report](docs/DELIVERY_REPORT_V2.md) for actual validation and deferred capabilities.
+
+### Queued imports and optional advisories
+
+Generate a Fernet key and keep it outside source control:
+
+```powershell
+.\.venv\Scripts\python.exe -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+```
+
+Set the same `DATABASE_URL`, `REDIS_URL`, `ANALYSIS_INPUT_KEY`, and `JOB_MODE=celery` in API and worker environments. Enable `OSV_ENABLED=1` to check exact package versions asynchronously. Only package ecosystem/name/version go to the fixed OSV endpoint; repository source stays local. Select an analyzed repository and use **Dependencies → Check advisories**. Constraints stay `UNKNOWN_VERSION`; unchecked and failed queries remain explicit. OSV results are cached per tenant for 24 hours with provider timestamps; each job has a 32-query/75-second network budget. Repeated jobs can extend coverage.
+
+Run the worker and expiry scheduler in separate terminals:
+
+```powershell
+.\.venv\Scripts\python.exe -m celery -A workers.tasks worker --pool=solo --loglevel=INFO
+.\.venv\Scripts\python.exe -m celery -A workers.tasks beat --loglevel=INFO --schedule=data/celerybeat-schedule
+```
+
+`--pool=solo` is a local Windows option, not a validated production pool. Failed broker dispatch leaves a retained `PENDING_RETRY` job. Authenticated retry/cancel APIs append audit events; retries are bounded to two. Expired worker leases can be retried while input is retained. Production requires PostgreSQL, Redis, Celery, explicit CORS origins and an input-encryption key; live deployment/recovery/load validation remains required.
+
 ## What works
 
 - Snapshot-scoped deterministic claim extraction and verification; VERIFIED / INFERRED / UNVERIFIED / CONTRADICTED, with STALE history during reverification.

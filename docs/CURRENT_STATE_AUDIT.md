@@ -1,5 +1,7 @@
 # Current-state audit — 2026-10-04, before repair
 
+Historical pre-repair observation. For the current updated source and fresh results, see [CURRENT_IMPLEMENTATION_AUDIT_V2.md](CURRENT_IMPLEMENTATION_AUDIT_V2.md).
+
 Inspected the 92-file delivered ProjectTrace ZIP after bounded, path-validated extraction into a scratch directory, then inspected the active Desktop/ProjectTrace checkout (which contains the later empty-workspace login fix). The newly supplied smart-waste-management-system-main.zip is the repository to analyze, not a replacement ProjectTrace application. Its 55 entries expand to 338,038 bytes; repository scripts were read as data and never executed. Existing users, repositories, reviews and audit events must be preserved.
 
 ## Reproduced root causes

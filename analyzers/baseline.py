@@ -20,6 +20,8 @@ def inventory(files):
             ecosystem=ecosystem,
             path=path,
             direct=direct,
+            dependency_kind="DIRECT" if direct is True else "TRANSITIVE" if direct is False else "UNKNOWN",
+            manifest=path,
             version_kind="EXACT" if exact else "CONSTRAINT",
             license=license,
         )
@@ -59,10 +61,17 @@ def inventory(files):
                     for package, value in manifest.get("dependencies", {}).items():
                         if value.get("version"):
                             put(path, "npm", package, value["version"], None)
-            elif name in {"pyproject.toml", "poetry.lock"}:
+            elif name in {"pyproject.toml", "poetry.lock", "uv.lock"}:
                 manifest = tomllib.loads(source)
                 for line in manifest.get("project", {}).get("dependencies", []):
                     requirement(path, line)
+                for group in manifest.get("project", {}).get("optional-dependencies", {}).values():
+                    for line in group:
+                        requirement(path, line)
+                for group in manifest.get("dependency-groups", {}).values():
+                    for line in group:
+                        if isinstance(line, str):
+                            requirement(path, line)
                 poetry = manifest.get("tool", {}).get("poetry", {})
                 for package, version in poetry.get("dependencies", {}).items():
                     if package != "python":
@@ -75,6 +84,40 @@ def inventory(files):
                         )
                 for package in manifest.get("package", []):
                     put(path, "PyPI", package["name"], package["version"], None)
+            elif name == "yarn.lock":
+                # Bounded classic/Berry stanza inventory; aliases/workspaces are not resolved.
+                packages, parsed = [], 0
+                for line in source.splitlines():
+                    if line and not line[0].isspace() and line.rstrip().endswith(":") and not line.startswith("#"):
+                        packages = []
+                        for selector in re.findall(r'"([^"]+)"|([^,\s]+)', line.rstrip(":")):
+                            value = selector[0] or selector[1]
+                            match = re.match(r"^(@[^/]+/[^@]+|[^@]+)@", value)
+                            if match:
+                                packages.append(match.group(1))
+                    match = re.match(r'\s+version(?:\s+|:\s*)["\']?([^"\'\s]+)', line)
+                    if match:
+                        for package in packages:
+                            put(path, "npm", package, match.group(1), None)
+                            parsed += 1
+                if not parsed and source.strip():
+                    raise ValueError("No supported Yarn package/version stanzas")
+            elif name == "pnpm-lock.yaml":
+                parsed, in_packages = 0, False
+                for line in source.splitlines():
+                    if line and not line[0].isspace() and not line.startswith("#"):
+                        in_packages = line.strip() in {"packages:", "snapshots:"}
+                    if not in_packages:
+                        continue
+                    key = re.match(
+                        r"^  ['\"]?/?(@[^/]+/[^@/]+|[^@/'\"\s]+)(?:@|/)([0-9][\w.+-]*)(?:\([^:]*\))?['\"]?:\s*(?:\{.*\})?$",
+                        line,
+                    )
+                    if key:
+                        put(path, "npm", key.group(1), key.group(2), None)
+                        parsed += 1
+                if not parsed and source.strip():
+                    raise ValueError("No supported pnpm resolved package keys")
             elif name == "pom.xml":
                 if "<!DOCTYPE" in source or "<!ENTITY" in source:
                     raise ValueError("XML entity declarations are not supported")
@@ -93,7 +136,7 @@ def inventory(files):
             elif name in {"build.gradle", "build.gradle.kts"}:
                 for group, artifact, version in re.findall(r"[\"']([\w.-]+):([\w.-]+):([^\"']+)[\"']", source):
                     put(path, "Maven", group + ":" + artifact, version, True)
-        except ValueError, TypeError, AttributeError, KeyError, ET.ParseError:
+        except (ValueError, TypeError, AttributeError, KeyError, ET.ParseError):
             warnings.append(
                 dict(
                     analyzer="DEPENDENCIES",
@@ -122,6 +165,8 @@ def context_signals(path, source):
                 continue
             for provider in re.findall(r'\bprovider\s+"(aws|azurerm|google)"', line):
                 signals.append(dict(type="infrastructure", value=provider, path=path, line=line_no))
+            if re.search(r'\b(?:provider|resource|terraform)\s*(?:"[^"\n]+"\s*)*\{', line) and path.endswith(".tf"):
+                signals.append(dict(type="infrastructure", value="Terraform", path=path, line=line_no))
             if re.match(r"\s*kind:\s*\w+", line):
                 signals.append(dict(type="infrastructure", value="Kubernetes", path=path, line=line_no))
     return signals
@@ -176,6 +221,7 @@ def implementation_claims(signals, dependencies):
                     severity="MEDIUM",
                     confidence="HIGH" if status == "VERIFIED" else "MEDIUM",
                     review_status="OPEN",
+                    assertion_family="source_" + kind,
                 )
             )
     for dependency in dependencies:
@@ -195,6 +241,7 @@ def implementation_claims(signals, dependencies):
                 severity="LOW",
                 confidence="MEDIUM",
                 review_status="OPEN",
+                assertion_family="manifest_" + dependency["ecosystem"] + "_" + dependency["version"],
             )
         )
     return claims

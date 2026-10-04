@@ -13,12 +13,13 @@ class OSVAdvisory(BaseModel):
     summary: str = ""
     affected: list[dict] = Field(default_factory=list)
     references: list[dict] = Field(default_factory=list)
+    database_specific: dict = Field(default_factory=dict)
 
 
 def query(ecosystem, name, version):
     if ecosystem not in {"npm", "PyPI", "Maven"} or len(name) > 200 or len(version) > 100:
         raise ValueError("Unsupported or invalid package identity.")
-    with httpx.Client(timeout=20, follow_redirects=False) as client:
+    with httpx.Client(timeout=8, follow_redirects=False) as client:
         response = client.post(
             "https://api.osv.dev/v1/query", json={"package": {"ecosystem": ecosystem, "name": name}, "version": version}
         )

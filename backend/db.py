@@ -92,6 +92,17 @@ class Audit(Base):
     created_at: Mapped[str] = mapped_column(String(50), default=now)
 
 
+class AnalysisInput(Base):
+    """Encrypted, expiring worker input; never returned by record APIs."""
+
+    __tablename__ = "analysis_inputs"
+    job_id: Mapped[str] = mapped_column(ForeignKey("records.id", ondelete="CASCADE"), primary_key=True)
+    organization_id: Mapped[str] = mapped_column(ForeignKey("organizations.id"), index=True)
+    repository_id: Mapped[str] = mapped_column(ForeignKey("repositories.id"), index=True)
+    ciphertext: Mapped[str] = mapped_column(Text)
+    expires_at: Mapped[str] = mapped_column(String(50))
+
+
 class Delivery(Base):
     __tablename__ = "webhook_deliveries"
     id: Mapped[str] = mapped_column(String(100), primary_key=True)

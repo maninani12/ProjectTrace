@@ -1,21 +1,23 @@
 import json
 import logging
+import math
 import os
 import re
 import time
 import zipfile
-from collections import defaultdict, deque
 from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, timezone
 from typing import Literal
 
 from fastapi import FastAPI, HTTPException, Query, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import or_, select, text
 from sqlalchemy.exc import IntegrityError
 
 from analyzers.engine import MAX_TOTAL_BYTES, read_zip, redact, sbom
+from backend import rate_limit
 from backend.db import Audit, Delivery, Grant, Organization, Record, Repository, Session, User
 from backend.domain import add, audit, policy_gate, uid
 from backend.jobs import execute_analysis
@@ -28,9 +30,11 @@ ORIGINS = os.getenv(
     "http://localhost:5181,http://127.0.0.1:5181,http://localhost:5173,http://127.0.0.1:5173,http://127.0.0.1:8011",
 ).split(",")
 if PRODUCTION and (
-    "*" in ORIGINS or os.getenv("DATABASE_URL", "").startswith("sqlite") or not os.getenv("DATABASE_URL")
+    "*" in ORIGINS or not os.getenv("DATABASE_URL", "").startswith(("postgresql://", "postgresql+psycopg://"))
 ):
     raise RuntimeError("Production requires PostgreSQL and explicit CORS origins.")
+if PRODUCTION and (os.getenv("JOB_MODE") != "celery" or not os.getenv("REDIS_URL") or not os.getenv("ANALYSIS_INPUT_KEY")):
+    raise RuntimeError("Production requires Celery, Redis and an encrypted analysis input key.")
 log = logging.getLogger("projecttrace")
 
 
@@ -44,7 +48,7 @@ async def lifespan(app):
 
 app = FastAPI(
     title="ProjectTrace",
-    version="1.1.0",
+    version="1.2.0",
     lifespan=lifespan,
     docs_url=None if PRODUCTION else "/api/docs",
     openapi_url=None if PRODUCTION else "/api/openapi.json",
@@ -56,7 +60,7 @@ app.add_middleware(
     allow_methods=["GET", "POST"],
     allow_headers=["Content-Type", "X-CSRF-Token"],
 )
-rate_windows = defaultdict(deque)
+rate_windows = rate_limit.windows
 
 
 @app.middleware("http")
@@ -78,17 +82,13 @@ async def security_boundary(request, call_next):
     if request.method == "POST" and request.url.path not in {"/api/github/webhook"}:
         if request.headers.get("origin") not in ORIGINS:
             return Response("Origin is not authorized.", status_code=403)
-    key = (
-        request.client.host if request.client else "unknown",
-        request.method == "POST" and request.url.path in {"/api/auth/login", "/api/auth/demo", "/api/auth/register"},
-    )
-    window = rate_windows[key]
-    t = time.monotonic()
-    while window and t - window[0] > 60:
-        window.popleft()
-    if len(window) >= (15 if key[1] else 240):
+    try:
+        permitted = rate_limit.allow(request.client.host if request.client else "unknown",
+                                     rate_limit.bucket(request.url.path, request.method), distributed=PRODUCTION)
+    except Exception:
+        return Response("Rate limit service unavailable.", status_code=503, headers={"Retry-After": "10"})
+    if not permitted:
         return Response("Rate limit reached. Try again in one minute.", status_code=429, headers={"Retry-After": "60"})
-    window.append(t)
     response = await call_next(request)
     response.headers.update(
         {
@@ -203,9 +203,20 @@ def current_snapshots(db, user):
     return result
 
 
+def queued_input(db, user, repo, content, request, *, source="FILES", **options):
+    if os.getenv("JOB_MODE") != "celery":
+        return None
+    from backend.queue import enqueue_analysis
+
+    job = enqueue_analysis(db, user, repo, content, source=source,
+                           request_id=request.state.request_id, **options)
+    return JSONResponse(status_code=202, content={"repository_id": repo.id, "snapshot_id": None,
+                                                 "job_id": job.id, "state": "QUEUED", "dispatch": job.data["dispatch"]})
+
+
 @app.get("/health")
 def health():
-    return {"status": "ok", "version": "1.1.0"}
+    return {"status": "ok", "version": "1.2.0"}
 
 
 @app.get("/ready")
@@ -349,11 +360,14 @@ def workspace(request: Request, repository_id: str | None = None):
         for record in records:
             if record.kind == "job":
                 latest_jobs.setdefault(record.repository_id, packed(record))
-        states = [
-            latest_jobs.get(r.id, {}).get("state")
-            or (snapshots[r.id].data["status"] if r.id in snapshots else "QUEUED")
-            for r in repos
-        ]
+        states = []
+        for r in repos:
+            job = latest_jobs.get(r.id, {})
+            snapshot_state = snapshots[r.id].data["status"] if r.id in snapshots else "READY"
+            state = job.get("state") or snapshot_state
+            if job.get("type") == "ADVISORIES" and state in {"COMPLETED", "COMPLETED_NO_FINDINGS"} and snapshot_state == "PARTIAL":
+                state = "PARTIAL"
+            states.append(state)
         state = (
             "NO_REPOSITORY"
             if not repos
@@ -366,13 +380,16 @@ def workspace(request: Request, repository_id: str | None = None):
                         "FAILED",
                         "PARTIAL",
                         "FETCHING",
+                        "VALIDATING",
                         "PARSING",
                         "ANALYZING",
                         "BUILDING_EVIDENCE",
                         "EXTRACTING_CLAIMS",
                         "VERIFYING",
                         "CORRELATING",
+                        "FINALIZING",
                         "QUEUED",
+                        "READY",
                         "CANCELLED",
                     ]
                     if s in states
@@ -382,6 +399,8 @@ def workspace(request: Request, repository_id: str | None = None):
         )
         return {
             "organization": db.get(Organization, user.organization_id).name,
+            "capabilities": {"job_mode": os.getenv("JOB_MODE", "sync"),
+                             "advisories_enabled": os.getenv("JOB_MODE") == "celery" and os.getenv("OSV_ENABLED") == "1"},
             "demo": APP_ENV == "demo" and user.organization_id == "northstar",
             "analysis": {
                 "state": state,
@@ -477,6 +496,9 @@ def import_repo(body: Import, request: Request):
         db.flush()
         db.add(Grant(user_id=user.id, repository_id=repo.id))
         try:
+            queued = queued_input(db, user, repo, body.files, request)
+            if queued:
+                return queued
             snapshot, job = execute_analysis(
                 db, user, repo, body.files, request_id=request.state.request_id, advisory_cache=local_advisories()
             )
@@ -498,6 +520,9 @@ def analyze_repo(repo_id: str, body: Analyze, request: Request):
             if base.kind != "snapshot" or base.repository_id != repo.id:
                 raise HTTPException(422, "Base must be a snapshot of the same repository.")
         try:
+            queued = queued_input(db, user, repo, body.files, request, branch=body.branch, base_id=body.base_id)
+            if queued:
+                return queued
             snapshot, _ = execute_analysis(
                 db,
                 user,
@@ -543,6 +568,9 @@ async def archive_import(
         blob = await request.body()
         db.add(Grant(user_id=user.id, repository_id=repo.id))
         try:
+            queued = queued_input(db, user, repo, blob, request, source="ZIP")
+            if queued:
+                return queued
             snapshot, job = execute_analysis(
                 db,
                 user,
@@ -575,6 +603,9 @@ async def archive_analyze(repo_id: str, request: Request, base_id: str | None = 
             base_id = base.id if base else None
         blob = await request.body()
         try:
+            queued = queued_input(db, user, repo, blob, request, source="ZIP", base_id=base_id)
+            if queued:
+                return queued
             snapshot, job = execute_analysis(
                 db,
                 user,
@@ -642,6 +673,7 @@ def review(record_id: str, body: Review, request: Request):
             "review_status": status,
             "owner": body.owner or record.data.get("owner"),
             "review_reason": redact(body.reason),
+            "review_identity_id": record.data.get("review_identity_id") or record.data.get("identity_id"),
         }
         details = {
             "target": record.id,
@@ -651,6 +683,7 @@ def review(record_id: str, body: Review, request: Request):
             "scope": record.data.get("scope"),
             "old_status": old,
             "new_status": status,
+            "identity_id": record.data.get("review_identity_id") or record.data.get("identity_id"),
         }
         add(db, user.organization_id, record.repository_id, "review", details)
         if body.action in {"ACCEPT_RISK", "CREATE_EXCEPTION"}:
@@ -850,7 +883,7 @@ def connect_github(body: ConnectGitHub, request: Request):
         try:
             adapter = configured_app()
             candidates = adapter.repositories()
-        except ValueError, httpx.HTTPError:
+        except (ValueError, httpx.HTTPError):
             raise HTTPException(503, "GitHub App credentials are missing or the installation connection test failed.")
         candidate = next((r for r in candidates if r["id"] == body.repository_id), None)
         if not candidate:
@@ -920,7 +953,7 @@ async def webhook(request: Request):
     try:
         payload = json.loads(raw)
         provider_id = str(payload.get("repository", {}).get("id", ""))
-    except ValueError, AttributeError:
+    except (ValueError, AttributeError):
         raise HTTPException(422, "Webhook payload is invalid.")
     with Session() as db:
         repo = db.scalar(
@@ -945,7 +978,7 @@ async def webhook(request: Request):
                 "pr_number": change.get("number"),
                 "pr_title": redact(str(change.get("title", "")))[:250],
             }
-        except AttributeError, TypeError:
+        except (AttributeError, TypeError):
             raise HTTPException(422, "Webhook change scope is invalid.")
         # Durable receipt is distinct from provider fetch/check publication.
         job = add(
@@ -989,17 +1022,70 @@ def control_job(job_id: str, action: Literal["retry", "cancel"], request: Reques
         if action == "cancel":
             if job.data.get("state") not in {"QUEUED", "FAILED", "PARTIAL"}:
                 raise HTTPException(409, "Only queued or stopped jobs can be cancelled.")
-            job.data = {**job.data, "state": "CANCELLED"}
+            from backend.db import AnalysisInput, now
+
+            retained = db.get(AnalysisInput, job.id)
+            if retained:
+                db.delete(retained)
+            job.data = {**job.data, "state": "CANCELLED", "stage": "CANCELLED", "finished_at": now()}
             audit(db, user, "JOB_CANCELLED", job.id, {}, job.repository_id)
             db.commit()
         else:
             if os.getenv("JOB_MODE") != "celery":
                 raise HTTPException(503, "The Redis/Celery worker must be configured before retrying provider jobs.")
-            if job.data.get("state") not in {"FAILED", "PARTIAL", "QUEUED"}:
+            lease = job.data.get("lease_expires_at")
+            stale = job.data.get("state") not in {"COMPLETED", "COMPLETED_NO_FINDINGS", "CANCELLED"} and lease and datetime.fromisoformat(lease) <= datetime.now(timezone.utc)
+            if job.data.get("state") not in {"FAILED", "PARTIAL", "QUEUED"} and not stale:
                 raise HTTPException(409, "This job cannot be retried in its current state.")
-            from workers.tasks import celery
+            from backend.db import AnalysisInput
+            from backend.queue import dispatch
 
-            job.data = {**job.data, "state": "QUEUED"}
+            if job.data.get("source") in {"ZIP", "FILES"} and not db.get(AnalysisInput, job.id):
+                raise HTTPException(409, "Retained input is unavailable; upload a fresh snapshot.")
+
+            if job.data.get("retry_count", 0) >= 2:
+                raise HTTPException(409, "Retry limit reached; upload a fresh snapshot or advisory job.")
+            job.data = {**job.data, "state": "QUEUED", "stage": "QUEUED", "finished_at": None,
+                        "retry_count": job.data.get("retry_count", 0) + 1}
+            audit(db, user, "JOB_RETRIED", job.id, {"retry_count": job.data["retry_count"]}, job.repository_id)
             db.commit()
-            celery.send_task("projecttrace.github_delivery", args=[job.id], task_id=job.id)
+            dispatch(db, job)
         return packed(job)
+
+
+@app.get("/api/analysis/metrics")
+def analysis_metrics(request: Request, repository_id: str | None = None):
+    with Session() as db:
+        user, _ = authenticate(db, request)
+        query = scope_query(db, user).where(Record.kind == "job").order_by(Record.created_at.desc()).limit(1000)
+        if repository_id:
+            require_repo(db, user, repository_id)
+            query = query.where(Record.repository_id == repository_id)
+        jobs = list(db.scalars(query))
+        samples = sorted(j.data["duration_ms"] for j in jobs if isinstance(j.data.get("duration_ms"), (int, float)))
+        waits = sorted(j.data["queue_wait_ms"] for j in jobs if isinstance(j.data.get("queue_wait_ms"), (int, float)))
+        def percentiles(values):
+            return {name: values[max(0, math.ceil(len(values)*p)-1)] if values else None
+                    for name, p in [("p50", .5), ("p95", .95), ("p99", .99)]}
+        return {"scope": "Authorized latest 1000 persisted jobs", "samples": len(samples),
+                "duration_ms": percentiles(samples), "queue_wait_ms": percentiles(waits),
+                "states": {state: sum(j.data.get("state") == state for j in jobs) for state in sorted({j.data.get("state", "UNKNOWN") for j in jobs})}}
+
+
+@app.post("/api/snapshots/{snapshot_id}/advisories")
+def check_advisories(snapshot_id: str, request: Request):
+    if os.getenv("JOB_MODE") != "celery" or os.getenv("OSV_ENABLED") != "1":
+        raise HTTPException(503, "Enable OSV_ENABLED=1 and the Celery worker for background advisory checks.")
+    with Session() as db:
+        user, _ = authenticate(db, request, True)
+        snapshot = authorized_record(db, user, snapshot_id)
+        if snapshot.kind != "snapshot":
+            raise HTTPException(422, "A snapshot is required.")
+        repo = require_repo(db, user, snapshot.repository_id)
+        from backend.advisories import enqueue_advisories
+
+        try:
+            job = enqueue_advisories(db, user, repo, snapshot)
+        except ValueError:
+            raise HTTPException(429, "Advisory queue quota reached.")
+        return JSONResponse(status_code=202, content={"job_id": job.id, "state": job.data["state"]})

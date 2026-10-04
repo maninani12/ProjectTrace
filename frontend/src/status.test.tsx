@@ -1,6 +1,15 @@
 import { describe, expect, it } from "vitest";
-import { analysisLabel, emptyMessage, scopeWorkspace } from "./status";
-import type { Workspace } from "./api";
+import {
+  analysisLabel,
+  dependencyState,
+  emptyMessage,
+  isAnalysisActive,
+  overviewState,
+  repositoryState,
+  repositoryEngines,
+  scopeWorkspace,
+} from "./status";
+import type { Repository, Workspace } from "./api";
 
 const empty = {
   repositories: [],
@@ -69,5 +78,63 @@ describe("truthful analysis and scoped empty states", () => {
     expect(scoped.claim.map((c) => c.id)).toEqual(["a"]);
     expect(scoped.edge).toEqual([]);
     expect(scoped.analysis.state).toBe("FAILED");
+  });
+  it("does not infer success from a missing snapshot or a running job", () => {
+    expect(repositoryState({ id: "ready", snapshot: null } as never)).toBe(
+      "READY",
+    );
+    for (const state of [
+      "READY",
+      "VALIDATING",
+      "FINALIZING",
+      "CANCELLED",
+      "FAILED",
+      "UNKNOWN",
+    ]) {
+      expect(overviewState({ ...empty, analysis: { state } })).toBe(state);
+      expect(analysisLabel(state)).not.toBe("Analysis completed");
+    }
+    expect(isAnalysisActive("FINALIZING")).toBe(true);
+    expect(isAnalysisActive("PARTIAL")).toBe(false);
+  });
+  it("distinguishes cached vulnerability findings from checked and unchecked declarations", () => {
+    expect(
+      dependencyState({
+        id: "one",
+        vulnerability_status: "CHECKED",
+        vulnerabilities: [
+          { id: "OSV-example", summary: "Known issue", url: "https://osv.dev" },
+        ],
+      }),
+    ).toBe("VULNERABLE");
+    expect(
+      dependencyState({
+        id: "two",
+        vulnerability_status: "CHECKED",
+        vulnerabilities: [],
+      }),
+    ).toBe("CHECKED_NO_KNOWN_ADVISORY");
+    expect(dependencyState({ id: "three" })).toBe("NOT_CHECKED");
+    expect(
+      dependencyState({ id: "four", vulnerability_status: "CHECK_FAILED" }),
+    ).toBe("CHECK_FAILED");
+  });
+  it("keeps native coverage while an advisory-only job is pending", () => {
+    const repository = {
+      id: "one",
+      snapshot: {
+        status: "PARTIAL",
+        engines: { SAST: { state: "COMPLETED" }, OSV: { state: "COMPLETED" } },
+      },
+      latest_job: { id: "job", type: "ADVISORIES", state: "QUEUED" },
+    } as unknown as Repository;
+    expect(repositoryEngines(repository)?.SAST.state).toBe("COMPLETED");
+    expect(repositoryEngines(repository)?.OSV.state).toBe("QUEUED");
+    expect(
+      repositoryState({
+        ...repository,
+        latest_job: { id: "job", type: "ADVISORIES", state: "COMPLETED" },
+      } as never),
+    ).toBe("PARTIAL");
   });
 });

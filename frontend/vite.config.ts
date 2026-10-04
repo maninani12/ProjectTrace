@@ -3,11 +3,11 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   plugins: [react()],
   server: {
-    port: 5181,
+    port: Number(process.env.PROJECTTRACE_UI_PORT || 5181),
     strictPort: true,
     proxy: {
-      "/api": "http://127.0.0.1:8011",
-      "/health": "http://127.0.0.1:8011",
+      "/api": process.env.PROJECTTRACE_API_URL || "http://127.0.0.1:8011",
+      "/health": process.env.PROJECTTRACE_API_URL || "http://127.0.0.1:8011",
     },
   },
   test: {

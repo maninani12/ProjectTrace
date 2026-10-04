@@ -1,5 +1,7 @@
 # ProjectTrace repair and smart-waste analysis report
 
+Historical version1.1 report. Current version1.2 capabilities, reanalysis and fresh validation are in [DELIVERY_REPORT_V2.md](DELIVERY_REPORT_V2.md).
+
 Date: 2026-10-04. ProjectTrace was repaired in place at `C:\Users\sai krishna\OneDrive\Desktop\ProjectTrace`. The user's smart-waste ZIP was treated as untrusted source data. None of its setup scripts, application code, dependencies or tests were executed. The ProjectTrace source ZIP was safely extracted for inspection; working implementation and existing database data were retained. A SQLite backup preceded the additive migration.
 
 ## Your repository results

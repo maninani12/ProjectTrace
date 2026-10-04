@@ -40,6 +40,8 @@ services:
       DATABASE_URL: postgresql+psycopg://projecttrace:${POSTGRES_PASSWORD}@database/projecttrace
       REDIS_URL: redis://redis:6379/0
       JOB_MODE: celery
+      ANALYSIS_INPUT_KEY: ${ANALYSIS_INPUT_KEY:?Set a Fernet key shared by API and worker}
+      OSV_ENABLED: ${OSV_ENABLED:-0}
       CORS_ORIGINS: http://127.0.0.1:5181,http://localhost:5181
     depends_on:
       seed: {condition: service_completed_successfully}
@@ -53,9 +55,22 @@ services:
     environment:
       DATABASE_URL: postgresql+psycopg://projecttrace:${POSTGRES_PASSWORD}@database/projecttrace
       REDIS_URL: redis://redis:6379/0
+      ANALYSIS_INPUT_KEY: ${ANALYSIS_INPUT_KEY:?Set a Fernet key shared by API and worker}
+      OSV_ENABLED: ${OSV_ENABLED:-0}
     command: [celery, -A, workers.tasks, worker, --loglevel=INFO, --concurrency=2]
     depends_on:
       migrate: {condition: service_completed_successfully}
+      redis: {condition: service_healthy}
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+  scheduler:
+    build: {context: ., dockerfile: infrastructure/Dockerfile}
+    environment:
+      REDIS_URL: redis://redis:6379/0
+    command: [celery, -A, workers.tasks, beat, --loglevel=INFO, --schedule=/tmp/celerybeat-schedule]
+    depends_on:
       redis: {condition: service_healthy}
     read_only: true
     tmpfs: [/tmp]

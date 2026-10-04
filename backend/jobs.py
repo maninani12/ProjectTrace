@@ -3,20 +3,24 @@
 import json
 import logging
 import time
+from datetime import datetime, timedelta, timezone
 
 from backend.db import Record, now
 from backend.domain import add, audit, persist_analysis
 
 STATES = {
     "NO_REPOSITORY",
+    "READY",
     "QUEUED",
     "FETCHING",
+    "VALIDATING",
     "PARSING",
     "ANALYZING",
     "BUILDING_EVIDENCE",
     "EXTRACTING_CLAIMS",
     "VERIFYING",
     "CORRELATING",
+    "FINALIZING",
     "COMPLETED",
     "COMPLETED_NO_FINDINGS",
     "PARTIAL",
@@ -27,8 +31,8 @@ TERMINAL = {"COMPLETED", "COMPLETED_NO_FINDINGS", "PARTIAL", "FAILED", "CANCELLE
 log = logging.getLogger("projecttrace.pipeline")
 
 
-def execute_analysis(db, user, repo, files, *, request_id=None, **options):
-    job = add(
+def execute_analysis(db, user, repo, files, *, request_id=None, job=None, **options):
+    job = job or add(
         db,
         user.organization_id,
         repo.id,
@@ -50,11 +54,19 @@ def execute_analysis(db, user, repo, files, *, request_id=None, **options):
     db.commit()  # Repository + job survive a failed analysis; snapshot output remains atomic.
     job_id, organization_id, repository_id = job.id, user.organization_id, repo.id
     stages, started = [], time.perf_counter()
+    output_started = False
+    job.data = {**job.data, "started_at": now(), "lease_expires_at": (datetime.now(timezone.utc) + timedelta(seconds=125)).isoformat()}
 
     def stage(state):
+        nonlocal output_started
         elapsed = round((time.perf_counter() - started) * 1000, 2)
         stages.append({"stage": state, "at": now(), "elapsed_ms": elapsed})
         job.data = {**job.data, "state": state, "stage": state, "stages": stages[:]}
+        # Publish native stages durably without committing partial graph output.
+        if not output_started:
+            db.commit()
+        if state == "BUILDING_EVIDENCE":
+            output_started = True
         log.info(
             json.dumps(
                 {
@@ -71,11 +83,12 @@ def execute_analysis(db, user, repo, files, *, request_id=None, **options):
         )
 
     try:
-        stage("PARSING")
-        db.commit()
+        stage("VALIDATING")
         content = files() if callable(files) else files
         snapshot = persist_analysis(db, user, repo, content, progress=stage, **options)
         state = snapshot.data["status"]
+        output_started = True
+        stage("FINALIZING")
         stage(state)
         job.data = {
             **job.data,
@@ -87,6 +100,7 @@ def execute_analysis(db, user, repo, files, *, request_id=None, **options):
             "warnings": snapshot.data.get("warnings", []),
             "errors": [],
             "analyzer_results": snapshot.data.get("analyzer_results", {}),
+            "engines": snapshot.data.get("engines", {}),
             "claim_extraction": snapshot.data.get("claim_extraction", {}),
         }
         snapshot.data = {**snapshot.data, "job_id": job.id}
@@ -96,7 +110,7 @@ def execute_analysis(db, user, repo, files, *, request_id=None, **options):
         db.rollback()
         job = db.get(Record, job_id)
         job.data = {
-            **job.data,
+            **{k: v for k, v in job.data.items() if k != "files"},
             "state": "FAILED",
             "stage": stages[-1]["stage"] if stages else "PARSING",
             "stages": stages,

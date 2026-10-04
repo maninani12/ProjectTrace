@@ -1,5 +1,7 @@
 # ProjectTrace delivery report
 
+Historical initial delivery. See [DELIVERY_REPORT_V2.md](DELIVERY_REPORT_V2.md) for the current release; the results below do not validate newer source automatically.
+
 Date: 4 October 2026. Project folder: `C:\Users\sai krishna\OneDrive\Desktop\ProjectTrace`.
 
 **Status: working, tested local demo/static-analysis MVP. The complete industry master specification and production release gates remain incomplete.** The existing `ProjectTrace-AI` project was not modified. No commit, push, deployment, cloud resource creation or live check publication was performed.
