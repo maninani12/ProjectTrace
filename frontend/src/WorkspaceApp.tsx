@@ -78,6 +78,8 @@ import type {
 import NativeProfiles from "./NativeProfiles";
 
 const CodeQuality = lazy(() => import("./CodeQuality"));
+const EnterpriseTrust = lazy(() => import("./EnterpriseTrust"));
+const Infrastructure = lazy(() => import("./Infrastructure"));
 const Graph = lazy(() => import("./Graph"));
 const navigation = [
   {
@@ -124,6 +126,7 @@ const navigation = [
       ["Policies", ListChecks],
       ["Reviews", Check],
       ["Audit Trail", Activity],
+      ["Trust & Coverage", Shield],
     ],
   },
   {
@@ -447,10 +450,17 @@ function WorkspaceApp() {
   const [mobile, setMobile] = useState(false);
   const [error, setError] = useState("");
   const workspace = useQuery({
-    queryKey: ["workspace", page === "Code Quality" ? "quality" : "full"],
+    queryKey: [
+      "workspace",
+      ["Code Quality", "Infrastructure", "Trust & Coverage"].includes(page)
+        ? "quality"
+        : "full",
+    ],
     queryFn: () =>
       api<Workspace>(
-        page === "Code Quality" ? "/workspace?summary=1" : "/workspace",
+        ["Code Quality", "Infrastructure", "Trust & Coverage"].includes(page)
+          ? "/workspace?summary=1"
+          : "/workspace",
       ),
     enabled: !!identity,
     refetchInterval: (query) =>
@@ -844,6 +854,18 @@ function WorkspaceApp() {
                       onOpen={open}
                     />
                   </Suspense>
+                ) : page === "Infrastructure" ? (
+                  <Suspense fallback={<p>Loading Infrastructure…</p>}>
+                    <Infrastructure
+                      repository={repoFilter}
+                      role={identity.role}
+                      onOpen={open}
+                    />
+                  </Suspense>
+                ) : page === "Trust & Coverage" ? (
+                  <Suspense fallback={<p>Loading Trust &amp; Coverage…</p>}>
+                    <EnterpriseTrust role={identity.role} />
+                  </Suspense>
                 ) : [
                     "Findings",
                     "Security",
@@ -1046,6 +1068,9 @@ function WorkspaceApp() {
                   </>
                 ) : page === "Settings" ? (
                   <div className="settings-panel">
+                    <Suspense fallback={<p>Loading trust controls…</p>}>
+                      <EnterpriseTrust role={identity.role} compact />
+                    </Suspense>
                     <NativeProfiles
                       repository={repoFilter}
                       role={identity.role}
@@ -1087,7 +1112,7 @@ function WorkspaceApp() {
             <Waypoints size={13} /> Evidence first. Every conclusion has a
             scope.
           </span>
-          <span>Static analysis · v1.5.0</span>
+          <span>Static analysis · v1.6.0</span>
         </footer>
       </div>
       {selected && data && (
@@ -2760,6 +2785,20 @@ function Inspector({
     : item.kind === "evidence"
       ? [item]
       : data.evidence.filter((e) => linkedEvidence.has(e.id));
+  const linkedSource = useQuery({
+    queryKey: ["inspector-linked-evidence", item.id, item.evidence_ids],
+    queryFn: () =>
+      Promise.all(
+        (item.evidence_ids || [])
+          .slice(0, 5)
+          .map((id) => api<Item>("/record/" + id)),
+      ),
+    enabled:
+      item.category !== "QUALITY" &&
+      evidence.length === 0 &&
+      !!item.evidence_ids?.length,
+  });
+  const sourceEvidence = evidence.length ? evidence : linkedSource.data || [];
   const canReview =
     [
       "ORG_OWNER",
@@ -2997,8 +3036,8 @@ function Inspector({
       <div className="inspector-body">
         {tab === "Evidence" ? (
           <>
-            {evidence.length ? (
-              evidence.map((e) => (
+            {sourceEvidence.length ? (
+              sourceEvidence.map((e) => (
                 <section className="evidence-block" key={e.id}>
                   <div className="section-head">
                     <code>{e.path}</code>
@@ -3021,11 +3060,13 @@ function Inspector({
               ))
             ) : (
               <p>
-                {qualitySource.isLoading
+                {qualitySource.isLoading || linkedSource.isLoading
                   ? "Loading source evidence… "
                   : qualitySource.isError
                     ? qualitySource.error.message + " "
-                    : ""}
+                    : linkedSource.isError
+                      ? linkedSource.error.message + " "
+                      : ""}
                 No source artifact is attached to this result. Review its scope
                 and analyzer limitation.
               </p>

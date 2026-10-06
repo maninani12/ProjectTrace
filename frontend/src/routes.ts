@@ -25,6 +25,7 @@ export const routes = {
   Policies: "/policies",
   Reviews: "/reviews",
   "Audit Trail": "/audit",
+  "Trust & Coverage": "/trust/coverage",
   Connections: "/settings/connections",
   Settings: "/settings",
 } as const;

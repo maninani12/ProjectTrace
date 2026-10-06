@@ -165,6 +165,10 @@ test("real workspace ZIP import, claims, evidence, question and second-snapshot 
   await nav
     .getByRole("button", { name: "Infrastructure", exact: true })
     .click();
+  await page
+    .getByRole("navigation", { name: "Infrastructure views" })
+    .getByRole("button", { name: "Findings", exact: true })
+    .click();
   await expect(
     page.getByRole("button", { name: /Privileged container enabled/ }),
   ).toBeVisible();

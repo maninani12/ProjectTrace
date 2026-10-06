@@ -184,7 +184,7 @@ test("six responsive widths, dark theme, reduced motion and the complete Guide",
     page
       .getByRole("navigation", { name: "Guide topics", exact: true })
       .getByRole("link"),
-  ).toHaveCount(31);
+  ).toHaveCount(33);
   await page
     .getByRole("navigation", { name: "Interactive product map" })
     .getByRole("link", { name: /Claim Ledger/ })

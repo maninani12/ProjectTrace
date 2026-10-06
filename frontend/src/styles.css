@@ -2296,3 +2296,5 @@ tbody tr:hover {
 .quality-table td:first-child { min-width:11rem; }
 .quality-table .badge { white-space:nowrap; }
 .quality-table-wrap:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+.trust-capability-table { min-width:70rem; }
+.trust-capability-table td:nth-child(3), .trust-capability-table td:last-child { white-space:nowrap; }

@@ -42,6 +42,21 @@ export default function PublicDocument({ page }: { page: string }) {
             writes cloud resources; its live account validation remains
             unverified here.
           </p>
+          <h2>Tenant controls and audit integrity</h2>
+          <p>
+            Settings includes tenant authorization for package advisory
+            coordinates and GitHub check metadata. Source egress and external AI
+            remain disabled. Trust &amp; Coverage lists supported language
+            subsets and current gaps. New audit events are hash linked; signed
+            checkpoints require an operator-managed key and separate retention.
+            Legacy events are unlinked.
+          </p>
+          <p>
+            OIDC Authorization Code with PKCE supports explicit subject
+            membership when configured. Live provider validation, full OS
+            isolation, PostgreSQL RLS, immutable archival and enterprise scale
+            remain unverified.
+          </p>
           <h2>Validation is bounded</h2>
           <p>
             Regression, authorization and real queue/recovery tests support the
@@ -111,6 +126,14 @@ export default function PublicDocument({ page }: { page: string }) {
         </>
       ) : page === "changelog" ? (
         <>
+          <h2>1.6.0 · Enterprise trust foundations</h2>
+          <p>
+            Tenant metadata egress controls, capability registry, audit hash
+            chains and optional HMAC checkpoints, explicit OIDC membership with
+            PKCE, native infrastructure views, bounded IaC parser processes and
+            safer finding identity. Representative accuracy, live provider
+            integrations and large deployment scale remain unverified.
+          </p>
           <h2>1.5.0 · Native Code Intelligence</h2>
           <p>
             Separate reliability and maintainability observations, explainable

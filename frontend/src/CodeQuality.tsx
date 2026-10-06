@@ -37,6 +37,7 @@ type Configuration = {
     max_new_complexity: number;
     max_new_duplication_percent: number | null;
     min_changed_coverage: number | null;
+    min_analysis_coverage_percent: number | null;
   };
 };
 type Overview = {
@@ -1270,6 +1271,30 @@ function QualityProfiles({
                 }
               />
             </label>
+            <label>
+              Minimum parsed-file analysis coverage % (blank disables)
+              <input
+                type="number"
+                min={0}
+                max={100}
+                value={draft.gate.min_analysis_coverage_percent ?? ""}
+                onChange={(e) =>
+                  setDraft({
+                    ...draft,
+                    gate: {
+                      ...draft.gate,
+                      min_analysis_coverage_percent:
+                        e.target.value === "" ? null : Number(e.target.value),
+                    },
+                  })
+                }
+              />
+            </label>
+            <p>
+              Rule precision remains unmeasured. Exceeded rule thresholds
+              request review; imported test coverage and explicitly configured
+              parsed-file coverage use their measured evidence.
+            </p>
             <button type="submit">
               {busy ? "Saving…" : "Save quality profile"}
             </button>

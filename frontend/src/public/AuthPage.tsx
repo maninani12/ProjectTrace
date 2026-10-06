@@ -36,6 +36,19 @@ export default function AuthPage({
   const [params] = useSearchParams();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [oidcEnabled, setOIDCEnabled] = useState(false);
+  useEffect(() => {
+    if (register || autoDemo) return;
+    let active = true;
+    api<{ enabled: boolean }>("/auth/oidc/options")
+      .then((result) => {
+        if (active) setOIDCEnabled(result.enabled);
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, [register, autoDemo]);
   const autoStarted = useRef(false);
   const next = safeReturnTo(params.get("next"));
   async function submit(demo: boolean, event?: FormEvent<HTMLFormElement>) {
@@ -181,6 +194,11 @@ export default function AuthPage({
             )
           )}
           {!options.ready && <p role="status">Checking account options…</p>}
+          {oidcEnabled && !register && !autoDemo && (
+            <a className="secondary full" href="/api/auth/oidc/start">
+              Sign in with your organization
+            </a>
+          )}
           {options.error && (
             <p role="alert" className="error">
               {options.error}{" "}

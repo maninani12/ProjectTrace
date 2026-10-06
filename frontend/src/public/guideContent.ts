@@ -40,6 +40,32 @@ function topic(
 }
 export const guideTopics: GuideTopic[] = [
   topic(
+    "security-trust",
+    "Security, Trust & Buyer Readiness",
+    "Know which conclusions have evidence and which capabilities remain unverified.",
+    "Parser support and a passing scan do not prove complete coverage or production safety.",
+    "Captured source, versioned rule metadata, tenant policy and audit events.",
+    "Trust & Coverage shows language maturity, parser limits, egress settings and audit integrity.",
+    "An unsupported language is a visible coverage gap. Unmeasured rule precision requires review rather than default blocking.",
+    ["limitations", "data-flow", "code-quality"],
+    "Open Trust & Coverage, inspect the scope, then review evidence and coverage before accepting a result.",
+    "Three-million-line imports exceed current intake limits. Simultaneous PR capacity and live OIDC are unverified; GHES is unimplemented. Production restoration, full OS parser isolation and immutable archival remain incomplete.",
+    "Tenant policy denies external source egress and AI. Hash-linked audit events support tamper detection; an operator-keyed HMAC checkpoint must be retained separately. Legacy events remain unlinked. ORM tenant checks supplement repository authorization; PostgreSQL RLS is not activated.",
+  ),
+  topic(
+    "data-flow",
+    "Source, Metadata & AI Data Flow",
+    "Your source stays inside the ProjectTrace deployment; optional metadata transfers need tenant authorization.",
+    "Teams need to know what data a provider receives before enabling a connection.",
+    "Source ZIPs or authorized GitHub snapshots; optional package coordinates and check summaries.",
+    "Redacted evidence and encrypted retained worker input; AI remains disabled.",
+    "Enabling OSV permits ecosystem, package name and version. It does not send a source file. GitHub checks publish system policy names and result states without source excerpts.",
+    ["security-trust", "limitations", "repositories"],
+    "Organization administrators open Settings → Data & AI Egress to authorize metadata transfers. Changes are versioned and audited.",
+    "Operator controls and deployment network policy must also constrain outbound traffic. Customer-managed AI transport and source-sharing modes are not implemented.",
+    "Authorization Code OIDC uses PKCE/state/nonce, verified signing keys, issuer/audience/time checks and explicit subject membership. Endpoint hosts are operator allowlisted. Live identity-provider validation and complete DNS-rebinding enforcement require deployment testing.",
+  ),
+  topic(
     "start",
     "ProjectTrace in 60 Seconds",
     "ProjectTrace checks your software and its technical statements, shows what the evidence supports, and helps your team act on problems.",

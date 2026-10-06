@@ -130,7 +130,7 @@ try {
     path.join(root, "dist/public-build.json"),
     JSON.stringify(
       {
-        release: "1.4.0",
+        release: "1.6.0",
         pages: publicPages.length,
         routes: publicPages,
         staticContent: true,
