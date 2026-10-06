@@ -10,6 +10,9 @@ test("CEO and engineer evidence workflow", async ({ page }) => {
   await expect(
     page.getByRole("heading", { name: "Engineering, backed by evidence." }),
   ).toBeVisible();
+  await expect(
+    page.getByRole("region", { name: "Native analyzer coverage" }),
+  ).toBeVisible();
   await page.screenshot({
     path: path.join(proof, "overview.png"),
     fullPage: true,
@@ -39,7 +42,7 @@ test("CEO and engineer evidence workflow", async ({ page }) => {
   const nav = page.getByRole("navigation", { name: "Main navigation" });
   await nav.getByRole("button", { name: "Claim Ledger", exact: true }).click();
   await page.getByLabel("Status filter").selectOption("CONTRADICTED");
-  await expect(page.locator("tbody tr")).toHaveCount(1);
+  await expect(page.locator("tbody tr")).toHaveCount(2);
   await nav
     .getByRole("button", { name: "Ask Engineering", exact: true })
     .click();
@@ -69,13 +72,20 @@ test("CEO and engineer evidence workflow", async ({ page }) => {
     "Code Quality",
     "Security",
     "Dependencies",
+    "Secrets",
     "Infrastructure",
     "Cloud",
+    "Cloud Assets",
+    "Cloud Identities",
+    "Exposure",
+    "Risk Paths",
     "Drift",
     "Architecture",
+    "API Integrity",
     "Evidence",
     "Evidence Graph",
     "Policies",
+    "Reviews",
     "Audit Trail",
     "Connections",
     "Settings",
@@ -109,6 +119,9 @@ test("mobile review and honest unsupported investigation", async ({ page }) => {
   await page.getByRole("button", { name: "Close dialog", exact: true }).click();
   await expect(
     page.getByRole("heading", { name: "Engineering, backed by evidence." }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("region", { name: "Native analyzer coverage" }),
   ).toBeVisible();
   expect(
     await page.evaluate(

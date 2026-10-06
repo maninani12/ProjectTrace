@@ -15,3 +15,11 @@ pytest>=8,<10
 pytest-cov>=6,<8
 ruff>=0.11,<1
 pip-audit>=2.9,<3
+
+tree-sitter>=0.26,<0.27
+tree-sitter-javascript>=0.25,<0.26
+tree-sitter-typescript>=0.23,<0.24
+tree-sitter-java>=0.23,<0.24
+python-hcl2>=8.1,<9
+PyYAML>=6.0.3,<7
+boto3>=1.43,<2

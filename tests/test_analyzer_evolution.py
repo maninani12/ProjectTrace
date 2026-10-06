@@ -269,9 +269,9 @@ def test_parse_and_manifest_failures_have_truthful_independent_coverage():
     assert documentation(result)[0]["status"] == "UNVERIFIED"
 
 
-def test_unsupported_language_quality_is_disclosed_not_reported_clean():
+def test_java_quality_uses_a_versioned_syntax_parser():
     result = analyze({"app.java": "class Demo {}"})
-    assert result["engines"]["QUALITY"]["state"] == "SKIPPED_UNSUPPORTED"
+    assert result["engines"]["QUALITY"]["state"] == "COMPLETED"
     assert result["engines"]["SAST"]["limitations"]
 
 

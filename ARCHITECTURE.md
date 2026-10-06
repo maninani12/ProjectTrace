@@ -1,38 +1,31 @@
-# Architecture
+# ProjectTrace architecture 1.3.3
 
 ```mermaid
 flowchart LR
-  UI[React / TypeScript] --> API[FastAPI modular monolith]
-  API --> ACL[Tenant + repository grants]
-  ACL --> DB[(SQLAlchemy / PostgreSQL)]
-  API --> Import[Bounded ZIP / text intake]
-  Import --> Static[Static analyzers]
-  Static --> Snapshot[Snapshot + evidence nodes]
-  Snapshot --> Claim[Claim verification]
-  Claim --> Drift[History / drift / impact]
-  Snapshot --> Finding[Findings / dependencies]
-  Finding --> Gate[Explainable advisory gate]
-  Drift --> Gate
-  Gate --> Review[Human review / expiring exceptions]
-  Review --> Audit[Append-oriented audit]
-  GH[GitHub signed webhook] --> API
-  API --> Queue[Redis / Celery]
-  Queue --> Fetch[Allowlisted GitHub tree/blob fetch]
-  Fetch --> Static
+ UI[React / TypeScript] --> API[FastAPI]
+ API --> ACL[Tenant / repository authorization]
+ ACL --> DB[(PostgreSQL / SQLAlchemy)]
+ API --> Intake[Bounded ZIP / text intake]
+ Intake --> Queue[Encrypted retained input / job ID]
+ Queue --> Worker[Redis / Celery prefork]
+ Worker --> Native[Native syntax / quality / flow / dependencies / IaC]
+ Native --> Graph[Immutable snapshot / Evidence Graph]
+ Graph --> Claims[Claim Ledger / verification / history]
+ Claims --> Impact[Drift / reverse graph impact]
+ Graph --> Gate[Versioned profile / explainable gate]
+ Impact --> Gate
+ Gate --> Review[Human ownership / review / audit]
+ AWS[Authorized AWS read-only SDK] --> Graph
+ API --> Ask[Scoped full-text / deterministic / graph retrieval]
+ Ask --> DB
 ```
 
-## Implemented boundaries
+The modular monolith preserves relational organization/repository grants and JSON domain records. Migration 0005 adds NativeProfile and typed CloudAsset projections plus a PostgreSQL claim full-text GIN index. Profiles/asset projections share existing foreign keys and immutable snapshot evidence; complete normalized claim/graph schemas remain deferred.
 
-`backend/db.py` defines organization, user, repository, source grant, session, domain record, audit and delivery tables. Domain documents carry organization/repository foreign keys and kind/natural-key uniqueness. Claims/findings/evidence/edges/dependencies/snapshots/reviews/PRs/drift/jobs are versioned JSON documents within that relational scope. SQLAlchemy optimistic versions protect reviews.
+Caches require file fingerprints/analyzer version and same-repository authorization; profile filters apply after observation caching. Snapshots record profile/version. Rule-only analysis changes are separate from software drift. Source redaction precedes persistence. Imported applications and templates are never executed.
 
-`backend/domain.py` persists each analysis output transactionally. Source files are redacted before persistence; original content SHA-256 fingerprints enable snapshot identity and file reuse. Cache reuse requires identical file hash and analyzer version and is scoped to the authorized same-repository base snapshot. Deterministic verifier results are reused only when their full relevant input fingerprints match, including absence of evidence. Claims and findings keep stable scoped identities and snapshot version IDs; reviews carry only across unchanged evidence. Impact traverses stored reverse graph dependencies, including removed evidence. A rule-only upgrade with unchanged source creates analysis-change provenance rather than software drift.
+Queues retain encrypted, scoped inputs with 72-hour expiry; messages contain only job IDs. Workers commit a claimed stage/125-second lease before analysis, then commit graph/snapshot output atomically. Terminal jobs, including PARTIAL, are idempotent. Late acknowledgements, prefork limits, visibility timeout and a 60-second recovery scheduler bound duplicate/crash recovery. Retained-input recovery is capped at two attempts. Redis production admission fails closed; PostgreSQL admission/recovery use row locks.
 
-`analyzers/engine.py` has no subprocess, importlib, exec, eval, source installation or network authority. It parses source with Python AST and bounded lexical rules. Imports/declarations support INFERRED results. Missing implementation evidence stays UNVERIFIED. A session configuration opposing a JWT declaration creates a scoped contradiction with limitations.
+Real PostgreSQL 18.6, Redis 8.8.0 and a non-root Alpine Linux Celery 5.6.3 prefork worker were validated in a disposable QEMU VM, including natural lease recovery after a forced crash. This does not verify the supplied Docker images/Compose versions (PostgreSQL 17/Redis 7), production backup restore or sustained capacity. SQLite remains the explicit local adapter.
 
-`integrations/github` owns temporary GitHub installation tokens and allowlisted HTTP transport. `workers/github.py` joins base/head analyses and optional advisory checks. Provider responses are never interpreted as executable instructions. The current environment has no configured live installation.
-
-The local adapter uses SQLite and bounded synchronous imports by default. `JOB_MODE=celery` queues source imports and returns before analysis. Migration 0004 adds tenant/repository-scoped encrypted, expiring `AnalysisInput` rows. Queue messages contain job IDs. Worker completion/cancellation deletes retained input; Celery beat schedules expiry cleanup. Native stages commit before output construction; the evidence graph/snapshot output remains atomic. A tenant row lock serializes PostgreSQL admission quotas. Production middleware uses separate Redis atomic counters for login/import/analysis/Ask/webhook/provider/general admission and fails closed on Redis outage.
-
-`workers/advisories.py` optionally checks exact versions against OSV with fixed transport, tenant cache, bounded provider budgets and explicit coverage. Findings merge manifest observations and preserve original provider identity, evidence links and human review. Gates and policy graph nodes are refreshed from current records and active exceptions.
-
-Container PostgreSQL/Redis/Celery behavior is **unverified here because Docker, native PostgreSQL/Redis and installed WSL are unavailable**. Raw source object storage, normalized claim/graph tables, semantic hybrid/pgvector retrieval, multi-component discovery, weighted tenant scheduling, production metrics/tracing export and enterprise identity remain deferred. This is a tested local static-analysis product, not a production-ready platform claim.
+Native rules consume syntax primitives, never competitor finding services. Direct AWS reads are credential-gated; live-account verification is absent. OSV/GitHub remain optional authorized transports. Ask combines PostgreSQL full-text, deterministic evidence and stored graph neighborhoods; pgvector/embeddings are NOT_CONFIGURED. Enterprise identity, managed source object storage, full interprocedural analysis, multi-cloud fleets and runtime observations remain deferred. See [Final validation](FINAL_PRODUCT_VALIDATION.md).

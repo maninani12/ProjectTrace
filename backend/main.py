@@ -18,7 +18,7 @@ from sqlalchemy.exc import IntegrityError
 
 from analyzers.engine import MAX_TOTAL_BYTES, read_zip, redact, sbom
 from backend import rate_limit
-from backend.db import Audit, Delivery, Grant, Organization, Record, Repository, Session, User
+from backend.db import Audit, Delivery, Grant, Organization, Record, Repository, Session, User, now
 from backend.domain import add, audit, policy_gate, uid
 from backend.jobs import execute_analysis
 from backend.security import allowed_repositories, authenticate, create_session, passwords, require_repo
@@ -33,7 +33,9 @@ if PRODUCTION and (
     "*" in ORIGINS or not os.getenv("DATABASE_URL", "").startswith(("postgresql://", "postgresql+psycopg://"))
 ):
     raise RuntimeError("Production requires PostgreSQL and explicit CORS origins.")
-if PRODUCTION and (os.getenv("JOB_MODE") != "celery" or not os.getenv("REDIS_URL") or not os.getenv("ANALYSIS_INPUT_KEY")):
+if PRODUCTION and (
+    os.getenv("JOB_MODE") != "celery" or not os.getenv("REDIS_URL") or not os.getenv("ANALYSIS_INPUT_KEY")
+):
     raise RuntimeError("Production requires Celery, Redis and an encrypted analysis input key.")
 log = logging.getLogger("projecttrace")
 
@@ -48,7 +50,7 @@ async def lifespan(app):
 
 app = FastAPI(
     title="ProjectTrace",
-    version="1.2.0",
+    version="1.3.3",
     lifespan=lifespan,
     docs_url=None if PRODUCTION else "/api/docs",
     openapi_url=None if PRODUCTION else "/api/openapi.json",
@@ -83,8 +85,11 @@ async def security_boundary(request, call_next):
         if request.headers.get("origin") not in ORIGINS:
             return Response("Origin is not authorized.", status_code=403)
     try:
-        permitted = rate_limit.allow(request.client.host if request.client else "unknown",
-                                     rate_limit.bucket(request.url.path, request.method), distributed=PRODUCTION)
+        permitted = rate_limit.allow(
+            request.client.host if request.client else "unknown",
+            rate_limit.bucket(request.url.path, request.method),
+            distributed=PRODUCTION,
+        )
     except Exception:
         return Response("Rate limit service unavailable.", status_code=503, headers={"Retry-After": "10"})
     if not permitted:
@@ -159,6 +164,20 @@ class Question(StrictModel):
     repository_id: str | None = None
 
 
+class AWSInventoryBody(StrictModel):
+    repository_id: str
+    account_id: str = Field(pattern=r"^[0-9]{12}$")
+    region: str = Field(default="us-east-1", pattern=r"^[a-z]{2}(?:-[a-z]+)+-\d$")
+
+
+class NativeProfileBody(StrictModel):
+    repository_id: str | None = None
+    version: int | None = None
+    rules: dict = Field(default_factory=dict)
+    licenses: dict[str, list[str]] = Field(default_factory=dict)
+    gate_scope: Literal["ALL_FINDINGS", "NEW_FINDINGS"] = "ALL_FINDINGS"
+
+
 class ConnectGitHub(StrictModel):
     repository_id: int = Field(gt=0)
     system: str = Field(min_length=1, max_length=120)
@@ -208,15 +227,22 @@ def queued_input(db, user, repo, content, request, *, source="FILES", **options)
         return None
     from backend.queue import enqueue_analysis
 
-    job = enqueue_analysis(db, user, repo, content, source=source,
-                           request_id=request.state.request_id, **options)
-    return JSONResponse(status_code=202, content={"repository_id": repo.id, "snapshot_id": None,
-                                                 "job_id": job.id, "state": "QUEUED", "dispatch": job.data["dispatch"]})
+    job = enqueue_analysis(db, user, repo, content, source=source, request_id=request.state.request_id, **options)
+    return JSONResponse(
+        status_code=202,
+        content={
+            "repository_id": repo.id,
+            "snapshot_id": None,
+            "job_id": job.id,
+            "state": "QUEUED",
+            "dispatch": job.data["dispatch"],
+        },
+    )
 
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "version": "1.2.0"}
+    return {"status": "ok", "version": "1.3.3"}
 
 
 @app.get("/ready")
@@ -354,6 +380,7 @@ def workspace(request: Request, repository_id: str | None = None):
                 "exception",
                 "job",
                 "graph_node",
+                "risk_path",
             ]
         }
         latest_jobs = {}
@@ -365,7 +392,11 @@ def workspace(request: Request, repository_id: str | None = None):
             job = latest_jobs.get(r.id, {})
             snapshot_state = snapshots[r.id].data["status"] if r.id in snapshots else "READY"
             state = job.get("state") or snapshot_state
-            if job.get("type") == "ADVISORIES" and state in {"COMPLETED", "COMPLETED_NO_FINDINGS"} and snapshot_state == "PARTIAL":
+            if (
+                job.get("type") == "ADVISORIES"
+                and state in {"COMPLETED", "COMPLETED_NO_FINDINGS"}
+                and snapshot_state == "PARTIAL"
+            ):
                 state = "PARTIAL"
             states.append(state)
         state = (
@@ -399,8 +430,10 @@ def workspace(request: Request, repository_id: str | None = None):
         )
         return {
             "organization": db.get(Organization, user.organization_id).name,
-            "capabilities": {"job_mode": os.getenv("JOB_MODE", "sync"),
-                             "advisories_enabled": os.getenv("JOB_MODE") == "celery" and os.getenv("OSV_ENABLED") == "1"},
+            "capabilities": {
+                "job_mode": os.getenv("JOB_MODE", "sync"),
+                "advisories_enabled": os.getenv("JOB_MODE") == "celery" and os.getenv("OSV_ENABLED") == "1",
+            },
             "demo": APP_ENV == "demo" and user.organization_id == "northstar",
             "analysis": {
                 "state": state,
@@ -723,7 +756,12 @@ def gate(snapshot_id: str, request: Request):
             if r.kind == "finding" and r.data.get("scope", {}).get("snapshot_id") == snapshot.id
         ]
         exceptions = [r.data for r in records if r.kind == "exception"]
-        return policy_gate(claims, findings, exceptions)
+        return policy_gate(
+            claims,
+            findings,
+            exceptions,
+            new_findings_only=snapshot.data.get("native_profile", {}).get("gate_scope") == "NEW_FINDINGS",
+        )
 
 
 @app.get("/api/sbom/{snapshot_id}")
@@ -763,6 +801,24 @@ def ask(body: Question, request: Request):
             "with",
         }
         tokens = set(re.findall(r"[a-z0-9_/]+", body.question.lower())) - stopwords
+        fulltext = {}
+        if db.bind.dialect.name == "postgresql":
+            from sqlalchemy import bindparam, text
+
+            ids = [
+                claim["id"]
+                for rid, snap in snapshots.items()
+                if not body.repository_id or rid == body.repository_id
+                for claim in snap.data.get("claims", [])
+            ]
+            if ids:
+                query = text(
+                    "SELECT id, ts_rank_cd(to_tsvector('english', coalesce(data->>'text', '') || ' ' || coalesce(data->>'category', '')), plainto_tsquery('english', :question)) AS rank FROM records WHERE organization_id = :org AND kind = 'claim' AND id IN :ids"
+                ).bindparams(bindparam("ids", expanding=True))
+                fulltext = {
+                    row.id: float(row.rank)
+                    for row in db.execute(query, {"question": body.question, "org": user.organization_id, "ids": ids})
+                }
         candidates = []
         for repo_id, snap in snapshots.items():
             if body.repository_id and repo_id != body.repository_id:
@@ -772,7 +828,9 @@ def ask(body: Question, request: Request):
                 score = len(tokens & words) + (
                     3 if any(t.startswith("auth") for t in tokens) and claim["category"] == "AUTHENTICATION" else 0
                 )
+                score += fulltext.get(claim["id"], 0) * 4
                 if score:
+                    score += 0.25 if claim["status"] == "CONTRADICTED" else 0.1 if claim["status"] == "VERIFIED" else 0
                     candidates.append((score, claim))
         candidates.sort(key=lambda c: c[0], reverse=True)
         claims = [c for _, c in candidates[:5]]
@@ -797,12 +855,224 @@ def ask(body: Question, request: Request):
             "claims": claims,
             "evidence": evidence,
             "provider": "Deterministic evidence retrieval",
+            "retrieval": {
+                "full_text": "POSTGRESQL" if fulltext else "LOCAL_TOKEN",
+                "metadata": ["authorized_repository", "current_snapshot", "claim_category", "verification_status"],
+                "graph_neighborhood": [
+                    packed(item)
+                    for item in db.scalars(
+                        scope_query(db, user).where(
+                            Record.kind == "edge",
+                            Record.data["snapshot_id"]
+                            .as_string()
+                            .in_(
+                                [
+                                    snap.id
+                                    for rid, snap in snapshots.items()
+                                    if not body.repository_id or rid == body.repository_id
+                                ]
+                            ),
+                        )
+                    )
+                    if item.data.get("source") in {claim["id"] for claim in claims}
+                    or item.data.get("target") in {claim["id"] for claim in claims}
+                ][:50],
+                "semantic_vectors": "NOT_CONFIGURED",
+            },
             "limitations": [
                 "No language model was called.",
                 "Static evidence only; runtime and omitted files may differ.",
                 "Keyword retrieval does not support every engineering question.",
             ],
         }
+
+
+@app.post("/api/cloud/aws/inventory")
+def sync_aws_inventory(body: AWSInventoryBody, request: Request):
+    from analyzers.engine import finding
+    from backend.db import CloudAsset
+    from integrations.cloud import aws_inventory, configured_clients
+
+    with Session() as db:
+        user, _ = authenticate(db, request, True)
+        if user.role not in {"ORG_OWNER", "ADMIN"}:
+            raise HTTPException(403, "Only administrators can authorize cloud inventory.")
+        repo = require_repo(db, user, body.repository_id)
+        snapshot = current_snapshots(db, user).get(repo.id)
+        if not snapshot:
+            raise HTTPException(409, "Analyze the repository before correlating cloud inventory.")
+        try:
+            clients = configured_clients(user.organization_id, body.region)
+            inventory = aws_inventory(clients, body.account_id, body.region)
+        except ValueError:
+            raise HTTPException(
+                409, "Tenant-scoped AWS credentials are missing or do not match this account."
+            ) from None
+        except Exception:
+            raise HTTPException(502, "Read-only cloud inventory failed; provider details are withheld.") from None
+        scope = {**snapshot.data["scope"], "cloud_account": body.account_id, "cloud_region": body.region}
+        observation = add(
+            db,
+            user.organization_id,
+            repo.id,
+            "evidence",
+            {
+                "class": "CLOUD_INVENTORY",
+                "authority": "CLOUD_API",
+                "path": "aws-control-plane/" + body.account_id,
+                "source": json.dumps(inventory),
+                "scope": scope,
+                "observed_at": now(),
+                "provider": "AWS direct read-only API",
+            },
+        )
+        nodes = []
+        for asset in inventory["assets"]:
+            node = add(
+                db,
+                user.organization_id,
+                repo.id,
+                "graph_node",
+                {
+                    **asset,
+                    "class": "CLOUD_IDENTITY" if asset["asset_kind"] == "CloudIdentity" else "CLOUD_RESOURCE",
+                    "title": asset["identity"],
+                    "scope": scope,
+                    "owner": repo.owner,
+                    "evidence_ids": [observation.id],
+                },
+            )
+            db.add(
+                CloudAsset(
+                    id=node.id,
+                    organization_id=user.organization_id,
+                    repository_id=repo.id,
+                    snapshot_id=snapshot.id,
+                    provider="AWS",
+                    resource_id=asset["identity"],
+                    asset_kind=asset["asset_kind"],
+                    exposure=asset["public"],
+                    encryption=asset["encryption"],
+                    observed_at=now(),
+                )
+            )
+            nodes.append(node.id)
+            add(
+                db,
+                user.organization_id,
+                repo.id,
+                "edge",
+                {
+                    "source": node.id,
+                    "target": observation.id,
+                    "relationship": "OBSERVED_IN",
+                    "snapshot_id": snapshot.id,
+                },
+            )
+            rule = (
+                "PT-CLOUD-002"
+                if asset["public"] == "INTERNET_INGRESS_OBSERVED"
+                else "PT-CLOUD-001"
+                if asset["public"] == "PUBLIC_ACL_OBSERVED"
+                and not asset.get("public_access_block", {}).get("IgnorePublicAcls")
+                else None
+            )
+            if rule:
+                issue = add(
+                    db,
+                    user.organization_id,
+                    repo.id,
+                    "finding",
+                    {
+                        **finding(
+                            rule,
+                            observation.data["path"],
+                            1,
+                            "Read-only control-plane observation; effective access and workload reachability are unverified.",
+                            "MEDIUM",
+                        ),
+                        "classification": "SECURITY_HOTSPOT",
+                        "scope": scope,
+                        "resource_identity": asset["identity"],
+                        "evidence_ids": [observation.id],
+                        "owner": repo.owner,
+                        "provider": "ProjectTrace native CSPM",
+                    },
+                )
+                add(
+                    db,
+                    user.organization_id,
+                    repo.id,
+                    "edge",
+                    {"source": issue.id, "target": node.id, "relationship": "AFFECTS", "snapshot_id": snapshot.id},
+                )
+        account = add(
+            db,
+            user.organization_id,
+            repo.id,
+            "cloud_account",
+            {
+                "provider": "AWS",
+                "status": inventory["state"],
+                "live_verification": "CONTROL_PLANE_OBSERVED",
+                "account_id": body.account_id,
+                "region": body.region,
+                "scope": scope,
+                "last_sync": now(),
+                "asset_ids": nodes,
+                "warnings": inventory["warnings"],
+                "permissions": "Only configured read operations",
+                "credential_storage": "TENANT_SCOPED_HOST_REFERENCE",
+            },
+        )
+        audit(
+            db,
+            user,
+            "AWS_READ_ONLY_INVENTORY",
+            account.id,
+            {"asset_count": len(nodes), "state": inventory["state"]},
+            repo.id,
+        )
+        db.commit()
+        return {"id": account.id, **account.data}
+
+
+@app.get("/api/native/rules")
+def native_rules(request: Request):
+    from analyzers.engine import RULES, VERSION
+    from analyzers.native_rules import registry
+
+    with Session() as db:
+        authenticate(db, request)
+    return {"provider": "ProjectTrace native", "version": VERSION, "rules": registry(RULES, VERSION)}
+
+
+@app.get("/api/native/profile")
+def native_profile(request: Request, repository_id: str | None = None):
+    from backend.native import profile_scope
+
+    with Session() as db:
+        user, _ = authenticate(db, request)
+        row = db.scalar(profile_scope(db, user, repository_id))
+        return (
+            {"version": row.version, "repository_id": row.repository_id, **row.data}
+            if row
+            else {"version": 0, "repository_id": repository_id, "rules": {}, "licenses": {}}
+        )
+
+
+@app.post("/api/native/profile")
+def update_native_profile(body: NativeProfileBody, request: Request):
+    from backend.native import save_profile
+
+    if body.licenses.keys() - {"approved", "restricted"} or any(
+        len(items) > 100 or any(not re.fullmatch(r"[A-Za-z0-9.+-]{1,70}", item) for item in items)
+        for items in body.licenses.values()
+    ):
+        raise HTTPException(422, "Use bounded observed SPDX license identifiers.")
+    with Session() as db:
+        user, _ = authenticate(db, request, True)
+        return save_profile(db, user, body)
 
 
 @app.get("/api/integrations")
@@ -818,20 +1088,38 @@ def integrations(request: Request):
             )
         )
         github_data = connection.data if connection else None
+        cloud_connection = db.scalar(
+            scope_query(db, user).where(Record.kind == "cloud_account").order_by(Record.created_at.desc())
+        )
+        aws_data = cloud_connection.data if cloud_connection else None
     result = [
         {
-            "name": n,
+            "name": name,
+            "group": group,
+            "optional": True,
+            "implementation": implementation,
             "status": "NOT_CONFIGURED",
             "live_verification": "NOT_VERIFIED",
-            "permissions": p,
+            "permissions": permissions,
             "last_sync": None,
         }
-        for n, p in [
-            ("GitHub App", "Contents: read; Pull requests: read; Checks: write only when enabled"),
-            ("SonarQube", "Read-only finding ingestion"),
-            ("Wiz", "Read-only external evidence; live adapter deferred"),
-            ("Cloud inventory", "Read-only; live inventory deferred"),
-            ("External AI", "Disabled; no source is sent to a provider"),
+        for name, group, implementation, permissions in [
+            (
+                "GitHub App",
+                "SCM",
+                "CREDENTIAL_GATED",
+                "Contents and pull requests: read; Checks: write only when explicitly enabled",
+            ),
+            ("GitLab", "SCM", "DEFERRED", "Read-only SCM adapter planned"),
+            (
+                "AWS",
+                "Cloud Accounts",
+                "READ_ONLY_ADAPTER",
+                "Authorized list/describe inventory only; live verification requires account credentials",
+            ),
+            ("Azure", "Cloud Accounts", "DEFERRED", "Reader inventory adapter planned"),
+            ("GCP", "Cloud Accounts", "DEFERRED", "Viewer inventory adapter planned"),
+            ("External AI", "AI Providers", "DISABLED", "Optional; no source is sent to a provider"),
         ]
     ]
     if github_data:
@@ -842,31 +1130,14 @@ def integrations(request: Request):
                 "last_sync": github_data.get("last_sync"),
             }
         )
-    for row in result:
-        row["group"] = (
-            "SCM"
-            if row["name"] == "GitHub App"
-            else "External Evidence"
-            if row["name"] in {"SonarQube", "Wiz"}
-            else "Cloud Accounts"
-            if row["name"] == "Cloud inventory"
-            else "AI Providers"
+    if aws_data:
+        result[2].update(
+            {
+                "status": aws_data["status"],
+                "live_verification": aws_data["live_verification"],
+                "last_sync": aws_data.get("last_sync"),
+            }
         )
-        row["optional"] = True
-        row["implementation"] = "CREDENTIAL_GATED" if row["name"] == "GitHub App" else "DEFERRED"
-    result.extend(
-        {
-            "name": name,
-            "group": "External Evidence",
-            "optional": True,
-            "implementation": "DEFERRED",
-            "status": "NOT_CONFIGURED",
-            "live_verification": "NOT_VERIFIED",
-            "permissions": "Optional external evidence adapter is not implemented.",
-            "last_sync": None,
-        }
-        for name in ["CodeQL", "Snyk", "Semgrep", "Trivy"]
-    )
     return result
 
 
@@ -1034,7 +1305,11 @@ def control_job(job_id: str, action: Literal["retry", "cancel"], request: Reques
             if os.getenv("JOB_MODE") != "celery":
                 raise HTTPException(503, "The Redis/Celery worker must be configured before retrying provider jobs.")
             lease = job.data.get("lease_expires_at")
-            stale = job.data.get("state") not in {"COMPLETED", "COMPLETED_NO_FINDINGS", "CANCELLED"} and lease and datetime.fromisoformat(lease) <= datetime.now(timezone.utc)
+            stale = (
+                job.data.get("state") not in {"COMPLETED", "COMPLETED_NO_FINDINGS", "CANCELLED"}
+                and lease
+                and datetime.fromisoformat(lease) <= datetime.now(timezone.utc)
+            )
             if job.data.get("state") not in {"FAILED", "PARTIAL", "QUEUED"} and not stale:
                 raise HTTPException(409, "This job cannot be retried in its current state.")
             from backend.db import AnalysisInput
@@ -1045,8 +1320,13 @@ def control_job(job_id: str, action: Literal["retry", "cancel"], request: Reques
 
             if job.data.get("retry_count", 0) >= 2:
                 raise HTTPException(409, "Retry limit reached; upload a fresh snapshot or advisory job.")
-            job.data = {**job.data, "state": "QUEUED", "stage": "QUEUED", "finished_at": None,
-                        "retry_count": job.data.get("retry_count", 0) + 1}
+            job.data = {
+                **job.data,
+                "state": "QUEUED",
+                "stage": "QUEUED",
+                "finished_at": None,
+                "retry_count": job.data.get("retry_count", 0) + 1,
+            }
             audit(db, user, "JOB_RETRIED", job.id, {"retry_count": job.data["retry_count"]}, job.repository_id)
             db.commit()
             dispatch(db, job)
@@ -1064,12 +1344,23 @@ def analysis_metrics(request: Request, repository_id: str | None = None):
         jobs = list(db.scalars(query))
         samples = sorted(j.data["duration_ms"] for j in jobs if isinstance(j.data.get("duration_ms"), (int, float)))
         waits = sorted(j.data["queue_wait_ms"] for j in jobs if isinstance(j.data.get("queue_wait_ms"), (int, float)))
+
         def percentiles(values):
-            return {name: values[max(0, math.ceil(len(values)*p)-1)] if values else None
-                    for name, p in [("p50", .5), ("p95", .95), ("p99", .99)]}
-        return {"scope": "Authorized latest 1000 persisted jobs", "samples": len(samples),
-                "duration_ms": percentiles(samples), "queue_wait_ms": percentiles(waits),
-                "states": {state: sum(j.data.get("state") == state for j in jobs) for state in sorted({j.data.get("state", "UNKNOWN") for j in jobs})}}
+            return {
+                name: values[max(0, math.ceil(len(values) * p) - 1)] if values else None
+                for name, p in [("p50", 0.5), ("p95", 0.95), ("p99", 0.99)]
+            }
+
+        return {
+            "scope": "Authorized latest 1000 persisted jobs",
+            "samples": len(samples),
+            "duration_ms": percentiles(samples),
+            "queue_wait_ms": percentiles(waits),
+            "states": {
+                state: sum(j.data.get("state") == state for j in jobs)
+                for state in sorted({j.data.get("state", "UNKNOWN") for j in jobs})
+            },
+        }
 
 
 @app.post("/api/snapshots/{snapshot_id}/advisories")

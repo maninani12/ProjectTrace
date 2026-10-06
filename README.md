@@ -2,7 +2,7 @@
 
 ProjectTrace connects engineering claims to current software evidence, then shows what changed, what needs review, and who owns the next action.
 
-**Current release: tested local engineering-integrity demo and bounded static-analysis MVP. The full industry specification and production release gates are not complete.** Northstar Labs is deterministic demo data. Live GitHub/cloud/security providers have not been verified with credentials. No external AI call is made.
+**Current release: ProjectTrace 1.3.3, a native engineering-integrity platform with bounded static analysis.** Its quality, security, dependency, secrets and infrastructure engines run independently. Northstar’s maintained fixtures are synthetic demo data; this existing workspace also retains an older local import with its historical provenance. Real PostgreSQL, Redis and non-root Linux Celery prefork execution and recovery were validated. Live cloud accounts and GitHub installations remain unverified, and full enterprise release gates remain incomplete. No external AI call is made. See [FINAL_PRODUCT_VALIDATION.md](FINAL_PRODUCT_VALIDATION.md) for the measured scope.
 
 ## Start on Windows PowerShell
 
@@ -75,13 +75,15 @@ Use a dedicated temporary directory for pytest; pytest manages that directory. B
 
 Native implementation claims populate repositories whose README uses other wording. ZIP jobs persist real completion/partial/failure states and sanitized diagnostics. The global repository selector scopes results; Upload new snapshot compares versions; initial contradictions are consistency findings. Connections lists optional enrichment separately. See docs/CURRENT_STATE_AUDIT.md and docs/REPAIR_REPORT.md for evidence and limits.
 
-## Current version 1.2
+## Native version 1.3.3
 
-The supplied updated ZIP matched all 104 working source files before edits. Seven multi-exception handlers now use portable tuple syntax. Python 3.14 accepts the old syntax, but Python 3.11 does not; the formatter targets 3.11 syntax while the installed runtime/dependencies remain Python 3.14.
+The attached latest source ZIP matched all 123 baseline source files at commit `b358f36`. This release evolves the same ProjectTrace folder and preserves the existing accounts, real repositories, history, reviews, URL routes and working version 1.2 behavior.
 
-Version 1.2 adds broader deterministic atomic claims, verifier-specific cache reuse, stable claim/finding identities, reverse evidence-graph impact including deleted files, rule-only analysis changes separated from software drift, independent analyzer diagnostics, additional conservative Python security/quality checks, safe lockfile inventory subsets, deduplicated SBOM/SCA findings and canonical browser routes. Northstar remains explicitly labeled demo data; real repositories and prior history remain separate.
+Native Python AST and maintained JavaScript/TypeScript/TSX/Java syntax parsers produce explainable quality metrics. Bounded Python source-to-sink flow traces distinguish modeled static findings from context-dependent hotspots. Structured Terraform, CloudFormation, Kubernetes, Compose and Dockerfile checks produce source-backed cloud assets and risk paths. Settings supports versioned organization/repository rule, license and new-findings gate profiles. Native code/cloud evidence uses the existing Claim Ledger and Evidence Graph.
 
-Local imports default to bounded synchronous execution. `JOB_MODE=celery` returns queued jobs immediately and sends only job IDs through Redis; worker source input is encrypted in the database, expires after 72 hours, and is removed on completion/cancellation. PostgreSQL serializes per-tenant admission; production middleware requires distributed Redis limits. Worker/Redis/PostgreSQL deployment has **not been executed on this Windows host**. See [the fresh audit](docs/CURRENT_IMPLEMENTATION_AUDIT_V2.md) and [the version 1.2 delivery report](docs/DELIVERY_REPORT_V2.md) for actual validation and deferred capabilities.
+The direct AWS adapter performs only allowlisted reads, verifies the credential account, and records control-plane authority separately from static declarations. Use **Cloud → Sync read-only AWS inventory** after a host administrator configures an authorized credential reference. No live cloud connection is claimed in this installation. Azure/GCP inventory, effective IAM permissions and deployment reachability remain deferred. See [Native coverage](docs/NATIVE_PLATFORM.md) and [Cloud permissions](docs/CLOUD_READ_ONLY.md).
+
+Historical version 1.1/1.2 repair reports remain in `docs/` as historical evidence. Their statements about unexecuted PostgreSQL/Redis are superseded by the current validation report. Local imports still default to bounded synchronous execution; `JOB_MODE=celery` queues encrypted source input and sends only job IDs through Redis.
 
 ### Queued imports and optional advisories
 
@@ -100,13 +102,13 @@ Run the worker and expiry scheduler in separate terminals:
 .\.venv\Scripts\python.exe -m celery -A workers.tasks beat --loglevel=INFO --schedule=data/celerybeat-schedule
 ```
 
-`--pool=solo` is a local Windows option, not a validated production pool. Failed broker dispatch leaves a retained `PENDING_RETRY` job. Authenticated retry/cancel APIs append audit events; retries are bounded to two. Expired worker leases can be retried while input is retained. Production requires PostgreSQL, Redis, Celery, explicit CORS origins and an input-encryption key; live deployment/recovery/load validation remains required.
+`--pool=solo` is a local Windows option, not a validated production pool. Failed broker dispatch leaves a retained `PENDING_RETRY` job. Authenticated retry/cancel APIs append audit events; retries are bounded to two. Expired worker leases can be retried while input is retained. Production requires PostgreSQL, Redis, Celery, explicit CORS origins and an input-encryption key. Real queue, duplicate delivery, broker outage, cancellation and lease recovery checks passed in a disposable Linux VM. Production-host deployment, sustained load, backups/restores and container-image validation remain required.
 
 ## What works
 
 - Snapshot-scoped deterministic claim extraction and verification; VERIFIED / INFERRED / UNVERIFIED / CONTRADICTED, with STALE history during reverification.
 - Evidence graph, inspector, source viewer, atomic compound claims, changed-file impact and drift history.
-- Python AST checks; conservative JavaScript/Java patterns; masked secret detection; static privileged-container/public-ACL/root-user checks.
+- Python AST checks and maintained JS/TS/TSX/Java syntax metrics; bounded Python flow evidence; masked secret detection; structured infrastructure and static cloud evidence.
 - npm lockfile and pinned Python dependencies, cached exact-version OSV demo advisories, CycloneDX export.
 - Advisory PR gates, transactional human review, optimistic concurrency, expiring privileged risk exceptions, append-oriented audit.
 - Tenant/repository access checks, Argon2 local passwords, HttpOnly sessions, CSRF, origin checks, input limits and safe ZIP ingestion.

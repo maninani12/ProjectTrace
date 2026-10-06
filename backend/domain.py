@@ -1,3 +1,4 @@
+import difflib
 import json
 import uuid
 from collections import deque
@@ -7,7 +8,7 @@ from sqlalchemy import or_, select
 
 from analyzers.engine import VERSION, analyze, hash_text, redact, validate_files
 from analyzers.verifiers import claim_key
-from backend.db import Audit, Record, now
+from backend.db import Audit, CloudAsset, NativeProfile, Record, now
 
 
 def uid():
@@ -37,7 +38,7 @@ def audit(db, user, action, target, data, repo=None):
     )
 
 
-def policy_gate(claims, findings, exceptions=()):
+def policy_gate(claims, findings, exceptions=(), *, new_findings_only=False):
     active = set()
     for exception in exceptions:
         try:
@@ -55,6 +56,8 @@ def policy_gate(claims, findings, exceptions=()):
 
     results = []
     for f in findings:
+        if new_findings_only and f.get("delta") in {"EXISTING", "ANALYZER_BASELINE"}:
+            continue
         if exempt(f) or f.get("review_status") in {"RESOLVED", "FALSE_POSITIVE"}:
             continue
         if f["severity"] == "CRITICAL" and f.get("confidence") == "HIGH":
@@ -73,6 +76,16 @@ def policy_gate(claims, findings, exceptions=()):
                     "policy": "Review material security risks",
                     "version": 1,
                     "result": "REVIEW_REQUIRED",
+                    "target": f.get("id"),
+                    "reason": f["title"],
+                }
+            )
+        elif f.get("category") == "QUALITY" and f["severity"] == "MEDIUM" and f.get("new_code"):
+            results.append(
+                {
+                    "policy": "Review maintainability on changed lines",
+                    "version": 1,
+                    "result": "WARNING",
                     "target": f.get("id"),
                     "reason": f["title"],
                 }
@@ -102,6 +115,8 @@ def policy_gate(claims, findings, exceptions=()):
         if any(r["result"] == "FAIL" for r in results)
         else "REVIEW_REQUIRED"
         if any(r["result"] == "REVIEW_REQUIRED" for r in results)
+        else "WARNING"
+        if any(r["result"] == "WARNING" for r in results)
         else "PASS"
     )
     return {"overall": status, "mode": "ADVISORY", "results": results}
@@ -269,6 +284,18 @@ def persist_analysis(
         raise ValueError("Repository does not belong to the current organization.")
     files = validate_files(files)
     digest = hash_text("\n".join(p + ":" + hash_text(t) for p, t in sorted(files.items())))
+    profile_row = db.scalar(
+        select(NativeProfile).where(
+            NativeProfile.organization_id == user.organization_id, NativeProfile.scope_key == repo.id
+        )
+    )
+    if profile_row is None:
+        profile_row = db.scalar(
+            select(NativeProfile).where(
+                NativeProfile.organization_id == user.organization_id, NativeProfile.scope_key == "organization"
+            )
+        )
+    profile = {**profile_row.data, "version": profile_row.version} if profile_row else {}
     key = hash_text(
         json.dumps(
             {
@@ -279,6 +306,7 @@ def persist_analysis(
                 "analyzer": VERSION,
                 "base": base_id,
                 "advisories": advisory_cache or {},
+                "native_profile": profile,
                 "git_commit": git_commit,
             },
             sort_keys=True,
@@ -306,6 +334,7 @@ def persist_analysis(
         base_data.get("analysis_cache"),
         progress,
         verification_context=base_data.get("verification_cache"),
+        profile=profile,
     )
     if progress:
         progress("BUILDING_EVIDENCE")
@@ -324,8 +353,12 @@ def persist_analysis(
             "commit_source": "GIT_SHA" if git_commit else "CONTENT_DIGEST",
             "hashes": hashes,
             "changed_files": changed,
-            "comparison": {"source_changed": bool(changed), "analysis_model_changed": model_changed,
-                           "base_analyzer_version": base_data.get("analyzer_version"), "head_analyzer_version": VERSION},
+            "comparison": {
+                "source_changed": bool(changed),
+                "analysis_model_changed": model_changed,
+                "base_analyzer_version": base_data.get("analyzer_version"),
+                "head_analyzer_version": VERSION,
+            },
             "analyzer_version": VERSION,
             "base_id": base_id,
             "analysis_at": now(),
@@ -352,6 +385,8 @@ def persist_analysis(
             "analysis_cache": result["analysis_cache"],
             "verification_cache": result.get("verification_cache", {}),
             "engines": result.get("engines", {}),
+            "native_profile": profile,
+            "quality_metrics": result.get("quality_metrics", []),
             "reused_files": result["reused_files"],
             "limitations": [
                 "Static analysis only; runtime not connected.",
@@ -428,8 +463,13 @@ def persist_analysis(
         history = (previous or {}).get("history", [])[:]
         if previous and (previous["status"] != data["status"] or not unchanged and not data.get("verification_reused")):
             history.append(
-                {"status": "STALE", "at": now(), "reason": "Analysis rules changed; reverification required."
-                 if model_changed and not changed else "Related evidence changed; reverification required."}
+                {
+                    "status": "STALE",
+                    "at": now(),
+                    "reason": "Analysis rules changed; reverification required."
+                    if model_changed and not changed
+                    else "Related evidence changed; reverification required.",
+                }
             )
         history.append({"status": data["status"], "at": now(), "snapshot_id": snapshot.id, "reason": data["reason"]})
         claim = add(
@@ -582,9 +622,14 @@ def persist_analysis(
                 )
                 drifts.append({"id": record.id, **record.data})
     if model_changed and not changed:
-        change = {"base_id": base_id, "snapshot_id": snapshot.id, "scope": scope,
-                  "base_analyzer_version": base_data.get("analyzer_version"), "head_analyzer_version": VERSION,
-                  "reason": "Source hashes are unchanged. Updated analyzer rules establish a new analysis baseline; this is not software drift."}
+        change = {
+            "base_id": base_id,
+            "snapshot_id": snapshot.id,
+            "scope": scope,
+            "base_analyzer_version": base_data.get("analyzer_version"),
+            "head_analyzer_version": VERSION,
+            "reason": "Source hashes are unchanged. Updated analyzer rules establish a new analysis baseline; this is not software drift.",
+        }
         event = add(db, user.organization_id, repo.id, "analysis_change", change)
         audit(db, user, "ANALYSIS_RULES_CHANGED", event.id, change, repo.id)
     for data in result["findings"]:
@@ -738,7 +783,41 @@ def persist_analysis(
     if progress:
         progress("CORRELATING")
 
-    # Normalize findings without losing native/advisory provenance. Reviews only
+    old_sources = {item.get("path"): item.get("source", "") for item in base_evidence.values()}
+    changed_lines = {}
+    for path in changed:
+        old, head = old_sources.get(path, "").splitlines(), redact(files.get(path, "")).splitlines()
+        changed_lines[path] = [
+            (j1 + 1, max(j1 + 1, j2))
+            for tag, _, _, j1, j2 in difflib.SequenceMatcher(None, old, head, autojunk=False).get_opcodes()
+            if tag != "equal"
+        ]
+    old_signatures = set()
+    for prior in base_findings.values():
+        item = prior.data
+        lines = old_sources.get(item.get("path"), "").splitlines()
+        line = item.get("line", 1)
+        text = lines[line - 1].strip() if isinstance(line, int) and 0 < line <= len(lines) else ""
+        old_signatures.add(hash_text(str(item.get("rule")) + ":" + str(item.get("path")) + ":" + text))
+    for item in findings:
+        lines = redact(files.get(item["path"], "")).splitlines()
+        text = lines[item["line"] - 1].strip() if 0 < item.get("line", 1) <= len(lines) else ""
+        signature = hash_text(str(item.get("rule")) + ":" + item["path"] + ":" + text)
+        item["delta"] = (
+            "ANALYZER_BASELINE"
+            if model_changed and not changed
+            else "EXISTING"
+            if signature in old_signatures
+            else "NEW"
+        )
+        item["new_code"] = not base or any(
+            lo <= item.get("end_line", item["line"]) and hi >= item["line"]
+            for lo, hi in changed_lines.get(item["path"], [])
+        )
+        rec = db.get(Record, item["id"])
+        rec.data = {**rec.data, "delta": item["delta"], "new_code": item["new_code"]}
+    # Normalize findings without losing native/advisory provenance.
+    # Reviews only
     # carry when the same issue still cites exactly the same source fingerprints.
     for packed_finding in findings:
         record = db.get(Record, packed_finding["id"])
@@ -848,11 +927,95 @@ def persist_analysis(
                 signal_type=signal["type"],
             )
             edge(declaration.id, evidence[signal["path"]], "DECLARED_IN")
+    cloud_records, risk_paths = [], []
+    resource_nodes = {}
+    for resource in result.get("cloud_assets", []):
+        kind = (
+            "CLOUD_IDENTITY"
+            if "iam" in resource["kind"].lower() or resource["kind"] == "ServiceAccount"
+            else "CONTAINER_WORKLOAD"
+            if resource["provider"] in {"KUBERNETES", "COMPOSE"}
+            else "CLOUD_RESOURCE"
+        )
+        resource_node = node(
+            kind,
+            resource["identity"],
+            **{key: value for key, value in resource.items() if key != "kind"},
+            asset_kind=resource["kind"],
+            owner=repo.owner,
+            evidence_ids=[evidence[resource["path"]]],
+        )
+        resource_nodes[(resource["path"], resource["identity"])] = resource_node
+        cloud_records.append({"id": resource_node.id, **resource_node.data})
+        db.add(
+            CloudAsset(
+                id=resource_node.id,
+                organization_id=user.organization_id,
+                repository_id=repo.id,
+                snapshot_id=snapshot.id,
+                provider=resource["provider"],
+                resource_id=resource["identity"],
+                asset_kind=resource["kind"],
+                exposure=resource["public"],
+                encryption=resource["encryption"],
+                observed_at=now(),
+            )
+        )
+        edge(resource_node.id, evidence[resource["path"]], "DECLARED_IN")
+        related = [
+            item
+            for item in findings
+            if item.get("resource_identity") == resource["identity"] and item["path"] == resource["path"]
+        ]
+        for issue in related:
+            edge(issue["id"], resource_node.id, "AFFECTS")
+        if resource["public"] == "DECLARED_PUBLIC":
+            exposure = node(
+                "EXPOSURE",
+                "Public access declared: " + resource["identity"],
+                path=resource["path"],
+                line=resource["line"],
+                authority="STATIC",
+                verification_scope="DECLARED_CONFIGURATION",
+                evidence_ids=[evidence[resource["path"]]],
+            )
+            edge(exposure.id, resource_node.id, "EXPOSES")
+            path_data = {
+                "title": "Declared public access to " + resource["identity"],
+                "scope": scope,
+                "authority": "STATIC",
+                "owner": repo.owner,
+                "classification": "DECLARED_CONFIGURATION_RISK",
+                "runtime_reachability": "UNOBSERVED",
+                "factors": [
+                    "Explicit public ACL/ingress/policy",
+                    "Supported configuration resource",
+                    "Deployment and effective access unobserved",
+                ],
+                "node_ids": [exposure.id, resource_node.id] + [item["id"] for item in related],
+                "evidence_ids": [evidence[resource["path"]]],
+                "severity": "HIGH",
+                "review_status": "OPEN",
+                "remediation": "Remove the public declaration and verify deployed policy with an authorized read-only inventory.",
+            }
+            risk = add(db, user.organization_id, repo.id, "risk_path", path_data)
+            risk_paths.append({"id": risk.id, **risk.data})
+    for resource in result.get("cloud_assets", []):
+        for relation in resource.get("relations", []):
+            targets = [value for (_, identity), value in resource_nodes.items() if identity == relation["target"]]
+            if len(targets) == 1:
+                edge(resource_nodes[(resource["path"], resource["identity"])].id, targets[0].id, relation["type"])
+    for signal in result["signals"]:
+        if signal["type"] == "function":
+            function = node(
+                "FUNCTION", signal["value"], path=signal["path"], line=signal["line"], end_line=signal.get("end_line")
+            )
+            edge(function.id, evidence[signal["path"]], "IMPLEMENTED_IN")
     for claim in claims:
         shared = [f["id"] for f in findings if set(f.get("evidence_ids", [])) & set(claim["evidence_ids"])]
         for fid in shared[:20]:
             edge(fid, claim["id"], "RELATED_EVIDENCE")
-    gate = policy_gate(claims, findings)
+    gate = policy_gate(claims, findings, new_findings_only=profile.get("gate_scope") == "NEW_FINDINGS")
     evaluated = {item["id"]: item for item in [*claims, *findings]}
     for decision in gate["results"]:
         target = decision.get("target")
@@ -883,6 +1046,13 @@ def persist_analysis(
         "claims": claims,
         "findings": findings,
         "dependencies": deps,
+        "cloud_assets": cloud_records,
+        "risk_paths": risk_paths,
+        "changed_lines": changed_lines,
+        "finding_delta": {
+            state: sum(item.get("delta") == state for item in findings)
+            for state in ["NEW", "EXISTING", "ANALYZER_BASELINE"]
+        },
         "drifts": drifts,
         "gate": gate,
         "scope": scope,

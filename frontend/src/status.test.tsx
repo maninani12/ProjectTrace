@@ -72,10 +72,15 @@ describe("truthful analysis and scoped empty states", () => {
         { id: "a", repository_id: "one" },
         { id: "b", repository_id: "two" },
       ],
+      risk_path: [
+        { id: "risk-one", repository_id: "one" },
+        { id: "risk-two", repository_id: "two" },
+      ],
       edge: [{ id: "e", source: "a", target: "b", relationship: "RELATED" }],
     } as Workspace;
     const scoped = scopeWorkspace(data, "one");
     expect(scoped.claim.map((c) => c.id)).toEqual(["a"]);
+    expect(scoped.risk_path?.map((risk) => risk.id)).toEqual(["risk-one"]);
     expect(scoped.edge).toEqual([]);
     expect(scoped.analysis.state).toBe("FAILED");
   });

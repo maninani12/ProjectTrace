@@ -87,6 +87,17 @@ export type Item = {
   line_end?: number;
   end_line?: number;
   secret_context?: string;
+  classification?: string;
+  delta?: string;
+  new_code?: boolean;
+  asset_kind?: string;
+  public?: string;
+  encryption?: string;
+  verification_scope?: string;
+  factors?: string[];
+  node_ids?: string[];
+  flow?: { kind: string; path: string; line: number; symbol: string }[];
+  license_status?: string;
   credential_context?: string;
   context?: string;
   provider?: string;
@@ -181,6 +192,16 @@ export type Snapshot = {
   reused_files?: number;
   analyzer_version?: string;
   base_id?: string;
+  quality_metrics?: {
+    path: string;
+    line: number;
+    name: string;
+    language: string;
+    cyclomatic: number;
+    length: number;
+    nesting: number;
+    formula: string;
+  }[];
   warnings?: { message: string; path?: string }[];
   claim_extraction?: {
     state: string;
@@ -215,6 +236,7 @@ export type Workspace = {
   job: Item[];
   limitations: string[];
   graph_node: Item[];
+  risk_path?: Item[];
   analysis: { state: string; truncated?: boolean; warnings?: string[] };
   capabilities?: { job_mode: "sync" | "celery"; advisories_enabled: boolean };
 };

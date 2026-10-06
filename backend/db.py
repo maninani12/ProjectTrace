@@ -111,6 +111,34 @@ class Delivery(Base):
     received_at: Mapped[str] = mapped_column(String(50), default=now)
 
 
+class NativeProfile(Base):
+    __tablename__ = "native_profiles"
+    __table_args__ = (UniqueConstraint("organization_id", "scope_key"),)
+    id: Mapped[str] = mapped_column(String(80), primary_key=True)
+    organization_id: Mapped[str] = mapped_column(ForeignKey("organizations.id"), index=True)
+    repository_id: Mapped[str | None] = mapped_column(ForeignKey("repositories.id"), nullable=True, index=True)
+    scope_key: Mapped[str] = mapped_column(String(80))
+    data: Mapped[dict] = mapped_column(JSON)
+    version: Mapped[int] = mapped_column(default=1)
+    __mapper_args__ = {"version_id_col": version}
+
+
+class CloudAsset(Base):
+    """Typed inventory projection; the evidence record and immutable snapshots remain authoritative."""
+
+    __tablename__ = "cloud_assets"
+    id: Mapped[str] = mapped_column(ForeignKey("records.id", ondelete="CASCADE"), primary_key=True)
+    organization_id: Mapped[str] = mapped_column(ForeignKey("organizations.id"), index=True)
+    repository_id: Mapped[str] = mapped_column(ForeignKey("repositories.id"), index=True)
+    snapshot_id: Mapped[str] = mapped_column(ForeignKey("records.id"), index=True)
+    provider: Mapped[str] = mapped_column(String(40))
+    resource_id: Mapped[str] = mapped_column(String(500))
+    asset_kind: Mapped[str] = mapped_column(String(120))
+    exposure: Mapped[str] = mapped_column(String(60))
+    encryption: Mapped[str] = mapped_column(String(60))
+    observed_at: Mapped[str] = mapped_column(String(50))
+
+
 def make_engine(url):
     engine = create_engine(
         url, connect_args={"check_same_thread": False} if url.startswith("sqlite") else {}, pool_pre_ping=True

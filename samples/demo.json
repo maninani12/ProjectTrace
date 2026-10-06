@@ -20,7 +20,9 @@
     "README.md": "# Payments Platform\nDatabase uses PostgreSQL.\n",
     "payments.py": "import psycopg\n\ndef get_invoice(connection, invoice_id):\n    return connection.execute('SELECT id FROM invoices WHERE id = %s', (invoice_id,))\n",
     "package-lock.json": "{\"name\":\"payment-worker\",\"lockfileVersion\":3,\"packages\":{\"\":{\"dependencies\":{\"lodash\":\"4.17.20\"}},\"node_modules/lodash\":{\"version\":\"4.17.20\",\"license\":\"MIT\"}}}",
-    "config/demo.env": "# Synthetic benchmark credential; cannot authenticate to any provider.\napi_key = 'projecttrace_fixture_not_a_live_credential_12345'\n"
+    "config/demo.env": "# Synthetic benchmark credential; cannot authenticate to any provider.\napi_key = 'projecttrace_fixture_not_a_live_credential_12345'\n",
+    "docs/security.md": "# Northstar demo storage claim\nProduction storage is private.\n",
+    "deploy/storage.tf": "# Synthetic static demonstration; never deployed.\nresource \"aws_s3_bucket\" \"demo_production\" {\n acl = \"public-read\"\n}\n"
   },
   "commerce": {
     "base": {

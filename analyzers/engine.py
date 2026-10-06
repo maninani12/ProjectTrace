@@ -11,9 +11,14 @@ from pathlib import PurePosixPath
 from urllib.parse import quote
 
 from analyzers.baseline import context_signals, implementation_claims, inventory
+from analyzers.flows import python_flows
+from analyzers.infrastructure import structured_iac
+from analyzers.languages import LANGUAGES, analyze_languages
+from analyzers.native_rules import NATIVE_RULES
+from analyzers.quality import metrics as python_metrics
 from analyzers.verifiers import claim_key, extract_documentation, verify_claim
 
-VERSION = "1.2.0"
+VERSION = "1.3.3"
 MAX_FILES = 1000
 MAX_FILE_BYTES = 512_000
 MAX_TOTAL_BYTES = 10_000_000
@@ -260,6 +265,8 @@ RULES = {
     ),
 }
 
+RULES.update(NATIVE_RULES)
+
 
 def finding(rule, path, line, detail="", confidence="HIGH"):
     category, severity, title, remediation, cwe = RULES[rule]
@@ -289,6 +296,7 @@ def finding(rule, path, line, detail="", confidence="HIGH"):
         "remediation": remediation,
         "confidence": confidence,
         "cwe": cwe,
+        "classification": "SECURITY_HOTSPOT" if category == "SAST" else "STATIC_FINDING",
         "review_status": "OPEN",
         "fingerprint": hash_text(f"{rule}:{path}:{line}:{detail}"),
     }
@@ -658,14 +666,16 @@ def verify(claim, signals, deps):
     return result["status"], result["reason"], result["signals"]
 
 
-def analyze(files, cached_analysis=None, progress=None, verification_context=None):
+def analyze(files, cached_analysis=None, progress=None, verification_context=None, profile=None):
     files = validate_files(files)
     if progress:
         progress("ANALYZING")
     findings, signals, warnings = [], [], []
+    assets, quality_metrics = [], []
     failures = set()
     cache = {}
     reused = 0
+    language_results = None
     for path, source in files.items():
         previous = (cached_analysis or {}).get(path)
         content_hash = hash_text(source)
@@ -678,13 +688,44 @@ def analyze(files, cached_analysis=None, progress=None, verification_context=Non
             cached = json.loads(json.dumps(previous))
             findings.extend(cached["findings"])
             signals.extend(cached["signals"])
+            assets.extend(cached.get("assets", []))
+            quality_metrics.extend(cached.get("quality_metrics", []))
             cache[path] = cached
             reused += 1
             continue
         finding_start, signal_start = len(findings), len(signals)
+        asset_start, metric_start = len(assets), len(quality_metrics)
         if path.endswith(".py"):
             try:
                 f, s = python_analysis(path, source)
+                if not any(item["rule"] == "PT-PARSE-001" for item in f):
+                    measured = python_metrics(path, source)
+                    quality_metrics.extend(measured)
+                    s.extend(
+                        {
+                            "type": "function",
+                            "value": metric["name"],
+                            "path": path,
+                            "line": metric["line"],
+                            "end_line": metric["end_line"],
+                        }
+                        for metric in measured
+                    )
+                    # Upgrade branch metrics while preserving the established rule IDs.
+                    f = [item for item in f if item["rule"] != "PT-QUALITY-001"]
+                    f.extend(
+                        finding(
+                            "PT-QUALITY-001",
+                            path,
+                            metric["line"],
+                            f"{metric['name']}: cyclomatic approximation {metric['cyclomatic']}; threshold 10.",
+                        )
+                        for metric in measured
+                        if metric["cyclomatic"] > 10
+                    )
+                    flows = python_flows(path, source, finding)
+                    proven = {(item["rule"], item["line"]) for item in flows}
+                    f = [item for item in f if (item["rule"], item["line"]) not in proven] + flows
                 findings.extend(f)
                 signals.extend(s)
             except Exception as error:
@@ -699,44 +740,38 @@ def analyze(files, cached_analysis=None, progress=None, verification_context=Non
                     }
                 )
         elif path.endswith((".js", ".ts", ".jsx", ".tsx", ".java")):
-            for line_no, line in enumerate(pattern_source(source).splitlines(), 1):
-                # Conservative syntax-pattern adapters, not full taint analysis.
-                if re.search(r"\beval\s*\(", line) and not line.lstrip().startswith(("//", "*")):
-                    findings.append(
-                        {
-                            "rule": "PT-SAST-005",
-                            "rule_id": "PT-SAST-005",
-                            "rule_version": VERSION,
-                            "analyzer_version": VERSION,
-                            "category": "SAST",
-                            "severity": "HIGH",
-                            "confidence": "MEDIUM",
-                            "title": "Dynamic code evaluation",
-                            "path": path,
-                            "line": line_no,
-                            "end_line": line_no,
-                            "language": "Java"
-                            if path.endswith(".java")
-                            else "TypeScript"
-                            if path.endswith((".ts", ".tsx"))
-                            else "JavaScript",
-                            "explanation": "An eval call pattern was found. Data flow and reachability are unproven.",
-                            "remediation": "Replace dynamic evaluation with structured data handling.",
-                            "cwe": "CWE-95",
-                            "review_status": "OPEN",
-                            "fingerprint": hash_text(path + str(line_no)),
-                        }
-                    )
-                if re.search(r"\.innerHTML\s*=\s*(?![\"'`\s])", line) and not line.lstrip().startswith("//"):
-                    findings.append(
-                        finding(
-                            "PT-SAST-006",
-                            path,
-                            line_no,
-                            "A non-literal expression is assigned to innerHTML. Data flow is unproven.",
-                            "MEDIUM",
-                        )
-                    )
+            try:
+                if language_results is None:
+                    pending = {}
+                    for native_path, native_source in files.items():
+                        if PurePosixPath(native_path).suffix not in LANGUAGES:
+                            continue
+                        prior = (cached_analysis or {}).get(native_path, {})
+                        if (
+                            prior.get("hash") == hash_text(native_source)
+                            and prior.get("version") == VERSION
+                            and not prior.get("warnings")
+                        ):
+                            continue
+                        pending[native_path] = native_source
+                    language_results = analyze_languages(pending)
+                parsed = language_results[path]
+                if isinstance(parsed, dict):
+                    raise ValueError("Native syntax process failed or exceeded its budget")
+                f, sig, metrics = parsed
+                findings.extend(f)
+                signals.extend(sig)
+                quality_metrics.extend(metrics)
+            except Exception as error:
+                warnings.append(
+                    {
+                        "analyzer": "PARSING",
+                        "path": path,
+                        "code": type(error).__name__,
+                        "state": "PARTIAL",
+                        "message": "Native syntax parsing failed or exceeded its budget; this file has partial coverage.",
+                    }
+                )
         secret_lines = set()
         for match in (
             list(SECRET_RE.finditer(source)) + list(PRIVATE_RE.finditer(source)) + list(ENV_SECRET_RE.finditer(source))
@@ -760,21 +795,38 @@ def analyze(files, cached_analysis=None, progress=None, verification_context=Non
             if context in {"TEST_FIXTURE", "EXAMPLE_CREDENTIAL"}:
                 result["severity"] = "MEDIUM"
             findings.append(result)
-        if path.endswith((".yml", ".yaml", ".tf")) or PurePosixPath(path).name == "Dockerfile":
-            for line_no, line in enumerate(source.splitlines(), 1):
-                if line.lstrip().startswith("#"):
-                    continue
-                if re.match(r"\s*privileged\s*:\s*true\s*(?:#.*)?$", line, re.I):
-                    findings.append(finding("PT-IAC-001", path, line_no))
-                if re.match(r"\s*USER\s+(root|0)\s*$", line, re.I):
-                    findings.append(finding("PT-IAC-002", path, line_no))
-                if re.match(r"\s*acl\s*=\s*[\"\']public-(read|read-write)[\"\']\s*(?:#.*)?$", line):
-                    findings.append(finding("PT-IAC-003", path, line_no))
+        if (
+            path.endswith((".yml", ".yaml", ".tf"))
+            or path.endswith(".json")
+            and '"Resources"' in source
+            or PurePosixPath(path).name == "Dockerfile"
+        ):
+            f, resource_assets, messages = structured_iac(path, source, finding)
+            findings.extend(f)
+            assets.extend(resource_assets)
+            warnings.extend(messages)
+        for item in findings[finding_start:]:
+            if "resource_identity" in item:
+                item["resource_identity"] = redact(item["resource_identity"])
+            for step in item.get("flow", []):
+                step["symbol"] = redact(step["symbol"])
+        for signal in signals[signal_start:]:
+            signal["value"] = redact(signal["value"])
+        for metric in quality_metrics[metric_start:]:
+            metric["name"] = redact(metric["name"])
+        for asset in assets[asset_start:]:
+            asset["identity"] = redact(asset["identity"])
+            asset["kind"] = redact(asset["kind"])
+            asset["environment"] = redact(asset["environment"])
+            for relation in asset.get("relations", []):
+                relation["target"] = redact(relation["target"])
         cache[path] = {
             "hash": content_hash,
             "version": VERSION,
             "findings": findings[finding_start:],
             "signals": signals[signal_start:],
+            "assets": assets[asset_start:],
+            "quality_metrics": quality_metrics[metric_start:],
             "warnings": [warning for warning in warnings if warning.get("path") == path],
         }
     try:
@@ -800,7 +852,7 @@ def analyze(files, cached_analysis=None, progress=None, verification_context=Non
         {
             "analyzer": "PARSING",
             "path": f["path"],
-            "message": "Python source could not be parsed; analysis coverage is partial.",
+            "message": "Source could not be parsed; analysis coverage is partial.",
         }
         for f in findings
         if f["rule"] == "PT-PARSE-001"
@@ -904,6 +956,76 @@ def analyze(files, cached_analysis=None, progress=None, verification_context=Non
                 "review_status": "OPEN",
             }
         )
+    storage = [
+        item
+        for item in assets
+        if item["kind"] in {"aws_s3_bucket", "AWS::S3::Bucket", "google_storage_bucket", "azurerm_storage_container"}
+    ]
+    for path, source in files.items():
+        if not path.endswith(".md"):
+            continue
+        fenced = False
+        for line, content in enumerate(source.splitlines(), 1):
+            if content.strip().startswith("```"):
+                fenced = not fenced
+            if fenced or not re.search(r"^\s*(?:[-*]\s+)?(?:Production\s+)?storage is private[.!]?\s*$", content, re.I):
+                continue
+            scoped_storage = storage
+            if content.strip().lower().startswith("production"):
+                scoped_storage = [
+                    item
+                    for item in storage
+                    if item.get("environment") in {"prod", "production"}
+                    or re.search(r"(?:^|[._/-])(?:prod|production)(?:$|[._/-])", item["identity"].lower())
+                ]
+            public = [item for item in scoped_storage if item["public"] == "DECLARED_PUBLIC"]
+            claims.append(
+                {
+                    "text": content.strip(),
+                    "origin": "DOCUMENTATION",
+                    "category": "CLOUD_SECURITY",
+                    "expected": "private_storage",
+                    "assertion_family": "storage_privacy",
+                    "path": path,
+                    "line": line,
+                    "status": "CONTRADICTED" if public else "UNVERIFIED",
+                    "reason": "A supported storage declaration explicitly permits public access. This contradicts the broad assertion within the declared configuration scope; live deployment is unobserved."
+                    if public
+                    else "The supported inventory does not establish storage privacy in the assertion's environment scope; complete policy and deployed access are unobserved.",
+                    "signals": [
+                        {
+                            "path": item["path"],
+                            "line": item["line"],
+                            "type": "cloud_resource",
+                            "value": item["identity"],
+                        }
+                        for item in public
+                    ],
+                    "severity": "HIGH",
+                    "confidence": "HIGH" if public else "LOW",
+                    "review_status": "OPEN",
+                    "verifier": "NATIVE_STATIC_STORAGE_PRIVACY",
+                    "verification_scope": "DECLARED_CONFIGURATION",
+                }
+            )
+    duplicates = {}
+    for metric in quality_metrics:
+        if metric["token_count"] >= 30:
+            duplicates.setdefault(metric["body_hash"], []).append(metric)
+    for group in duplicates.values():
+        if len(group) > 1:
+            for metric in group[1:]:
+                findings.append(
+                    finding(
+                        "PT-QUALITY-007",
+                        metric["path"],
+                        metric["line"],
+                        "Exact normalized function body also occurs at "
+                        + group[0]["path"]
+                        + ":"
+                        + str(group[0]["line"]),
+                    )
+                )
     claims.extend(implementation_claims(signals, deps))
     if len(claims) > 1500:
         claims = claims[:1500]
@@ -957,13 +1079,17 @@ def analyze(files, cached_analysis=None, progress=None, verification_context=Non
 
     engines = {
         "PARSING": engine(
-            "PARSING", py_files, ["Python standard-library AST; JS/TS/Java use limited lexical patterns."]
+            "PARSING",
+            py_files + pattern_files,
+            [
+                "Python standard-library AST and versioned Tree-sitter JavaScript/TypeScript/TSX/Java grammars; syntax node budget 40,000."
+            ],
         ),
         "QUALITY": engine(
             "QUALITY",
-            py_files,
+            py_files + pattern_files,
             [
-                "Python branch approximation, length, nesting, class size and bare exceptions; JS/TS/Java quality parsers deferred."
+                "Syntax-based branch approximation, length, nesting, class size and exception rules; JS/TS/Java exact normalized function duplication. No dead-code or unused-symbol resolution."
             ],
             {"QUALITY"},
         ),
@@ -971,7 +1097,7 @@ def analyze(files, cached_analysis=None, progress=None, verification_context=Non
             "SAST",
             py_files + pattern_files,
             [
-                "Narrow static source/sink rules; no complete control-flow, interprocedural taint or exploitability proof."
+                "Python bounded assignment and local-helper source/sink flow, contextual HTML sanitizer and SQL parameter models; JS/TS/Java syntax hotspots. No complete CFG, cross-file taint or runtime exploitability proof."
             ],
             {"SAST"},
         ),
@@ -990,7 +1116,7 @@ def analyze(files, cached_analysis=None, progress=None, verification_context=Non
             "IAC",
             iac_files,
             [
-                "Static privileged/root/public-ACL patterns; no live cloud, Terraform evaluation or complete YAML semantics."
+                "Structured Terraform HCL2, Kubernetes, Compose, CloudFormation and Dockerfile checks; aliases and unrendered Helm templates refused. No Terraform evaluation or live deployment proof."
             ],
             {"IAC"},
         ),
@@ -1010,8 +1136,49 @@ def analyze(files, cached_analysis=None, progress=None, verification_context=Non
             ],
         ),
     }
+    profile = profile or {}
+    configured = []
+    for item in findings:
+        override = profile.get("rules", {}).get(item["rule"], {})
+        if override.get("enabled", True):
+            configured.append(
+                {
+                    **item,
+                    "severity": override.get("severity", item["severity"]),
+                    "profile_version": profile.get("version", 0),
+                }
+            )
+    findings = configured
+    license_policy = profile.get("licenses", {})
+    for dep in deps:
+        license_id = dep.get("license")
+        dep["license_status"] = (
+            "UNKNOWN"
+            if not license_id
+            else "RESTRICTED"
+            if license_id in license_policy.get("restricted", [])
+            else "APPROVED"
+            if license_id in license_policy.get("approved", [])
+            else "REVIEW_REQUIRED"
+        )
+        if dep["license_status"] == "RESTRICTED" or license_policy and dep["license_status"] == "REVIEW_REQUIRED":
+            findings.append(
+                finding(
+                    "PT-LICENSE-001",
+                    dep["path"],
+                    1,
+                    "Observed manifest license "
+                    + str(license_id)
+                    + "; policy outcome "
+                    + dep["license_status"]
+                    + ". This is not a legal conclusion.",
+                    "MEDIUM",
+                )
+            )
     return {
         "findings": findings,
+        "cloud_assets": assets,
+        "quality_metrics": quality_metrics,
         "signals": signals,
         "dependencies": deps,
         "claims": claims,

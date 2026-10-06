@@ -71,6 +71,8 @@ import type {
   Workspace,
 } from "./api";
 
+import NativeProfiles from "./NativeProfiles";
+
 const Graph = lazy(() => import("./Graph"));
 const navigation = [
   {
@@ -89,8 +91,13 @@ const navigation = [
       ["Code Quality", FileCode2],
       ["Security", Shield],
       ["Dependencies", Database],
+      ["Secrets", Shield],
       ["Infrastructure", Terminal],
       ["Cloud", Globe],
+      ["Cloud Assets", Boxes],
+      ["Cloud Identities", Shield],
+      ["Exposure", Globe],
+      ["Risk Paths", Waypoints],
     ],
   },
   {
@@ -99,6 +106,7 @@ const navigation = [
       ["Claim Ledger", Check],
       ["Drift", Activity],
       ["Architecture", Network],
+      ["API Integrity", Network],
       ["Evidence", FileCode2],
       ["Evidence Graph", Waypoints],
       ["Ask Engineering", Sparkles],
@@ -109,6 +117,7 @@ const navigation = [
     items: [
       ["Findings", ListChecks],
       ["Policies", ListChecks],
+      ["Reviews", Check],
       ["Audit Trail", Activity],
     ],
   },
@@ -161,6 +170,20 @@ const descriptions: Record<string, string> = {
     "Follow who changed or reviewed an engineering conclusion, when, and why.",
   Connections:
     "Provider permissions, connection status, and verification are always explicit.",
+  Secrets:
+    "Review masked credential observations, context, ownership, and remediation.",
+  "Cloud Assets":
+    "Inspect supported infrastructure declarations and authorized control-plane observations.",
+  "Cloud Identities":
+    "Inspect declared identities and observed inventory with explicit permission coverage.",
+  Exposure:
+    "Review explicit public access declarations and exposure that still requires verification.",
+  "Risk Paths":
+    "Follow actual observed configuration and finding relationships; runtime reachability remains explicit.",
+  "API Integrity":
+    "Compare supported API contract statements against implementation evidence.",
+  Reviews:
+    "Inspect review decisions, owners, and evidence changes across current snapshots.",
   Settings:
     "Manage your local experience and understand the workspace data boundary.",
 };
@@ -534,6 +557,7 @@ function WorkspaceApp() {
           i.status === filter ||
           i.severity === filter ||
           i.category === filter ||
+          i.classification === filter ||
           i.review_status === filter) &&
         (query === "" ||
           JSON.stringify([label(i), i.path, i.owner, i.category])
@@ -765,8 +789,19 @@ function WorkspaceApp() {
         {data?.demo && (
           <div className="demo-banner">
             <span>
-              <strong>DEMO DATA</strong> Northstar Labs · deterministic
-              repository fixtures
+              <strong>
+                {data.repositories.some(
+                  (repository) => repository.provider === "LOCAL",
+                )
+                  ? "DEMO WORKSPACE"
+                  : "DEMO DATA"}
+              </strong>{" "}
+              Northstar Labs ·{" "}
+              {data.repositories.some(
+                (repository) => repository.provider === "LOCAL",
+              )
+                ? "demo fixtures and retained historical source"
+                : "deterministic repository fixtures"}
             </span>
             <button onClick={() => setTour(true)}>
               Follow the story <ArrowRight size={13} />
@@ -889,6 +924,7 @@ function WorkspaceApp() {
                 ) : [
                     "Findings",
                     "Security",
+                    "Secrets",
                     "Code Quality",
                     "Infrastructure",
                   ].includes(page) ? (
@@ -905,6 +941,8 @@ function WorkspaceApp() {
                                   (page === "Findings" ||
                                     (page === "Security" &&
                                       isSecurityFinding(f)) ||
+                                    (page === "Secrets" &&
+                                      f.category === "SECRET") ||
                                     (page === "Code Quality" &&
                                       f.category === "QUALITY") ||
                                     (page === "Infrastructure" &&
@@ -915,6 +953,33 @@ function WorkspaceApp() {
                         </div>
                       ))}
                     </div>
+                    {page === "Security" && (
+                      <div className="context-note">
+                        <strong>
+                          {
+                            data.finding.filter(
+                              (item) =>
+                                item.classification ===
+                                "CONFIRMED_STATIC_FINDING",
+                            ).length
+                          }{" "}
+                          confirmed static flows ·{" "}
+                          {
+                            data.finding.filter(
+                              (item) =>
+                                item.classification === "SECURITY_HOTSPOT",
+                            ).length
+                          }{" "}
+                          security hotspots
+                        </strong>
+                        <p>
+                          Static flows show modeled source-to-sink paths.
+                          Hotspots require context review. Runtime reachability
+                          remains unobserved.
+                        </p>
+                      </div>
+                    )}
+                    {page === "Code Quality" && <QualityMetrics data={data} />}
                     <Filters
                       filter={filter}
                       setFilter={setFilter}
@@ -933,6 +998,8 @@ function WorkspaceApp() {
                         "RESOLVED",
                         "FALSE_POSITIVE",
                         "REVIEW_REQUIRED",
+                        "CONFIRMED_STATIC_FINDING",
+                        "SECURITY_HOTSPOT",
                       ]}
                     />
                     <DataTable
@@ -944,6 +1011,7 @@ function WorkspaceApp() {
                           (f) =>
                             page === "Findings" ||
                             (page === "Security" && isSecurityFinding(f)) ||
+                            (page === "Secrets" && f.category === "SECRET") ||
                             (page === "Code Quality" &&
                               f.category === "QUALITY") ||
                             (page === "Infrastructure" && f.category === "IAC"),
@@ -954,10 +1022,10 @@ function WorkspaceApp() {
                     {page === "Code Quality" && (
                       <div className="context-note">
                         Python uses native AST quality rules. JavaScript,
-                        TypeScript, and Java checks use conservative patterns
-                        where supported; full control-flow and data-flow
-                        analysis remain outside coverage. Open a result to
-                        inspect its rule and scope.
+                        TypeScript, TSX and Java use versioned syntax grammars.
+                        Metrics disclose their formulas; complete control-flow,
+                        dead-code and unused-symbol resolution remain outside
+                        coverage.
                       </div>
                     )}
                     <AnalysisCoverage data={data} />
@@ -1014,35 +1082,51 @@ function WorkspaceApp() {
                   <PolicyPage data={data} />
                 ) : page === "Connections" ? (
                   <IntegrationPage />
-                ) : page === "Cloud" ? (
+                ) : [
+                    "Cloud",
+                    "Cloud Assets",
+                    "Cloud Identities",
+                    "Exposure",
+                    "Risk Paths",
+                  ].includes(page) ? (
+                  <NativeCloudEvidence
+                    page={page}
+                    data={data}
+                    onOpen={open}
+                    role={identity.role}
+                  />
+                ) : page === "API Integrity" ? (
+                  <DataTable
+                    mode="claim"
+                    items={data.claim.filter((item) => item.category === "API")}
+                    onOpen={open}
+                    emptyTitle="No supported API contracts"
+                    emptyDetail="Import an OpenAPI contract and supported route implementations to compare their evidence."
+                  />
+                ) : page === "Reviews" ? (
                   <>
-                    <h2>Native static cloud evidence</h2>
-                    <p>
-                      Native static configuration evidence from the selected
-                      source snapshot.
-                    </p>
+                    <h2>Current review decisions</h2>
                     <DataTable
                       mode="finding"
-                      items={data.finding.filter((f) => f.category === "IAC")}
+                      items={[
+                        ...data.claim,
+                        ...data.finding,
+                        ...data.drift,
+                      ].filter(
+                        (item) =>
+                          item.review_status && item.review_status !== "OPEN",
+                      )}
                       onOpen={open}
-                      emptyTitle={tableEmpty[0]}
-                      emptyDetail={tableEmpty[1]}
+                      emptyTitle="No current review decisions"
+                      emptyDetail="Open a claim or finding to review its evidence and record a decision."
                     />
-                    <h2>Live Cloud Inventory</h2>
-                    <Empty title="Live cloud inventory is not connected">
-                      Configure an authorized read-only provider to correlate
-                      deployment exposure with engineering claims. Static IaC
-                      findings are available now.
-                    </Empty>
-                    <button
-                      className="secondary"
-                      onClick={() => navigate("Infrastructure")}
-                    >
-                      Review infrastructure evidence <ArrowRight size={15} />
-                    </button>
                   </>
                 ) : page === "Settings" ? (
                   <div className="settings-panel">
+                    <NativeProfiles
+                      repository={repoFilter}
+                      role={identity.role}
+                    />
                     <h2>Workspace preferences</h2>
                     <label className="toggle">
                       <input
@@ -1087,7 +1171,7 @@ function WorkspaceApp() {
             <Waypoints size={13} /> Evidence first. Every conclusion has a
             scope.
           </span>
-          <span>Static analysis · v1.2.0</span>
+          <span>Static analysis · v1.3.3</span>
         </footer>
       </div>
       {selected && data && (
@@ -1248,7 +1332,13 @@ function Overview({
   navigate: (s: string) => void;
 }) {
   const verified = data.claim.filter((c) => c.status === "VERIFIED").length;
-  const contradicted = data.claim.filter((c) => c.status === "CONTRADICTED");
+  const contradicted = data.claim
+    .filter((c) => c.status === "CONTRADICTED")
+    .sort(
+      (a, b) =>
+        Number(b.category === "AUTHENTICATION") -
+        Number(a.category === "AUTHENTICATION"),
+    );
   const risk = data.finding.filter(
     (f) =>
       ["HIGH", "CRITICAL"].includes(f.severity || "") &&
@@ -2460,8 +2550,8 @@ function IntegrationPage() {
     <div className="integration-list">
       <p className="context-note">
         ProjectTrace native analysis works independently. Connections provide
-        optional source synchronization, live cloud inventory, external
-        evidence, or AI enrichment.
+        optional source synchronization, authorized read-only cloud inventory,
+        or AI enrichment.
       </p>
       {result.isLoading ? (
         <p>Loading provider status…</p>
@@ -2485,7 +2575,7 @@ function IntegrationPage() {
               )}
               <small>
                 Live verification: {i.live_verification.replaceAll("_", " ")} ·
-                No sync recorded
+                {i.last_sync ? date(i.last_sync) : "No sync recorded"}
               </small>
             </div>
             <Badge value={i.status} />
@@ -2493,6 +2583,270 @@ function IntegrationPage() {
         ))
       )}
     </div>
+  );
+}
+
+function QualityMetrics({ data }: { data: Workspace }) {
+  const measured = data.repositories.flatMap(
+    (repo) => repo.snapshot?.quality_metrics || [],
+  );
+  if (!measured.length)
+    return (
+      <p className="context-note">
+        Function metrics are available for supported, parsed source in a new
+        native snapshot.
+      </p>
+    );
+  return (
+    <section className="settings-panel">
+      <h2>Measured function quality</h2>
+      <p>
+        {measured.length} functions · highest cyclomatic approximation{" "}
+        {Math.max(...measured.map((item) => item.cyclomatic))} · highest nesting{" "}
+        {Math.max(...measured.map((item) => item.nesting))}. Exact normalized
+        duplicates and threshold violations appear in the findings below.
+      </p>
+      <details>
+        <summary>Inspect metric formulas and locations</summary>
+        {measured
+          .slice()
+          .sort((a, b) => b.cyclomatic - a.cyclomatic)
+          .slice(0, 20)
+          .map((item) => (
+            <p key={item.path + item.line}>
+              <code>
+                {item.path}:{item.line}
+              </code>{" "}
+              · {item.name} · {item.language} · complexity {item.cyclomatic},
+              length {item.length}, nesting {item.nesting}
+              <br />
+              <small>{item.formula}</small>
+            </p>
+          ))}
+      </details>
+    </section>
+  );
+}
+
+function AWSInventoryForm({ data, role }: { data: Workspace; role: string }) {
+  const client = useQueryClient();
+  const [repository, setRepository] = useState(data.repositories[0]?.id || "");
+  const [account, setAccount] = useState("");
+  const [region, setRegion] = useState("us-east-1");
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState("");
+  if (!["ORG_OWNER", "ADMIN"].includes(role))
+    return <p>Organization administrators authorize account inventory.</p>;
+  async function submit(event: FormEvent) {
+    event.preventDefault();
+    setBusy(true);
+    setMessage("");
+    try {
+      const result = await api<{
+        status: string;
+        asset_ids: string[];
+        warnings: string[];
+      }>("/cloud/aws/inventory", {
+        repository_id: repository,
+        account_id: account,
+        region,
+      });
+      setMessage(
+        `${result.asset_ids.length} assets observed · ${result.status}. ${result.warnings.join(" ")}`,
+      );
+      await client.invalidateQueries();
+    } catch (error) {
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : "Inventory could not be synchronized.",
+      );
+    } finally {
+      setBusy(false);
+    }
+  }
+  return (
+    <form className="settings-panel" onSubmit={submit}>
+      <label>
+        Repository{" "}
+        <select
+          aria-label="Cloud repository"
+          value={repository}
+          onChange={(event) => setRepository(event.target.value)}
+          required
+        >
+          <option value="">Select a repository</option>
+          {data.repositories.map((repo) => (
+            <option value={repo.id} key={repo.id}>
+              {repo.name}
+            </option>
+          ))}
+        </select>
+      </label>
+      <label>
+        AWS account ID{" "}
+        <input
+          aria-label="AWS account ID"
+          value={account}
+          onChange={(event) => setAccount(event.target.value)}
+          pattern="[0-9]{12}"
+          maxLength={12}
+          placeholder="12-digit account ID"
+          required
+        />
+      </label>
+      <label>
+        Region{" "}
+        <select
+          aria-label="AWS region"
+          value={region}
+          onChange={(event) => setRegion(event.target.value)}
+        >
+          {[
+            "us-east-1",
+            "us-east-2",
+            "us-west-2",
+            "ap-south-1",
+            "ap-south-2",
+            "eu-west-1",
+            "eu-central-1",
+          ].map((item) => (
+            <option key={item}>{item}</option>
+          ))}
+        </select>
+      </label>
+      <button
+        className="secondary"
+        type="submit"
+        disabled={busy || !repository}
+      >
+        {busy ? "Reading account inventory…" : "Sync read-only AWS inventory"}
+      </button>
+      {message && <p role="status">{message}</p>}
+    </form>
+  );
+}
+
+function NativeCloudEvidence({
+  page,
+  data,
+  onOpen,
+  role,
+}: {
+  page: string;
+  data: Workspace;
+  onOpen: (item: Item) => void;
+  role: string;
+}) {
+  const inventory = (data.graph_node || []).filter((item) =>
+    [
+      "CLOUD_RESOURCE",
+      "CLOUD_IDENTITY",
+      "CONTAINER_WORKLOAD",
+      "EXPOSURE",
+    ].includes(item.class || ""),
+  );
+  const assets = inventory.filter((item) =>
+    page === "Cloud Identities"
+      ? item.class === "CLOUD_IDENTITY"
+      : page === "Exposure"
+        ? item.class === "EXPOSURE" ||
+          (item.public &&
+            !["UNKNOWN", "NO_INTERNET_RANGE_OBSERVED"].includes(item.public))
+        : item.class !== "EXPOSURE",
+  );
+  const paths = data.risk_path || [];
+  return (
+    <>
+      <p className="context-note">
+        Static inventory describes declared configuration. Direct AWS
+        observations describe the control plane. Deployment mappings, effective
+        permissions and application reachability require their own evidence.
+      </p>
+      {page === "Risk Paths" ? (
+        paths.length ? (
+          paths.map((path) => (
+            <section className="settings-panel" key={path.id}>
+              <h2>{path.title}</h2>
+              <Badge value={path.classification} />
+              <p>{path.factors?.join(" · ")}</p>
+              <div className="filters">
+                {path.node_ids?.map((id) => {
+                  const item = [...inventory, ...data.finding].find(
+                    (node) => node.id === id,
+                  );
+                  return item ? (
+                    <button
+                      className="secondary"
+                      key={id}
+                      onClick={() => onOpen(item)}
+                    >
+                      {item.title || item.id}
+                    </button>
+                  ) : null;
+                })}
+              </div>
+              <p>{path.remediation}</p>
+            </section>
+          ))
+        ) : (
+          <Empty title="No supported risk paths">
+            A path requires observed resource, exposure, and finding
+            relationships in the selected snapshot.
+          </Empty>
+        )
+      ) : assets.length ? (
+        <div className="integration-list">
+          {assets.map((asset) => (
+            <article key={asset.id}>
+              <div>
+                <small>
+                  {asset.provider} · {asset.asset_kind || asset.class}
+                </small>
+                <h2>{asset.title}</h2>
+                <p>
+                  {asset.public || "Exposure unknown"} · encryption{" "}
+                  {asset.encryption || "unknown"}
+                </p>
+                <small>
+                  {asset.path || asset.verification_scope} · {asset.owner}
+                </small>
+              </div>
+              <Badge value={asset.authority || asset.provenance} />
+              <button className="secondary" onClick={() => onOpen(asset)}>
+                Inspect evidence
+              </button>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <Empty title="No supported cloud assets">
+          Import Terraform, Kubernetes, Compose, or CloudFormation
+          configuration. An authorized native AWS inventory can add
+          control-plane observations.
+        </Empty>
+      )}
+      {page === "Cloud" && (
+        <>
+          <h2>Native infrastructure and cloud findings</h2>
+          <DataTable
+            mode="finding"
+            items={data.finding.filter((item) =>
+              ["IAC", "CLOUD"].includes(item.category || ""),
+            )}
+            onOpen={onOpen}
+          />
+          <h2>Read-only account inventory</h2>
+          <p>
+            Authorized AWS accounts add read-only S3, security group and
+            identity inventory. Your administrator must enable the account's
+            read-only credentials before syncing. Azure and GCP live adapters
+            are deferred.
+          </p>
+          <AWSInventoryForm data={data} role={role} />
+        </>
+      )}
+    </>
   );
 }
 
@@ -2708,6 +3062,34 @@ function Inspector({
           </>
         )}
       </dl>
+      {item.classification && (
+        <p>
+          <Badge value={item.classification} />{" "}
+          {item.delta && <Badge value={item.delta} />}{" "}
+          {item.new_code !== undefined &&
+            (item.new_code ? "Changed code" : "Outside changed lines")}
+        </p>
+      )}
+      {item.flow?.length ? (
+        <section className="evidence-block">
+          <h3>Static flow evidence</h3>
+          <ol>
+            {item.flow.map((step, index) => (
+              <li key={index}>
+                <Badge value={step.kind} />{" "}
+                <code>
+                  {step.path}:{step.line}
+                </code>{" "}
+                · {step.symbol}
+              </li>
+            ))}
+          </ol>
+          <p className="subtle">
+            Conservative static path. Runtime reachability is unobserved;
+            unknown transformations remain review hotspots.
+          </p>
+        </section>
+      ) : null}
       <div className="tabs">
         {["Evidence", "History", ...(canReview ? ["Review"] : [])].map((t) => (
           <button

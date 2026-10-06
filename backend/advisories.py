@@ -378,7 +378,7 @@ def run_checks(db, user, repo, snapshot, job, query):
             )
         )
     ]
-    gate = policy_gate(claims, findings, exceptions)
+    gate = policy_gate(claims, findings, exceptions, new_findings_only=snapshot.data.get("native_profile", {}).get("gate_scope") == "NEW_FINDINGS")
     refresh_policy_graph(db, user, repo, snapshot, records, gate)
     db.flush()
     base_records = scoped_snapshot_records(db, user.organization_id, repo.id, snapshot.data.get("base_id"))

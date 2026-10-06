@@ -183,7 +183,7 @@ def test_security_headers_and_bad_zip(signed):
 
 def test_claim_history_tracks_stale_transition(signed):
     data = signed.get("/api/workspace").json()
-    claim = next(c for c in data["claim"] if c["status"] == "CONTRADICTED")
+    claim = next(c for c in data["claim"] if c["status"] == "CONTRADICTED" and c["category"] == "AUTHENTICATION")
     assert [h["status"] for h in claim["history"]] == ["VERIFIED", "STALE", "CONTRADICTED"]
 
 
@@ -201,7 +201,7 @@ def test_repeated_bad_login_is_rate_limited(client):
 
 
 def test_gate_recomputes_from_reviewed_records(signed):
-    item = next(f for f in signed.get("/api/workspace").json()["finding"] if f["category"] == "IAC")
+    item = next(f for f in signed.get("/api/workspace").json()["finding"] if f["category"] == "IAC" and f["severity"] == "HIGH")
     snapshot_id = item["scope"]["snapshot_id"]
     before = signed.get("/api/gate/" + snapshot_id).json()
     signed.post(

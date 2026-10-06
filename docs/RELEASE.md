@@ -1,20 +1,9 @@
-# Release gates
+# ProjectTrace 1.3.3 release status
 
-## Passed locally
+Native quality/security/secrets/dependency/SBOM/IaC/static-cloud/claim analysis is independent of competitor products. The current release preserves version 1.2 and adds versioned rule profiles, syntax metrics, bounded flow traces, typed cloud assets, static risk paths and scoped PostgreSQL full-text/graph retrieval.
 
-- Runnable React/FastAPI demo with deterministic source-derived records.
-- Critical backend analyzer/security tests, frontend tests, TypeScript production build and browser workflows.
-- SQLite fresh migrations, rollback/re-upgrade, local consistent-backup integrity and recovery reads.
-- Dependency audits of the tested lockfiles.
-- Visual review of primary views, desktop/mobile overflow checks and no browser application exceptions in the workflow.
+Passed: baseline and fresh backend/frontend/browser checks; locked dependency audits; SQLite and real PostgreSQL migration upgrade/rollback/re-upgrade; real Redis/Celery duplicate delivery, broker outage/retry, cancellation/expiry, non-root Linux prefork and forced-crash natural lease recovery. Clean packaging excludes credentials, data, caches and build artifacts while retaining intentional inert browser ZIP fixtures.
 
-## Not passed — do not call this production ready
+Not passed: Docker/Compose/image scan and exact shipped image versions; production restore; real AWS/GitHub account end-to-end verification; Azure/GCP live adapters; complete multi-language taint/control-flow, IAM effective permission/escalation and deployed runtime attack paths; enterprise identity/member lifecycle; parser OS sandbox; managed object storage/key lifecycle; semantic vector retrieval; sustained capacity/fairness and population precision/recall.
 
-- Docker/Compose execution, container scan, PostgreSQL/Redis deployment validation and production backup restore.
-- Live GitHub App installation, fetch, private-source access inheritance, webhook-to-worker processing and check publication using real credentials.
-- Live SonarQube/Wiz/cloud integrations; external AI evaluations and quotas.
-- OIDC/SSO, invitation/member lifecycle, distributed limits, object storage/retention/deletion, encrypted storage policy, parser OS-level sandbox and enterprise operations.
-- pgvector/hybrid semantic retrieval, richer language/taint coverage, complete domain schema and multi-component monorepo mapping.
-- Population-level precision/recall, distributed load/failure/recovery tests and production security review.
-
-The local MVP is functional and reviewable. The complete master specification is not delivered. This file distinguishes verified local behavior from remaining engineering work and credential/infrastructure gates.
+The release is usable locally and has real service validation. It does not satisfy the entire enterprise master specification or all production release gates. [FINAL_PRODUCT_VALIDATION.md](../FINAL_PRODUCT_VALIDATION.md) is the authoritative current evidence report; earlier repair/delivery reports are historical.

@@ -1,5 +1,5 @@
-# Quality engine
+# Native quality engine
 
-Python AST rules approximate branch complexity and flag functions exceeding 80 lines. Rules include ID, version, category, severity/confidence, source location, rationale and remediation. Parse errors are explicitly reported as incomplete analysis instead of silently passing.
+ProjectTrace 1.3.3 uses Python AST and maintained Tree-sitter grammars for JavaScript/JSX, TypeScript/TSX and Java. Function metrics and source locations appear in Code Quality; findings have versioned IDs, severity, explanation and remediation. Parse failures/budgets are explicit PARTIAL coverage.
 
-No maintainability or technical-debt score is invented. JS/Java coverage is currently conservative security-pattern scanning, not a complete quality AST adapter. Duplication, precise control flow, naming policy and broad language support remain future work. The fixture corpus is too small to establish general false-positive rates.
+See [Native platform](NATIVE_PLATFORM.md) for exact complexity/length/nesting formulas, the cognitive approximation, duplicate-body rules and language limits. Quality gates support organization/repository profiles and new-findings scope. Full control-flow, naming/style policies, near-duplicate detection and standardized maintainability/debt ratings are deferred. The small synthetic corpus cannot establish a real-world false-positive rate.

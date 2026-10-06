@@ -106,6 +106,7 @@ export function scopeWorkspace(data: Workspace, repository: string): Workspace {
     "exception",
     "job",
     "graph_node",
+    "risk_path",
   ] as const) {
     scoped[key] = (data[key] || []).filter(
       (item) =>

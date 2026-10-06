@@ -27,7 +27,7 @@ def bucket(path, method):
         return "ask"
     if path == "/api/github/webhook":
         return "webhook"
-    if path.startswith("/api/connections") or path.endswith("/advisories"):
+    if path.startswith(("/api/connections", "/api/cloud/")) or path.endswith("/advisories"):
         return "provider"
     return "general"
 

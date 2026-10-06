@@ -47,7 +47,7 @@ def archive(files):
 
 
 def check_fixture(fixture):
-    result = analyze(fixture["files"])
+    result = analyze(fixture["files"], profile=fixture.get("profile"))
     rules = sorted({finding["rule"] for finding in result["findings"]})
     actual_claims = {
         claim["expected"]: claim["status"] for claim in result["claims"] if claim["origin"] == "DOCUMENTATION"
@@ -182,6 +182,19 @@ def run(samples):
             "false_positive_traps": len(false_positive_cases),
             "traps_with_unexpected_findings": sum(bool(item["forbidden_rules_found"]) for item in false_positive_cases),
             "general_false_positive_rate": "UNMEASURED; this small synthetic corpus cannot estimate real-world precision.",
+            "labeled_rule_presence": {
+                "true_positives": sum(
+                    len(fixture.get("expected_rules", [])) - len(outcome["missing_rules"])
+                    for fixture, outcome in zip(manifest["fixtures"], outcomes)
+                ),
+                "false_negatives": sum(len(outcome["missing_rules"]) for outcome in outcomes),
+                "false_positives": sum(len(outcome["forbidden_rules_found"]) for outcome in outcomes),
+                "true_negatives": sum(
+                    len(fixture.get("forbidden_rules", [])) - len(outcome["forbidden_rules_found"])
+                    for fixture, outcome in zip(manifest["fixtures"], outcomes)
+                ),
+                "scope": "Explicit expected/forbidden rule-presence labels only; finding instances and unlabeled rule outputs are not scored.",
+            },
         },
         "timings": {
             "full_zip_and_analysis": full,
@@ -206,7 +219,7 @@ def run(samples):
             "worker queue delay",
             "OSV refresh/advisory evaluation",
             "live cloud/provider transport",
-            "independent JS/Java quality AST parsers",
+            "Real-world precision beyond the labeled synthetic corpus",
         ],
     }
 
