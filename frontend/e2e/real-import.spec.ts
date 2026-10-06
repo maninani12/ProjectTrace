@@ -73,8 +73,17 @@ test("real workspace ZIP import, claims, evidence, question and second-snapshot 
   });
   const nav = page.getByRole("navigation", { name: "Main navigation" });
   await nav.getByRole("button", { name: "Overview", exact: true }).click();
-  await expect(page.getByRole("heading", { name: "Engineering, backed by evidence.", exact: true })).toBeVisible();
-  await expect(page.getByRole("region", { name: "Native analyzer coverage" }).getByText("SAST", { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("heading", {
+      name: "Engineering, backed by evidence.",
+      exact: true,
+    }),
+  ).toBeVisible();
+  await expect(
+    page
+      .getByRole("region", { name: "Native analyzer coverage" })
+      .getByText("SAST", { exact: true }),
+  ).toBeVisible();
   await page.screenshot({
     path: path.join(proof, "real-overview.png"),
     fullPage: true,
@@ -105,8 +114,14 @@ test("real workspace ZIP import, claims, evidence, question and second-snapshot 
   await expect(inspector.getByText("CONFIRMED", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Close dialog", exact: true }).click();
   await nav.getByRole("button", { name: "Code Quality", exact: true }).click();
+  await page
+    .getByRole("navigation", { name: "Code Quality views" })
+    .getByRole("button", { name: "Findings", exact: true })
+    .click();
   await expect(
-    page.getByRole("button", { name: /Function exceeds complexity budget/ }),
+    page.getByRole("button", {
+      name: /Cyclomatic complexity exceeds threshold/,
+    }),
   ).toBeVisible();
   await nav.getByRole("button", { name: "Security", exact: true }).click();
   await expect(

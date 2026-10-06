@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ReactFlow, Background, Controls, MarkerType } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { Badge } from "./App";
+import Badge from "./shared/Badge";
 import type { Workspace, Item } from "./api";
 function label(item: Item) {
   return item.text || item.title || item.path || item.name || item.id;

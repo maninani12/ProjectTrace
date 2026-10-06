@@ -4,7 +4,7 @@ const proof = process.env.PROJECTTRACE_PROOF || "test-results";
 test("CEO and engineer evidence workflow", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
-  await page.goto("/");
+  await page.goto("/login");
   await page.getByRole("button", { name: "Explore Northstar demo" }).click();
   await page.getByRole("button", { name: "Close dialog", exact: true }).click();
   await expect(
@@ -114,7 +114,7 @@ test("CEO and engineer evidence workflow", async ({ page }) => {
 });
 test("mobile review and honest unsupported investigation", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/");
+  await page.goto("/login");
   await page.getByRole("button", { name: "Explore Northstar demo" }).click();
   await page.getByRole("button", { name: "Close dialog", exact: true }).click();
   await expect(

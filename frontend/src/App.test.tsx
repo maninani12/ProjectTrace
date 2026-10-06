@@ -1,7 +1,8 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import App, { AnalysisCoverage, Badge, ImpactSummary } from "./App";
+import App from "./App";
+import { AnalysisCoverage, Badge, ImpactSummary } from "./WorkspaceApp";
 import type { Workspace } from "./api";
 import { cleanup } from "@testing-library/react";
 afterEach(() => {
@@ -14,12 +15,24 @@ describe("ProjectTrace interface", () => {
     expect(screen.getByText("CONTRADICTED")).toBeInTheDocument();
   });
   it("offers the deterministic demo and secure login", async () => {
+    window.history.replaceState({}, "", "/login");
     vi.stubGlobal(
       "fetch",
-      vi.fn().mockResolvedValue({
-        ok: false,
-        text: async () => '{"detail":"Sign in"}',
-      }),
+      vi.fn((url) =>
+        String(url).endsWith("/auth/options")
+          ? Promise.resolve({
+              ok: true,
+              json: async () => ({
+                authenticated: false,
+                local_registration: true,
+                demo_available: true,
+              }),
+            })
+          : Promise.resolve({
+              ok: false,
+              text: async () => '{"detail":"Sign in"}',
+            }),
+      ),
     );
     render(
       <QueryClientProvider client={new QueryClient()}>
@@ -27,7 +40,7 @@ describe("ProjectTrace interface", () => {
       </QueryClientProvider>,
     );
     expect(
-      screen.getByRole("button", { name: /Explore Northstar demo/ }),
+      await screen.findByRole("button", { name: /Explore Northstar demo/ }),
     ).toBeInTheDocument();
     expect(screen.getByLabelText("Password")).toHaveAttribute(
       "type",
@@ -35,12 +48,24 @@ describe("ProjectTrace interface", () => {
     );
   });
   it("shows actionable login errors", async () => {
+    window.history.replaceState({}, "", "/login");
     vi.stubGlobal(
       "fetch",
-      vi.fn().mockResolvedValue({
-        ok: false,
-        text: async () => '{"detail":"Run the demo seed command"}',
-      }),
+      vi.fn((url) =>
+        String(url).endsWith("/auth/options")
+          ? Promise.resolve({
+              ok: true,
+              json: async () => ({
+                authenticated: false,
+                local_registration: true,
+                demo_available: true,
+              }),
+            })
+          : Promise.resolve({
+              ok: false,
+              text: async () => '{"detail":"Run the demo seed command"}',
+            }),
+      ),
     );
     render(
       <QueryClientProvider client={new QueryClient()}>
@@ -48,7 +73,7 @@ describe("ProjectTrace interface", () => {
       </QueryClientProvider>,
     );
     fireEvent.click(
-      screen.getByRole("button", { name: /Explore Northstar demo/ }),
+      await screen.findByRole("button", { name: /Explore Northstar demo/ }),
     );
     await waitFor(() =>
       expect(screen.getByRole("alert")).toHaveTextContent(
@@ -125,7 +150,7 @@ describe("ProjectTrace interface", () => {
     );
     expect(
       screen.getByText(
-      "1 declared claims reverified · 3 declared claims reused from unchanged evidence",
+        "1 declared claims reverified · 3 declared claims reused from unchanged evidence",
       ),
     ).toBeInTheDocument();
     fireEvent.click(

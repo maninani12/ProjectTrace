@@ -54,6 +54,14 @@ export type Impact = {
   }[];
 };
 export type Item = {
+  dimension?: string;
+  symbol?: string;
+  measured?: number;
+  threshold?: number;
+  metric?: string;
+  machine_status?: string;
+  fingerprint_version?: string;
+  first_line?: number;
   id: string;
   version?: number | string;
   kind?: string;
