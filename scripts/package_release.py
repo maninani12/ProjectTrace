@@ -30,6 +30,7 @@ EXCLUDED = {
     "playwright-report",
     "work",
     "outputs",
+    ".prerender",
 }
 
 

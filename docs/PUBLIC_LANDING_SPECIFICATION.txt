@@ -1,0 +1,2487 @@
+######################################################################
+# PROJECTTRACE — MASTER PUBLIC LANDING PAGE SPECIFICATION
+######################################################################
+
+IMPORTANT:
+
+ProjectTrace requires a world-class PUBLIC LANDING PAGE in addition to
+the authenticated application.
+
+The landing page is NOT:
+
+- the ProjectTrace dashboard
+- an admin screen
+- a collection of feature cards
+- a college-project homepage
+- a generic SaaS template
+- an AI-generated purple-gradient website
+- a copy of Linear, Vercel, Wiz, SonarQube, GitHub or another company
+
+The landing page represents the PRODUCT and COMPANY before a visitor
+logs in.
+
+It must be suitable for:
+
+- developers
+- startup founders
+- CTOs
+- CEOs
+- engineering managers
+- platform teams
+- security engineers
+- investors
+- evaluators
+- non-technical visitors
+
+A person who has NEVER heard of ProjectTrace should understand:
+
+WHAT it is
+
+WHAT problem it solves
+
+HOW it works
+
+WHY it is different
+
+WHAT it can analyze
+
+WHAT result it gives
+
+WHY they should care
+
+WHAT they should do next
+
+within the first few minutes of visiting the site.
+
+The product must explain itself.
+
+======================================================================
+1. LANDING PAGE PRODUCT GOAL
+======================================================================
+
+The landing page should communicate one idea before everything else:
+
+"ProjectTrace helps engineering teams understand what their software
+actually implements, verify whether technical claims are still true,
+identify quality/security/risk problems, understand what changed, and
+see the evidence behind every conclusion."
+
+Do NOT open with technical jargon such as:
+
+CNAPP
+SAST
+SCA
+RAG
+AST
+Evidence Graph
+CSPM
+
+These concepts may appear later.
+
+Start with the customer problem in understandable language.
+
+======================================================================
+2. PRIMARY POSITIONING
+======================================================================
+
+Public product category:
+
+Unified Engineering Integrity, Quality & Security Platform
+
+Primary product statement:
+
+"Know what your software actually does — and prove it."
+
+Supporting statement:
+
+"ProjectTrace analyzes code, documentation, dependencies,
+infrastructure and cloud context to verify engineering claims,
+detect quality and security problems, uncover drift, understand
+change impact and show the evidence behind every conclusion."
+
+Alternative short tagline:
+
+Understand it.
+Verify it.
+Secure it.
+Keep it true.
+
+Use one clear primary headline.
+
+Do not rotate five competing marketing messages.
+
+======================================================================
+3. LANDING PAGE ROUTING
+======================================================================
+
+Public experience:
+
+/
+
+Product sections may use:
+
+/product
+/security
+/code-quality
+/cloud
+/engineering-integrity
+/guide
+/pricing
+/docs
+/about
+
+Authenticated product:
+
+/app
+
+or another clean dedicated application route.
+
+Do NOT mix authenticated dashboard navigation into the public marketing
+site.
+
+If the user is already authenticated:
+
+allow:
+
+Open ProjectTrace
+
+instead of forcing another login.
+
+======================================================================
+4. TOP NAVIGATION
+======================================================================
+
+Create a clean sticky navigation bar.
+
+LEFT:
+
+ProjectTrace logo
+ProjectTrace wordmark
+
+CENTER / MAIN NAVIGATION:
+
+Product
+Solutions
+Security
+Resources
+Pricing
+
+or equivalent structure based on implemented pages.
+
+Possible Product dropdown:
+
+Engineering Integrity
+Code Quality
+Application Security
+Dependencies
+Infrastructure
+Cloud & Risk
+Pull Requests
+Ask Engineering
+
+Possible Resources:
+
+ProjectTrace Guide
+Documentation
+Security
+Changelog
+GitHub / community only if actually public
+Blog only if implemented
+
+RIGHT:
+
+Sign in
+
+Primary CTA:
+
+Analyze a Repository
+
+or:
+
+Start Free
+
+ONLY use "Start Free" if a real free workflow exists.
+
+If registration is not implemented:
+
+use:
+
+Explore Demo
+
+or:
+
+Request Access
+
+Never create a CTA leading to a dead page.
+
+======================================================================
+5. NAVIGATION DESIGN
+======================================================================
+
+Navigation should feel:
+
+light
+fast
+intentional
+premium
+technical
+
+Use restrained dropdowns.
+
+Do NOT create a giant mega-menu containing every product capability.
+
+On mobile:
+
+use a proper accessible menu.
+
+Keyboard navigation must work.
+
+Sticky navigation may slightly change background/border on scroll.
+
+Avoid dramatic blur/glass effects.
+
+======================================================================
+6. HERO SECTION — MOST IMPORTANT SECTION
+======================================================================
+
+The hero must answer:
+
+What is ProjectTrace?
+
+Why should I care?
+
+What can I do now?
+
+Suggested structure:
+
+EYEBROW:
+
+ENGINEERING TRUTH, CONTINUOUSLY VERIFIED
+
+HEADLINE:
+
+Know what your software actually does.
+
+SUBHEAD:
+
+ProjectTrace analyzes your code, documentation, dependencies,
+infrastructure and engineering context to verify what is true,
+detect what changed, uncover quality and security risks, and show
+the evidence behind every conclusion.
+
+PRIMARY CTA:
+
+Analyze a Repository
+
+SECONDARY CTA:
+
+Explore Interactive Demo
+
+TERTIARY TEXT LINK:
+
+See how ProjectTrace works
+
+Do NOT overload hero with:
+
+10 buttons
+long technical paragraphs
+fake awards
+fake customer logos
+fake metrics.
+
+======================================================================
+7. HERO PRODUCT VISUAL
+======================================================================
+
+The hero should contain a REAL product-inspired visual.
+
+Do not use:
+
+robot illustrations
+
+generic AI blobs
+
+random code floating around
+
+stock photographs
+
+3D decorative objects unrelated to product
+
+fake dashboards.
+
+Create an elegant animated ProjectTrace investigation.
+
+Example hero sequence:
+
+README.md
+
+"Authentication uses JWT"
+
+        ↓
+
+PROJECTTRACE ANALYZES
+
+        ↓
+
+Code:
+SessionMiddleware(...)
+
+        ↓
+
+CLAIM
+
+Authentication uses JWT
+
+        ↓
+
+CONTRADICTED
+
+        ↓
+
+Changed by PR #1842
+
+        ↓
+
+2 documents affected
+
+        ↓
+
+Owner: Identity Team
+
+This instantly explains ProjectTrace.
+
+Animation should be subtle and controlled.
+
+Respect:
+
+prefers-reduced-motion.
+
+Do not autoplay distracting infinite animations.
+
+======================================================================
+8. HERO VISUAL ALTERNATIVE
+======================================================================
+
+Another strong visual:
+
+CODE
+DOCS
+DEPENDENCIES
+INFRASTRUCTURE
+CLOUD
+
+        ↓
+
+PROJECTTRACE
+
+        ↓
+
+EVIDENCE GRAPH
+
+        ↓
+
+CLAIMS
+QUALITY
+SECURITY
+DRIFT
+RISK
+
+        ↓
+
+ACTION
+
+This diagram may transition into an actual product screenshot.
+
+======================================================================
+9. FIRST-SCREEN TRUST
+======================================================================
+
+Immediately below hero provide a small credibility strip.
+
+Do NOT invent customer logos.
+
+Until actual customers exist, use factual capability signals such as:
+
+Static analysis without executing repository code
+
+Evidence-backed conclusions
+
+PR-aware analysis
+
+Native code quality and security
+
+Versioned engineering claims
+
+Private repository support architecture
+
+or equivalent VERIFIED capabilities.
+
+If a capability is not implemented yet:
+
+do not claim it.
+
+======================================================================
+10. PROBLEM SECTION
+======================================================================
+
+Explain the problem before listing features.
+
+Suggested headline:
+
+"Engineering reality changes faster than engineering knowledge."
+
+Explain simply:
+
+Code changes.
+
+Documentation falls behind.
+
+Architecture diagrams become stale.
+
+Dependencies change.
+
+Security assumptions stop being true.
+
+Different tools report disconnected findings.
+
+Developers must manually determine:
+
+what changed
+
+what is actually true
+
+what is risky
+
+what documentation is wrong
+
+who owns the issue.
+
+ProjectTrace brings these signals together around evidence.
+
+Use a visual comparison.
+
+BEFORE PROJECTTRACE:
+
+Code tool
+Security tool
+Cloud tool
+Docs
+Architecture
+PRs
+Spreadsheets
+
+all disconnected.
+
+WITH PROJECTTRACE:
+
+one evidence-driven engineering view.
+
+Do NOT directly attack competitors.
+
+======================================================================
+11. "HOW PROJECTTRACE WORKS" SECTION
+======================================================================
+
+This section must be understandable by a common person.
+
+Use four or five stages maximum.
+
+Example:
+
+1. CONNECT YOUR SOFTWARE
+
+Upload a repository or connect source control.
+
+2. PROJECTTRACE ANALYZES IT
+
+Code
+Documentation
+Dependencies
+Infrastructure
+Security signals
+
+3. PROJECTTRACE BUILDS EVIDENCE
+
+Technical facts are connected to their exact source.
+
+4. PROJECTTRACE CHECKS WHAT IS TRUE
+
+Engineering claims are verified against current evidence.
+
+5. PROJECTTRACE SHOWS WHAT NEEDS ACTION
+
+Quality issues
+Security risks
+Drift
+Impact
+Ownership
+PR decisions.
+
+Create a visual flow.
+
+Each stage may expand into Technical Details.
+
+======================================================================
+12. SIMPLE / TECHNICAL EXPLANATION PATTERN
+======================================================================
+
+Where useful, let visitors switch between:
+
+SIMPLE
+
+and
+
+TECHNICAL
+
+views.
+
+Example:
+
+SIMPLE:
+
+"ProjectTrace checks whether important statements about your software
+are still true."
+
+TECHNICAL:
+
+"ProjectTrace stores atomic engineering claims and verifies them
+against scoped implementation, configuration, infrastructure and
+other evidence."
+
+Use sparingly.
+
+Do not make the landing page feel like documentation.
+
+======================================================================
+13. SIGNATURE DIFFERENTIATOR — CLAIM LEDGER
+======================================================================
+
+This should receive its OWN major section.
+
+Headline:
+
+"Your engineering claims should have evidence."
+
+Explain:
+
+Organizations make statements such as:
+
+"We use JWT."
+
+"All admin APIs require authorization."
+
+"Production storage is private."
+
+"Payments use PostgreSQL."
+
+ProjectTrace checks those claims against current engineering evidence.
+
+Show actual ProjectTrace statuses:
+
+VERIFIED
+
+INFERRED
+
+UNVERIFIED
+
+STALE
+
+CONTRADICTED.
+
+Use a realistic Claim Ledger product preview.
+
+Example:
+
+✓ VERIFIED
+Database uses PostgreSQL
+
+✕ CONTRADICTED
+Authentication uses JWT
+
+◐ STALE
+Events are delivered through Kafka
+
+? UNVERIFIED
+Backups are encrypted
+
+This should feel uniquely ProjectTrace.
+
+======================================================================
+14. SIGNATURE DIFFERENTIATOR — EVIDENCE
+======================================================================
+
+Headline:
+
+"Every important conclusion should be explainable."
+
+Show:
+
+Claim
+
+↓
+
+Source File
+
+↓
+
+Exact Code
+
+↓
+
+Configuration
+
+↓
+
+Pull Request
+
+↓
+
+Finding
+
+↓
+
+Owner.
+
+Explain:
+
+ProjectTrace does not simply say:
+
+"Something is wrong."
+
+It shows:
+
+what
+
+where
+
+why
+
+when
+
+what changed
+
+what evidence supports the conclusion.
+
+This section builds trust.
+
+======================================================================
+15. SIGNATURE DIFFERENTIATOR — DRIFT
+======================================================================
+
+Headline:
+
+"Software changes. Your documentation should know."
+
+Example:
+
+BEFORE
+
+Documentation:
+Authentication uses JWT.
+
+Implementation:
+JWT.
+
+AFTER PR
+
+Implementation:
+Sessions.
+
+Documentation:
+still says JWT.
+
+PROJECTTRACE:
+
+Documentation Drift
+
+Claim:
+CONTRADICTED
+
+Changed by:
+PR #1842.
+
+This is a powerful landing-page demonstration.
+
+======================================================================
+16. CODE QUALITY SECTION
+======================================================================
+
+Do NOT present Code Quality as a random add-on.
+
+Headline:
+
+"Understand the quality of every change."
+
+Show:
+
+Quality Gate
+
+New Code
+
+Complexity
+
+Duplication
+
+Maintainability
+
+Quality Findings
+
+Changed-code analysis.
+
+Explain that ProjectTrace connects code-quality findings to:
+
+component
+
+PR
+
+owner
+
+evidence
+
+policy
+
+engineering claims where relevant.
+
+Do not claim unsupported rules/languages.
+
+Display supported languages truthfully.
+
+======================================================================
+17. APPLICATION SECURITY SECTION
+======================================================================
+
+Headline:
+
+"Find security problems where developers work."
+
+Visual:
+
+source
+→ propagation
+→ sink
+
+Example:
+
+HTTP input
+→ user_id
+→ SQL query
+→ unsafe execution.
+
+Show:
+
+severity
+
+confidence
+
+CWE where supported
+
+source location
+
+remediation.
+
+Also communicate:
+
+Secrets
+
+Security Hotspots
+
+Dependency Risk
+
+IaC Security.
+
+Do not use fear-based red dashboards.
+
+======================================================================
+18. SUPPLY-CHAIN SECTION
+======================================================================
+
+Explain:
+
+Dependencies
+
+Known vulnerabilities
+
+Direct/transitive relationship
+
+Licenses
+
+SBOM
+
+Fixed versions.
+
+Show a simple dependency investigation.
+
+Example:
+
+lodash
+4.x
+HIGH
+
+Used by:
+web-app
+
+Affected:
+CVE / advisory
+
+Fixed:
+version X
+
+Only use real fixture/demo values.
+
+======================================================================
+19. INFRASTRUCTURE SECTION
+======================================================================
+
+Show:
+
+Terraform
+
+Kubernetes
+
+Docker
+
+IaC.
+
+Explain:
+
+ProjectTrace statically examines infrastructure configuration without
+executing it.
+
+Show example:
+
+Public storage configuration
+
+Privileged container
+
+Overly broad network access.
+
+======================================================================
+20. CLOUD & RISK SECTION
+======================================================================
+
+Clearly distinguish:
+
+STATIC IaC ANALYSIS
+
+from:
+
+LIVE CLOUD CONTEXT.
+
+Explain:
+
+ProjectTrace can understand infrastructure from code.
+
+When an authorized AWS/Azure/GCP account is connected, ProjectTrace may
+also correlate live cloud context.
+
+Show an explainable risk path.
+
+Example:
+
+Internet
+↓
+Public Workload
+↓
+Critical Vulnerability
+↓
+Privileged Identity
+↓
+Sensitive Database.
+
+Never pretend live cloud functionality exists if not implemented.
+
+======================================================================
+21. PR INTELLIGENCE SECTION
+======================================================================
+
+This should be another major product showcase.
+
+Headline:
+
+"One engineering decision for every pull request."
+
+Visual example:
+
+PROJECTTRACE PR CHECK
+
+Code Quality
+PASS
+
+Application Security
+1 HIGH
+
+Dependencies
+PASS
+
+Secrets
+PASS
+
+Claims
+1 CONTRADICTED
+
+Documentation
+2 OUTDATED
+
+Overall
+REVIEW REQUIRED.
+
+Explain:
+
+Instead of developers checking many disconnected places,
+ProjectTrace explains what this change affects.
+
+======================================================================
+22. UNIFIED FINDINGS SECTION
+======================================================================
+
+Headline:
+
+"One place for engineering issues."
+
+Show one table combining:
+
+Quality
+
+Security
+
+Dependencies
+
+Infrastructure
+
+Cloud
+
+Claims
+
+Documentation.
+
+Filters:
+
+Severity
+
+Category
+
+Owner
+
+Repository
+
+Status.
+
+Clicking a row should open the same investigation UI users see inside
+the product.
+
+This demonstrates coherence.
+
+======================================================================
+23. ASK ENGINEERING SECTION
+======================================================================
+
+Do NOT market it as:
+
+"Chat with your code."
+
+That market is crowded and undersells ProjectTrace.
+
+Instead:
+
+"Ask questions. Get engineering answers with evidence."
+
+Example:
+
+QUESTION
+
+How is administrator authentication implemented?
+
+ANSWER
+
+Server-managed sessions.
+
+VERIFIED
+HIGH CONFIDENCE
+
+Evidence:
+auth/session.py
+middleware/auth.py
+
+Related Claim:
+"Authentication uses JWT"
+CONTRADICTED.
+
+Show the structured investigation UI.
+
+======================================================================
+24. PROJECTTRACE GUIDE SECTION
+======================================================================
+
+Promote ProjectTrace Guide on the landing page.
+
+Headline:
+
+"New to ProjectTrace? Understand the entire product in minutes."
+
+Explain:
+
+ProjectTrace Guide provides:
+
+simple explanations
+
+technical explanations
+
+workflow diagrams
+
+examples
+
+module descriptions
+
+glossary
+
+security/privacy explanations.
+
+CTA:
+
+Explore ProjectTrace Guide.
+
+This reassures non-technical buyers.
+
+======================================================================
+25. AUDIENCE / USE CASE SECTION
+======================================================================
+
+Avoid generic:
+
+"For everyone."
+
+Use targeted tabs or sections.
+
+DEVELOPERS
+
+Understand PR impact.
+
+Find quality/security problems.
+
+See exact evidence.
+
+Reduce tool switching.
+
+ENGINEERING LEADERS
+
+Understand engineering health.
+
+See ownership.
+
+Track drift.
+
+Understand risk.
+
+SECURITY TEAMS
+
+Investigate AppSec, dependencies, IaC, cloud context and risk.
+
+PLATFORM / DEVEX
+
+Understand systems across repositories.
+
+Enforce policies.
+
+Improve developer workflows.
+
+CTO / CEO
+
+Understand engineering risk without reading code.
+
+See what requires action and who owns it.
+
+======================================================================
+26. COMPARISON WITH FRAGMENTED WORKFLOWS
+======================================================================
+
+Do NOT create an aggressive:
+
+"ProjectTrace vs Company X"
+
+section at first.
+
+Instead show:
+
+WITHOUT PROJECTTRACE
+
+Code Quality Tool
+Security Tool
+Cloud Tool
+Documentation
+PRs
+Architecture
+Spreadsheets
+
+↓
+
+Disconnected context.
+
+WITH PROJECTTRACE
+
+Evidence
++
+Claims
++
+Quality
++
+Security
++
+Infrastructure
++
+Risk
++
+PR Impact
+
+↓
+
+One connected engineering view.
+
+Position around:
+
+context
+
+evidence
+
+traceability
+
+less fragmentation.
+
+======================================================================
+27. PRODUCT TOUR
+======================================================================
+
+Create an optional interactive tour directly on landing page.
+
+Potential steps:
+
+Overview
+
+Claim Ledger
+
+Finding Inspector
+
+Evidence Explorer
+
+Evidence Graph
+
+PR Analysis
+
+Risk Path
+
+Ask Engineering.
+
+Do not load the entire authenticated application.
+
+Use controlled demo data.
+
+Allow visitor to explore without registration.
+
+======================================================================
+28. SCREENSHOT / PRODUCT VISUAL QUALITY
+======================================================================
+
+Use real product components/screens where possible.
+
+Screens must contain realistic deterministic demo data.
+
+Never show:
+
+Lorem ipsum
+
+random counts
+
+fake enterprise customers
+
+unfinished UI
+
+placeholder values
+
+broken charts
+
+empty tables
+
+fake integrations.
+
+All landing visuals should match actual application design.
+
+Landing and app must look like ONE product family.
+
+======================================================================
+29. DESIGN LANGUAGE
+======================================================================
+
+ProjectTrace public site should inherit the same design identity as the
+application.
+
+Personality:
+
+technical
+
+precise
+
+premium
+
+quiet
+
+credible
+
+modern
+
+confident
+
+human.
+
+Foundation:
+
+off-white/light neutral surface
+
+graphite/slate text
+
+deep charcoal dark mode
+
+restrained identity accent
+
+semantic colors only when useful.
+
+Avoid:
+
+purple AI gradients
+
+huge blobs
+
+overdone glassmorphism
+
+neon cybersecurity aesthetic
+
+constant animated backgrounds
+
+huge rounded cards everywhere.
+
+======================================================================
+30. LANDING PAGE VISUAL REFERENCES
+======================================================================
+
+Study interaction/design principles from:
+
+LINEAR
+
+for:
+typography
+spacing
+calmness
+high information quality.
+
+VERCEL
+
+for:
+developer-product polish
+hierarchy
+public-to-product transition.
+
+GITHUB
+
+for:
+developer familiarity
+technical trust
+source-oriented visuals.
+
+Do NOT copy these products.
+
+ProjectTrace must develop its own visual identity.
+
+======================================================================
+31. TYPOGRAPHY
+======================================================================
+
+Use the application's typography system.
+
+Strong sans-serif for:
+
+headlines
+
+body
+
+UI.
+
+Monospace only for:
+
+file paths
+
+commit IDs
+
+API routes
+
+rules
+
+evidence metadata.
+
+Do not use monospace for marketing paragraphs.
+
+Hero typography should be strong but not gigantic purely for fashion.
+
+Desktop headline should remain readable without consuming the entire
+viewport.
+
+======================================================================
+32. SPACING & LAYOUT
+======================================================================
+
+Use disciplined spacing.
+
+Content max-width should prevent extremely long text lines.
+
+Alternate:
+
+text + product visual
+
+product visual + text
+
+full-width evidence section
+
+rather than:
+
+card
+card
+card
+card
+card.
+
+Use cards only when content genuinely benefits from containment.
+
+======================================================================
+33. MOTION
+======================================================================
+
+Motion should explain.
+
+Use motion for:
+
+claim status transition
+
+evidence relationship construction
+
+PR impact flow
+
+graph expansion
+
+section entrance
+
+navigation transitions.
+
+Avoid motion that exists only to look futuristic.
+
+Keep animations:
+
+short
+
+smooth
+
+interruptible
+
+GPU-friendly.
+
+Support:
+
+prefers-reduced-motion.
+
+======================================================================
+34. DARK MODE
+======================================================================
+
+Support:
+
+Light
+
+Dark
+
+System
+
+if the public site design system already supports it.
+
+Do not make dark mode cyberpunk.
+
+Preserve:
+
+readability
+
+contrast
+
+serious engineering appearance.
+
+======================================================================
+35. RESPONSIVENESS
+======================================================================
+
+Landing page must work excellently on:
+
+large desktop
+
+standard laptop
+
+tablet
+
+mobile.
+
+Do NOT merely scale desktop down.
+
+On mobile:
+
+stack visuals
+
+simplify interactive graphs
+
+keep CTA visible
+
+keep typography readable
+
+avoid horizontal overflow.
+
+Test common widths.
+
+======================================================================
+36. ACCESSIBILITY
+======================================================================
+
+Target accessible public-site behavior.
+
+Use:
+
+semantic landmarks
+
+proper headings
+
+keyboard navigation
+
+focus indicators
+
+accessible menus
+
+accessible accordions
+
+alt text
+
+ARIA only where necessary
+
+good contrast
+
+reduced motion.
+
+Do not encode status only by color.
+
+======================================================================
+37. PERFORMANCE
+======================================================================
+
+Landing page speed is a product feature.
+
+Optimize for excellent Core Web Vitals.
+
+Avoid:
+
+large JS bundles
+
+huge graph libraries above the fold
+
+uncompressed imagery
+
+autoplay videos
+
+unnecessary web fonts
+
+blocking requests.
+
+Use:
+
+route/section code splitting
+
+lazy loading
+
+responsive images
+
+modern image formats
+
+preload only critical resources
+
+font subsetting where appropriate.
+
+Hero must become usable quickly.
+
+======================================================================
+38. SEO
+======================================================================
+
+The landing page must be indexable.
+
+Create high-quality:
+
+<title>
+
+meta description
+
+canonical URL
+
+Open Graph metadata
+
+Twitter/social metadata
+
+robots configuration
+
+sitemap.
+
+Use semantic content.
+
+Public marketing content should not depend on client-side JavaScript
+alone if the chosen deployment architecture makes proper SSR/static
+generation practical.
+
+If current Vite architecture remains SPA-only:
+
+evaluate whether public marketing pages should use static pre-rendering
+or an appropriate framework.
+
+Do NOT rewrite the application framework solely for marketing without
+weighing complexity.
+
+======================================================================
+39. STRUCTURED DATA
+======================================================================
+
+Where valid, add schema.org structured metadata such as:
+
+SoftwareApplication
+
+Organization
+
+FAQPage
+
+only when page content genuinely supports it.
+
+Do not add misleading structured data.
+
+======================================================================
+40. LANDING PAGE CONTENT MUST BE REAL
+======================================================================
+
+Do NOT fabricate:
+
+"Trusted by 5,000 developers"
+
+"Used by Fortune 500 companies"
+
+"99.99% uptime"
+
+"40% fewer vulnerabilities"
+
+customer quotes
+
+logos
+
+awards
+
+certifications
+
+SOC 2
+
+ISO certification
+
+benchmarks.
+
+Until real evidence exists, omit those sections or use product
+capability content.
+
+Trust is more important than fake social proof.
+
+======================================================================
+41. SECURITY / TRUST SECTION
+======================================================================
+
+Create a real security section.
+
+Explain simply:
+
+Repositories are treated as untrusted data.
+
+ProjectTrace does not execute uploaded repository code.
+
+Secrets are protected/redacted.
+
+Tenant access is enforced.
+
+Private-source authorization is respected.
+
+External AI use is controlled.
+
+Data-retention controls exist where implemented.
+
+CTA:
+
+Read ProjectTrace Security Model.
+
+Only claim implemented controls.
+
+======================================================================
+42. PRIVACY COMMUNICATION
+======================================================================
+
+Clearly answer:
+
+What repository data is stored?
+
+How long is it stored?
+
+What leaves ProjectTrace?
+
+Does an AI provider see source?
+
+Can AI be disabled?
+
+Can source be deleted?
+
+How are secrets handled?
+
+Link to detailed documentation.
+
+Do not bury these answers for technical customers.
+
+======================================================================
+43. PRICING SECTION
+======================================================================
+
+Only show public pricing when actual product economics and plan logic are
+ready.
+
+Potential future tiers:
+
+FREE
+
+DEVELOPER
+
+TEAM
+
+BUSINESS
+
+ENTERPRISE.
+
+Do not fabricate exact prices before infrastructure costs have been
+measured.
+
+If pricing is not finalized:
+
+use:
+
+Simple plans for developers and teams.
+
+[ Join Early Access ]
+
+or:
+
+[ Contact Us ]
+
+without pretending final commercial pricing exists.
+
+======================================================================
+44. CALL TO ACTION STRATEGY
+======================================================================
+
+Primary CTA throughout site should remain consistent.
+
+Choose based on actual product state:
+
+Analyze a Repository
+
+Start Free
+
+Explore Demo
+
+Request Access.
+
+Do not change CTA wording every section.
+
+Recommended current structure if open registration works:
+
+PRIMARY:
+Analyze a Repository
+
+SECONDARY:
+Explore Demo.
+
+If open registration does not work:
+
+PRIMARY:
+Explore Demo
+
+SECONDARY:
+Request Access.
+
+======================================================================
+45. FINAL CTA
+======================================================================
+
+End page with a strong but non-hype section.
+
+Example:
+
+YOUR SOFTWARE CHANGES EVERY DAY.
+YOUR ENGINEERING KNOWLEDGE SHOULD KEEP UP.
+
+ProjectTrace connects code, evidence, claims, quality, security and risk
+so teams can understand what is true and what needs action.
+
+[ Analyze a Repository ]
+
+[ Explore Demo ]
+
+Avoid:
+
+"Revolutionize your software journey."
+
+Avoid meaningless AI marketing language.
+
+======================================================================
+46. FAQ
+======================================================================
+
+Create concise useful FAQ.
+
+Possible questions:
+
+What is ProjectTrace?
+
+Does ProjectTrace execute my repository code?
+
+Do I need SonarQube?
+
+Do I need Wiz?
+
+Can ProjectTrace analyze private repositories?
+
+What languages are supported?
+
+Does ProjectTrace use AI?
+
+Can AI be disabled?
+
+What is a Claim?
+
+What is Drift?
+
+What is the Evidence Graph?
+
+Can ProjectTrace analyze pull requests?
+
+Does ProjectTrace support cloud environments?
+
+How does ProjectTrace protect source code?
+
+What happens to uploaded repositories?
+
+Answers must match real current implementation.
+
+Do not promise roadmap items as existing capabilities.
+
+======================================================================
+47. FOOTER
+======================================================================
+
+Create professional footer.
+
+PROJECTTRACE
+
+Product
+
+Code Quality
+Application Security
+Dependencies
+Infrastructure
+Engineering Integrity
+Cloud & Risk
+
+Resources
+
+ProjectTrace Guide
+Documentation
+Security
+Changelog
+
+Company
+
+About
+Contact
+
+Legal
+
+Privacy
+Terms
+Security
+
+Product status / GitHub only if actually available.
+
+Keep footer concise.
+
+======================================================================
+48. ERROR STATES
+======================================================================
+
+Public landing page must gracefully handle:
+
+failed demo loading
+
+failed CTA navigation
+
+network issues
+
+missing screenshot asset
+
+invalid route.
+
+Create useful error pages:
+
+404
+
+500 fallback.
+
+404 should include:
+
+Return Home
+
+Open ProjectTrace
+
+ProjectTrace Guide.
+
+======================================================================
+49. ANALYTICS
+======================================================================
+
+If product analytics are implemented:
+
+collect privacy-conscious events such as:
+
+CTA clicked
+
+demo opened
+
+Guide opened
+
+registration started
+
+repository analysis started.
+
+Do NOT send repository source or sensitive technical data to marketing
+analytics.
+
+Respect applicable consent requirements.
+
+======================================================================
+50. LANDING → PRODUCT TRANSITION
+======================================================================
+
+This transition must feel seamless.
+
+Landing:
+
+[ Analyze a Repository ]
+
+↓
+
+Sign in / Create Account if needed
+
+↓
+
+Create/select Organization
+
+↓
+
+Import Source
+
+↓
+
+ProjectTrace Analysis
+
+↓
+
+Overview.
+
+Do not send users through five unnecessary marketing/account screens.
+
+If visitor chooses:
+
+Explore Demo
+
+↓
+
+Northstar Demo Workspace
+
+with clear:
+
+DEMO DATA
+
+indicator.
+
+======================================================================
+51. FIRST PRODUCT RETURN PATH
+======================================================================
+
+Authenticated users visiting the landing page should see:
+
+Open ProjectTrace
+
+rather than only:
+
+Sign Up.
+
+If they have recent workspace context:
+
+do not expose private workspace information publicly,
+but allow one-click return after authentication.
+
+======================================================================
+52. LANDING PAGE INFORMATION HIERARCHY
+======================================================================
+
+Recommended final section sequence:
+
+NAVIGATION
+
+↓
+
+HERO
+
+↓
+
+PRODUCT TRUST / CAPABILITY SIGNAL
+
+↓
+
+THE PROBLEM
+
+↓
+
+HOW PROJECTTRACE WORKS
+
+↓
+
+CLAIM LEDGER
+
+↓
+
+EVIDENCE / TRACEABILITY
+
+↓
+
+CODE QUALITY + SECURITY
+
+↓
+
+DRIFT + IMPACT
+
+↓
+
+PR INTELLIGENCE
+
+↓
+
+CLOUD / RISK
+
+↓
+
+UNIFIED FINDINGS
+
+↓
+
+ASK ENGINEERING
+
+↓
+
+PROJECTTRACE GUIDE
+
+↓
+
+WHO IT IS FOR
+
+↓
+
+SECURITY / PRIVACY
+
+↓
+
+OPTIONAL PRICING
+
+↓
+
+FAQ
+
+↓
+
+FINAL CTA
+
+↓
+
+FOOTER.
+
+Do not create sections merely because competitors have them.
+
+Every section must help answer a visitor question.
+
+======================================================================
+53. VISITOR QUESTIONS TEST
+======================================================================
+
+The landing page must answer, in order:
+
+"What is this?"
+
+"Why do I need it?"
+
+"How does it work?"
+
+"What makes it different?"
+
+"Can I trust its conclusions?"
+
+"Does it cover quality?"
+
+"Does it cover security?"
+
+"Does it understand change?"
+
+"Can my developers use it?"
+
+"Can management understand it?"
+
+"How is my source protected?"
+
+"How do I try it?"
+
+If an answer is missing:
+
+fix the page.
+
+======================================================================
+54. COMMON-PERSON TEST
+======================================================================
+
+Give the landing page mentally to someone who does not understand:
+
+SAST
+SCA
+IaC
+RAG
+AST
+CSPM.
+
+They should still be able to say:
+
+"ProjectTrace checks software and its documentation/security information,
+figures out what is actually true, shows problems and changes, gives
+proof, and tells the team what needs to be fixed."
+
+If they cannot explain that:
+
+simplify the landing page.
+
+======================================================================
+55. DEVELOPER TEST
+======================================================================
+
+An experienced developer should NOT think:
+
+"This is another AI wrapper."
+
+They should see:
+
+source-level evidence
+
+snapshots
+
+commit context
+
+PR context
+
+quality gates
+
+SAST
+
+dependencies
+
+IaC
+
+claims
+
+drift
+
+traceability.
+
+The landing page must demonstrate technical credibility.
+
+======================================================================
+56. CEO TEST
+======================================================================
+
+A CEO/CTO should understand:
+
+Engineering teams use many disconnected sources of truth.
+
+ProjectTrace creates one evidence-driven view.
+
+It identifies:
+
+risk
+
+incorrect assumptions
+
+engineering drift
+
+ownership
+
+change impact.
+
+Do not require them to understand AST or taint analysis.
+
+======================================================================
+57. COMPETITOR TEST
+======================================================================
+
+Do not make ProjectTrace visually look like:
+
+SonarQube
+
+Wiz
+
+Linear
+
+GitHub
+
+Datadog.
+
+Ask:
+
+If the ProjectTrace logo were removed, would the landing page still have
+a recognizable design identity?
+
+If NO:
+
+strengthen ProjectTrace's own visual language.
+
+======================================================================
+58. SCREENSHOT CONSISTENCY
+======================================================================
+
+Landing screenshots and product screenshots must use the same:
+
+typography
+
+status colors
+
+spacing
+
+component language
+
+icon family
+
+table styling
+
+navigation conventions.
+
+Do not create one design system for marketing and another unrelated one
+for the app.
+
+======================================================================
+59. IMPLEMENTATION QUALITY
+======================================================================
+
+Do not create the entire landing page as one giant component.
+
+Use sections/components such as:
+
+PublicNavbar
+
+Hero
+
+HeroInvestigationDemo
+
+CapabilityStrip
+
+ProblemSection
+
+HowItWorks
+
+ClaimLedgerShowcase
+
+EvidenceShowcase
+
+CodeSecurityShowcase
+
+PRIntelligenceShowcase
+
+CloudRiskShowcase
+
+AskEngineeringShowcase
+
+GuideShowcase
+
+AudienceSection
+
+SecuritySection
+
+FAQ
+
+FinalCTA
+
+PublicFooter.
+
+Keep content/data separate where useful.
+
+======================================================================
+60. REAL CONTENT ARCHITECTURE
+======================================================================
+
+Avoid scattering marketing text across JSX.
+
+Create manageable content configuration or dedicated content modules.
+
+This makes future:
+
+copy updates
+
+localization
+
+experiments
+
+pricing changes
+
+feature availability changes
+
+safer.
+
+Do not overengineer a CMS initially.
+
+======================================================================
+61. FEATURE AVAILABILITY
+======================================================================
+
+Landing-page claims must correspond to actual availability.
+
+Support status internally such as:
+
+AVAILABLE
+
+BETA
+
+COMING_LATER
+
+PRIVATE_PREVIEW.
+
+Do not publish unfinished features as normal available functionality.
+
+If showing future functionality:
+
+label it explicitly.
+
+======================================================================
+62. TESTING
+======================================================================
+
+Test public landing page with:
+
+unit tests
+
+component tests
+
+responsive tests
+
+navigation tests
+
+CTA tests
+
+auth transition tests
+
+demo transition tests
+
+accessibility checks
+
+visual regression where practical
+
+Playwright E2E.
+
+Test:
+
+anonymous visitor
+
+logged-in visitor
+
+mobile visitor
+
+keyboard-only visitor
+
+reduced-motion visitor.
+
+======================================================================
+63. PERFORMANCE TEST
+======================================================================
+
+Run Lighthouse or equivalent measurements.
+
+Investigate:
+
+Largest Contentful Paint
+
+Interaction responsiveness
+
+layout shift
+
+JS size
+
+image weight
+
+font loading.
+
+Do not chase a vanity Lighthouse number by breaking real functionality.
+
+But public landing must feel extremely fast.
+
+======================================================================
+64. VISUAL REVIEW
+======================================================================
+
+Manually inspect:
+
+1440 desktop
+
+1280 laptop
+
+1024 tablet
+
+768 tablet/small
+
+390 mobile
+
+360 mobile.
+
+Check:
+
+overflow
+
+wrapping
+
+navigation
+
+hero
+
+tables/demo visuals
+
+CTA
+
+FAQ
+
+footer
+
+dark mode
+
+motion.
+
+======================================================================
+65. FINAL LANDING PAGE ACCEPTANCE
+======================================================================
+
+Landing page is not complete until:
+
+A new visitor understands ProjectTrace.
+
+A non-technical visitor understands the basic problem.
+
+A developer sees technical credibility.
+
+A CEO understands business relevance.
+
+CTA works.
+
+Demo works.
+
+Login works.
+
+No fake metrics exist.
+
+No fake logos exist.
+
+No fake testimonials exist.
+
+No unsupported product claim exists.
+
+Product screenshots match actual product.
+
+Mobile works.
+
+Keyboard navigation works.
+
+Accessibility basics pass.
+
+No broken links.
+
+No console errors.
+
+No visible placeholder content.
+
+No heavy/unnecessary animation.
+
+Performance is acceptable.
+
+Security/privacy language is truthful.
+
+======================================================================
+66. LANDING PAGE NORTH STAR
+======================================================================
+
+The public site should communicate:
+
+PROJECTTRACE DOES NOT JUST FIND PROBLEMS.
+
+IT EXPLAINS ENGINEERING REALITY.
+
+It connects:
+
+WHAT YOU SAY
+
+with
+
+WHAT YOU IMPLEMENT
+
+with
+
+WHAT CHANGED
+
+with
+
+WHAT IS RISKY
+
+with
+
+WHO OWNS IT
+
+with
+
+THE EVIDENCE THAT PROVES IT.
+
+That is the landing-page story.
+
+======================================================================
+67. FINAL INSTRUCTION
+======================================================================
+
+Build the ProjectTrace landing page as if it is the first contact a
+serious engineering company has with the product.
+
+It must look intentional enough for a CEO.
+
+It must contain enough technical substance for a senior developer.
+
+It must remain simple enough for a non-technical visitor.
+
+It must transition naturally into the actual ProjectTrace application.
+
+Do NOT build a pretty shell around vague marketing.
+
+The product itself is the proof.
+
+BUILD A LANDING PAGE THAT MAKES PROJECTTRACE UNDERSTANDABLE,
+TRUSTWORTHY AND DESIRABLE BEFORE THE USER EVEN LOGS IN.
+######################################################################

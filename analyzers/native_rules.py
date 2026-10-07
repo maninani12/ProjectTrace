@@ -1,5 +1,7 @@
 """ProjectTrace-owned native rules. Parser libraries supply syntax, not findings."""
 
+from analyzers.infrastructure_extra import RULES as INFRASTRUCTURE_RULES
+
 NATIVE_RULES = {
     "PT-CLOUD-001": (
         "CLOUD",
@@ -87,6 +89,9 @@ NATIVE_RULES = {
     ),
 }
 
+
+NATIVE_RULES.update(INFRASTRUCTURE_RULES)
+
 RULE_LANGUAGES = {
     **{f"PT-SAST-{number:03}": ["Python"] for number in (1, 2, 3, 4, 7, 8, 9, 10)},
     "PT-SAST-005": ["JavaScript", "TypeScript", "Java"],
@@ -105,6 +110,17 @@ RULE_LANGUAGES = {
     "PT-SECRET-001": ["Supported text files"],
     "PT-LICENSE-001": ["Supported dependency manifests/lockfiles"],
 }
+
+RULE_LANGUAGES.update(
+    {
+        "PT-IAC-007": ["Kubernetes YAML", "Compose YAML"],
+        "PT-IAC-010": ["Kubernetes YAML", "Compose YAML", "Dockerfile"],
+        "PT-IAC-011": ["Kubernetes YAML", "Compose YAML"],
+        **{f"PT-IAC-{n:03}": ["Kubernetes YAML"] for n in (12, 13, 14, 20)},
+        **{f"PT-IAC-{n:03}": ["Dockerfile"] for n in (15, 16, 17)},
+        **{f"PT-IAC-{n:03}": ["Terraform HCL/JSON", "CloudFormation YAML/JSON"] for n in (18, 19)},
+    }
+)
 
 RULE_EXAMPLES = {
     "PT-SAST-001": "db.execute(f'SELECT * FROM users WHERE id={value}')",
@@ -153,10 +169,12 @@ def registry(rules, version):
             "remediation": value[3],
             "cwe": value[4],
             "enabled_by_default": True,
+            "precision_status": "UNMEASURED",
+            "blocking_eligible": False,
             "languages": RULE_LANGUAGES.get(key, ["Python", "JavaScript", "TypeScript", "Java"]),
             "explanation": value[2]
             + ". Findings describe static observations; runtime exploitability is not inferred.",
-            "example": {"trigger": RULE_EXAMPLES[key], "remedy": value[3]},
+            "example": {"trigger": RULE_EXAMPLES.get(key, value[2]), "remedy": value[3]},
             "references": ["https://cwe.mitre.org/data/definitions/" + value[4].split("-")[1] + ".html"]
             if value[4]
             else [],

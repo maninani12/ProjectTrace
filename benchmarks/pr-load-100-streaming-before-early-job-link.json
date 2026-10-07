@@ -1,0 +1,60 @@
+{
+  "state": "MEASURED_CONTROLLED_LOCAL",
+  "database": "LOCAL_SQLITE",
+  "source_adapter": "OWNED_STREAMING_ITERATOR_TENANT_ENCRYPTED_CAPTURE",
+  "streaming_snapshots": 80,
+  "captured_inventories": 80,
+  "resource_guard": {
+    "kind": "WINDOWS_JOB_OBJECT",
+    "memory_commit_limit_bytes": 805306368,
+    "job_memory_limit_bytes": 805306368,
+    "cpu_user_seconds_per_process": 600.0,
+    "network_isolation": "NOT_PROVIDED",
+    "filesystem_isolation": "NOT_PROVIDED"
+  },
+  "implementation_hashes": {
+    "backend/domain.py": "1e41b92c1a1c6f0881ebaa5c3dc4a5d58acc7bef609efdc1e4dbfd97078a8667",
+    "backend/repository_store.py": "44ca9ef0676f00c16a5046c9f3aa1cbef09ab1cada7fe8cd0380080add15afa2",
+    "backend/scheduling.py": "ff8cd978659589b071438a21b0f2c5ed66ccb380d27094af3fcc6400dfe7070f",
+    "workers/github.py": "af04f3184f44cbe727a035fd1ff5fcb83b70c4b56812005c4c9ddb9a76a8369e",
+    "scripts/benchmark_pr_load.py": "c6352ce58383b32ad0f034a4863c62907e89ed1fe1109909803f27ce44bc38e8"
+  },
+  "queue_adapter": "FOUR_CONTROLLED_THREADS_USING_PRODUCTION_CLAIMS_AND_GHES_WORKER",
+  "broker_qualification": "UNMEASURED_REDIS_CELERY_POSTGRESQL",
+  "primary_pr_events": 100,
+  "http_requests": 115,
+  "duplicate_delivery_responses": 10,
+  "retained_delivery_receipts": 105,
+  "jobs": 100,
+  "job_states": {
+    "COMPLETED_NO_FINDINGS": 80,
+    "CANCELLED": 20
+  },
+  "snapshots": 80,
+  "tenant_completed": {
+    "alpha": 40,
+    "beta": 40
+  },
+  "tenant_scope_verified": true,
+  "owned_worker_exit_code": 73,
+  "recovered_jobs": 1,
+  "lease_expiry_advanced_for_crash_test": true,
+  "webhook_p50_ms": 82.575,
+  "webhook_p95_ms": 96.035,
+  "webhook_p99_ms": 133.057,
+  "worker_attempt_p50_ms": 1425.892,
+  "worker_attempt_p95_ms": 5058.201,
+  "queue_wait_p50_ms": 43186.649,
+  "queue_wait_p95_ms": 62456.082,
+  "worker_threads": 4,
+  "peak_busy_threads": 4,
+  "deferred_attempts": 5,
+  "failures": [],
+  "wall_seconds": 72.681,
+  "customer_code_executed": false,
+  "limitations": [
+    "Local HTTP TestClient excludes network/TLS latency; adapter serves owned inert source.",
+    "Lease expiry was advanced after an actual owned subprocess exit; production crash timing is unmeasured.",
+    "Busy threads include database lock waits and deferred deliveries; CPU saturation is unmeasured."
+  ]
+}

@@ -48,6 +48,7 @@ services:
       redis: {condition: service_healthy}
     read_only: true
     tmpfs: [/tmp]
+    volumes: [source-data:/app/data]
     cap_drop: [ALL]
     security_opt: [no-new-privileges:true]
   worker:
@@ -57,12 +58,13 @@ services:
       REDIS_URL: redis://redis:6379/0
       ANALYSIS_INPUT_KEY: ${ANALYSIS_INPUT_KEY:?Set a Fernet key shared by API and worker}
       OSV_ENABLED: ${OSV_ENABLED:-0}
-    command: [celery, -A, workers.tasks, worker, --loglevel=INFO, --concurrency=2]
+    command: [celery, -A, workers.tasks, worker, --loglevel=INFO, --queues=native,large,scm,advisory,celery, --concurrency=2]
     depends_on:
       migrate: {condition: service_completed_successfully}
       redis: {condition: service_healthy}
     read_only: true
     tmpfs: [/tmp]
+    volumes: [source-data:/app/data]
     cap_drop: [ALL]
     security_opt: [no-new-privileges:true]
     mem_limit: 1g
@@ -72,9 +74,12 @@ services:
     build: {context: ., dockerfile: infrastructure/Dockerfile}
     environment:
       REDIS_URL: redis://redis:6379/0
+      DATABASE_URL: postgresql+psycopg://projecttrace:${POSTGRES_PASSWORD}@database/projecttrace
+      ANALYSIS_INPUT_KEY: ${ANALYSIS_INPUT_KEY:?Set a Fernet key shared by API and worker}
     command: [celery, -A, workers.tasks, beat, --loglevel=INFO, --schedule=/tmp/celerybeat-schedule]
     depends_on:
       redis: {condition: service_healthy}
+      migrate: {condition: service_completed_successfully}
     read_only: true
     tmpfs: [/tmp]
     cap_drop: [ALL]
@@ -86,3 +91,4 @@ services:
 volumes:
   postgres-data:
   redis-data:
+  source-data:

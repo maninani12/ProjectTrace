@@ -4,6 +4,7 @@ export const routes = {
   Components: "/components",
   Repositories: "/repositories",
   "Pull Requests": "/pull-requests",
+  "Engineering Changes": "/engineering-changes",
   Findings: "/findings",
   "Code Quality": "/quality",
   Security: "/security",

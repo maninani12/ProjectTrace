@@ -1,0 +1,357 @@
+{
+  "schema": "projecttrace-labeled-accuracy-v1",
+  "version": "1.6.0",
+  "python": "3.14.3",
+  "corpus_sha256": "b3bcdcae6ab43b88e8c4165403e852ea9badd40c783557c23f27b176159de567",
+  "case_count": 22,
+  "groups": [
+    {
+      "rule": "PT-IAC-001",
+      "version": "1.6.0",
+      "language": "YAML",
+      "framework": "Kubernetes",
+      "tp": 1,
+      "tn": 1,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "blocking_eligible": false,
+      "population": "SYNTHETIC_ONLY_UNQUALIFIED"
+    },
+    {
+      "rule": "PT-IAC-003",
+      "version": "1.6.0",
+      "language": "HCL",
+      "framework": "Terraform",
+      "tp": 1,
+      "tn": 1,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "blocking_eligible": false,
+      "population": "SYNTHETIC_ONLY_UNQUALIFIED"
+    },
+    {
+      "rule": "PT-IAC-007",
+      "version": "1.6.0",
+      "language": "YAML",
+      "framework": "Compose",
+      "tp": 1,
+      "tn": 1,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "blocking_eligible": false,
+      "population": "SYNTHETIC_ONLY_UNQUALIFIED"
+    },
+    {
+      "rule": "PT-IAC-012",
+      "version": "1.6.0",
+      "language": "YAML",
+      "framework": "Kubernetes",
+      "tp": 1,
+      "tn": 1,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "blocking_eligible": false,
+      "population": "SYNTHETIC_ONLY_UNQUALIFIED"
+    },
+    {
+      "rule": "PT-IAC-014",
+      "version": "1.6.0",
+      "language": "YAML",
+      "framework": "Kubernetes",
+      "tp": 1,
+      "tn": 1,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "blocking_eligible": false,
+      "population": "SYNTHETIC_ONLY_UNQUALIFIED"
+    },
+    {
+      "rule": "PT-IAC-015",
+      "version": "1.6.0",
+      "language": "Dockerfile",
+      "framework": "Dockerfile",
+      "tp": 1,
+      "tn": 1,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "blocking_eligible": false,
+      "population": "SYNTHETIC_ONLY_UNQUALIFIED"
+    },
+    {
+      "rule": "PT-IAC-017",
+      "version": "1.6.0",
+      "language": "Dockerfile",
+      "framework": "Dockerfile",
+      "tp": 1,
+      "tn": 1,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "blocking_eligible": false,
+      "population": "SYNTHETIC_ONLY_UNQUALIFIED"
+    },
+    {
+      "rule": "PT-IAC-018",
+      "version": "1.6.0",
+      "language": "JSON",
+      "framework": "CloudFormation",
+      "tp": 1,
+      "tn": 1,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "blocking_eligible": false,
+      "population": "SYNTHETIC_ONLY_UNQUALIFIED"
+    },
+    {
+      "rule": "PT-IAC-019",
+      "version": "1.6.0",
+      "language": "HCL",
+      "framework": "Terraform",
+      "tp": 1,
+      "tn": 1,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "blocking_eligible": false,
+      "population": "SYNTHETIC_ONLY_UNQUALIFIED"
+    },
+    {
+      "rule": "PT-SAST-002",
+      "version": "1.6.0",
+      "language": "Python",
+      "framework": "NONE",
+      "tp": 1,
+      "tn": 1,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "blocking_eligible": false,
+      "population": "SYNTHETIC_ONLY_UNQUALIFIED"
+    },
+    {
+      "rule": "PT-SAST-003",
+      "version": "1.6.0",
+      "language": "Python",
+      "framework": "NONE",
+      "tp": 1,
+      "tn": 1,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "blocking_eligible": false,
+      "population": "SYNTHETIC_ONLY_UNQUALIFIED"
+    }
+  ],
+  "observations": [
+    {
+      "case_id": "PT-SAST-002:NONE:positive",
+      "expected": true,
+      "detected": true,
+      "classification": "tp",
+      "elapsed_ms": 0.987,
+      "source_sha256": "3c0c0d8415b88215f4412e54547e6687fe5a85838036b215988567d5c9d3f03c"
+    },
+    {
+      "case_id": "PT-SAST-002:NONE:negative",
+      "expected": false,
+      "detected": false,
+      "classification": "tn",
+      "elapsed_ms": 0.515,
+      "source_sha256": "ead871579692e32a5e48cea7e2302a5579ed6af5bac1805ba224ece63535a0dc"
+    },
+    {
+      "case_id": "PT-SAST-003:NONE:positive",
+      "expected": true,
+      "detected": true,
+      "classification": "tp",
+      "elapsed_ms": 0.345,
+      "source_sha256": "ab6c3e6a59031335fcb4d17da31510253d867526ff1f9425e9b97836d449f9ca"
+    },
+    {
+      "case_id": "PT-SAST-003:NONE:negative",
+      "expected": false,
+      "detected": false,
+      "classification": "tn",
+      "elapsed_ms": 0.29,
+      "source_sha256": "0f26f30ef0c544a6267f7aca1f997143fd01e099514a66542e12237375e65a76"
+    },
+    {
+      "case_id": "PT-IAC-001:Kubernetes:positive",
+      "expected": true,
+      "detected": true,
+      "classification": "tp",
+      "elapsed_ms": 329.457,
+      "source_sha256": "2259cafa4570de8dab120942581db77a772812de6801a4f76a808452c21f2f09"
+    },
+    {
+      "case_id": "PT-IAC-001:Kubernetes:negative",
+      "expected": false,
+      "detected": false,
+      "classification": "tn",
+      "elapsed_ms": 492.356,
+      "source_sha256": "0540e8d902a5b831b08e1b4e67075c4edeeafe9e05cfa50519fb1c847a74b6d1"
+    },
+    {
+      "case_id": "PT-IAC-003:Terraform:positive",
+      "expected": true,
+      "detected": true,
+      "classification": "tp",
+      "elapsed_ms": 542.881,
+      "source_sha256": "773029acea589840636b738d210b4eeb2933f3204afa8607d7b4ee09fb9d3944"
+    },
+    {
+      "case_id": "PT-IAC-003:Terraform:negative",
+      "expected": false,
+      "detected": false,
+      "classification": "tn",
+      "elapsed_ms": 425.007,
+      "source_sha256": "87eb29899d471d3a650eb4f78d59de66243aee415a1fa8e6f1076c102687d614"
+    },
+    {
+      "case_id": "PT-IAC-012:Kubernetes:positive",
+      "expected": true,
+      "detected": true,
+      "classification": "tp",
+      "elapsed_ms": 556.948,
+      "source_sha256": "ee35e044f5d8ff5769e88d13a44d9836ef23be2887584593dec6b55c5a333650"
+    },
+    {
+      "case_id": "PT-IAC-012:Kubernetes:negative",
+      "expected": false,
+      "detected": false,
+      "classification": "tn",
+      "elapsed_ms": 840.349,
+      "source_sha256": "5ed2c9bc33ca846b577149cb5a54b2ee331e77a46194c02c34e375485c4163cf"
+    },
+    {
+      "case_id": "PT-IAC-014:Kubernetes:positive",
+      "expected": true,
+      "detected": true,
+      "classification": "tp",
+      "elapsed_ms": 361.286,
+      "source_sha256": "9a846bccd445ecbbc327e6ddf8599fafa719dda03b1b46e5ba63c27571a1f45c"
+    },
+    {
+      "case_id": "PT-IAC-014:Kubernetes:negative",
+      "expected": false,
+      "detected": false,
+      "classification": "tn",
+      "elapsed_ms": 459.214,
+      "source_sha256": "ed2730778dabbf0c70ff6f9be2ed3cfa96d380b411ee03ab27d4c04e245aec9b"
+    },
+    {
+      "case_id": "PT-IAC-015:Dockerfile:positive",
+      "expected": true,
+      "detected": true,
+      "classification": "tp",
+      "elapsed_ms": 371.657,
+      "source_sha256": "5e455eb784060b5343b99228f6dcab754cee62f18fd19adf6e435e4a379b04e2"
+    },
+    {
+      "case_id": "PT-IAC-015:Dockerfile:negative",
+      "expected": false,
+      "detected": false,
+      "classification": "tn",
+      "elapsed_ms": 548.2,
+      "source_sha256": "a351c66727786451a9435b075f662809897584bc6ba82067f74b6c3f1828f46b"
+    },
+    {
+      "case_id": "PT-IAC-017:Dockerfile:positive",
+      "expected": true,
+      "detected": true,
+      "classification": "tp",
+      "elapsed_ms": 648.069,
+      "source_sha256": "f2d082b2031cf37a9dd6c522727527c883a94739cff53231b105a12e1d8f271e"
+    },
+    {
+      "case_id": "PT-IAC-017:Dockerfile:negative",
+      "expected": false,
+      "detected": false,
+      "classification": "tn",
+      "elapsed_ms": 389.017,
+      "source_sha256": "a351c66727786451a9435b075f662809897584bc6ba82067f74b6c3f1828f46b"
+    },
+    {
+      "case_id": "PT-IAC-018:CloudFormation:positive",
+      "expected": true,
+      "detected": true,
+      "classification": "tp",
+      "elapsed_ms": 583.499,
+      "source_sha256": "013c76714fbdc23b9ba6fa70f9cebf9234466e248ffeadde3d811a4c57bc44c1"
+    },
+    {
+      "case_id": "PT-IAC-018:CloudFormation:negative",
+      "expected": false,
+      "detected": false,
+      "classification": "tn",
+      "elapsed_ms": 515.968,
+      "source_sha256": "4b732ff908aefd24607cdb901713294b84b45d29263d95dfe60201edc2c4fe40"
+    },
+    {
+      "case_id": "PT-IAC-019:Terraform:positive",
+      "expected": true,
+      "detected": true,
+      "classification": "tp",
+      "elapsed_ms": 471.049,
+      "source_sha256": "6c90661e7958083ba882b0a7e05e25ebab384132ae4c5ea3d9b46c24a8c70638"
+    },
+    {
+      "case_id": "PT-IAC-019:Terraform:negative",
+      "expected": false,
+      "detected": false,
+      "classification": "tn",
+      "elapsed_ms": 393.702,
+      "source_sha256": "ed330d5b88427aa1e431d0d2f449e49f42f3c88f19e8fc76c4b432effc4cef94"
+    },
+    {
+      "case_id": "PT-IAC-007:Compose:positive",
+      "expected": true,
+      "detected": true,
+      "classification": "tp",
+      "elapsed_ms": 301.109,
+      "source_sha256": "4a787956eacacab254372c34efc456665ca533bc49866b8c99c5dea47e24d89a"
+    },
+    {
+      "case_id": "PT-IAC-007:Compose:negative",
+      "expected": false,
+      "detected": false,
+      "classification": "tn",
+      "elapsed_ms": 627.116,
+      "source_sha256": "511298fe53e5ffb2458b0027ec23db740ac4b9b4ab9d8ae639701e1638e758ba"
+    }
+  ],
+  "limitations": [
+    "Two manually specified cases per selected rule/framework; no representative repository population.",
+    "No universal accuracy percentage. All rules remain unqualified for default blocking.",
+    "Separate 3M-line and concurrent-PR deployment benchmarks remain unmeasured."
+  ]
+}

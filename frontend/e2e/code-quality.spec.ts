@@ -2,13 +2,17 @@ import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import path from "node:path";
 
+const origin = new URL(
+  process.env.PROJECTTRACE_BASE_URL || "http://127.0.0.1:5181",
+).origin;
+
 test("native quality views, stable evidence review, profile and real coverage import", async ({
   page,
 }, testInfo) => {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
   const registration = await page.request.post("/api/auth/register", {
-    headers: { Origin: "http://127.0.0.1:5181" },
+    headers: { Origin: origin },
     data: {
       email: `quality-${Date.now()}@projecttrace.test`,
       password: `Disposable-quality-test-${Date.now()}!`,
@@ -27,7 +31,7 @@ test("native quality views, stable evidence review, profile and real coverage im
     "test_app.py": "def test_fixture():\n    assert True\n",
   };
   const imported = await page.request.post("/api/import", {
-    headers: { Origin: "http://127.0.0.1:5181", "X-CSRF-Token": identity.csrf },
+    headers: { Origin: origin, "X-CSRF-Token": identity.csrf },
     data: { name: "Quality browser fixture", files },
   });
   expect(imported.status()).toBe(200);
@@ -95,7 +99,7 @@ test("native quality views, stable evidence review, profile and real coverage im
     `/api/repositories/${repository.repository_id}/analyze`,
     {
       headers: {
-        Origin: "http://127.0.0.1:5181",
+        Origin: origin,
         "X-CSRF-Token": identity.csrf,
       },
       data: {

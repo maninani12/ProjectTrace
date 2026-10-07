@@ -2,6 +2,8 @@
 
 from datetime import datetime, timedelta, timezone
 
+import pytest
+
 from backend import main
 from backend.db import Record
 from backend.domain import policy_gate, scoped_snapshot_records
@@ -68,14 +70,18 @@ def test_removed_support_reaches_unchanged_documentation_and_tracks_lineage(clie
     assert all(set(n["via"]) <= edges for n in impact["affected_nodes"])
 
 
-def test_analyzer_rule_upgrade_is_not_software_drift(client):
+@pytest.mark.parametrize("changed_model", ["version", "parser"])
+def test_analyzer_rule_upgrade_is_not_software_drift(client, changed_model):
     client = workspace(client)
     files = {"README.md": "Backend uses FastAPI.", "app.py": "from fastapi import FastAPI\napp=FastAPI()\n"}
     imported, base = import_files(client, files)
     with main.Session() as db:
         stored = db.get(Record, base["id"])
         claims = [{**c, "status": "UNVERIFIED"} for c in stored.data["claims"]]
-        stored.data = {**stored.data, "analyzer_version": "legacy-test", "claims": claims}
+        model = (
+            {"analyzer_version": "legacy-test"} if changed_model == "version" else {"parser_signature": "legacy-parser"}
+        )
+        stored.data = {**stored.data, **model, "claims": claims}
         db.commit()
     head = next_snapshot(client, imported, base, files)
     assert head["changed_files"] == [] and head["drifts"] == []
@@ -183,7 +189,7 @@ def test_finding_exception_follows_only_unchanged_evidence(client):
     assert same["first_seen"] == finding["first_seen"]
     assert client.get("/api/gate/" + unchanged["id"]).json()["overall"] == "PASS"
     changed = next_snapshot(
-        client, imported, unchanged, {**files, "compose.yaml": files["compose.yaml"] + "# evidence changed\n"}
+        client, imported, unchanged, {**files, "compose.yaml": files["compose.yaml"] + '    ports: ["8080:80"]\n'}
     )
     fresh = next(f for f in changed["findings"] if f["category"] == "IAC")
     assert fresh["identity_id"] == finding["identity_id"]
@@ -197,6 +203,7 @@ def test_exception_identity_expiry_and_changed_evidence_fail_closed():
         "review_identity_id": "same-reviewed-evidence",
         "severity": "CRITICAL",
         "confidence": "HIGH",
+        "blocking_eligible": True,  # Explicit qualified synthetic gate condition.
         "title": "Fixture",
     }
     expiry = (datetime.now(timezone.utc) + timedelta(days=1)).isoformat()

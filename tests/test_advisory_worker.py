@@ -9,6 +9,8 @@ from backend.domain import add
 def test_exact_advisory_coverage_cache_failure_and_tenant_isolation(client):
     registered = client.post("/api/auth/register", json={"email": "advisory@example.com", "password": "Strong-test-password-123!", "organization": "Advisory tests"})
     client.headers["x-csrf-token"] = registered.json()["csrf"]
+    policy = client.get("/api/trust/policy").json()
+    assert client.post("/api/trust/policy", json={**policy, "package_coordinate_advisories": True}).status_code == 200
     imported = client.post("/api/import", json={"name": "Packages", "files": {
         "package.json": '{"dependencies":{"alpha":"1.0.0","beta":"2.0.0","gamma":"3.0.0","range":"^1.0.0"}}'}}).json()
     calls = []

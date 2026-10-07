@@ -1,0 +1,306 @@
+{
+  "state": "MEASURED_SYNTHETIC_LOCAL",
+  "recovered_initial_report": false,
+  "recovered_captured_inventory": false,
+  "analyzer_version": "1.6.0",
+  "parser_signature": "6bb6bc805e8cc99f849bf0ffa9e26c39867a6e863c020497eb61fff40a6bb9cb",
+  "fixture": "OWNED_SYNTHETIC_FIRST_PARTY_STYLE_INERT",
+  "files_requested": 500,
+  "fixture_languages": [
+    "Python"
+  ],
+  "fixture_kind": "python",
+  "physical_lines_requested": 5000,
+  "platform": "Windows-11-10.0.26300-SP0",
+  "python": "3.14.3",
+  "implementation_hashes": {
+    "backend/domain.py": "480e2be71ef7c5d5fccafb5ff65cd4569f7e682ed415ddbc2e0374b68410762f",
+    "backend/repository_store.py": "44ca9ef0676f00c16a5046c9f3aa1cbef09ab1cada7fe8cd0380080add15afa2",
+    "backend/partitioned_analysis.py": "61c9715b30da768e4396576a493c58f3816d069d6f7c14f12a48be7b0c98f8c8",
+    "analyzers/engine.py": "39f483e68db6aa62a0c0788801350ddef452ed63cf285dfef448a9d228aa7c13",
+    "backend/db.py": "0b74eca3228b8c3386081f77cfef437aa3988976fe6014910ea5fc55dd898d0a"
+  },
+  "active_clock": "WINDOWS_UNBIASED_INTERRUPT_TIME_PRECISE",
+  "database": "LOCAL_SQLITE",
+  "resource_guard": {
+    "kind": "WINDOWS_JOB_OBJECT",
+    "memory_commit_limit_bytes": 1610612736,
+    "job_memory_limit_bytes": 1610612736,
+    "cpu_user_seconds_per_process": 7200.0,
+    "network_isolation": "NOT_PROVIDED",
+    "filesystem_isolation": "NOT_PROVIDED"
+  },
+  "execution_budget_seconds": 3600,
+  "execution_budget_clock": "OWNED_BENCHMARK_ACTIVE_SYSTEM_TIME_PRODUCTION_UNCHANGED",
+  "customer_code_executed": false,
+  "external_llm_used": false,
+  "phases": [
+    {
+      "phase": "INITIAL",
+      "files_discovered": 500,
+      "physical_lines": 5000,
+      "inventory_seconds": 1.672,
+      "inventory_active_seconds": 1.672,
+      "pipeline_active_seconds": 9.932,
+      "active_wall_seconds": 11.604,
+      "system_suspend_seconds": 0.0,
+      "pipeline_seconds": 9.932,
+      "wall_seconds": 11.604,
+      "cpu_seconds": 3.984,
+      "peak_working_set_bytes": 113901568,
+      "database_bytes": 11161600,
+      "persisted_records": 3514,
+      "source_storage": {
+        "kind": "TENANT_ENCRYPTED_CONTENT_ADDRESSED",
+        "inventory_id": "7821d4f1-37cd-4796-bdc9-bc746beefb2b",
+        "partitions": 5,
+        "partition_model": "DECLARED_COMPONENT_THEN_FILE_AND_BYTE_BUDGET",
+        "max_partition_files": 100,
+        "max_partition_bytes": 18500,
+        "parser_cache_hits": 0,
+        "parser_cache_misses": 500,
+        "parser_cache_scope": "TENANT_CONTENT_PATH_PARSER_RULE_VERSION",
+        "quality_thresholds_recomputed": true,
+        "global_correlations_recomputed": true,
+        "analysis_ms": 8693.16,
+        "large_repository_performance": "UNMEASURED"
+      },
+      "state": "COMPLETED_NO_FINDINGS",
+      "changed_files": 500,
+      "claims": {
+        "state": "COMPLETED",
+        "implementation": 0,
+        "documentation": 0,
+        "documentation_files": 0
+      },
+      "gate": "REVIEW_REQUIRED",
+      "snapshot_id": "57294907-6920-4d50-ac45-ea2a20ed5778",
+      "coverage": {
+        "files_discovered": 500,
+        "files_with_native_scan": 500,
+        "source_files": 500,
+        "source_files_parsed": 500,
+        "source_analysis_percent": 100.0,
+        "states": {
+          "PARTIAL": 500
+        }
+      },
+      "stages": [
+        {
+          "stage": "VALIDATING",
+          "at": "2026-10-07T10:45:37.703169+00:00",
+          "elapsed_ms": 6.97
+        },
+        {
+          "stage": "PARSING",
+          "at": "2026-10-07T10:45:37.710530+00:00",
+          "elapsed_ms": 14.33
+        },
+        {
+          "stage": "ANALYZING",
+          "at": "2026-10-07T10:45:37.716364+00:00",
+          "elapsed_ms": 20.16
+        },
+        {
+          "stage": "ANALYZING",
+          "at": "2026-10-07T10:45:39.495357+00:00",
+          "elapsed_ms": 1799.16
+        },
+        {
+          "stage": "ANALYZING",
+          "at": "2026-10-07T10:45:41.200982+00:00",
+          "elapsed_ms": 3504.78
+        },
+        {
+          "stage": "ANALYZING",
+          "at": "2026-10-07T10:45:42.785391+00:00",
+          "elapsed_ms": 5089.19
+        },
+        {
+          "stage": "ANALYZING",
+          "at": "2026-10-07T10:45:44.598042+00:00",
+          "elapsed_ms": 6901.84
+        },
+        {
+          "stage": "ANALYZING",
+          "at": "2026-10-07T10:45:46.348635+00:00",
+          "elapsed_ms": 8652.44
+        },
+        {
+          "stage": "ANALYZING",
+          "at": "2026-10-07T10:45:46.357803+00:00",
+          "elapsed_ms": 8661.6
+        },
+        {
+          "stage": "EXTRACTING_CLAIMS",
+          "at": "2026-10-07T10:45:46.365636+00:00",
+          "elapsed_ms": 8669.43
+        },
+        {
+          "stage": "VERIFYING",
+          "at": "2026-10-07T10:45:46.371440+00:00",
+          "elapsed_ms": 8675.23
+        },
+        {
+          "stage": "BUILDING_EVIDENCE",
+          "at": "2026-10-07T10:45:46.408462+00:00",
+          "elapsed_ms": 8712.26
+        },
+        {
+          "stage": "CORRELATING",
+          "at": "2026-10-07T10:45:46.695167+00:00",
+          "elapsed_ms": 8998.97
+        },
+        {
+          "stage": "FINALIZING",
+          "at": "2026-10-07T10:45:47.592250+00:00",
+          "elapsed_ms": 9896.05
+        },
+        {
+          "stage": "COMPLETED_NO_FINDINGS",
+          "at": "2026-10-07T10:45:47.593079+00:00",
+          "elapsed_ms": 9896.88
+        }
+      ],
+      "execution_workers": 1,
+      "queue_delay_seconds": null,
+      "helper_cpu_seconds": null
+    },
+    {
+      "phase": "EIGHT_FILE_HEAD",
+      "files_discovered": 500,
+      "physical_lines": 5000,
+      "inventory_seconds": 0.53,
+      "inventory_active_seconds": 0.53,
+      "pipeline_active_seconds": 0.99,
+      "active_wall_seconds": 1.52,
+      "system_suspend_seconds": 0.0,
+      "pipeline_seconds": 0.99,
+      "wall_seconds": 1.52,
+      "cpu_seconds": 1.406,
+      "peak_working_set_bytes": 121298944,
+      "database_bytes": 18677760,
+      "persisted_records": 7028,
+      "source_storage": {
+        "kind": "TENANT_ENCRYPTED_CONTENT_ADDRESSED",
+        "inventory_id": "d97f6869-f21b-4122-b9d9-bf187a58ab99",
+        "partitions": 5,
+        "partition_model": "DECLARED_COMPONENT_THEN_FILE_AND_BYTE_BUDGET",
+        "max_partition_files": 100,
+        "max_partition_bytes": 18500,
+        "parser_cache_hits": 492,
+        "parser_cache_misses": 8,
+        "parser_cache_scope": "TENANT_CONTENT_PATH_PARSER_RULE_VERSION",
+        "quality_thresholds_recomputed": true,
+        "global_correlations_recomputed": true,
+        "analysis_ms": 250.32,
+        "large_repository_performance": "UNMEASURED"
+      },
+      "state": "COMPLETED_NO_FINDINGS",
+      "changed_files": 8,
+      "claims": {
+        "state": "COMPLETED",
+        "implementation": 0,
+        "documentation": 0,
+        "documentation_files": 0
+      },
+      "gate": "PASS",
+      "snapshot_id": "51dd62f6-2185-4a50-8b2c-b49989e090e3",
+      "coverage": {
+        "files_discovered": 500,
+        "files_with_native_scan": 500,
+        "source_files": 500,
+        "source_files_parsed": 500,
+        "source_analysis_percent": 100.0,
+        "states": {
+          "PARTIAL": 500
+        }
+      },
+      "stages": [
+        {
+          "stage": "VALIDATING",
+          "at": "2026-10-07T10:45:48.174272+00:00",
+          "elapsed_ms": 1.7
+        },
+        {
+          "stage": "PARSING",
+          "at": "2026-10-07T10:45:48.177927+00:00",
+          "elapsed_ms": 5.36
+        },
+        {
+          "stage": "ANALYZING",
+          "at": "2026-10-07T10:45:48.182604+00:00",
+          "elapsed_ms": 10.03
+        },
+        {
+          "stage": "ANALYZING",
+          "at": "2026-10-07T10:45:48.313859+00:00",
+          "elapsed_ms": 141.29
+        },
+        {
+          "stage": "ANALYZING",
+          "at": "2026-10-07T10:45:48.328301+00:00",
+          "elapsed_ms": 155.72
+        },
+        {
+          "stage": "ANALYZING",
+          "at": "2026-10-07T10:45:48.343694+00:00",
+          "elapsed_ms": 171.12
+        },
+        {
+          "stage": "ANALYZING",
+          "at": "2026-10-07T10:45:48.369288+00:00",
+          "elapsed_ms": 196.71
+        },
+        {
+          "stage": "ANALYZING",
+          "at": "2026-10-07T10:45:48.381950+00:00",
+          "elapsed_ms": 209.38
+        },
+        {
+          "stage": "ANALYZING",
+          "at": "2026-10-07T10:45:48.388038+00:00",
+          "elapsed_ms": 215.46
+        },
+        {
+          "stage": "EXTRACTING_CLAIMS",
+          "at": "2026-10-07T10:45:48.392849+00:00",
+          "elapsed_ms": 220.27
+        },
+        {
+          "stage": "VERIFYING",
+          "at": "2026-10-07T10:45:48.396102+00:00",
+          "elapsed_ms": 223.53
+        },
+        {
+          "stage": "BUILDING_EVIDENCE",
+          "at": "2026-10-07T10:45:48.431795+00:00",
+          "elapsed_ms": 259.22
+        },
+        {
+          "stage": "CORRELATING",
+          "at": "2026-10-07T10:45:48.585498+00:00",
+          "elapsed_ms": 412.92
+        },
+        {
+          "stage": "FINALIZING",
+          "at": "2026-10-07T10:45:49.108903+00:00",
+          "elapsed_ms": 936.33
+        },
+        {
+          "stage": "COMPLETED_NO_FINDINGS",
+          "at": "2026-10-07T10:45:49.109746+00:00",
+          "elapsed_ms": 937.18
+        }
+      ],
+      "execution_workers": 1,
+      "queue_delay_seconds": null,
+      "helper_cpu_seconds": null
+    }
+  ],
+  "limitations": [
+    "Generated benchmark fixture is not a representative customer repository or production precision corpus.",
+    "No live PostgreSQL/Redis/Celery/TLS staging; synchronous pipeline timings are measured separately from queue load.",
+    "Memory is OS-reported process lifetime peak working set; source and observation growth are not extrapolated."
+  ]
+}

@@ -11,7 +11,11 @@ Open **http://127.0.0.1:5181** and use **admin@projecttrace.local** with the pas
 
 **Explore Northstar demo** opens the separate labeled demo organization. Source imports are rejected there. Your two existing smart-waste repositories and their history remain in your real workspace; neither prevents importing another ZIP.
 
-The source bundle excludes the existing local database, passwords, sessions and encryption keys. For a separate fresh installation, create a local workspace after following README startup instructions. PowerShell prompts for the password without writing it into a file:
+The source bundle excludes the existing local database, passwords, sessions and encryption keys. For a separate fresh installation, create a local workspace after following README startup instructions.
+
+You can also open `http://127.0.0.1:5181/signup?next=%2Frepositories%3Fimport%3D1`, enter your own email and a password of at least 16 characters, and choose **Create workspace & continue**. This creates an empty real workspace and opens the import dialog. Choose **New repository**, select the ZIP under **Source archive**, and press **Analyze source snapshot**. Sign in later at `http://127.0.0.1:5181/login` with those same details.
+
+Alternatively, PowerShell prompts for the password without writing it into a file:
 
 ```powershell
 $taskEmail = Read-Host 'New local email'

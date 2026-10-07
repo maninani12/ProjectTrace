@@ -1,123 +1,210 @@
 import { useEffect, useState } from "react";
-import { ReactFlow, Background, Controls, MarkerType } from "@xyflow/react";
-import "@xyflow/react/dist/style.css";
-import Badge from "./shared/Badge";
-import type { Workspace, Item } from "./api";
-function label(item: Item) {
-  return item.text || item.title || item.path || item.name || item.id;
-}
+import { useQuery } from "@tanstack/react-query";
+import GraphCanvas from "./GraphCanvas";
+import { api, type Edge, type Item, type Workspace } from "./api";
+
+type NodePage = { items: Item[]; total: number };
+type Neighborhood = { nodes: Item[]; edges: Edge[]; total: number };
+
 export default function Graph({
   data,
   onOpen,
 }: {
   data: Workspace;
-  onOpen: (i: Item) => void;
+  onOpen: (item: Item) => void;
 }) {
-  const candidates = [
-    ...data.claim,
-    ...data.finding,
-    ...(data.graph_node || []),
-    ...data.dependency,
-  ];
-  const [focus, setFocus] = useState(
-    candidates.find((c) => c.status === "CONTRADICTED")?.id ||
-      candidates[0]?.id ||
-      "",
-  );
+  const [repository, setRepository] = useState(data.repositories[0]?.id || "");
+  const [nodeClass, setNodeClass] = useState("COMPONENT");
+  const [search, setSearch] = useState("");
+  const [nodeOffset, setNodeOffset] = useState(0);
+  const [edgeOffset, setEdgeOffset] = useState(0);
+  const [focus, setFocus] = useState("");
+  const [focusedNode, setFocusedNode] = useState<Item | null>(null);
   const [relation, setRelation] = useState("ALL");
+  const selected = data.repositories.find((repo) => repo.id === repository);
   useEffect(() => {
-    if (!candidates.some((c) => c.id === focus))
-      setFocus(candidates[0]?.id || "");
-  }, [candidates, focus]);
-  const center = candidates.find((c) => c.id === focus);
-  const edges = data.edge.filter(
-    (e) =>
-      (e.source === focus || e.target === focus) &&
-      (relation === "ALL" || e.relationship === relation),
-  );
-  const connectedIds = new Set(edges.flatMap((e) => [e.source, e.target]));
-  const items = [
+    if (!selected) setRepository(data.repositories[0]?.id || "");
+  }, [selected, data.repositories]);
+  const listing = useQuery({
+    queryKey: [
+      "graph-nodes",
+      repository,
+      selected?.snapshot?.id,
+      nodeClass,
+      search,
+      nodeOffset,
+    ],
+    enabled: Boolean(selected?.snapshot),
+    queryFn: () =>
+      api<NodePage>(
+        `/graph/nodes?repository_id=${encodeURIComponent(repository)}&snapshot_id=${encodeURIComponent(selected!.snapshot!.id)}&limit=50&offset=${nodeOffset}${nodeClass === "ALL" ? "" : "&node_class=" + nodeClass}${search ? "&search=" + encodeURIComponent(search) : ""}`,
+      ),
+  });
+  const fallback = [
     ...data.claim,
     ...data.finding,
-    ...data.evidence,
+    ...data.graph_node,
     ...data.dependency,
-    ...(data.graph_node || []),
-  ].filter((i) => connectedIds.has(i.id) || i.id === focus);
-  const nodes = items.map((i, n) => ({
-    id: i.id,
-    position: {
-      x: i.id === focus ? 40 : 420,
-      y: i.id === focus ? 130 : (n - items.indexOf(center!)) * 130 + 40,
-    },
-    data: {
-      label: (
-        <div className="graph-label">
-          <small>{i.kind || i.category || i.class}</small>
-          <strong>{label(i)}</strong>
-          <Badge value={i.status || i.severity || i.authority} />
-        </div>
+  ]
+    .filter((item) => item.repository_id === repository)
+    .slice(0, 50);
+  const visible = listing.data?.items || fallback;
+  useEffect(() => {
+    setFocus(visible[0]?.id || "");
+    setEdgeOffset(0);
+  }, [listing.data, repository, nodeClass, nodeOffset]);
+  const neighborhood = useQuery({
+    queryKey: ["graph-neighborhood", focus, relation, edgeOffset],
+    enabled: Boolean(focus),
+    queryFn: () =>
+      api<Neighborhood>(
+        `/graph/neighborhood?node_id=${encodeURIComponent(focus)}&limit=50&offset=${edgeOffset}${relation === "ALL" ? "" : "&relationship=" + encodeURIComponent(relation)}`,
       ),
-    },
-    style: {
-      width: 280,
-      borderColor: i.status === "CONTRADICTED" ? "#cf917a" : "#c7d3ce",
-      background: "var(--surface)",
-      color: "var(--text)",
-      borderRadius: 6,
-    },
-  }));
+  });
+  const allNodes = [
+    ...new Map(
+      [
+        ...visible,
+        ...(neighborhood.data?.nodes || []),
+        ...(focusedNode ? [focusedNode] : []),
+      ].map((item) => [item.id, item]),
+    ).values(),
+  ];
+  const merged = {
+    ...data,
+    claim: allNodes.filter((item) => item.kind === "claim"),
+    finding: allNodes.filter((item) => item.kind === "finding"),
+    evidence: allNodes.filter((item) => item.kind === "evidence"),
+    dependency: allNodes.filter((item) => item.kind === "dependency"),
+    graph_node: allNodes.filter((item) => item.kind === "graph_node"),
+    edge:
+      neighborhood.data?.edges ||
+      data.edge
+        .filter((edge) => edge.source === focus || edge.target === focus)
+        .slice(0, 50),
+  };
+  function reset() {
+    setNodeOffset(0);
+    setFocusedNode(null);
+    setEdgeOffset(0);
+    setFocus("");
+  }
   return (
     <>
       <div className="filters">
-        <select
-          aria-label="Graph focus"
-          value={focus}
-          onChange={(e) => setFocus(e.target.value)}
+        <label>
+          Graph repository{" "}
+          <select
+            value={repository}
+            onChange={(event) => {
+              setRepository(event.target.value);
+              reset();
+            }}
+          >
+            {data.repositories.map((repo) => (
+              <option key={repo.id} value={repo.id}>
+                {repo.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Node type{" "}
+          <select
+            value={nodeClass}
+            onChange={(event) => {
+              setNodeClass(event.target.value);
+              reset();
+            }}
+          >
+            {[
+              "COMPONENT",
+              "REPOSITORY",
+              "ARTIFACT",
+              "FUNCTION",
+              "API_ENDPOINT",
+              "CLOUD_RESOURCE",
+              "DOCUMENTATION_SECTION",
+              "ALL",
+            ].map((value) => (
+              <option key={value} value={value}>
+                {value.replaceAll("_", " ")}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Find a node{" "}
+          <input
+            value={search}
+            maxLength={120}
+            onChange={(event) => {
+              setSearch(event.target.value);
+              reset();
+            }}
+          />
+        </label>
+        <button
+          disabled={!nodeOffset}
+          onClick={() => setNodeOffset(Math.max(0, nodeOffset - 50))}
         >
-          {candidates.map((c) => (
-            <option key={c.id} value={c.id}>
-              {label(c)}
-            </option>
-          ))}
-        </select>
-        <select
-          aria-label="Graph relationship"
-          value={relation}
-          onChange={(e) => setRelation(e.target.value)}
+          Previous nodes
+        </button>
+        <button
+          disabled={!listing.data || nodeOffset + 50 >= listing.data.total}
+          onClick={() => setNodeOffset(nodeOffset + 50)}
         >
-          <option value="ALL">All relationships</option>
-          {[...new Set(data.edge.map((e) => e.relationship))].map((r) => (
-            <option key={r}>{r}</option>
-          ))}
-        </select>
-        <span className="subtle">Select a node to inspect evidence</span>
+          Next nodes
+        </button>
+        <span>
+          {listing.data?.total ?? fallback.length} captured nodes · snapshot{" "}
+          {selected?.snapshot?.id.slice(0, 8) || "None"}
+        </span>
       </div>
-      <div className="graph-canvas">
-        <ReactFlow
-          key={focus + relation}
-          nodes={nodes}
-          edges={edges.map((e) => ({
-            ...e,
-            label: e.relationship.replaceAll("_", " "),
-            markerEnd: { type: MarkerType.ArrowClosed },
-            style: { stroke: "#647c70" },
-            labelStyle: { fill: "#647c70", fontSize: 10 },
-          }))}
-          fitView
-          minZoom={0.25}
-          maxZoom={1.5}
-          onNodeClick={(_, node) => {
-            const item = items.find((i) => i.id === node.id);
-            if (item) onOpen(item);
+      {(listing.isError || neighborhood.isError) && (
+        <p role="alert">
+          The paged graph could not be loaded. Available workspace evidence is
+          shown; this view may be incomplete.
+        </p>
+      )}
+      {!selected?.snapshot ? (
+        <p>No captured snapshot is available.</p>
+      ) : (
+        <GraphCanvas
+          data={merged}
+          onOpen={onOpen}
+          focus={focus}
+          relation={relation}
+          onFocusChange={(value) => {
+            setFocusedNode(allNodes.find((item) => item.id === value) || null);
+            setFocus(value);
+            setEdgeOffset(0);
           }}
+          onRelationChange={(value) => {
+            setRelation(value);
+            setEdgeOffset(0);
+          }}
+        />
+      )}
+      <div className="filters">
+        <button
+          disabled={!edgeOffset}
+          onClick={() => setEdgeOffset(Math.max(0, edgeOffset - 50))}
         >
-          <Background gap={24} />
-          <Controls />
-        </ReactFlow>
-      </div>
-      <div className="context-note">
-        This neighborhood is derived from stored evidence edges. It does not
-        infer runtime topology or network reachability.
+          Previous links
+        </button>
+        <button
+          disabled={
+            !neighborhood.data || edgeOffset + 50 >= neighborhood.data.total
+          }
+          onClick={() => setEdgeOffset(edgeOffset + 50)}
+        >
+          Next links
+        </button>
+        <span>
+          {neighborhood.data?.total ?? merged.edge.length} captured links · one
+          hop
+        </span>
       </div>
     </>
   );

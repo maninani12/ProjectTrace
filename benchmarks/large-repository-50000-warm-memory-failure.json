@@ -1,0 +1,45 @@
+{
+  "state": "FAILED",
+  "recovered_initial_report": false,
+  "recovered_captured_inventory": true,
+  "analyzer_version": "1.6.0",
+  "parser_signature": "6bb6bc805e8cc99f849bf0ffa9e26c39867a6e863c020497eb61fff40a6bb9cb",
+  "fixture": "OWNED_SYNTHETIC_FIRST_PARTY_STYLE_INERT",
+  "files_requested": 50000,
+  "fixture_languages": [
+    "Python"
+  ],
+  "fixture_kind": "python",
+  "physical_lines_requested": 500000,
+  "platform": "Windows-11-10.0.26300-SP0",
+  "python": "3.14.3",
+  "implementation_hashes": {
+    "backend/domain.py": "d9ae25f430cdfbc550b0878e02200ca5188542740845e7ed2b4af893b942b6d3",
+    "backend/repository_store.py": "44ca9ef0676f00c16a5046c9f3aa1cbef09ab1cada7fe8cd0380080add15afa2",
+    "backend/partitioned_analysis.py": "61c9715b30da768e4396576a493c58f3816d069d6f7c14f12a48be7b0c98f8c8",
+    "analyzers/engine.py": "39f483e68db6aa62a0c0788801350ddef452ed63cf285dfef448a9d228aa7c13",
+    "backend/db.py": "0b74eca3228b8c3386081f77cfef437aa3988976fe6014910ea5fc55dd898d0a"
+  },
+  "active_clock": "WINDOWS_UNBIASED_INTERRUPT_TIME_PRECISE",
+  "database": "LOCAL_SQLITE",
+  "resource_guard": {
+    "kind": "WINDOWS_JOB_OBJECT",
+    "memory_commit_limit_bytes": 1610612736,
+    "job_memory_limit_bytes": 1610612736,
+    "cpu_user_seconds_per_process": 7200.0,
+    "network_isolation": "NOT_PROVIDED",
+    "filesystem_isolation": "NOT_PROVIDED"
+  },
+  "execution_budget_seconds": 3600,
+  "execution_budget_clock": "OWNED_BENCHMARK_ACTIVE_SYSTEM_TIME_PRODUCTION_UNCHANGED",
+  "customer_code_executed": false,
+  "external_llm_used": false,
+  "phases": [],
+  "limitations": [
+    "Generated benchmark fixture is not a representative customer repository or production precision corpus.",
+    "No live PostgreSQL/Redis/Celery/TLS staging; synchronous pipeline timings are measured separately from queue load.",
+    "Memory is OS-reported process lifetime peak working set; source and observation growth are not extrapolated.",
+    "The cold initial attempt was interrupted before snapshot commit. INITIAL_RECOVERY_CACHE_WARM measures a new persisted analysis using the retained encrypted inventory and compatible parser artifacts. Original cold intake/parsing/persistence totals are UNMEASURED; no interrupted timing is treated as a pass."
+  ],
+  "error_type": "MemoryError"
+}

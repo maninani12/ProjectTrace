@@ -15,6 +15,9 @@ from backend.domain import add, audit, graph_impact, policy_gate, scoped_snapsho
 
 def enqueue_advisories(db, user, repo, snapshot):
     from backend.queue import check_capacity, dispatch
+    from backend.trust import require_egress
+
+    require_egress(db, user.organization_id, "OSV")
 
     check_capacity(db, user, repo)
     job = add(
@@ -37,6 +40,8 @@ def enqueue_advisories(db, user, repo, snapshot):
             "stages": [],
         },
     )
+    from backend.scheduling import register
+    register(db, job)
     db.commit()
     dispatch(db, job)
     return job
@@ -147,6 +152,9 @@ def run_checks(db, user, repo, snapshot, job, query):
     from backend.security import require_repo
 
     require_repo(db, user, repo.id)
+    from backend.trust import require_egress
+
+    require_egress(db, user.organization_id, "OSV")
     records = scoped_snapshot_records(db, user.organization_id, repo.id, snapshot.id)
     evidence_by_path = {r.data["path"]: r for r in records if r.kind == "evidence"}
     issue_records = [r for r in records if r.kind == "finding" and r.data.get("category") == "SCA"]
@@ -168,6 +176,8 @@ def run_checks(db, user, repo, snapshot, job, query):
     db.commit()
     warnings = []
     for dependency in dependencies:
+        from backend.scheduling import ensure_current
+        ensure_current(db, job, renew_seconds=120)
         data = dependency.data
         if data.get("version_kind") != "EXACT":
             dependency.data = {**data, "vulnerability_status": "UNKNOWN_VERSION"}
@@ -378,7 +388,12 @@ def run_checks(db, user, repo, snapshot, job, query):
             )
         )
     ]
-    gate = policy_gate(claims, findings, exceptions, new_findings_only=snapshot.data.get("native_profile", {}).get("gate_scope") == "NEW_FINDINGS")
+    gate = policy_gate(
+        claims,
+        findings,
+        exceptions,
+        new_findings_only=snapshot.data.get("native_profile", {}).get("gate_scope") == "NEW_FINDINGS",
+    )
     refresh_policy_graph(db, user, repo, snapshot, records, gate)
     db.flush()
     base_records = scoped_snapshot_records(db, user.organization_id, repo.id, snapshot.data.get("base_id"))
@@ -418,6 +433,8 @@ def run_checks(db, user, repo, snapshot, job, query):
         if findings
         else "COMPLETED_NO_FINDINGS",
     }
+    from backend.scheduling import ensure_current
+    ensure_current(db, job)
     job.data = {
         **job.data,
         "state": "PARTIAL" if incomplete else "COMPLETED",

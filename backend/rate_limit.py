@@ -19,13 +19,13 @@ def bucket(path, method):
         return "general"
     if path in {"/api/auth/login", "/api/auth/demo", "/api/auth/register"}:
         return "login"
-    if path in {"/api/import", "/api/archive/import"}:
+    if path in {"/api/import", "/api/archive/import", "/api/archive/stream/import"} or path.endswith("/source-archive"):
         return "imports"
     if path.endswith("/analyze") or "/jobs/" in path:
         return "analysis"
     if path == "/api/ask":
         return "ask"
-    if path == "/api/github/webhook":
+    if path == "/api/github/webhook" or path.startswith("/api/github/webhook/"):
         return "webhook"
     if path.startswith(("/api/connections", "/api/cloud/")) or path.endswith("/advisories"):
         return "provider"

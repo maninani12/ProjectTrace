@@ -1,0 +1,32 @@
+{
+  "state": "MEASURED_LOCAL_TESTCLIENT",
+  "database": "ISOLATED_OWNED_SQLITE",
+  "network_transport_included": false,
+  "samples_per_endpoint": 10,
+  "endpoints": {
+    "graph_nodes_page_50": {
+      "p50_ms": 693.872,
+      "p95_ms": 964.729,
+      "max_ms": 5004.85,
+      "response_max_bytes": 37501
+    },
+    "graph_neighborhood_page_50": {
+      "p50_ms": 861.652,
+      "p95_ms": 1006.701,
+      "max_ms": 1100.207,
+      "response_max_bytes": 98456
+    },
+    "workspace": {
+      "p50_ms": 1588.96,
+      "p95_ms": 1786.835,
+      "max_ms": 2616.558,
+      "response_max_bytes": 4697699
+    },
+    "authorized_evidence": {
+      "p50_ms": 11.91,
+      "p95_ms": 15.9,
+      "max_ms": 26.152,
+      "response_max_bytes": 7533
+    }
+  }
+}

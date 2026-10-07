@@ -34,8 +34,26 @@ def inventory(files):
             constraint = constraint.strip() or "unspecified"
             put(path, "PyPI", name, constraint[2:] if constraint.startswith("==") else constraint, True)
 
-    for path, source in files.items():
+    for path in files:
         name = PurePosixPath(path).name
+        if not (
+            (name.startswith("requirements") and name.endswith((".txt", ".lock")))
+            or name
+            in {
+                "package.json",
+                "package-lock.json",
+                "yarn.lock",
+                "pnpm-lock.yaml",
+                "pyproject.toml",
+                "poetry.lock",
+                "uv.lock",
+                "pom.xml",
+                "build.gradle",
+                "build.gradle.kts",
+            }
+        ):
+            continue
+        source = files[path]
         try:
             if name.startswith("requirements") and name.endswith((".txt", ".lock")):
                 for line in source.splitlines():

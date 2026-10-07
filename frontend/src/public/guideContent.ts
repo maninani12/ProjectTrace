@@ -40,6 +40,19 @@ function topic(
 }
 export const guideTopics: GuideTopic[] = [
   topic(
+    "engineering-changes",
+    "Engineering Changes",
+    "See which engineering realities changed in an explicit BASE-to-HEAD comparison.",
+    "A change can affect claims, documentation, quality, security, infrastructure and policy together.",
+    "An authorized BASE snapshot, HEAD analysis and the existing Impact Engine/Evidence Graph.",
+    "Correlated observations, before/after values, owners, captured gate decisions and visible priority factors.",
+    "A storage declaration changes from private to public while a privacy claim becomes contradicted. The comparison links both observations and their evidence.",
+    ["claims", "evidence-graph", "impact", "pull-requests"],
+    "Open Engineering Changes, select the time window, inspect the comparison and follow its linked evidence.",
+    "An initial import establishes a baseline. Correlation is not causality. Runtime behavior and commit authorship can remain unobserved; analyzer re-evaluation is labeled separately.",
+    "A persisted, repository-authorized projection derives from explicit snapshot ancestry and existing graph impact. Historical snapshots are preserved. Priority weights are deterministic and shown beside their reasons.",
+  ),
+  topic(
     "security-trust",
     "Security, Trust & Buyer Readiness",
     "Know which conclusions have evidence and which capabilities remain unverified.",
@@ -49,7 +62,7 @@ export const guideTopics: GuideTopic[] = [
     "An unsupported language is a visible coverage gap. Unmeasured rule precision requires review rather than default blocking.",
     ["limitations", "data-flow", "code-quality"],
     "Open Trust & Coverage, inspect the scope, then review evidence and coverage before accepting a result.",
-    "Three-million-line imports exceed current intake limits. Simultaneous PR capacity and live OIDC are unverified; GHES is unimplemented. Production restoration, full OS parser isolation and immutable archival remain incomplete.",
+    "Larger imports use configured encrypted inventory and partition budgets. Owned local scale and PR-load measurements do not qualify production capacity. OIDC provisioning and GHES connections have controlled validation; live providers, managed restoration, complete parser isolation and immutable archival remain unverified or incomplete.",
     "Tenant policy denies external source egress and AI. Hash-linked audit events support tamper detection; an operator-keyed HMAC checkpoint must be retained separately. Legacy events remain unlinked. ORM tenant checks supplement repository authorization; PostgreSQL RLS is not activated.",
   ),
   topic(
@@ -63,7 +76,7 @@ export const guideTopics: GuideTopic[] = [
     ["security-trust", "limitations", "repositories"],
     "Organization administrators open Settings → Data & AI Egress to authorize metadata transfers. Changes are versioned and audited.",
     "Operator controls and deployment network policy must also constrain outbound traffic. Customer-managed AI transport and source-sharing modes are not implemented.",
-    "Authorization Code OIDC uses PKCE/state/nonce, verified signing keys, issuer/audience/time checks and explicit subject membership. Endpoint hosts are operator allowlisted. Live identity-provider validation and complete DNS-rebinding enforcement require deployment testing.",
+    "Authorization Code OIDC uses PKCE/state/nonce, verified signing keys and issuer/audience/time checks. Membership uses explicit subjects or controlled verified-email/group policies. Approved TCP destinations are pinned while TLS verifies the original host. Live identity providers and deployed network isolation require acceptance testing.",
   ),
   topic(
     "start",
@@ -454,7 +467,7 @@ export const guideTopics: GuideTopic[] = [
     "OSV receives package identity/version, not repository source. No external AI receives source in this release.",
     ["secrets", "scope", "limitations"],
     "Import only authorized source and review operator retention/backup practices before sensitive production use.",
-    "Operator-managed source retention remains in place. Self-service deletion, enterprise OIDC and full OS parser sandboxing are deferred.",
+    "Operator-managed source retention remains in place. Self-service deletion and a complete parser filesystem/network sandbox remain unfinished; live enterprise identity qualification is unverified.",
     "Argon2 passwords, HttpOnly sessions, CSRF/origin/RBAC checks, bounded safe ZIP parsing and isolated grammar helpers protect local workflows. Queued raw inputs are encrypted/expiring; persistent redacted source/history remain in the database.",
   ),
   topic(
@@ -483,6 +496,7 @@ export const guideForPage: Record<string, string> = {
   Components: "product-map",
   Repositories: "repositories",
   "Pull Requests": "pull-requests",
+  "Engineering Changes": "engineering-changes",
   "Code Quality": "code-quality",
   Security: "application-security",
   Dependencies: "dependencies",

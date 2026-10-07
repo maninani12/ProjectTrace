@@ -37,12 +37,21 @@ export default function AuthPage({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [oidcEnabled, setOIDCEnabled] = useState(false);
+  const [oidcOrganizations, setOIDCOrganizations] = useState<
+    { id: string; label: string }[]
+  >([]);
+  const [oidcOrganization, setOIDCOrganization] = useState("");
   useEffect(() => {
     if (register || autoDemo) return;
     let active = true;
-    api<{ enabled: boolean }>("/auth/oidc/options")
+    api<{ enabled: boolean; organizations?: { id: string; label: string }[] }>(
+      "/auth/oidc/options",
+    )
       .then((result) => {
-        if (active) setOIDCEnabled(result.enabled);
+        if (active) {
+          setOIDCEnabled(result.enabled);
+          setOIDCOrganizations(result.organizations || []);
+        }
       })
       .catch(() => {});
     return () => {
@@ -195,9 +204,35 @@ export default function AuthPage({
           )}
           {!options.ready && <p role="status">Checking account options…</p>}
           {oidcEnabled && !register && !autoDemo && (
-            <a className="secondary full" href="/api/auth/oidc/start">
-              Sign in with your organization
-            </a>
+            <>
+              {!!oidcOrganizations.length && (
+                <label>
+                  Organization SSO
+                  <select
+                    value={oidcOrganization}
+                    onChange={(e) => setOIDCOrganization(e.target.value)}
+                  >
+                    <option value="">Explicit subject membership</option>
+                    {oidcOrganizations.map((org) => (
+                      <option key={org.id} value={org.id}>
+                        {org.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              )}
+              <a
+                className="secondary full"
+                href={
+                  "/api/auth/oidc/start" +
+                  (oidcOrganization
+                    ? `?organization_id=${encodeURIComponent(oidcOrganization)}`
+                    : "")
+                }
+              >
+                Sign in with your organization
+              </a>
+            </>
           )}
           {options.error && (
             <p role="alert" className="error">

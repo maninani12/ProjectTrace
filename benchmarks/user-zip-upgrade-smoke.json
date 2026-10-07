@@ -1,0 +1,47 @@
+{
+  "state": "PARTIAL",
+  "existing_snapshots_before": 9,
+  "snapshots_after": 10,
+  "explicit_base_preserved": true,
+  "files_captured": 47,
+  "changed_files": 0,
+  "source_storage": {
+    "kind": "TENANT_ENCRYPTED_CONTENT_ADDRESSED",
+    "partitions": 3,
+    "partition_model": "DECLARED_COMPONENT_THEN_FILE_AND_BYTE_BUDGET",
+    "max_partition_files": 25,
+    "max_partition_bytes": 181244,
+    "parser_cache_hits": 40,
+    "parser_cache_misses": 0,
+    "parser_cache_scope": "TENANT_CONTENT_PATH_PARSER_RULE_VERSION",
+    "quality_thresholds_recomputed": true,
+    "global_correlations_recomputed": true,
+    "analysis_ms": 738.56,
+    "large_repository_performance": "UNMEASURED"
+  },
+  "gate": "REVIEW_REQUIRED",
+  "coverage": {
+    "files_discovered": 47,
+    "files_with_native_scan": 40,
+    "source_files": 20,
+    "source_files_parsed": 19,
+    "source_analysis_percent": 95.0,
+    "states": {
+      "IGNORED_BY_POLICY": 7,
+      "PARTIAL": 39,
+      "PARSE_FAILED": 1
+    }
+  },
+  "customer_code_executed": false,
+  "customer_source_in_report": false,
+  "final_cache_policy_verification": {
+    "state": "VERIFIED_EXISTING_INVENTORY_WITHOUT_NEW_SNAPSHOT",
+    "parser_cache_hits": 39,
+    "parser_cache_misses": 1,
+    "failed_file_retried": true,
+    "source_files_parsed": 19,
+    "source_files": 20,
+    "writes_rolled_back": true,
+    "customer_code_executed": false
+  }
+}

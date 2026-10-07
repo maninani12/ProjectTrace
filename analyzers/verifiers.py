@@ -78,13 +78,39 @@ def claim_key(claim):
     return hashlib.sha256(json.dumps(fields, ensure_ascii=True).encode()).hexdigest()
 
 
-def extract_documentation(files):
-    claims, seen = [], set()
-    for path, text in files.items():
+def extract_documentation(files, *, diagnostics=None, limit=1501):
+    claims, seen, scanned_bytes, scanned_files = [], set(), 0, 0
+    diagnostics = diagnostics if diagnostics is not None else []
+    for path in files:
         if not path.endswith(".md"):
             continue
+        text = files[path]
+        scanned_bytes += len(text.encode())
+        scanned_files += 1
+        if scanned_bytes > 32_000_000 or scanned_files > 2000:
+            diagnostics.append(
+                {
+                    "analyzer": "CLAIMS",
+                    "code": "DOCUMENTATION_WORK_BUDGET",
+                    "state": "PARTIAL",
+                    "message": "Documentation scanning reached its 32 MB / 2,000-file work budget; remaining declarations are unmeasured.",
+                }
+            )
+            return claims
         fenced = False
         for line_no, line in enumerate(text.splitlines(), 1):
+            if len(line) > 32000:
+                if not any(item.get("code") == "DOCUMENTATION_LINE_BUDGET" for item in diagnostics):
+                    diagnostics.append(
+                        {
+                            "analyzer": "CLAIMS",
+                            "code": "DOCUMENTATION_LINE_BUDGET",
+                            "state": "PARTIAL",
+                            "path": path,
+                            "message": "A documentation line exceeded 32,000 characters and was not interpreted.",
+                        }
+                    )
+                continue
             if line.lstrip().startswith(("```", "~~~")):
                 fenced = not fenced
                 continue
@@ -137,6 +163,16 @@ def extract_documentation(files):
                         assertion_family="declaration",
                     )
                 )
+                if len(claims) >= limit:
+                    diagnostics.append(
+                        {
+                            "analyzer": "CLAIMS",
+                            "code": "DOCUMENTATION_CLAIM_BUDGET",
+                            "state": "PARTIAL",
+                            "message": "Documentation claim candidate limit reached; remaining declarations are unmeasured.",
+                        }
+                    )
+                    return claims
     return claims
 
 

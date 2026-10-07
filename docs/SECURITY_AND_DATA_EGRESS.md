@@ -1,0 +1,27 @@
+# Security boundaries and data transfers
+
+Customer code and IaC remain inert text. ProjectTrace never runs imported commands, scripts, tests, builds, package installation, Terraform providers, CloudFormation transforms, Helm rendering or container images. Native Python AST runs in the worker; maintained grammar and IaC parsers use owned bounded helpers. POSIX/Windows resource ceilings, bounded input/output, timeouts and parser-state reporting limit work. A complete helper filesystem/network sandbox is **PARTIAL**, not certified.
+
+| Transfer | Default / enforcement | Boundary |
+| --- | --- | --- |
+| Source to LLM | Disabled; no external LLM integration receives source | AI modes unsupported by implementation are rejected |
+| OSV package ecosystem/name/version | Tenant opt-in; admission and worker recheck | Package coordinates are metadata egress; source is not sent |
+| GitHub/GHES source | Inbound, installed-repository scoped, signed durable delivery | No arbitrary clone/URL, fork traversal, submodule execution or provider template evaluation |
+| GitHub checks | Tenant opt-in; latest head/actor/repository/connection rechecked | System policy names and result enums only; free-text source-derived reasons excluded |
+| OIDC code/token/JWKS | Operator-approved HTTPS hosts, original-host TLS and pinned validated TCP addresses | PKCE/state/browser binding/nonce/issuer/audience/azp/time/signature and explicit member/grant policies |
+| Private S3-compatible storage | Operator-configured HTTPS destination; encrypted content only | Requires operator network/DNS controls; SDK sockets are not pinned |
+| Telemetry and audit | Local structured IDs/status/durations; scoped API | No automatic external analytics/source upload; centralized operations are operator-managed |
+
+OIDC and GHES reject loopback, link-local, multicast, unspecified and unapproved private addresses, including IPv4-mapped IPv6. Explicit private CIDRs do not authorize metadata or loopback addresses. DNS mixtures fail closed and the selected validated TCP IP is used for the connection while the original host remains the TLS identity. Redirects and inherited proxies are disabled. CA files are operator references, not imported repository values.
+
+Organization and repository grants are required for source, graph, claims, findings, history, inventories, components, changes, caches, exports and workers. Owner roles do not bypass repository grants. Disabled users cannot run queued work. Identity/provider/member revocation invalidates sessions. Queue claims and parser artifacts remain tenant-scoped; parser reuse cannot borrow another tenant's source. Encrypted blobs use tenant-separated namespaces even for identical content. Application checks and new compound inventory references are verified; PostgreSQL RLS and complete compound tenant foreign keys throughout the legacy schema are not implemented.
+
+Local passwords use Argon2id. Sessions are opaque, hashed at rest, HttpOnly, scoped, expiring and Secure in production. Mutations require authorized Origin, CSRF, role and repository access. Production Redis admission fails closed on outage. Streaming ZIP imports authenticate before consuming the stream and enforce archive/file/count/path/ratio/byte bounds; binary/oversize/unsupported files remain visible in coverage. Initial capacity checks release their short database lock before accepting upload bytes and admission is rechecked when the job is created. SQLite is a local single-writer adapter, not evidence of concurrent production ingestion.
+
+Secret masking is heuristic and can miss unsupported formats. Raw retained source and redacted evidence use authenticated encryption; source is loaded on demand after authorization. Keys must remain outside source control, images, exports and release ZIPs. Supported secret mounts and rotation are in `PRIVATE_DEPLOYMENT_GUIDE.md`. Full secret recall, tenant-specific KMS envelopes, automated sensitive-data deletion and deletion from retained backups remain incomplete.
+
+Audit events include actor/action/target/time/scope and redacted details. Serialized append transactions maintain a hash chain with visible legacy unlinked events. Optional HMAC checkpoints bind schema/organization/sequence/digest. `/api/trust/audit-checkpoint/verify` verifies a separately retained checkpoint against the corresponding current chain link; controlled tests detect privileged full-chain rewriting that an unanchored chain cannot detect. Keep checkpoints and keys in a separately controlled store. This is not WORM storage or non-repudiation: automatic external immutable archival is unavailable.
+
+Finding identity uses structural anchors distinct from occurrence IDs and line offsets. Review/exception carry requires compatible concept/context/rule/severity/confidence/classification. Ambiguous repeats do not inherit another issue's review. Unsupported/failed observation does not establish resolution. Gates default unmeasured rule precision to advisory unless an administrator explicitly chooses an override. A successful parser, zero findings or a passing configured gate never establishes absence of vulnerabilities.
+
+Evidence: `tests/test_security_hardening.py`, `test_enterprise_trust.py`, `test_oidc_lifecycle.py`, `test_ghes.py`, `test_repository_store.py`, `test_streaming_import.py`, `test_fair_scheduling.py`, `test_private_operations.py` and existing API/IDOR/review tests. External IdP/GHES/cloud/staging/network controls require live acceptance and remain UNMEASURED locally.

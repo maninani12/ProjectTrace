@@ -1,0 +1,2657 @@
+######################################################################
+# PROJECTTRACE
+# ENTERPRISE TRUST, SCALE & BUYER-READINESS MASTER EXECUTION PROMPT
+#
+# PURPOSE:
+# Close every gap exposed by the 21 enterprise-buyer questions.
+#
+# ALSO MANDATORY:
+# Industry-grade non-executing static infrastructure analysis for:
+#
+# Terraform
+# AWS CloudFormation
+# Kubernetes
+# Docker Compose
+# Dockerfile
+######################################################################
+
+IMPORTANT CONTEXT
+
+ProjectTrace is:
+
+Unified Engineering Integrity, Quality & Security Platform.
+
+Core product statement:
+
+"ProjectTrace continuously verifies whether what an engineering
+organization says about its software is still supported by what the
+software actually implements."
+
+This prompt does NOT replace the existing ProjectTrace master
+specification.
+
+It adds an ENTERPRISE TRUST / BUYER READINESS program.
+
+The current codebase already contains useful functionality.
+
+INSPECT THE ACTUAL LATEST REPOSITORY FIRST.
+
+Do not rebuild working functionality unnecessarily.
+
+Do not assume documentation means implementation exists.
+
+Do not assume passing tests prove production maturity.
+
+Every final claim must be backed by:
+
+source inspection
+tests
+benchmarks
+runtime validation where required
+and explicit limitations.
+
+======================================================================
+0. YOUR ROLE
+======================================================================
+
+Act as the company owner and Principal Engineer responsible for making
+ProjectTrace safe to sell to a serious engineering organization.
+
+Operate simultaneously as:
+
+Principal Software Architect
+Static Analysis Engineer
+Compiler Engineer
+DevSecOps Architect
+Application Security Engineer
+Cloud Security Engineer
+Platform Engineer
+SRE
+Database Security Engineer
+Identity Architect
+GitHub Integration Engineer
+Performance Engineer
+Developer Experience Engineer
+Product Designer
+QA Lead
+Security Reviewer
+Technical Writer.
+
+The goal is NOT:
+
+"make the 21 answers sound good."
+
+The goal is:
+
+make the PRODUCT technically capable of answering those questions
+truthfully.
+
+TRUTH > MARKETING.
+
+Do not claim:
+
+enterprise-ready
+
+production-ready
+
+zero false positives
+
+millions of lines supported
+
+100-PR scalability
+
+OIDC
+
+GitHub Enterprise
+
+private deployment maturity
+
+complete IaC coverage
+
+unless real evidence exists.
+
+======================================================================
+1. PRESERVE THE PROJECTTRACE CORE
+======================================================================
+
+Do not weaken:
+
+Project Evidence Graph
+Claim Ledger
+atomic claims
+VERIFIED
+INFERRED
+UNVERIFIED
+CONTRADICTED
+STALE
+evidence provenance
+evidence authority
+verification scope
+snapshots
+Drift Engine
+Impact Engine
+PR intelligence
+human review
+expiring exceptions
+policy evaluation
+audit history
+Ask Engineering.
+
+All improvements must feed these systems.
+
+======================================================================
+2. BASELINE AUDIT FIRST
+======================================================================
+
+Before modifying anything, inspect and document:
+
+current source version
+
+current migrations
+
+current supported languages
+
+parser architecture
+
+current findings/rules
+
+current quality profiles
+
+quality gate behavior
+
+finding fingerprints
+
+queue architecture
+
+tenant authorization
+
+GitHub connector
+
+LLM boundary
+
+secret redaction
+
+audit system
+
+IaC analyzers
+
+current limits
+
+current test corpus
+
+current benchmarks
+
+deployment architecture.
+
+Create:
+
+docs/ENTERPRISE_READINESS_BASELINE.md
+
+For each of the 21 buyer questions record:
+
+IMPLEMENTED
+PARTIAL
+UNIMPLEMENTED
+UNMEASURED
+
+with exact evidence.
+
+Do not code blindly.
+
+======================================================================
+3. QUESTION 1 — "HOW ACCURATE IS IT?"
+======================================================================
+
+Do NOT create one fake universal accuracy percentage.
+
+Create a serious evaluation program.
+
+Accuracy must be measured separately for:
+
+code-quality rules
+reliability rules
+SAST
+secrets
+dependency findings
+IaC rules
+claim extraction
+claim verification
+contradiction detection
+drift detection
+impact relationships.
+
+Create labeled corpora.
+
+Include:
+
+synthetic fixtures
+open-source repositories
+framework-specific fixtures
+negative examples
+adversarial examples
+legacy code
+generated code
+test code
+realistic enterprise structures.
+
+Measure where labels permit:
+
+TP
+TN
+FP
+FN
+precision
+recall
+F1.
+
+Store benchmark version.
+
+Report:
+
+rule-specific results
+language-specific results
+framework-specific results.
+
+Never hide weak-performing rules inside aggregate results.
+
+Blocking/high-confidence rules must meet an explicitly defined
+precision threshold before being allowed to block PRs.
+
+If precision is unknown:
+
+do not allow the rule to block by default.
+
+Create:
+
+benchmarks/accuracy/
+docs/ANALYZER_ACCURACY.md
+
+======================================================================
+4. QUESTION 2 — "HOW MANY FALSE POSITIVES?"
+======================================================================
+
+Build a false-positive measurement and feedback system.
+
+Every finding must support:
+
+FALSE_POSITIVE
+
+with:
+
+reviewer
+reason
+timestamp
+rule
+rule version
+language
+framework
+repository context.
+
+Aggregate internally:
+
+false-positive count by rule
+false-positive rate where valid labels exist
+false-positive trends
+frequently dismissed rules.
+
+Do not automatically disable a rule globally because one user dismissed
+one finding.
+
+Create rule-health reporting.
+
+Rules with repeated poor precision must be:
+
+fixed
+reduced in confidence
+moved to hotspot/review status
+or disabled by default.
+
+Never advertise:
+
+"zero false positives"
+
+unless statistically defensible.
+
+======================================================================
+5. QUESTION 3 — "WHAT LANGUAGES ARE TRULY SUPPORTED?"
+======================================================================
+
+Create an explicit language-support registry.
+
+Each language has:
+
+language_id
+parser
+parser_version
+support_status
+quality_support
+reliability_support
+SAST_support
+flow_support
+framework_support
+duplication_support
+symbol_support
+coverage_support
+known limitations.
+
+Statuses:
+
+STABLE
+PARTIAL
+BETA
+EXPERIMENTAL
+UNSUPPORTED.
+
+Initial priority:
+
+Python
+JavaScript
+JSX
+TypeScript
+TSX
+Java.
+
+Never use one generic "Supported" label.
+
+Expose language coverage in:
+
+API
+Code Quality UI
+Security UI
+ProjectTrace Guide.
+
+Example:
+
+Python
+Parser: STABLE
+Quality: STABLE
+SAST: PARTIAL
+Cross-file flow: PARTIAL
+
+TypeScript
+Parser: STABLE
+Quality: STABLE
+SAST: PARTIAL
+Type resolution: BETA
+
+Java
+Parser: STABLE
+Quality: PARTIAL
+SAST: BETA.
+
+======================================================================
+6. QUESTION 4 — "WHAT HAPPENS WHEN YOUR PARSER FAILS?"
+======================================================================
+
+Preserve current PARTIAL behavior.
+
+Harden it.
+
+Every parser must execute inside a constrained analysis sandbox.
+
+Requirements:
+
+non-root
+no repository execution
+no shell access from repository data
+no network
+read-only analyzer runtime
+read-only source input
+no inherited customer credentials
+CPU limit
+memory limit
+process limit
+file-size limit
+syntax-node limit
+wall-clock timeout
+bounded stdout/result size.
+
+Parser failure:
+
+must NOT become PASS.
+
+Return:
+
+PARTIAL
+
+with:
+
+language
+affected file count
+affected paths
+safe error category
+analysis sections affected.
+
+Continue analysis for unaffected files.
+
+No raw sensitive source in crash diagnostics.
+
+Create adversarial parser-budget tests.
+
+======================================================================
+7. QUESTION 5 — "DO YOU EXECUTE OUR CODE?"
+======================================================================
+
+Maintain an absolute architectural rule:
+
+CUSTOMER REPOSITORY CONTENT IS DATA.
+
+Never automatically run:
+
+python
+node
+java
+npm
+yarn
+pnpm
+pip
+poetry
+uv
+maven
+gradle
+shell
+PowerShell
+Make
+Docker build
+Terraform
+Helm
+application binaries
+git hooks.
+
+Do not execute customer tests.
+
+Do not execute build scripts.
+
+Do not initialize arbitrary submodules.
+
+Static parsers may parse source bytes only.
+
+Add regression fixtures containing malicious commands such as:
+
+filesystem writes
+network calls
+process execution
+environment reads.
+
+Prove they are never executed.
+
+Add a permanent product trust message:
+
+"ProjectTrace does not execute analyzed repository code."
+
+======================================================================
+8. QUESTION 6 — "DOES OUR SOURCE LEAVE YOUR INFRASTRUCTURE?"
+======================================================================
+
+Implement explicit SOURCE EGRESS POLICY.
+
+Modes:
+
+NO_EXTERNAL_SOURCE_EGRESS
+
+REDACTED_CONTEXT_ONLY
+
+CUSTOMER_MANAGED_AI_ENDPOINT
+
+or equivalent.
+
+Default:
+
+NO_EXTERNAL_SOURCE_EGRESS.
+
+Document precisely:
+
+what goes to GitHub
+what goes to OSV
+what goes to cloud providers
+what goes to optional LLMs
+what goes to analytics.
+
+OSV:
+
+package ecosystem/name/version only.
+
+Never send repository source.
+
+Marketing analytics:
+
+never receive source
+file names where sensitive
+claims
+secrets
+dependency inventory.
+
+Create:
+
+Settings → Data & AI Egress
+
+and:
+
+ProjectTrace Guide → Data Flow.
+
+Every optional external egress must be:
+
+explicit
+tenant-configurable
+audited.
+
+======================================================================
+9. QUESTION 7 — "DOES AN LLM RECEIVE SOURCE?"
+======================================================================
+
+Preserve:
+
+external AI disabled by default.
+
+If external AI is introduced:
+
+require organization policy.
+
+AI policy choices:
+
+DISABLED
+
+METADATA_ONLY
+
+REDACTED_EVIDENCE
+
+CUSTOMER_MANAGED_MODEL.
+
+Before context leaves ProjectTrace:
+
+authorize every evidence item
+redact secrets
+apply path policies
+apply tenant AI policy
+bound context size
+record provider/model
+record prompt version
+record evidence IDs
+record timestamp.
+
+Never send entire repositories automatically.
+
+Never send files marked:
+
+NO_EXTERNAL_AI.
+
+LLM output must cite only authorized evidence IDs.
+
+Fake citations:
+
+reject.
+
+Repository prompt injection:
+
+treat as untrusted text.
+
+Add AI egress audit metadata without logging secret/source content.
+
+======================================================================
+10. QUESTION 8 — "HOW DO YOU ISOLATE TENANTS?"
+======================================================================
+
+Move from only application-layer tenant filtering toward defense in
+depth.
+
+Requirements:
+
+organization_id on every tenant-owned record
+
+compound tenant/repository constraints
+
+repository authorization
+
+PostgreSQL Row-Level Security where operationally practical
+
+tenant-qualified unique constraints
+
+tenant-prefixed cache keys
+
+tenant-qualified Redis job keys
+
+tenant-qualified object storage prefixes
+
+tenant-qualified search/vector queries
+
+tenant-qualified graph queries
+
+tenant-qualified exports
+
+tenant-qualified background jobs.
+
+No global query may return tenant-owned records without explicit scope.
+
+Add cross-tenant tests for EVERY sensitive endpoint.
+
+Fuzz IDs.
+
+Test:
+
+claim
+finding
+evidence
+source viewer
+graph
+audit
+review
+exception
+profile
+export
+SBOM
+cloud
+PR
+Ask Engineering
+jobs.
+
+Consider tenant-specific encryption keys for high-security deployment.
+
+Privileged administrative access must be:
+
+explicit
+limited
+audited.
+
+======================================================================
+11. QUESTION 9 — "HOW DO YOU HANDLE SECRETS?"
+======================================================================
+
+Expand the secret engine.
+
+Use:
+
+known provider patterns
+
+private-key detection
+
+credential assignment patterns
+
+connection-string credentials
+
+entropy where appropriate
+
+context-aware classification.
+
+Context:
+
+LIKELY_PRODUCTION
+
+UNKNOWN
+
+EXAMPLE
+
+TEST_FIXTURE.
+
+Always mask discovered values.
+
+Persist:
+
+type
+location
+hash/fingerprint
+masked preview
+context
+
+not raw value.
+
+Queued raw source:
+
+encrypt using production-managed encryption keys.
+
+Production:
+
+use KMS/HSM/secret-manager-backed key lifecycle.
+
+Rotate keys.
+
+Never write raw secrets to:
+
+logs
+audit events
+errors
+analytics
+LLM prompts.
+
+Add secure deletion.
+
+Never validate a suspected credential against its provider automatically
+unless the organization explicitly opts in and the security design has
+been reviewed.
+
+======================================================================
+12. QUESTION 10 — "CAN I DEPLOY IT PRIVATELY?"
+======================================================================
+
+Create a real production self-hosting path.
+
+Do not call current local Compose:
+
+enterprise private deployment.
+
+Provide supported private architecture:
+
+API
+workers
+scheduler
+PostgreSQL
+Redis
+S3-compatible object storage
+reverse proxy / ingress
+OIDC
+secret manager
+observability.
+
+Provide:
+
+OCI images
+
+pinned versions
+
+SBOMs
+
+image vulnerability scanning
+
+image signing/provenance
+
+non-root containers
+
+read-only root filesystem where practical
+
+Kubernetes deployment/Helm packaging
+
+network policies
+
+resource limits
+
+health/readiness probes
+
+TLS configuration
+
+external database support
+
+external Redis support
+
+backup/restore
+
+key rotation
+
+disaster recovery
+
+upgrade/migration guide.
+
+Support:
+
+connected private deployment
+
+restricted-egress deployment.
+
+Air-gapped mode may be a later explicit mode if vulnerability/advisory
+update strategy is defined.
+
+Run a real staging restore before claiming production private
+deployment.
+
+======================================================================
+13. QUESTION 11 — "CAN I USE GITHUB ENTERPRISE?"
+======================================================================
+
+Remove hardcoded api.github.com assumptions.
+
+Support connection-specific:
+
+web URL
+
+API base URL
+
+upload base URL where needed
+
+GHES version
+
+custom CA bundle
+
+GitHub App ID
+
+installation ID
+
+private-key reference
+
+webhook secret reference.
+
+Validate hostname.
+
+Prevent SSRF.
+
+Do not allow arbitrary internal URL access without approved GHES
+configuration.
+
+Support:
+
+GitHub.com
+
+GitHub Enterprise Server.
+
+Test:
+
+authentication
+
+repository listing
+
+tree fetching
+
+webhooks
+
+PR events
+
+checks
+
+fork PR behavior
+
+permission revocation
+
+installation removal
+
+token expiry.
+
+Do not leak one GitHub connection across organizations.
+
+======================================================================
+14. QUESTION 12 — "CAN I USE OIDC?"
+======================================================================
+
+Implement enterprise OIDC.
+
+Start with generic standards-compliant OIDC.
+
+Validate against:
+
+Microsoft Entra ID
+
+Okta
+
+Google Workspace
+
+a generic standards-compliant provider.
+
+Requirements:
+
+Authorization Code flow
+
+PKCE where applicable
+
+state
+
+nonce
+
+issuer validation
+
+audience validation
+
+signature validation
+
+clock-skew handling
+
+secure callback
+
+session rotation
+
+logout
+
+provider disable/revoke behavior.
+
+Map:
+
+external subject
+organization
+email
+display name
+role/groups.
+
+Do not grant admin based only on email domain.
+
+Organization membership must be explicit.
+
+Provide:
+
+JIT provisioning only when organization policy allows
+
+group-to-role mapping
+
+invitation/member lifecycle
+
+disabled-user behavior.
+
+Keep optional break-glass local admin separately protected.
+
+======================================================================
+15. QUESTION 13 — "HOW DO YOU HANDLE A 3-MILLION-LINE MONOREPO?"
+======================================================================
+
+Current fixed 10 MB / 1,000-file architecture is insufficient.
+
+Redesign enterprise ingestion without removing safe quotas.
+
+Use:
+
+streaming repository inventory
+
+Git tree metadata
+
+content-addressed blobs
+
+content hashes
+
+incremental fetch
+
+sharded parsing
+
+batch persistence
+
+component discovery
+
+worker partitioning
+
+bounded memory.
+
+Do NOT load entire monorepo into one Python dictionary.
+
+Model:
+
+Repository
+
+Component
+
+File
+
+Snapshot
+
+Blob/content hash.
+
+Reuse unchanged content across snapshots.
+
+Analyze changed files first.
+
+Build repository-level results incrementally.
+
+Support configurable enterprise quotas.
+
+Large files should become:
+
+SKIPPED_SIZE_LIMIT
+
+with explicit coverage impact
+
+instead of making the entire repository appear clean.
+
+Create a benchmark corpus approximating:
+
+3 million LOC
+
+multiple languages
+
+multiple components
+
+generated code
+
+vendor code
+
+large history.
+
+Measure:
+
+wall time
+
+CPU
+
+peak memory
+
+database growth
+
+queue latency
+
+cache reuse
+
+incremental PR time.
+
+Do not publish a 3M-line capability until this benchmark passes in a
+realistic deployment.
+
+======================================================================
+16. QUESTION 14 — "WHAT HAPPENS WHEN 100 PRs ARRIVE TOGETHER?"
+======================================================================
+
+Build a distributed PR workload model.
+
+Webhook receipt must be:
+
+fast
+durable
+idempotent.
+
+Separate:
+
+WEBHOOK RECEIPT
+
+from:
+
+ANALYSIS EXECUTION.
+
+Add:
+
+per-tenant queues or fair scheduling
+
+per-repository concurrency
+
+global worker limits
+
+tenant quotas
+
+backpressure
+
+priority
+
+PR supersession
+
+duplicate SHA deduplication
+
+cancellation of obsolete analyses where safe.
+
+If PR #50 receives commits A, B, C quickly:
+
+do not waste full analysis capacity on obsolete A/B unless audit policy
+requires it.
+
+Latest head should become primary.
+
+Never lose durable history.
+
+Test a burst of:
+
+100 PR events.
+
+Prove:
+
+no event loss
+
+no duplicate snapshot corruption
+
+no tenant starvation
+
+no cross-tenant execution
+
+no broken checks
+
+worker recovery works.
+
+Record:
+
+webhook p50/p95/p99
+
+queue wait p50/p95/p99
+
+analysis p50/p95/p99
+
+throughput
+
+worker saturation
+
+failure/retry counts.
+
+Do not promise a fixed SLA until measured.
+
+======================================================================
+17. QUESTION 15 — "WHAT EVIDENCE MADE THIS CLAIM CONTRADICTED?"
+======================================================================
+
+This is a ProjectTrace flagship requirement.
+
+Every claim verdict must expose:
+
+claim statement
+
+normalized claim
+
+status
+
+confidence
+
+severity
+
+scope
+
+snapshot
+
+commit
+
+verifier
+
+rule/version
+
+supporting evidence
+
+contradicting evidence
+
+evidence authority
+
+reason
+
+previous state
+
+changed evidence
+
+related PR.
+
+CONTRADICTED must never be a black box.
+
+UI:
+
+Claim Inspector
+
+WHY THIS STATUS?
+
+Example:
+
+Claim:
+Authentication uses JWT
+
+Status:
+CONTRADICTED
+
+Documentation evidence:
+README.md:42
+
+Contradicting implementation evidence:
+auth/session.py:31
+SessionMiddleware(...)
+
+Verifier:
+AuthenticationVerifier
+
+Snapshot:
+main @ abc123
+
+Changed by:
+PR #1842.
+
+Provide direct evidence navigation.
+
+======================================================================
+18. QUESTION 16 — "WHY SHOULD I TRUST THIS RESULT?"
+======================================================================
+
+Every important conclusion needs a trust envelope.
+
+Display:
+
+Detection method
+
+Deterministic / AI-assisted
+
+Rule ID
+
+Rule version
+
+Analyzer version
+
+Parser version
+
+Confidence
+
+Evidence authority
+
+Analysis coverage
+
+Snapshot
+
+Limitations.
+
+Example:
+
+DETECTION
+
+Deterministic static configuration verifier
+
+CONFIDENCE
+
+HIGH
+
+SCOPE
+
+identity-api
+main @ abc123
+
+COVERAGE
+
+Python complete
+TypeScript partial
+Runtime unobserved.
+
+Never say:
+
+"ProjectTrace knows"
+
+when the correct statement is:
+
+"Current supported static evidence indicates."
+
+======================================================================
+19. QUESTION 17 — "CAN A FINDING SURVIVE A LINE-NUMBER CHANGE?"
+======================================================================
+
+THIS IS A CURRENT RELEASE BLOCKER.
+
+Remove line number from primary stable identity.
+
+Design a versioned structural fingerprint.
+
+Potential inputs:
+
+rule ID
+
+rule major version
+
+repository/component identity
+
+language
+
+symbol qualified name
+
+normalized AST/token neighborhood
+
+sink/source identity for flows
+
+resource identity for IaC
+
+semantic finding type.
+
+Line/range is LOCATION.
+
+It must not be IDENTITY.
+
+Fingerprint must survive:
+
+blank lines inserted
+
+comments inserted
+
+formatting changes
+
+unrelated code inserted above finding.
+
+Where safely possible also survive:
+
+function movement within file
+
+file movement with stable symbol/content.
+
+Do not incorrectly merge unrelated findings.
+
+Version the fingerprint algorithm.
+
+Add regression tests:
+
+line movement
+
+comment insertion
+
+formatting
+
+file rename
+
+symbol rename
+
+duplicate similar findings.
+
+Human review/history should follow the same finding only when identity
+confidence is sufficient.
+
+======================================================================
+20. QUESTION 18 — "CAN I CONFIGURE THE QUALITY GATE?"
+======================================================================
+
+Replace hardcoded-only quality thresholds with versioned quality
+profiles.
+
+Profile conditions must support:
+
+complexity threshold
+
+cognitive threshold
+
+function length
+
+class size
+
+nesting
+
+parameter count when supported
+
+new duplication percentage
+
+changed-code coverage
+
+new reliability findings
+
+new maintainability findings
+
+severity counts
+
+specific rule blockers
+
+minimum analysis coverage.
+
+Support:
+
+Organization Default
+
+Team/Profile
+
+Repository Override.
+
+Quality Gate condition example:
+
+New HIGH reliability findings == 0
+
+New HIGH maintainability findings == 0
+
+Changed-code coverage >= 80
+
+New duplication < 3%
+
+Maximum new complexity <= 20.
+
+Every threshold must show:
+
+configured value
+
+observed value
+
+PASS/FAIL reason.
+
+Version profiles.
+
+Audit every change.
+
+A snapshot stores the exact profile/gate version used.
+
+======================================================================
+21. QUESTION 19 — "CAN I SUPPRESS IT WITH AN EXPIRING EXCEPTION?"
+======================================================================
+
+Preserve and strengthen existing exception support.
+
+Exception requires:
+
+target identity
+
+scope
+
+reason
+
+owner
+
+approver
+
+created time
+
+expiry.
+
+No indefinite exception.
+
+Support policy-configurable maximum duration.
+
+Expiry automatically restores evaluation.
+
+Notify owner before expiry where notification infrastructure exists.
+
+Audit:
+
+creation
+
+extension
+
+expiration
+
+revocation.
+
+Do not delete machine findings.
+
+Display:
+
+MACHINE RESULT
+
+separately from:
+
+HUMAN EXCEPTION.
+
+======================================================================
+22. QUESTION 20 — "WHERE IS THE AUDIT RECORD?"
+======================================================================
+
+Strengthen current append-oriented audit.
+
+Audit:
+
+analysis
+
+claim transitions
+
+finding transitions
+
+review
+
+assignment
+
+exception
+
+policy/profile change
+
+connection change
+
+OIDC administration
+
+provider actions
+
+exports
+
+cloud synchronization.
+
+Add tamper evidence.
+
+Recommended:
+
+hash-chain audit events
+
+periodic signed checkpoints
+
+optional immutable/WORM archival.
+
+A DB administrator should not be able to silently rewrite history
+without detection.
+
+Support authorized export.
+
+Do not put raw repository source or secret values in audit events.
+
+======================================================================
+23. QUESTION 21 — "WHAT HAPPENS IF A LANGUAGE IS UNSUPPORTED?"
+======================================================================
+
+Never silently drop unsupported source.
+
+Create complete repository source inventory.
+
+For every file classify:
+
+SUPPORTED
+
+PARTIAL
+
+BETA
+
+UNSUPPORTED
+
+EXCLUDED_GENERATED
+
+EXCLUDED_VENDOR
+
+SKIPPED_SIZE_LIMIT
+
+PARSE_FAILED.
+
+UI:
+
+ANALYSIS COVERAGE
+
+Python
+482 / 482
+SUPPORTED
+
+TypeScript
+201 / 201
+SUPPORTED
+
+Java
+51 / 74
+PARTIAL
+
+Go
+18 files
+UNSUPPORTED
+
+Generated
+144 files
+EXCLUDED.
+
+Report:
+
+analyzed files
+analyzed LOC
+unsupported files
+unsupported LOC
+failed files.
+
+Quality/security gates must state their scope.
+
+Organizations may configure:
+
+minimum supported-code coverage
+
+before PASS is allowed.
+
+Never treat unsupported code as clean code.
+
+======================================================================
+24. INFRASTRUCTURE ANALYSIS — REQUIRED ARCHITECTURE
+======================================================================
+
+Infrastructure code is untrusted input.
+
+Never execute:
+
+terraform
+
+cloudformation transforms
+
+kubectl
+
+helm
+
+docker
+
+docker compose
+
+customer scripts.
+
+Use structural non-executing parsers.
+
+Common output model:
+
+InfrastructureResource
+
+InfrastructureIdentity
+
+InfrastructureNetwork
+
+InfrastructureWorkload
+
+InfrastructureStorage
+
+InfrastructureFinding
+
+InfrastructureRelationship.
+
+Every infrastructure finding includes:
+
+format
+
+resource identity
+
+file
+
+range
+
+rule ID
+
+rule version
+
+severity
+
+confidence
+
+evidence
+
+remediation
+
+static/runtime authority
+
+snapshot.
+
+======================================================================
+25. TERRAFORM — INDUSTRY TARGET
+======================================================================
+
+Retain HCL structural parsing.
+
+Expand support for:
+
+resources
+
+data references where safe
+
+variables
+
+locals
+
+outputs
+
+modules
+
+provider aliases
+
+count/for_each symbolic handling
+
+references between resources.
+
+Do not execute Terraform.
+
+Never run:
+
+terraform init
+
+terraform plan
+
+terraform apply.
+
+If values cannot be resolved statically:
+
+mark UNKNOWN.
+
+Rules should progressively cover:
+
+public storage
+
+public databases
+
+Internet-wide ingress
+
+unrestricted egress where material
+
+unencrypted storage/database resources
+
+weak KMS configuration
+
+IAM wildcard actions
+
+IAM wildcard resources
+
+dangerous trust policies
+
+public load balancers
+
+unsafe security groups
+
+logging disabled
+
+dangerous Kubernetes/cloud workload settings.
+
+Support AWS/Azure/GCP Terraform resource families progressively.
+
+Module source not locally available:
+
+PARTIAL / EXTERNAL_MODULE_UNRESOLVED.
+
+Do not fetch arbitrary modules automatically.
+
+======================================================================
+26. CLOUDFORMATION — INDUSTRY TARGET
+======================================================================
+
+Support:
+
+YAML
+
+JSON.
+
+Preserve intrinsic functions symbolically:
+
+Ref
+
+Fn::GetAtt
+
+Fn::Sub
+
+Fn::Join
+
+Fn::If
+
+Fn::ImportValue
+
+and related supported constructs.
+
+Never execute transforms.
+
+Handle safely where possible:
+
+Parameters
+
+Mappings
+
+Conditions
+
+Outputs
+
+Resources.
+
+Detect progressively:
+
+public S3
+
+public databases
+
+security groups
+
+IAM wildcard permissions
+
+IAM trust risks
+
+unencrypted storage
+
+unencrypted databases
+
+public Lambda/API relationships where determinable
+
+dangerous ECS/EKS configuration
+
+logging gaps.
+
+Nested stacks:
+
+resolve only local explicitly supplied templates.
+
+Remote nested templates:
+
+UNRESOLVED_EXTERNAL_TEMPLATE.
+
+SAM/transforms:
+
+do not execute transforms.
+
+Label unsupported transformed semantics.
+
+======================================================================
+27. KUBERNETES — INDUSTRY TARGET
+======================================================================
+
+Support:
+
+Pod
+
+Deployment
+
+StatefulSet
+
+DaemonSet
+
+Job
+
+CronJob
+
+Service
+
+Ingress
+
+ServiceAccount
+
+Role
+
+ClusterRole
+
+RoleBinding
+
+ClusterRoleBinding
+
+NetworkPolicy
+
+ConfigMap
+
+Secret metadata
+
+PersistentVolume
+
+PersistentVolumeClaim
+
+supported workload controllers.
+
+Rules should cover:
+
+privileged
+
+runAsUser 0
+
+runAsNonRoot
+
+allowPrivilegeEscalation
+
+capabilities add/drop
+
+hostNetwork
+
+hostPID
+
+hostIPC
+
+hostPath
+
+docker.sock
+
+readOnlyRootFilesystem
+
+seccomp
+
+resource requests/limits
+
+unsafe image tags
+
+image digest policy
+
+service exposure
+
+Ingress TLS configuration
+
+dangerous RBAC wildcards
+
+cluster-admin style grants
+
+default service account usage
+
+automount service-account token
+
+missing NetworkPolicy where policy requires it
+
+secret references
+
+sensitive ConfigMap patterns.
+
+Helm:
+
+do NOT execute arbitrary templates.
+
+Rendered manifests may be analyzed.
+
+Unrendered templates:
+
+PARTIAL / TEMPLATE_UNRENDERED.
+
+======================================================================
+28. DOCKER COMPOSE — INDUSTRY TARGET
+======================================================================
+
+Parse supported Compose structures.
+
+Analyze:
+
+services
+
+images
+
+build declarations as metadata only
+
+user
+
+privileged
+
+cap_add
+
+cap_drop
+
+security_opt
+
+read_only
+
+network_mode
+
+pid
+
+ipc
+
+ports
+
+volumes
+
+devices
+
+environment
+
+env_file
+
+secrets
+
+networks
+
+depends_on
+
+healthcheck.
+
+Detect:
+
+root
+
+privileged
+
+ALL capabilities
+
+host networking
+
+host PID/IPC
+
+sensitive bind mounts
+
+docker socket
+
+public port exposure
+
+credential-shaped environment values
+
+missing read-only FS policy
+
+unsafe image tags where policy enables it.
+
+Never run:
+
+docker compose config
+
+if it would execute/resolve unsafe external behavior.
+
+Use a safe internal parser.
+
+======================================================================
+29. DOCKERFILE — INDUSTRY TARGET
+======================================================================
+
+Build a proper Dockerfile parser.
+
+Understand:
+
+FROM
+
+ARG
+
+ENV
+
+USER
+
+RUN
+
+COPY
+
+ADD
+
+EXPOSE
+
+HEALTHCHECK
+
+WORKDIR
+
+ENTRYPOINT
+
+CMD
+
+multi-stage builds.
+
+Static checks progressively include:
+
+explicit root runtime
+
+missing non-root final USER
+
+secrets in ARG/ENV
+
+credential-shaped literals
+
+ADD remote URL
+
+curl/wget piped to shell patterns
+
+unsafe chmod 777
+
+unverified remote installation scripts
+
+unpinned mutable image tags where configured
+
+latest tag
+
+package installation without cleanup where relevant
+
+unnecessary build tools in final image
+
+missing HEALTHCHECK where organization policy requires
+
+sensitive COPY patterns
+
+private key inclusion patterns.
+
+Do not build the image.
+
+Image CVEs require separate image/SBOM evidence.
+
+Do not claim Dockerfile parsing proves runtime image state.
+
+======================================================================
+30. INFRASTRUCTURE COVERAGE UI
+======================================================================
+
+Create:
+
+Infrastructure
+
+Overview
+Findings
+Resources
+Terraform
+CloudFormation
+Kubernetes
+Compose
+Dockerfile
+Rules & Profiles
+Coverage.
+
+Overview:
+
+INFRASTRUCTURE ANALYSIS
+
+Terraform
+18 files · COMPLETE/PARTIAL
+
+CloudFormation
+4 files
+
+Kubernetes
+29 manifests
+
+Compose
+2 files
+
+Dockerfile
+5 files.
+
+Show:
+
+resource inventory
+
+findings
+
+unsupported constructs
+
+parse failures
+
+runtime observation state.
+
+Static declaration must visibly say:
+
+STATIC / DECLARED
+
+not:
+
+DEPLOYED / OBSERVED.
+
+======================================================================
+31. INFRASTRUCTURE → EVIDENCE GRAPH
+======================================================================
+
+Map actual parsed resources to Evidence Graph.
+
+Examples:
+
+Terraform Resource
+DECLARED_IN
+main.tf
+
+Kubernetes Workload
+USES_IDENTITY
+ServiceAccount
+
+Container Workload
+USES_IMAGE
+image reference
+
+CloudFormation Bucket
+DECLARED_IN
+stack.yaml
+
+Exposure Finding
+AFFECTS
+Cloud Resource.
+
+Never create relationships based merely on similar names.
+
+======================================================================
+32. STATIC VS LIVE CLOUD
+======================================================================
+
+Keep authority separate.
+
+STATIC IAC
+
+means:
+
+declared configuration.
+
+CLOUD API
+
+means:
+
+control-plane observation.
+
+RUNTIME
+
+means:
+
+observed workload/runtime evidence.
+
+Never allow static IaC to silently become runtime truth.
+
+Example:
+
+Terraform declares public ingress.
+
+Status:
+
+DECLARED_PUBLIC
+
+Runtime reachability:
+
+UNOBSERVED.
+
+This distinction is mandatory.
+
+======================================================================
+33. TRUST & COVERAGE PAGE
+======================================================================
+
+Create a permanent product area:
+
+TRUST & COVERAGE
+
+or:
+
+ANALYSIS COVERAGE.
+
+It should answer enterprise users directly:
+
+What languages are supported?
+
+What analyzers ran?
+
+What failed?
+
+What source was excluded?
+
+Was an LLM used?
+
+Did source leave this ProjectTrace deployment?
+
+What infrastructure formats were analyzed?
+
+What analyzer/rule versions were used?
+
+What was runtime-observed versus statically inferred?
+
+What limitations affect this result?
+
+This page dramatically improves product credibility.
+
+======================================================================
+34. PROJECTTRACE GUIDE — ENTERPRISE TRUST
+======================================================================
+
+Add a Guide section:
+
+Security & Trust.
+
+Explain in common language:
+
+Does ProjectTrace execute my software?
+
+Does AI see my code?
+
+What happens to secrets?
+
+What is stored?
+
+How are organizations isolated?
+
+What does PARTIAL mean?
+
+What does UNSUPPORTED mean?
+
+What does STATIC mean?
+
+Why might a result be UNVERIFIED?
+
+What is an exception?
+
+How long does an exception last?
+
+Where can I see audit history?
+
+Also provide Technical Details.
+
+======================================================================
+35. LARGE-SCALE DATABASE DESIGN
+======================================================================
+
+Do not store all enterprise facts as unbounded JSON records forever.
+
+Evaluate normalization for high-volume entities:
+
+RepositorySnapshot
+
+SourceFile
+
+Blob
+
+Symbol
+
+Finding
+
+FindingIdentity
+
+FindingOccurrence
+
+Evidence
+
+Edge
+
+Claim
+
+Rule
+
+Profile
+
+Gate
+
+Coverage
+
+Audit.
+
+Use indexes appropriate for:
+
+tenant
+
+repo
+
+snapshot
+
+fingerprint
+
+rule
+
+severity
+
+status
+
+symbol
+
+path.
+
+Benchmark query plans.
+
+Avoid N+1 access.
+
+======================================================================
+36. INCREMENTAL ANALYSIS
+======================================================================
+
+Enterprise scale requires:
+
+content hashes
+
+immutable blob identity
+
+parser cache
+
+rule cache
+
+base/head diff
+
+affected component detection
+
+affected claim reverification.
+
+A PR changing 8 files in a 3M-line repository should not require
+reanalyzing 3M lines by default.
+
+Reuse results only when all relevant identities match:
+
+content hash
+
+parser version
+
+analyzer version
+
+rule version
+
+profile version.
+
+======================================================================
+37. PERFORMANCE / LOAD VALIDATION
+======================================================================
+
+Create three separate benchmarks:
+
+A. ANALYZER ACCURACY
+
+B. LARGE REPOSITORY
+
+C. PR BURST.
+
+Do not combine them into one misleading benchmark.
+
+Required load scenarios:
+
+small repository
+
+medium repository
+
+large monorepo
+
+3M-line corpus
+
+100 simultaneous PR events
+
+multiple organizations
+
+same-repository PR burst
+
+worker loss
+
+Redis restart
+
+PostgreSQL restart/failover where deployment permits
+
+parser crash
+
+provider outage.
+
+Measure actual performance.
+
+No invented throughput claims.
+
+======================================================================
+38. ENTERPRISE SECURITY TESTS
+======================================================================
+
+Add tests for:
+
+cross-tenant IDOR
+
+RLS where enabled
+
+queue tenant isolation
+
+cache poisoning
+
+search/vector tenant isolation
+
+object-storage tenant isolation
+
+GitHub connection tenant isolation
+
+GHES SSRF
+
+OIDC state/nonce
+
+OIDC account takeover
+
+group role mapping
+
+session fixation
+
+secret leakage
+
+audit tamper detection
+
+parser sandbox escape attempts
+
+ZIP attacks
+
+resource exhaustion
+
+prompt injection
+
+fake citations
+
+unsupported-language gate behavior.
+
+======================================================================
+39. RELEASE GATES FOR THE 21 QUESTIONS
+======================================================================
+
+ProjectTrace must not be labelled enterprise-ready until:
+
+1.
+Accuracy is reported from a meaningful versioned corpus.
+
+2.
+False-positive measurements exist.
+
+3.
+Language support matrix is truthful.
+
+4.
+Parser failures are safely isolated and visible.
+
+5.
+Repository code execution remains impossible by design.
+
+6.
+Source egress behavior is explicit and controllable.
+
+7.
+AI source access is governed and auditable.
+
+8.
+Tenant isolation has defense in depth.
+
+9.
+Secret handling has production key management and DLP controls.
+
+10.
+Private deployment passes production staging validation.
+
+11.
+GitHub Enterprise is implemented and tested.
+
+12.
+OIDC is implemented and tested.
+
+13.
+A multi-million-line benchmark has passed.
+
+14.
+A 100-PR burst test has passed without loss/corruption.
+
+15.
+Every contradiction exposes evidence.
+
+16.
+Every important conclusion exposes trust metadata.
+
+17.
+Finding identity survives harmless line movement.
+
+18.
+Quality gates are configurable and versioned.
+
+19.
+Exceptions expire and remain audited.
+
+20.
+Audit is tamper-evident or immutable enough for the deployment model.
+
+21.
+Unsupported languages are explicitly visible.
+
+AND:
+
+Terraform support is verified.
+
+CloudFormation support is verified.
+
+Kubernetes support is verified.
+
+Docker Compose support is verified.
+
+Dockerfile support is verified.
+
+======================================================================
+40. FINAL ENTERPRISE BUYER REPORT
+======================================================================
+
+Create:
+
+ENTERPRISE_TRUST_VALIDATION.md
+
+The document must contain the exact 21 questions.
+
+For each question provide:
+
+STATUS
+
+SUPPORTED / PARTIAL / UNSUPPORTED / UNMEASURED
+
+IMPLEMENTATION EVIDENCE
+
+TEST EVIDENCE
+
+BENCHMARK EVIDENCE
+
+LIMITATIONS
+
+NEXT ACTION.
+
+Do not use marketing language.
+
+Example:
+
+Question:
+
+Can a finding survive a line-number change?
+
+Status:
+
+SUPPORTED.
+
+Proof:
+
+test_fingerprint_survives_line_insertion
+test_fingerprint_survives_comment_insertion
+test_fingerprint_survives_formatting
+
+Fingerprint algorithm:
+v2 structural fingerprint.
+
+Known limitation:
+symbol renames can require confidence-based lineage reconciliation.
+
+That is the expected level of honesty.
+
+======================================================================
+41. FINAL PRODUCT OWNER VALIDATION
+======================================================================
+
+Before stopping, act as a skeptical CTO.
+
+Ask all 21 questions again.
+
+Do not read planned documentation.
+
+Verify against actual product behavior.
+
+If the answer contains:
+
+"planned"
+
+"future"
+
+"should"
+
+"expected"
+
+for a required enterprise release capability:
+
+it is NOT DONE.
+
+Continue implementation or explicitly classify it as deferred.
+
+======================================================================
+42. FINAL PRINCIPLES
+======================================================================
+
+TRUST > SALES CLAIMS
+
+MEASURED ACCURACY > "AI ACCURACY"
+
+LOW FALSE POSITIVES > RULE COUNT
+
+SUPPORTED > SILENTLY SKIPPED
+
+PARTIAL > FALSE PASS
+
+UNVERIFIED > INVENTED CERTAINTY
+
+STATIC ≠ RUNTIME
+
+LINE NUMBER ≠ FINDING IDENTITY
+
+EXCEPTION ≠ DELETED FINDING
+
+AUDIT ≠ ORDINARY MUTABLE LOG
+
+SELF-HOSTED DEMO ≠ ENTERPRISE PRIVATE DEPLOYMENT
+
+QUEUED ≠ SCALED
+
+SYNTHETIC BENCHMARK ≠ PRODUCTION ACCURACY
+
+SOURCE DATA ≠ EXECUTABLE CODE
+
+EVIDENCE > ELOQUENCE
+
+======================================================================
+43. BEGIN
+======================================================================
+
+Start from the ACTUAL latest ProjectTrace source.
+
+Audit it first.
+
+Preserve working functionality.
+
+Do not remove the Claim Ledger / Evidence Graph identity.
+
+Fix enterprise gaps systematically.
+
+Prioritize first:
+
+stable finding fingerprints
+
+quality-gate configurability
+
+unsupported-language coverage reporting
+
+accuracy/false-positive benchmarks
+
+parser sandbox hardening
+
+OIDC
+
+GitHub Enterprise
+
+large-monorepo architecture
+
+100-PR fairness/load handling
+
+tenant defense-in-depth
+
+private deployment hardening
+
+tamper-evident audit
+
+deep infrastructure analysis.
+
+Implement Terraform, CloudFormation, Kubernetes, Compose and Dockerfile
+as first-class native ProjectTrace infrastructure evidence sources.
+
+Never execute imported infrastructure.
+
+Every result must be explainable.
+
+Every unsupported area must be visible.
+
+Every enterprise claim must be proven.
+
+THE TARGET IS NOT TO ANSWER THE 21 QUESTIONS WITH MARKETING.
+
+THE TARGET IS TO BUILD PROJECTTRACE SO THE PRODUCT ITSELF ANSWERS THEM.
+######################################################################

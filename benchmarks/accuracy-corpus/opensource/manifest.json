@@ -1,0 +1,62 @@
+[
+  {
+    "repository": "python/cpython",
+    "ref": "v3.14.3",
+    "commit": "323c59a5e348347be2ce2b7ea55fcb30bf68b2d3",
+    "path": "Lib/urllib/parse.py",
+    "file": "python-cpython-Lib-urllib-parse.py.txt",
+    "sha256": "a220071456b8487b51d09c9daa8f79bb382e345836ec7050efadfc27bbf3b72b",
+    "license_file": false,
+    "source_url": "https://github.com/python/cpython/blob/323c59a5e348347be2ce2b7ea55fcb30bf68b2d3/Lib/urllib/parse.py"
+  },
+  {
+    "repository": "python/cpython",
+    "ref": "v3.14.3",
+    "commit": "323c59a5e348347be2ce2b7ea55fcb30bf68b2d3",
+    "path": "Lib/ipaddress.py",
+    "file": "python-cpython-Lib-ipaddress.py.txt",
+    "sha256": "4cba28ab40dc34c685950535cf9adf6251bee5b63c82eed1f315d93853d4eaca",
+    "license_file": false,
+    "source_url": "https://github.com/python/cpython/blob/323c59a5e348347be2ce2b7ea55fcb30bf68b2d3/Lib/ipaddress.py"
+  },
+  {
+    "repository": "python/cpython",
+    "ref": "v3.14.3",
+    "commit": "323c59a5e348347be2ce2b7ea55fcb30bf68b2d3",
+    "path": "LICENSE",
+    "file": "python-cpython-LICENSE.txt",
+    "sha256": "b0e25a78cffb43f4d92de8b61ccfa1f1f98ecbc22330b54b5251e7b6ba010231",
+    "license_file": true,
+    "source_url": "https://github.com/python/cpython/blob/323c59a5e348347be2ce2b7ea55fcb30bf68b2d3/LICENSE"
+  },
+  {
+    "repository": "django/django",
+    "ref": "5.2",
+    "commit": "9e7cc2b628fe8fd3895986af9b7fc9525034c1b0",
+    "path": "django/utils/html.py",
+    "file": "django-django-django-utils-html.py.txt",
+    "sha256": "a40ffb868f9cb3872b0a4034b4db77e3c91216eb4a64a9dda4724480be3e30c3",
+    "license_file": false,
+    "source_url": "https://github.com/django/django/blob/9e7cc2b628fe8fd3895986af9b7fc9525034c1b0/django/utils/html.py"
+  },
+  {
+    "repository": "django/django",
+    "ref": "5.2",
+    "commit": "9e7cc2b628fe8fd3895986af9b7fc9525034c1b0",
+    "path": "django/utils/text.py",
+    "file": "django-django-django-utils-text.py.txt",
+    "sha256": "ad83f7066cdd1543c4ad1670ac1cd7972acc87e3ff80ba2df6ac28410d0753e1",
+    "license_file": false,
+    "source_url": "https://github.com/django/django/blob/9e7cc2b628fe8fd3895986af9b7fc9525034c1b0/django/utils/text.py"
+  },
+  {
+    "repository": "django/django",
+    "ref": "5.2",
+    "commit": "9e7cc2b628fe8fd3895986af9b7fc9525034c1b0",
+    "path": "LICENSE",
+    "file": "django-django-LICENSE.txt",
+    "sha256": "b846415d1b514e9c1dff14a22deb906d794bc546ca6129f950a18cd091e2a669",
+    "license_file": true,
+    "source_url": "https://github.com/django/django/blob/9e7cc2b628fe8fd3895986af9b7fc9525034c1b0/LICENSE"
+  }
+]

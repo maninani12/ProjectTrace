@@ -6,19 +6,48 @@ import io
 import json
 import re
 import stat
+import sys
 import zipfile
+from importlib.metadata import version as package_version
 from pathlib import PurePosixPath
 from urllib.parse import quote
 
+from analyzers.analysis_coverage import build as build_analysis_coverage
 from analyzers.baseline import context_signals, implementation_claims, inventory
+from analyzers.code_quality.core import build as quality_build
+from analyzers.code_quality.rules import RULES as QUALITY_RULES
+from analyzers.finding_identity import annotate as annotate_finding_identity
 from analyzers.flows import python_flows
 from analyzers.infrastructure import structured_iac
+from analyzers.infrastructure_deep import config as infrastructure_config
+from analyzers.infrastructure_deep import link_local_declarations
 from analyzers.languages import LANGUAGES, analyze_languages
 from analyzers.native_rules import NATIVE_RULES
 from analyzers.quality import metrics as python_metrics
+from analyzers.quality import structure as python_structure
+from analyzers.source_input import SourceFiles
 from analyzers.verifiers import claim_key, extract_documentation, verify_claim
 
-VERSION = "1.3.3"
+VERSION = "1.6.0"
+PARSER_SIGNATURE = hashlib.sha256(
+    json.dumps(
+        [
+            sys.version,
+            "native-observations-v10-partitioned-context",
+            *[
+                package_version(p)
+                for p in [
+                    "tree-sitter",
+                    "tree-sitter-javascript",
+                    "tree-sitter-typescript",
+                    "tree-sitter-java",
+                    "python-hcl2",
+                    "PyYAML",
+                ]
+            ],
+        ]
+    ).encode()
+).hexdigest()
 MAX_FILES = 1000
 MAX_FILE_BYTES = 512_000
 MAX_TOTAL_BYTES = 10_000_000
@@ -26,6 +55,8 @@ TEXT_SUFFIXES = {
     ".py",
     ".js",
     ".jsx",
+    ".mjs",
+    ".cjs",
     ".ts",
     ".tsx",
     ".java",
@@ -70,6 +101,26 @@ def redact(text):
     return SECRET_RE.sub("[REDACTED SECRET]", text)
 
 
+def is_iac_source(path, source):
+    return (
+        path.endswith((".yml", ".yaml", ".tf", ".tf.json"))
+        or path.endswith(".json")
+        and any(marker in source for marker in ('"Resources"', '"kind"', '"services"'))
+        or PurePosixPath(path).name.startswith("Dockerfile")
+    )
+
+
+def redact_metadata(value):
+    """Mask credential-shaped strings throughout persisted native metadata."""
+    if isinstance(value, str):
+        return redact(value)
+    if isinstance(value, dict):
+        return {redact(str(key)): redact_metadata(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [redact_metadata(item) for item in value]
+    return value
+
+
 def safe_path(path):
     if not isinstance(path, str) or len(path) > 240 or "\\" in path or ":" in path or "\x00" in path:
         raise ValueError("Repository contains an invalid path.")
@@ -79,33 +130,52 @@ def safe_path(path):
     return p
 
 
-def validate_files(files):
-    if not files or len(files) > MAX_FILES:
+def validate_files(files, *, keep_excluded=False):
+    intake = getattr(files, "intake", [])
+    if not (files or intake) or len(files) + len(intake) > MAX_FILES:
         raise ValueError(f"Repository must contain 1–{MAX_FILES} files.")
-    size = 0
-    clean = {}
+    size = sum(row["bytes"] for row in intake if row.get("state") != "SKIPPED_SIZE_LIMIT")
+    clean = SourceFiles(intake=intake)
+    if size > MAX_TOTAL_BYTES:
+        raise ValueError("Repository exceeds the configured total size limit.")
     for path, source in files.items():
         p = safe_path(path)
-        if any(part in SKIP_PARTS for part in p.parts):
+        if not keep_excluded and any(part in SKIP_PARTS for part in p.parts):
             continue
-        if p.suffix.lower() not in TEXT_SUFFIXES and p.name not in {"Dockerfile", "CODEOWNERS", "Makefile"}:
+        if (
+            not keep_excluded
+            and p.suffix.lower() not in TEXT_SUFFIXES
+            and p.name not in {"Dockerfile", "CODEOWNERS", "Makefile", ".env"}
+        ):
             continue
         if not isinstance(source, str):
             raise ValueError("File contents must be UTF-8 text.")
         n = len(source.encode())
         size += n
+        if n > MAX_FILE_BYTES and keep_excluded and size <= MAX_TOTAL_BYTES:
+            clean.intake.append(
+                {
+                    "path": str(p),
+                    "bytes": n,
+                    "hash": hash_text(source),
+                    "physical_lines": len(source.splitlines()),
+                    "state": "SKIPPED_SIZE_LIMIT",
+                }
+            )
+            continue
         if n > MAX_FILE_BYTES or size > MAX_TOTAL_BYTES:
             raise ValueError("Repository exceeds the configured file or total size limit.")
         clean[str(p)] = source
-    if not clean:
+    if not clean and not (keep_excluded and intake):
         raise ValueError("Repository contains no supported text files.")
     return clean
 
 
-def read_zip(blob):
+def read_zip(blob, *, keep_excluded=False):
     if len(blob) > MAX_TOTAL_BYTES:
         raise ValueError("Archive exceeds the 10 MB limit.")
-    files = {}
+    files = SourceFiles()
+    seen_paths = set()
     with zipfile.ZipFile(io.BytesIO(blob)) as archive:
         entries = archive.infolist()
         if len(entries) > MAX_FILES:
@@ -119,20 +189,48 @@ def read_zip(blob):
             total += entry.file_size
             if (
                 entry.file_size > MAX_FILE_BYTES
+                and not keep_excluded
                 or total > MAX_TOTAL_BYTES
                 or entry.file_size > max(entry.compress_size, 1) * 200
             ):
                 raise ValueError("Archive exceeds extraction limits or compression ratio.")
-            if entry.is_dir() or p.suffix.lower() not in TEXT_SUFFIXES and p.name not in {"Dockerfile", "CODEOWNERS"}:
+            if (
+                entry.is_dir()
+                or not keep_excluded
+                and p.suffix.lower() not in TEXT_SUFFIXES
+                and p.name not in {"Dockerfile", "CODEOWNERS", ".env"}
+            ):
                 continue
             canonical = str(p)
-            if canonical in files:
+            if canonical in seen_paths:
                 raise ValueError("Archive contains duplicate paths.")
-            try:
-                files[canonical] = archive.read(entry).decode("utf-8")
-            except UnicodeDecodeError:
+            seen_paths.add(canonical)
+            if entry.file_size > MAX_FILE_BYTES and keep_excluded:
+                files.intake.append(
+                    {
+                        "path": canonical,
+                        "bytes": entry.file_size,
+                        "hash": None,
+                        "physical_lines": None,
+                        "state": "SKIPPED_SIZE_LIMIT",
+                    }
+                )
                 continue
-    return validate_files(files)
+            raw = archive.read(entry)
+            try:
+                files[canonical] = raw.decode("utf-8")
+            except UnicodeDecodeError:
+                if keep_excluded:
+                    files.intake.append(
+                        {
+                            "path": canonical,
+                            "bytes": len(raw),
+                            "hash": hashlib.sha256(raw).hexdigest(),
+                            "physical_lines": None,
+                        }
+                    )
+                continue
+    return validate_files(files, keep_excluded=keep_excluded)
 
 
 RULES = {
@@ -266,6 +364,7 @@ RULES = {
 }
 
 RULES.update(NATIVE_RULES)
+RULES.update(QUALITY_RULES)
 
 
 def finding(rule, path, line, detail="", confidence="HIGH"):
@@ -387,10 +486,10 @@ def secret_context(path, material):
     return "UNKNOWN"
 
 
-def python_analysis(path, source):
+def python_analysis(path, source, tree=None):
     findings, signals = [], []
     try:
-        tree = ast.parse(source)
+        tree = tree or ast.parse(source)
     except (SyntaxError, RecursionError) as error:
         return [finding("PT-PARSE-001", path, getattr(error, "lineno", 1) or 1)], []
     parents = {child: parent for parent in ast.walk(tree) for child in ast.iter_child_nodes(parent)}
@@ -415,6 +514,30 @@ def python_analysis(path, source):
         return parent
 
     assignments = {}
+    builtin_bindings = {}
+    for bound in ast.walk(tree):
+        if isinstance(bound, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            builtin_bindings.setdefault(scope(bound), set()).add(bound.name)
+            if isinstance(bound, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                builtin_bindings.setdefault(bound, set()).update(
+                    a.arg for a in [*bound.args.posonlyargs, *bound.args.args, *bound.args.kwonlyargs]
+                )
+                builtin_bindings[bound].update(a.arg for a in (bound.args.vararg, bound.args.kwarg) if a)
+        elif isinstance(bound, ast.Name) and isinstance(bound.ctx, ast.Store):
+            builtin_bindings.setdefault(scope(bound), set()).add(bound.id)
+        elif isinstance(bound, (ast.Import, ast.ImportFrom)):
+            builtin_bindings.setdefault(scope(bound), set()).update(
+                a.asname or a.name.split(".")[0] for a in bound.names if getattr(bound, "module", None) != "builtins"
+            )
+
+    def builtin_available(name, location):
+        owner = scope(location)
+        while owner:
+            if name in builtin_bindings.get(owner, set()):
+                return False
+            owner = scope(owner)
+        return True
+
     for assigned in ast.walk(tree):
         if isinstance(assigned, (ast.Assign, ast.AnnAssign)):
             for target in assigned.targets if isinstance(assigned, ast.Assign) else [assigned.target]:
@@ -447,6 +570,21 @@ def python_analysis(path, source):
         if isinstance(node, ast.Call):
             name = canonical(node.func)
             argument = node.args[0] if node.args else None
+            if (
+                name in {"eval", "exec", "builtins.eval", "builtins.exec"}
+                and argument is not None
+                and builtin_available(call_name(node.func).split(".")[0], node)
+            ):
+                if "." not in name or name.startswith("builtins.") and (call_name(node.func).split(".")[0] in aliases):
+                    findings.append(
+                        finding(
+                            "PT-SAST-005",
+                            path,
+                            node.lineno,
+                            "A builtin dynamic-code evaluation sink is called; source reachability and defenses require review.",
+                            "MEDIUM",
+                        )
+                    )
             if isinstance(argument, ast.Call) and call_name(argument.func).split(".")[-1] == "text":
                 argument = argument.args[0] if argument.args else None
             sql_argument = prior_value(argument, node) if argument is not None else argument
@@ -657,8 +795,8 @@ def dependencies(files):
     return inventory(files)[0]
 
 
-def extract_claims(files):
-    return extract_documentation(files)
+def extract_claims(files, diagnostics=None):
+    return extract_documentation(files, diagnostics=diagnostics)
 
 
 def verify(claim, signals, deps):
@@ -666,24 +804,40 @@ def verify(claim, signals, deps):
     return result["status"], result["reason"], result["signals"]
 
 
-def analyze(files, cached_analysis=None, progress=None, verification_context=None, profile=None):
-    files = validate_files(files)
-    if progress:
-        progress("ANALYZING")
+def native_observations(files, cached_analysis=None, infrastructure_settings=None):
+    """File-local parser observations; callers may provide a bounded partition."""
+    infrastructure_settings = infrastructure_settings or infrastructure_config(None)
+    infrastructure_signature = hash_text(json.dumps(infrastructure_settings, sort_keys=True))
     findings, signals, warnings = [], [], []
     assets, quality_metrics = [], []
     failures = set()
     cache = {}
     reused = 0
     language_results = None
-    for path, source in files.items():
+    for path in files:
+        metadata = files.metadata_for(path) if hasattr(files, "metadata_for") else None
+        source = None if metadata else files[path]
         previous = (cached_analysis or {}).get(path)
-        content_hash = hash_text(source)
+        content_hash = files.hash_for(path) if metadata else hash_text(source)
+        iac = (
+            metadata.get(
+                "iac_candidate",
+                bool(metadata.get("infrastructure_format")) or path.endswith((".yaml", ".yml", ".json")),
+            )
+            if metadata
+            else is_iac_source(path, source)
+        )
         if (
             previous
             and previous.get("hash") == content_hash
             and previous.get("version") == VERSION
+            and previous.get("parser_signature") == PARSER_SIGNATURE
+            and (
+                not iac
+                or previous.get("infrastructure_signature", infrastructure_signature) == infrastructure_signature
+            )
             and not previous.get("warnings")
+            and not any(item.get("rule") == "PT-PARSE-001" for item in previous.get("findings", []))
         ):
             cached = json.loads(json.dumps(previous))
             findings.extend(cached["findings"])
@@ -693,13 +847,21 @@ def analyze(files, cached_analysis=None, progress=None, verification_context=Non
             cache[path] = cached
             reused += 1
             continue
+        if source is None:
+            source = files[path]
         finding_start, signal_start = len(findings), len(signals)
         asset_start, metric_start = len(assets), len(quality_metrics)
         if path.endswith(".py"):
             try:
-                f, s = python_analysis(path, source)
+                parsed_tree = None
+                try:
+                    parsed_tree = ast.parse(source)
+                except (SyntaxError, RecursionError):
+                    pass
+                f, s = python_analysis(path, source, parsed_tree)
                 if not any(item["rule"] == "PT-PARSE-001" for item in f):
-                    measured = python_metrics(path, source)
+                    measured = python_metrics(path, source, parsed_tree)
+                    s.append(python_structure(path, source, parsed_tree))
                     quality_metrics.extend(measured)
                     s.extend(
                         {
@@ -739,21 +901,26 @@ def analyze(files, cached_analysis=None, progress=None, verification_context=Non
                         "state": "FAILED",
                     }
                 )
-        elif path.endswith((".js", ".ts", ".jsx", ".tsx", ".java")):
+        elif path.endswith((".js", ".ts", ".jsx", ".tsx", ".java", ".mjs", ".cjs")):
             try:
                 if language_results is None:
                     pending = {}
-                    for native_path, native_source in files.items():
+                    for native_path in files:
                         if PurePosixPath(native_path).suffix not in LANGUAGES:
                             continue
                         prior = (cached_analysis or {}).get(native_path, {})
+                        native_hash = (
+                            files.hash_for(native_path) if hasattr(files, "hash_for") else hash_text(files[native_path])
+                        )
                         if (
-                            prior.get("hash") == hash_text(native_source)
+                            prior.get("hash") == native_hash
                             and prior.get("version") == VERSION
+                            and prior.get("parser_signature") == PARSER_SIGNATURE
                             and not prior.get("warnings")
+                            and not any(item.get("rule") == "PT-PARSE-001" for item in prior.get("findings", []))
                         ):
                             continue
-                        pending[native_path] = native_source
+                        pending[native_path] = files[native_path]
                     language_results = analyze_languages(pending)
                 parsed = language_results[path]
                 if isinstance(parsed, dict):
@@ -795,40 +962,94 @@ def analyze(files, cached_analysis=None, progress=None, verification_context=Non
             if context in {"TEST_FIXTURE", "EXAMPLE_CREDENTIAL"}:
                 result["severity"] = "MEDIUM"
             findings.append(result)
-        if (
-            path.endswith((".yml", ".yaml", ".tf"))
-            or path.endswith(".json")
-            and '"Resources"' in source
-            or PurePosixPath(path).name == "Dockerfile"
-        ):
-            f, resource_assets, messages = structured_iac(path, source, finding)
+        if is_iac_source(path, source):
+            f, resource_assets, messages = structured_iac(path, source, finding, infrastructure_settings)
             findings.extend(f)
             assets.extend(resource_assets)
             warnings.extend(messages)
+        native_occurrences = {}
         for item in findings[finding_start:]:
+            if item.get("category") != "QUALITY":
+                # Location is not identity. Hash a normalized statement and the
+                # bounded surrounding security context; ambiguous repeats remain
+                # separate occurrences and are not eligible for automatic carry.
+                lines = source.splitlines()
+                index = max(0, item["line"] - 1)
+                statement = re.sub(r"\s+", " ", lines[index].strip()) if index < len(lines) else ""
+                anchor = json.dumps(
+                    [item["rule"], path, item.get("resource_identity"), statement, item.get("explanation")],
+                    sort_keys=True,
+                )
+                count = native_occurrences.get(anchor, 0)
+                native_occurrences[anchor] = count + 1
+                item["fingerprint"] = hash_text(anchor + ":" + str(count))
+                item["fingerprint_version"] = "native-statement-v1"
+                item["security_context_hash"] = hash_text(
+                    "\n".join(
+                        line.strip() for line in lines if line.strip() and not line.lstrip().startswith(("#", "//"))
+                    )
+                )
+                item["blocking_eligible"] = False
+                item["precision_status"] = "UNMEASURED"
             if "resource_identity" in item:
                 item["resource_identity"] = redact(item["resource_identity"])
             for step in item.get("flow", []):
                 step["symbol"] = redact(step["symbol"])
+        signals.extend(context_signals(path, source))
         for signal in signals[signal_start:]:
             signal["value"] = redact(signal["value"])
+            for symbol in signal.get("symbols", []):
+                for key in ["name", "qualified_name"]:
+                    if key in symbol:
+                        symbol[key] = redact(symbol[key])
         for metric in quality_metrics[metric_start:]:
             metric["name"] = redact(metric["name"])
+            if "qualified_name" in metric:
+                metric["qualified_name"] = redact(metric["qualified_name"])
+            for token in metric.get("duplicate_tokens", []):
+                token["value"] = redact(token["value"])
         for asset in assets[asset_start:]:
-            asset["identity"] = redact(asset["identity"])
-            asset["kind"] = redact(asset["kind"])
-            asset["environment"] = redact(asset["environment"])
-            for relation in asset.get("relations", []):
-                relation["target"] = redact(relation["target"])
+            masked = redact_metadata(asset)
+            asset.clear()
+            asset.update(masked)
         cache[path] = {
             "hash": content_hash,
             "version": VERSION,
+            "parser_signature": PARSER_SIGNATURE,
             "findings": findings[finding_start:],
             "signals": signals[signal_start:],
             "assets": assets[asset_start:],
             "quality_metrics": quality_metrics[metric_start:],
             "warnings": [warning for warning in warnings if warning.get("path") == path],
+            "infrastructure_signature": infrastructure_signature,
         }
+    annotate_finding_identity(files, findings, quality_metrics)
+    return findings, signals, warnings, assets, quality_metrics, failures, cache, reused
+
+
+def analyze(
+    files,
+    cached_analysis=None,
+    progress=None,
+    verification_context=None,
+    profile=None,
+    *,
+    observations=None,
+    input_files=None,
+):
+    input_files = input_files if input_files is not None else validate_files(files, keep_excluded=True)
+    infrastructure_settings = infrastructure_config((profile or {}).get("infrastructure"))
+    try:
+        if observations is None:
+            files = validate_files(files)
+    except ValueError as error:
+        if str(error) != "Repository contains no supported text files.":
+            raise
+        files = {}
+    if progress:
+        progress("ANALYZING")
+    observations = observations or native_observations(files, cached_analysis, infrastructure_settings)
+    findings, signals, warnings, assets, quality_metrics, failures, cache, reused = observations
     try:
         deps, manifest_warnings = inventory(files)
         warnings.extend(manifest_warnings)
@@ -847,7 +1068,6 @@ def analyze(files, cached_analysis=None, progress=None, verification_context=Non
         for field in ("name", "version", "license"):
             if isinstance(dependency.get(field), str):
                 dependency[field] = redact(dependency[field])
-    signals.extend(s for path, source in files.items() for s in context_signals(path, source))
     warnings.extend(
         {
             "analyzer": "PARSING",
@@ -861,7 +1081,7 @@ def analyze(files, cached_analysis=None, progress=None, verification_context=Non
     if progress:
         progress("EXTRACTING_CLAIMS")
     try:
-        candidates = extract_claims(files)
+        candidates = extract_claims(files, warnings)
     except Exception as error:
         candidates = []
         failures.add("CLAIMS")
@@ -874,15 +1094,29 @@ def analyze(files, cached_analysis=None, progress=None, verification_context=Non
             }
         )
     # JSON OpenAPI declarations enter the same evidence-grounded verifier pipeline.
-    for path, source in files.items():
+    for path in files:
+        if len(candidates) > 1500:
+            warnings.append(
+                {
+                    "analyzer": "CLAIMS",
+                    "state": "PARTIAL",
+                    "message": "OpenAPI/documentation candidate limit reached; remaining declarations are unmeasured.",
+                }
+            )
+            break
         if not path.endswith(".json"):
             continue
+        source = files[path]
         try:
             contract = json.loads(source)
             if not isinstance(contract, dict) or "openapi" not in contract:
                 continue
             for route, methods in contract.get("paths", {}).items():
+                if len(candidates) > 1500:
+                    break
                 for method in methods:
+                    if len(candidates) > 1500:
+                        break
                     if method.upper() not in {"GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"}:
                         continue
                     endpoint = method.upper() + " " + route
@@ -961,9 +1195,10 @@ def analyze(files, cached_analysis=None, progress=None, verification_context=Non
         for item in assets
         if item["kind"] in {"aws_s3_bucket", "AWS::S3::Bucket", "google_storage_bucket", "azurerm_storage_container"}
     ]
-    for path, source in files.items():
+    for path in files:
         if not path.endswith(".md"):
             continue
+        source = files[path]
         fenced = False
         for line, content in enumerate(source.splitlines(), 1):
             if content.strip().startswith("```"):
@@ -1026,16 +1261,43 @@ def analyze(files, cached_analysis=None, progress=None, verification_context=Non
                         + str(group[0]["line"]),
                     )
                 )
-    claims.extend(implementation_claims(signals, deps))
+    findings.extend(link_local_declarations(files, assets, warnings, finding, infrastructure_settings))
+    for resource in assets:
+        resource["environment"] = (
+            infrastructure_settings["environment"]
+            if infrastructure_settings["environment"] != "UNKNOWN"
+            else resource.get("environment", "UNKNOWN")
+        )
+    quality_findings, quality = quality_build(input_files, quality_metrics, signals, findings, warnings, profile)
+    findings = [f for f in findings if f["category"] != "QUALITY"] + quality_findings
+    annotate_finding_identity(files, findings, quality_metrics)
+    quality["parser_signature"] = PARSER_SIGNATURE
+    quality["parsers"] = [
+        {k: v for k, v in s.items() if k not in {"symbols", "observations", "file_metrics"}}
+        for s in signals
+        if s.get("type") == "parser" or s.get("type") == "quality_file" and s.get("parser") == "Python ast"
+    ]
+    if quality["state"] == "PARTIAL":
+        warnings.append(
+            {
+                "analyzer": "QUALITY",
+                "state": "PARTIAL",
+                "message": "Quality scope includes unsupported/partial source or exceeded duplication work limits; inspect file inventory.",
+            }
+        )
+    claims.extend(sorted(implementation_claims(signals, deps), key=claim_key))
     if len(claims) > 1500:
         claims = claims[:1500]
         warnings.append({"analyzer": "CLAIMS", "message": "Claim limit reached; extraction coverage is partial."})
     for claim in claims:
         claim.setdefault("claim_key", claim_key(claim))
     py_files = sum(path.endswith(".py") for path in files)
-    pattern_files = sum(path.endswith((".js", ".ts", ".jsx", ".tsx", ".java")) for path in files)
+    pattern_files = sum(path.endswith((".js", ".ts", ".jsx", ".tsx", ".java", ".mjs", ".cjs")) for path in files)
     iac_files = sum(
-        path.endswith((".tf", ".yml", ".yaml")) or PurePosixPath(path).name == "Dockerfile" for path in files
+        files.metadata_for(path).get("iac_candidate", bool(files.metadata_for(path).get("infrastructure_format")))
+        if hasattr(files, "metadata_for")
+        else is_iac_source(path, files[path])
+        for path in files
     )
     manifest_files = sum(
         PurePosixPath(path).name
@@ -1089,7 +1351,7 @@ def analyze(files, cached_analysis=None, progress=None, verification_context=Non
             "QUALITY",
             py_files + pattern_files,
             [
-                "Syntax-based branch approximation, length, nesting, class size and exception rules; JS/TS/Java exact normalized function duplication. No dead-code or unused-symbol resolution."
+                "Native syntax complexity, length, nesting, parameters, exception observations, bounded normalized duplicate blocks and Python structural reliability checks. Partial language maturity; no full CFG/type or unused-symbol resolution."
             ],
             {"QUALITY"},
         ),
@@ -1130,7 +1392,7 @@ def analyze(files, cached_analysis=None, progress=None, verification_context=Non
         ),
         "API": engine(
             "API",
-            sum(path.endswith(".json") and "openapi" in source.lower() for path, source in files.items()),
+            sum("openapi" in files[path].lower() for path in files if path.endswith(".json")),
             [
                 "JSON OpenAPI and supported Python route decorators; unsupported routers, prefixes and dynamic registration remain unverified."
             ],
@@ -1139,7 +1401,15 @@ def analyze(files, cached_analysis=None, progress=None, verification_context=Non
     profile = profile or {}
     configured = []
     for item in findings:
-        override = profile.get("rules", {}).get(item["rule"], {})
+        override = {} if item["category"] == "QUALITY" else profile.get("rules", {}).get(item["rule"], {})
+        if item["category"] == "IAC":
+            infrastructure_override = infrastructure_settings["rules"].get(item["rule"], {})
+            if (
+                infrastructure_override.get("environments")
+                and infrastructure_settings["environment"] not in infrastructure_override["environments"]
+            ):
+                continue
+            override = {**override, **infrastructure_override}
         if override.get("enabled", True):
             configured.append(
                 {
@@ -1178,7 +1448,9 @@ def analyze(files, cached_analysis=None, progress=None, verification_context=Non
     return {
         "findings": findings,
         "cloud_assets": assets,
-        "quality_metrics": quality_metrics,
+        "quality_metrics": quality["metrics"],
+        "code_quality": quality,
+        "analysis_coverage": build_analysis_coverage(input_files, files, quality, signals, warnings, VERSION),
         "signals": signals,
         "dependencies": deps,
         "claims": claims,

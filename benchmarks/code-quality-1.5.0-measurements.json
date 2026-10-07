@@ -1,0 +1,183 @@
+{
+  "version": "1.5.0",
+  "timings": [
+    {
+      "files": 10,
+      "functions": 10,
+      "cold": {
+        "samples": 12,
+        "p50_ms": 3.43,
+        "p95_ms": 10.31,
+        "p99_ms": 10.31,
+        "maximum_ms": 10.31,
+        "method": "nearest rank; p99 with this sample size equals observed max, not production tail proof"
+      },
+      "cached": {
+        "samples": 20,
+        "p50_ms": 0.61,
+        "p95_ms": 1.22,
+        "p99_ms": 1.4,
+        "maximum_ms": 1.4,
+        "method": "nearest rank; p99 with this sample size equals observed max, not production tail proof"
+      },
+      "reused_files": 10,
+      "quality_state": "COMPLETED",
+      "cache_json_bytes": 20360
+    },
+    {
+      "files": 100,
+      "functions": 100,
+      "cold": {
+        "samples": 12,
+        "p50_ms": 35.32,
+        "p95_ms": 39.61,
+        "p99_ms": 39.61,
+        "maximum_ms": 39.61,
+        "method": "nearest rank; p99 with this sample size equals observed max, not production tail proof"
+      },
+      "cached": {
+        "samples": 20,
+        "p50_ms": 7.82,
+        "p95_ms": 10.03,
+        "p99_ms": 11.2,
+        "maximum_ms": 11.2,
+        "method": "nearest rank; p99 with this sample size equals observed max, not production tail proof"
+      },
+      "reused_files": 100,
+      "quality_state": "COMPLETED",
+      "cache_json_bytes": 204500
+    },
+    {
+      "files": 1000,
+      "functions": 1000,
+      "cold": {
+        "samples": 12,
+        "p50_ms": 958.01,
+        "p95_ms": 1358.15,
+        "p99_ms": 1358.15,
+        "maximum_ms": 1358.15,
+        "method": "nearest rank; p99 with this sample size equals observed max, not production tail proof"
+      },
+      "cached": {
+        "samples": 20,
+        "p50_ms": 260.3,
+        "p95_ms": 325.93,
+        "p99_ms": 347.7,
+        "maximum_ms": 347.7,
+        "method": "nearest rank; p99 with this sample size equals observed max, not production tail proof"
+      },
+      "reused_files": 1000,
+      "quality_state": "COMPLETED",
+      "cache_json_bytes": 2054900
+    }
+  ],
+  "scale_limits": [
+    {
+      "files": 10000,
+      "full_analysis": "REJECTED_BY_1000_FILE_INTAKE_LIMIT",
+      "intake_ms": 0.06,
+      "scope_classifier_component_ms": 299.82,
+      "classified": 10000,
+      "component_only": true
+    },
+    {
+      "files": 50000,
+      "full_analysis": "REJECTED_BY_1000_FILE_INTAKE_LIMIT",
+      "intake_ms": 0.03,
+      "scope_classifier_component_ms": 1366.07,
+      "classified": 50000,
+      "component_only": true
+    }
+  ],
+  "rule_corpus": [
+    {
+      "rule": "PT-QUALITY-001",
+      "positive_detected": true,
+      "negative_clear": true
+    },
+    {
+      "rule": "PT-QUALITY-002",
+      "positive_detected": true,
+      "negative_clear": true
+    },
+    {
+      "rule": "PT-QUALITY-003",
+      "positive_detected": true,
+      "negative_clear": true
+    },
+    {
+      "rule": "PT-QUALITY-004",
+      "positive_detected": true,
+      "negative_clear": true
+    },
+    {
+      "rule": "PT-QUALITY-005",
+      "positive_detected": true,
+      "negative_clear": true
+    },
+    {
+      "rule": "PT-QUALITY-006",
+      "positive_detected": true,
+      "negative_clear": true
+    },
+    {
+      "rule": "PT-QUALITY-007",
+      "positive_detected": true,
+      "negative_clear": true
+    },
+    {
+      "rule": "PT-QUALITY-008",
+      "positive_detected": true,
+      "negative_clear": true
+    },
+    {
+      "rule": "PT-QUALITY-009",
+      "positive_detected": true,
+      "negative_clear": true
+    },
+    {
+      "rule": "PT-QUALITY-010",
+      "positive_detected": true,
+      "negative_clear": true
+    },
+    {
+      "rule": "PT-QUALITY-011",
+      "positive_detected": true,
+      "negative_clear": true
+    },
+    {
+      "rule": "PT-QUALITY-012",
+      "positive_detected": true,
+      "negative_clear": true
+    }
+  ],
+  "corpus_scope": "12 manually labeled positives + 12 negatives; generated exclusions tested separately. Not population precision/recall proof.",
+  "user_repository": {
+    "input": "smart-waste-management-system-main.zip",
+    "executed": false,
+    "scope_counts": {
+      "NON_SOURCE": 27,
+      "SOURCE": 19,
+      "TEST": 1
+    },
+    "state": "PARTIAL",
+    "functions": 245,
+    "quality_findings": 22,
+    "duplication_groups": 0,
+    "parser_partial_files": 1,
+    "coverage": "NOT_AVAILABLE",
+    "native_sast_findings": 0
+  },
+  "process_memory": {
+    "peak_working_set_bytes": 108232704,
+    "working_set_bytes": 106188800,
+    "scope": "entire benchmark Python process including accumulated results; excludes native child parser RSS"
+  },
+  "environment": {
+    "python": "3.14.3 (tags/v3.14.3:323c59a, Feb  3 2026, 16:04:56) [MSC v.1944 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "recorded_utc": "2026-10-06T15:35:28.036037+00:00",
+    "parser_signature": "d939d5f473a80956a75abee914f8420842c8d60005528ce78c40cd6749db144b"
+  },
+  "sarif_schema_sha256": "c3b4bb2d6093897483348925aaa73af03b3e3f4bd4ca38cef26dcb4212a2682e"
+}

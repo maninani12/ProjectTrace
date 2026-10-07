@@ -1,0 +1,42 @@
+{
+  "state": "FAILED",
+  "recovered_initial_report": false,
+  "analyzer_version": "1.6.0",
+  "parser_signature": "6bb6bc805e8cc99f849bf0ffa9e26c39867a6e863c020497eb61fff40a6bb9cb",
+  "fixture": "OWNED_SYNTHETIC_FIRST_PARTY_STYLE_INERT",
+  "files_requested": 10000,
+  "fixture_languages": [
+    "Python"
+  ],
+  "fixture_kind": "python",
+  "physical_lines_requested": 3000000,
+  "platform": "Windows-11-10.0.26300-SP0",
+  "python": "3.14.3",
+  "implementation_hashes": {
+    "backend/domain.py": "b6bce2e4e402e06775eafb060337c4d5c667d1e1dc8416446ea90c834396f1ae",
+    "backend/repository_store.py": "5cfa82e273d17d9d20747dda929688e737e1c7881d31093fe66c9d4c80fedf88",
+    "backend/partitioned_analysis.py": "15af8dc01132a3debf2634a8e9039e4ab1179210f5df877724cf214dcce6aad9",
+    "analyzers/engine.py": "56f43a75b1ad0f1fb5ecca0c4707844fe7b1fa9e9825d4179b85c94e504a6988",
+    "backend/db.py": "5d16f90230df56c65d9da2b3b4721dd73d34201ceed837d65bd8285c4dc0f10f"
+  },
+  "active_clock": "WINDOWS_UNBIASED_INTERRUPT_TIME_PRECISE",
+  "database": "LOCAL_SQLITE",
+  "resource_guard": {
+    "kind": "WINDOWS_JOB_OBJECT",
+    "memory_commit_limit_bytes": 1610612736,
+    "job_memory_limit_bytes": 1610612736,
+    "cpu_user_seconds_per_process": 7200.0,
+    "network_isolation": "NOT_PROVIDED",
+    "filesystem_isolation": "NOT_PROVIDED"
+  },
+  "execution_budget_seconds": 3600,
+  "customer_code_executed": false,
+  "external_llm_used": false,
+  "phases": [],
+  "limitations": [
+    "Generated benchmark fixture is not a representative customer repository or production precision corpus.",
+    "No live PostgreSQL/Redis/Celery/TLS staging; synchronous pipeline timings are measured separately from queue load.",
+    "Memory is OS-reported process lifetime peak working set; source and observation growth are not extrapolated."
+  ],
+  "error_type": "TimeoutError"
+}

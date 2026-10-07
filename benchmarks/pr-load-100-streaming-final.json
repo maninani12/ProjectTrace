@@ -1,0 +1,64 @@
+{
+  "state": "MEASURED_CONTROLLED_LOCAL",
+  "database": "LOCAL_SQLITE",
+  "source_adapter": "OWNED_STREAMING_ITERATOR_TENANT_ENCRYPTED_CAPTURE",
+  "streaming_snapshots": 80,
+  "captured_inventories": 80,
+  "resource_guard": {
+    "kind": "WINDOWS_JOB_OBJECT",
+    "memory_commit_limit_bytes": 805306368,
+    "job_memory_limit_bytes": 805306368,
+    "cpu_user_seconds_per_process": 600.0,
+    "network_isolation": "NOT_PROVIDED",
+    "filesystem_isolation": "NOT_PROVIDED"
+  },
+  "implementation_hashes": {
+    "backend/domain.py": "6b387765c69480d37d4519ffc4ab151d581d3450be5493a7a085b8af8e5d8d25",
+    "backend/jobs.py": "2db55827ad0b3fd21827437d46c4f9b323f3089fe756e8d92d2bd3235f845efe",
+    "backend/repository_store.py": "69f558e29f8dc1d2a8e733902af8771eb06a3ff6c2d3dd0167cf317b7879d605",
+    "backend/scheduling.py": "ff8cd978659589b071438a21b0f2c5ed66ccb380d27094af3fcc6400dfe7070f",
+    "backend/snapshot_context.py": "411b89f829c20f305fe42dfac8a59892d9fbf2c2489edadc15ba24a4d255e120",
+    "backend/quality_domain.py": "a0fc1b47cd25ed97a73b356c61b31c2f816e7b335c9f8f47bc36774aba37ace9",
+    "backend/engineering_changes.py": "1dec5fec1d833f60afa527d0e239b595bf0acb597cd3c2ba5fdc3e25d51a4c8c",
+    "workers/github.py": "af04f3184f44cbe727a035fd1ff5fcb83b70c4b56812005c4c9ddb9a76a8369e",
+    "scripts/benchmark_pr_load.py": "d48c49bca9b4b99355cfe91a333bc2356760c2eed895d7291ecb1cb20b0ad66d"
+  },
+  "queue_adapter": "FOUR_CONTROLLED_THREADS_USING_PRODUCTION_CLAIMS_AND_GHES_WORKER",
+  "broker_qualification": "UNMEASURED_REDIS_CELERY_POSTGRESQL",
+  "primary_pr_events": 100,
+  "http_requests": 115,
+  "duplicate_delivery_responses": 10,
+  "retained_delivery_receipts": 105,
+  "jobs": 100,
+  "job_states": {
+    "COMPLETED_NO_FINDINGS": 80,
+    "CANCELLED": 20
+  },
+  "snapshots": 80,
+  "tenant_completed": {
+    "alpha": 40,
+    "beta": 40
+  },
+  "tenant_scope_verified": true,
+  "owned_worker_exit_code": 73,
+  "recovered_jobs": 1,
+  "lease_expiry_advanced_for_crash_test": true,
+  "webhook_p50_ms": 46.317,
+  "webhook_p95_ms": 75.997,
+  "webhook_p99_ms": 82.64,
+  "worker_attempt_p50_ms": 1423.642,
+  "worker_attempt_p95_ms": 3674.15,
+  "queue_wait_p50_ms": 26135.814,
+  "queue_wait_p95_ms": 45843.272,
+  "worker_threads": 4,
+  "peak_busy_threads": 4,
+  "deferred_attempts": 6,
+  "failures": [],
+  "wall_seconds": 54.837,
+  "customer_code_executed": false,
+  "limitations": [
+    "Local HTTP TestClient excludes network/TLS latency; adapter serves owned inert source.",
+    "Lease expiry was advanced after an actual owned subprocess exit; production crash timing is unmeasured.",
+    "Busy threads include database lock waits and deferred deliveries; CPU saturation is unmeasured."
+  ]
+}

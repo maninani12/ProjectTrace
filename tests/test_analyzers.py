@@ -162,9 +162,9 @@ def test_incremental_analysis_reuses_only_matching_content_and_version(monkeypat
     calls = []
     original_parser = engine.python_analysis
 
-    def parser(path, text):
+    def parser(path, text, tree=None):
         calls.append(path)
-        return original_parser(path, text)
+        return original_parser(path, text, tree)
 
     monkeypatch.setattr(engine, "python_analysis", parser)
     second = analyze(

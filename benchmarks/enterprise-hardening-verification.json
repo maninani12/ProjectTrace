@@ -1,0 +1,138 @@
+{
+  "schema": "projecttrace-enterprise-hardening-verification-v1",
+  "measured_at": "2026-10-07T14:16:43.659349+00:00",
+  "state": "LOCAL_HARDENING_CANDIDATE_EXTERNAL_ACCEPTANCE_INCOMPLETE",
+  "base_commit": "663770fffd4b1f5f532b6bd7b59949eb1183a3ee",
+  "working_tree_changes_uncommitted": true,
+  "backend": {
+    "tests": 306,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 430.537,
+    "warning": "Upstream Starlette/httpx TestClient deprecation"
+  },
+  "frontend": {
+    "unit_tests_passed": 24,
+    "production_build": "PASSED",
+    "prerendered_public_routes": 41,
+    "guide_topics": 34,
+    "browser": {
+      "startTime": "2026-10-07T13:44:14.986Z",
+      "duration": 143419.193,
+      "expected": 12,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "browser_implementation_scope": "Final UI and backend, including source-I/O, cache-failure admission, deferred full snapshot serialization, scoped comparison reads, batched capture and initial job linkage."
+  },
+  "accuracy": {
+    "cases": 76,
+    "groups": 38,
+    "labeled_mismatches": 0,
+    "representative_production_precision": "UNMEASURED"
+  },
+  "scale_reports": {
+    "large-repository-10000-current.json": "MEASURED_SYNTHETIC_LOCAL",
+    "large-repository-50000-current.json": "MEASURED_SYNTHETIC_LOCAL",
+    "large-repository-3mloc-current.json": "MEASURED_SYNTHETIC_LOCAL",
+    "large-repository-mixed-10000.json": "MEASURED_SYNTHETIC_LOCAL"
+  },
+  "final_implementation_smoke": "benchmarks/final-code-500-file-smoke.json",
+  "final_implementation_smoke_hashes_match_current_files": true,
+  "final_implementation_50000_hashes_match_current_files": true,
+  "final_implementation_50000_hash_scope": "CURRENT_RECOVERED_HEAD_ONLY_INITIAL_HAS_OWN_HISTORICAL_HASHES",
+  "scale_implementation_scope": "10k/3M/mixed and the successful 50k initial phase retain historical hashes. The final recovered 50k HEAD reuses fully hash-validated retained capture and explicitly evicts only eight owned changed-file artifacts; its current hashes cover deferred snapshot serialization, scoped comparison reads and batched capture. Near-zero intake is reference reuse, not throughput. The separate 500-file initial/HEAD smoke uses current code. Cold 50k completion remains UNMEASURED; historical timings are not relabeled as final-code throughput.",
+  "pr_load": "benchmarks/pr-load-100.json",
+  "pr_load_scope": "Final controlled iter_snapshot adapter, encrypted inventory capture and native persistence with current implementation hashes; four controlled threads on a separate owned database while the 50k run shared the host. Real network/broker/staging qualification remains unmeasured.",
+  "pr_load_streaming_snapshots": 80,
+  "pr_load_hashes_match_current_files": true,
+  "saved_data": "benchmarks/saved-data-upgrade-verification.json",
+  "real_user_zip": "benchmarks/user-zip-upgrade-smoke.json",
+  "preservation": "74 original password hashes and 162 pre-upgrade snapshot payloads unchanged; original IDs retained across six tables",
+  "local_recovery": {
+    "backup": "VERIFIED_LOCAL_BACKUP",
+    "restore": "VERIFIED_LOCAL_RESTORE",
+    "encrypted_blobs": 50,
+    "keys_in_bundle": false,
+    "private_bundle_delivered": false
+  },
+  "dependencies": {
+    "python": {
+      "sbom": "benchmarks/python-dependency-sbom.cdx.json",
+      "components": 93,
+      "known_vulnerabilities": 0
+    },
+    "frontend": {
+      "sbom": "benchmarks/frontend-dependency-sbom.cdx.json",
+      "audit": "benchmarks/frontend-dependency-audit.json",
+      "known_vulnerabilities": 0
+    },
+    "qualification": "Time-specific application dependency audit, not container image scan/signature qualification"
+  },
+  "kubernetes": {
+    "yaml_objects_parsed": 13,
+    "workloads_with_local_restriction_checks": 6,
+    "cluster_schema_admission": "UNMEASURED",
+    "cluster_runtime": "UNMEASURED"
+  },
+  "ruff": "PASSED",
+  "git_diff_whitespace_check": "PASSED",
+  "local_application": {
+    "api": "http://127.0.0.1:8011",
+    "ui": "http://127.0.0.1:5181",
+    "ready": "READY_DATABASE_REACHABLE_WORKER_NOT_CHECKED"
+  },
+  "customer_code_executed": false,
+  "external_llm_used": false,
+  "sonarqube_or_wiz_required": false,
+  "intermediate_failures": [
+    "Initial browser checks had obsolete hardcoded QA origin, policy button and Guide count; corrected without loosening authorization.",
+    "A later full browser run had 9 passes and 2 timing/interruption failures; affected imports passed isolated reruns. Final browser counts are from the last full report.",
+    "New hardening end-to-end check found component save-feedback refresh race and uppercase ALL repository sentinel mismatches; fixed and verified.",
+    "New test selectors were corrected to accessible combobox roles and the legacy analysis response id contract.",
+    "Focused pytest rerun could not access the Windows system temp root; seven checks passed using a private workspace temp root.",
+    "Graph batch validation initially exposed cloud projection foreign-key ordering; an explicit authoritative-record flush fixed it before the successful full regression.",
+    "A persistence probe found duplicate source reads; final code reuses only verified unchanged-redaction digests and preserves redacted added-line spans. 48 focused storage/quality tests passed before final regression.",
+    "Actual ZIP reanalysis exposed reusable syntax-failure artifacts; legacy/new cache admission now retries them, verified by two new regression cases.",
+    "An initial focused storage rerun had a missing private temp parent; the directory was created and all ten checks passed.",
+    "The batched cold 50k process stopped before commit with exit cause unavailable; 50,000 parser artifacts retained. Final scale report explicitly distinguishes warm recovery from cold throughput.",
+    "Warm 50k recovery failed at final snapshot persistence under the 1.5 GiB memory guard; its failure report is retained. Temporary working sets are now released before final JSON serialization; captured output and rollback remain intact.",
+    "A subsequent warm 50k recovery passed final result persistence but failed at commit when late job linkage reserialized the snapshot; the failure report is retained. Job linkage is now validated and captured at initial snapshot insert, avoiding that second metadata rewrite. Two regression cases verify one result update, bidirectional links and scope rejection.",
+    "The next 50k run committed its initial snapshot but HEAD failed at initial metadata INSERT; its terminal failure report is retained. Full snapshot serialization is now deferred until final working-set release, BASE/ancestor/quality reads project required fields, and capture flushes in batches of 100. Focused history/quality/storage checks and an owned recovery-guard regression passed before full regression.",
+    "An initial finalization regression launch used APP_ENV=test instead of the required demo fixture mode and was stopped; the final counts use the corrected complete rerun.",
+    "A later regression launch allowed only port 5173; 300 checks passed and the 5181 fresh-import check was correctly denied. Correcting the harness origins passed the focused import; final counts use the subsequent complete rerun.",
+    "Earlier 50k/3M wall-budget failures remain separately archived; owned fresh benchmark clocks exclude host suspension, production timeouts unchanged."
+  ],
+  "external_unmeasured_or_partial": [
+    "Representative production accuracy and approved design-partner corpus",
+    "Live IdP and GHES/private CA interoperability",
+    "Current PostgreSQL/Redis/Celery/S3/TLS and Kubernetes staging",
+    "Whole legacy-schema RLS/compound tenant foreign keys",
+    "Complete parser helper filesystem/network sandbox",
+    "Verified container digests, image scans, signatures and provenance",
+    "Automatic WORM checkpoints and snapshot retention/GC",
+    "Managed-service restore/key-rotation and measured availability/RPO/RTO",
+    "Sustained realistic concurrent arrivals during huge analysis",
+    "Completed cold 50,000-file initial timing: cold attempt interrupted; only retained-inventory cache-warm recovery measured"
+  ],
+  "evidence_sha256": {
+    "benchmarks/hardening-backend-junit.xml": "064c0e3744b1076cb913eff1553d5604ce7fcb333858b9273446bc27f32aaf17",
+    "benchmarks/hardening-browser-verification.json": "71e98a97103c82c127c11a8a0d91c4590625caae50d8b5a87fe5a3fb03668ef2",
+    "benchmarks/accuracy-hardening-v2.json": "edb91b0612be69d6eba10202398435572fb68fcf2e4a6ca3eae510fdbb4376a3",
+    "benchmarks/pr-load-100.json": "ed8afd04a907a0726e7c6aa8d1a91f19005ad2007680e96761eb52e3210bf9c4",
+    "benchmarks/final-code-500-file-smoke.json": "9df1b5158b3a1ff997ad92c1b597c3df34180b428a84dfe23764c9a7f5663bc0",
+    "benchmarks/large-repository-10000-api-final.json": "220b66f8830b5768d7c23eb6ecaab8dadc1853e836dae05ab6bb268e955653ec",
+    "benchmarks/large-repository-3mloc-api-final.json": "d31ecc754e3436ca38890d41d67e275901884b9b71d24fd1603a816a9499715b",
+    "benchmarks/large-repository-50000-api.json": "63e5e78b850f5e7c860fff1ad149677a469c14f229ad571a12f942d55fe5f908",
+    "benchmarks/saved-data-upgrade-verification.json": "1b927e2c446a62775dcdc37cf7cb25bc2b6341804d491d1314b86121e8682cf1",
+    "benchmarks/user-zip-upgrade-smoke.json": "ce5edff35d9b326fcfff45d33b2b8f9220ec4e05b3bca23d50fc5bb6aa8a6b86",
+    "benchmarks/large-repository-10000-current.json": "d8fcc9d6f7b19008d948b4cafd0a86add71454cb0d6cf1198576a67056eaa540",
+    "benchmarks/large-repository-50000-current.json": "eb2926e752c53ec5d286bdb5b5ab33fbebfb3fb90e255a6c65d14645f0943017",
+    "benchmarks/large-repository-3mloc-current.json": "f7e2ba2f75277ae6861cd9d0ff729481e4aa574f1069272c62d11d814e29909d",
+    "benchmarks/large-repository-mixed-10000.json": "0aff74d67d4863c71f88eafad4fadc82cab5117b3d95386911178043bde88696",
+    "benchmarks/python-dependency-sbom.cdx.json": "217b2662aa855c7c0b3deef156475a77636b33cdc1b362e4d203c69a249c74dc",
+    "benchmarks/frontend-dependency-audit.json": "f7b14f7420fdb8317ec4907e5789d6efc7bbfab797778121b2d086ba27fad3fa"
+  }
+}

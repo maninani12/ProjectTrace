@@ -88,7 +88,12 @@ def test_import_redacts_secrets(signed):
     assert response.status_code == 200
     serialized = signed.get("/api/workspace").text
     assert "test_credential_value" not in serialized
-    assert "[REDACTED SECRET]" in serialized
+    workspace = signed.get("/api/workspace").json()
+    assert all("source" not in item for item in workspace["evidence"])
+    config = next(item for item in workspace["evidence"] if item["path"] == "config.env")
+    inspected = signed.get("/api/record/" + config["id"]).text
+    assert "test_credential_value" not in inspected
+    assert "[REDACTED SECRET]" in inspected
 
 
 def test_review_audit_and_optimistic_locking(signed):
@@ -158,7 +163,7 @@ def test_webhook_signature_replay_and_unconfigured(signed, monkeypatch):
 
 
 def test_expired_exceptions_do_not_bypass_gate():
-    finding = {"id": "finding", "severity": "CRITICAL", "confidence": "HIGH", "title": "Test"}
+    finding = {"id": "finding", "severity": "CRITICAL", "confidence": "HIGH", "blocking_eligible": True, "title": "Test"}
     expired = {"target": "finding", "expires_at": (datetime.now(timezone.utc) - timedelta(days=1)).isoformat()}
     current = {**expired, "expires_at": (datetime.now(timezone.utc) + timedelta(days=1)).isoformat()}
     assert policy_gate([], [finding], [expired])["overall"] == "FAIL"

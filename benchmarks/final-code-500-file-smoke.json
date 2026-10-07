@@ -1,0 +1,311 @@
+{
+  "state": "MEASURED_SYNTHETIC_LOCAL",
+  "recovered_initial_report": false,
+  "recovered_captured_inventory": false,
+  "analyzer_version": "1.6.0",
+  "parser_signature": "6bb6bc805e8cc99f849bf0ffa9e26c39867a6e863c020497eb61fff40a6bb9cb",
+  "fixture": "OWNED_SYNTHETIC_FIRST_PARTY_STYLE_INERT",
+  "files_requested": 500,
+  "fixture_languages": [
+    "Python"
+  ],
+  "fixture_kind": "python",
+  "physical_lines_requested": 5000,
+  "platform": "Windows-11-10.0.26300-SP0",
+  "python": "3.14.3",
+  "implementation_hashes": {
+    "backend/domain.py": "6b387765c69480d37d4519ffc4ab151d581d3450be5493a7a085b8af8e5d8d25",
+    "backend/jobs.py": "2db55827ad0b3fd21827437d46c4f9b323f3089fe756e8d92d2bd3235f845efe",
+    "backend/repository_store.py": "69f558e29f8dc1d2a8e733902af8771eb06a3ff6c2d3dd0167cf317b7879d605",
+    "backend/partitioned_analysis.py": "61c9715b30da768e4396576a493c58f3816d069d6f7c14f12a48be7b0c98f8c8",
+    "analyzers/engine.py": "39f483e68db6aa62a0c0788801350ddef452ed63cf285dfef448a9d228aa7c13",
+    "backend/db.py": "0b74eca3228b8c3386081f77cfef437aa3988976fe6014910ea5fc55dd898d0a",
+    "scripts/benchmark_repository_scale.py": "8cfc1bbfcdc85a372d207898ffd276bbcb6c917684000dcc0af6ec1f62786f73",
+    "backend/snapshot_context.py": "411b89f829c20f305fe42dfac8a59892d9fbf2c2489edadc15ba24a4d255e120",
+    "backend/quality_domain.py": "a0fc1b47cd25ed97a73b356c61b31c2f816e7b335c9f8f47bc36774aba37ace9",
+    "backend/engineering_changes.py": "1dec5fec1d833f60afa527d0e239b595bf0acb597cd3c2ba5fdc3e25d51a4c8c"
+  },
+  "active_clock": "WINDOWS_UNBIASED_INTERRUPT_TIME_PRECISE",
+  "database": "LOCAL_SQLITE",
+  "resource_guard": {
+    "kind": "WINDOWS_JOB_OBJECT",
+    "memory_commit_limit_bytes": 1610612736,
+    "job_memory_limit_bytes": 1610612736,
+    "cpu_user_seconds_per_process": 7200.0,
+    "network_isolation": "NOT_PROVIDED",
+    "filesystem_isolation": "NOT_PROVIDED"
+  },
+  "execution_budget_seconds": 3600,
+  "execution_budget_clock": "OWNED_BENCHMARK_ACTIVE_SYSTEM_TIME_PRODUCTION_UNCHANGED",
+  "customer_code_executed": false,
+  "external_llm_used": false,
+  "phases": [
+    {
+      "phase": "INITIAL",
+      "files_discovered": 500,
+      "physical_lines": 5000,
+      "inventory_seconds": 2.274,
+      "inventory_active_seconds": 2.274,
+      "pipeline_active_seconds": 15.628,
+      "active_wall_seconds": 17.902,
+      "system_suspend_seconds": 0.0,
+      "pipeline_seconds": 15.628,
+      "wall_seconds": 17.903,
+      "cpu_seconds": 8.031,
+      "peak_working_set_bytes": 107585536,
+      "database_bytes": 10371072,
+      "persisted_records": 3514,
+      "source_storage": {
+        "kind": "TENANT_ENCRYPTED_CONTENT_ADDRESSED",
+        "inventory_id": "a3da881f-2bcb-4323-8a66-a647a43d18e2",
+        "partitions": 5,
+        "partition_model": "DECLARED_COMPONENT_THEN_FILE_AND_BYTE_BUDGET",
+        "max_partition_files": 100,
+        "max_partition_bytes": 18500,
+        "parser_cache_hits": 0,
+        "parser_cache_misses": 500,
+        "parser_cache_scope": "TENANT_CONTENT_PATH_PARSER_RULE_VERSION",
+        "quality_thresholds_recomputed": true,
+        "global_correlations_recomputed": true,
+        "analysis_ms": 12100.69,
+        "large_repository_performance": "UNMEASURED"
+      },
+      "state": "COMPLETED_NO_FINDINGS",
+      "changed_files": 500,
+      "claims": {
+        "state": "COMPLETED",
+        "implementation": 0,
+        "documentation": 0,
+        "documentation_files": 0
+      },
+      "gate": "REVIEW_REQUIRED",
+      "snapshot_id": "93e682b0-74e9-49e5-bb50-cd3462584f9c",
+      "coverage": {
+        "files_discovered": 500,
+        "files_with_native_scan": 500,
+        "source_files": 500,
+        "source_files_parsed": 500,
+        "source_analysis_percent": 100.0,
+        "states": {
+          "PARTIAL": 500
+        }
+      },
+      "stages": [
+        {
+          "stage": "VALIDATING",
+          "at": "2026-10-07T13:42:26.973484+00:00",
+          "elapsed_ms": 17.21
+        },
+        {
+          "stage": "PARSING",
+          "at": "2026-10-07T13:42:26.991456+00:00",
+          "elapsed_ms": 35.16
+        },
+        {
+          "stage": "ANALYZING",
+          "at": "2026-10-07T13:42:27.013864+00:00",
+          "elapsed_ms": 57.58
+        },
+        {
+          "stage": "ANALYZING",
+          "at": "2026-10-07T13:42:29.408802+00:00",
+          "elapsed_ms": 2452.54
+        },
+        {
+          "stage": "ANALYZING",
+          "at": "2026-10-07T13:42:31.425762+00:00",
+          "elapsed_ms": 4469.48
+        },
+        {
+          "stage": "ANALYZING",
+          "at": "2026-10-07T13:42:33.851597+00:00",
+          "elapsed_ms": 6895.32
+        },
+        {
+          "stage": "ANALYZING",
+          "at": "2026-10-07T13:42:36.264579+00:00",
+          "elapsed_ms": 9308.28
+        },
+        {
+          "stage": "ANALYZING",
+          "at": "2026-10-07T13:42:38.900232+00:00",
+          "elapsed_ms": 11943.95
+        },
+        {
+          "stage": "ANALYZING",
+          "at": "2026-10-07T13:42:38.913952+00:00",
+          "elapsed_ms": 11957.65
+        },
+        {
+          "stage": "EXTRACTING_CLAIMS",
+          "at": "2026-10-07T13:42:38.932155+00:00",
+          "elapsed_ms": 11975.85
+        },
+        {
+          "stage": "VERIFYING",
+          "at": "2026-10-07T13:42:38.942780+00:00",
+          "elapsed_ms": 11986.49
+        },
+        {
+          "stage": "BUILDING_EVIDENCE",
+          "at": "2026-10-07T13:42:39.111130+00:00",
+          "elapsed_ms": 12154.83
+        },
+        {
+          "stage": "CORRELATING",
+          "at": "2026-10-07T13:42:40.444569+00:00",
+          "elapsed_ms": 13488.28
+        },
+        {
+          "stage": "FINALIZING",
+          "at": "2026-10-07T13:42:42.524944+00:00",
+          "elapsed_ms": 15568.65
+        },
+        {
+          "stage": "COMPLETED_NO_FINDINGS",
+          "at": "2026-10-07T13:42:42.528092+00:00",
+          "elapsed_ms": 15571.81
+        }
+      ],
+      "execution_workers": 1,
+      "queue_delay_seconds": null,
+      "helper_cpu_seconds": null
+    },
+    {
+      "phase": "EIGHT_FILE_HEAD",
+      "files_discovered": 500,
+      "physical_lines": 5000,
+      "inventory_seconds": 1.431,
+      "inventory_active_seconds": 1.431,
+      "pipeline_active_seconds": 2.978,
+      "active_wall_seconds": 4.409,
+      "system_suspend_seconds": 0.0,
+      "pipeline_seconds": 2.978,
+      "wall_seconds": 4.409,
+      "cpu_seconds": 4.0,
+      "peak_working_set_bytes": 113213440,
+      "database_bytes": 17891328,
+      "persisted_records": 7028,
+      "source_storage": {
+        "kind": "TENANT_ENCRYPTED_CONTENT_ADDRESSED",
+        "inventory_id": "f7d44f3d-1b84-4ddc-95ba-c972d98bf832",
+        "partitions": 5,
+        "partition_model": "DECLARED_COMPONENT_THEN_FILE_AND_BYTE_BUDGET",
+        "max_partition_files": 100,
+        "max_partition_bytes": 18500,
+        "parser_cache_hits": 492,
+        "parser_cache_misses": 8,
+        "parser_cache_scope": "TENANT_CONTENT_PATH_PARSER_RULE_VERSION",
+        "quality_thresholds_recomputed": true,
+        "global_correlations_recomputed": true,
+        "analysis_ms": 498.41,
+        "large_repository_performance": "UNMEASURED"
+      },
+      "state": "COMPLETED_NO_FINDINGS",
+      "changed_files": 8,
+      "claims": {
+        "state": "COMPLETED",
+        "implementation": 0,
+        "documentation": 0,
+        "documentation_files": 0
+      },
+      "gate": "PASS",
+      "snapshot_id": "e9469199-dc2d-47b7-8f55-b5bb1413d168",
+      "coverage": {
+        "files_discovered": 500,
+        "files_with_native_scan": 500,
+        "source_files": 500,
+        "source_files_parsed": 500,
+        "source_analysis_percent": 100.0,
+        "states": {
+          "PARTIAL": 500
+        }
+      },
+      "stages": [
+        {
+          "stage": "VALIDATING",
+          "at": "2026-10-07T13:42:44.028505+00:00",
+          "elapsed_ms": 3.83
+        },
+        {
+          "stage": "PARSING",
+          "at": "2026-10-07T13:42:44.051600+00:00",
+          "elapsed_ms": 26.92
+        },
+        {
+          "stage": "ANALYZING",
+          "at": "2026-10-07T13:42:44.063433+00:00",
+          "elapsed_ms": 38.75
+        },
+        {
+          "stage": "ANALYZING",
+          "at": "2026-10-07T13:42:44.252418+00:00",
+          "elapsed_ms": 227.74
+        },
+        {
+          "stage": "ANALYZING",
+          "at": "2026-10-07T13:42:44.279774+00:00",
+          "elapsed_ms": 255.1
+        },
+        {
+          "stage": "ANALYZING",
+          "at": "2026-10-07T13:42:44.308150+00:00",
+          "elapsed_ms": 283.45
+        },
+        {
+          "stage": "ANALYZING",
+          "at": "2026-10-07T13:42:44.346307+00:00",
+          "elapsed_ms": 321.59
+        },
+        {
+          "stage": "ANALYZING",
+          "at": "2026-10-07T13:42:44.386734+00:00",
+          "elapsed_ms": 362.04
+        },
+        {
+          "stage": "ANALYZING",
+          "at": "2026-10-07T13:42:44.399675+00:00",
+          "elapsed_ms": 374.96
+        },
+        {
+          "stage": "EXTRACTING_CLAIMS",
+          "at": "2026-10-07T13:42:44.416204+00:00",
+          "elapsed_ms": 391.49
+        },
+        {
+          "stage": "VERIFYING",
+          "at": "2026-10-07T13:42:44.432643+00:00",
+          "elapsed_ms": 407.91
+        },
+        {
+          "stage": "BUILDING_EVIDENCE",
+          "at": "2026-10-07T13:42:44.558579+00:00",
+          "elapsed_ms": 533.89
+        },
+        {
+          "stage": "CORRELATING",
+          "at": "2026-10-07T13:42:45.025007+00:00",
+          "elapsed_ms": 1000.33
+        },
+        {
+          "stage": "FINALIZING",
+          "at": "2026-10-07T13:42:46.950538+00:00",
+          "elapsed_ms": 2925.87
+        },
+        {
+          "stage": "COMPLETED_NO_FINDINGS",
+          "at": "2026-10-07T13:42:46.951813+00:00",
+          "elapsed_ms": 2927.13
+        }
+      ],
+      "execution_workers": 1,
+      "queue_delay_seconds": null,
+      "helper_cpu_seconds": null
+    }
+  ],
+  "limitations": [
+    "Generated benchmark fixture is not a representative customer repository or production precision corpus.",
+    "No live PostgreSQL/Redis/Celery/TLS staging; synchronous pipeline timings are measured separately from queue load.",
+    "Memory is OS-reported process lifetime peak working set; source and observation growth are not extrapolated."
+  ]
+}

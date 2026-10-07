@@ -23,3 +23,5 @@ tree-sitter-java>=0.23,<0.24
 python-hcl2>=8.1,<9
 PyYAML>=6.0.3,<7
 boto3>=1.43,<2
+
+jsonschema>=4.26,<5

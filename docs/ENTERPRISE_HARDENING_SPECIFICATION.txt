@@ -1,0 +1,4528 @@
+######################################################################
+# PROJECTTRACE
+# FINAL ENTERPRISE TRUST & PRODUCT HARDENING MASTER PROMPT
+#
+# PRODUCT:
+# ProjectTrace — Unified Engineering Integrity, Quality & Security Platform
+#
+# CATEGORY:
+# Engineering Integrity / Engineering Evidence Intelligence
+#
+# CORE POSITIONING:
+# "Know what your software actually does — and prove it."
+#
+# CORE PRODUCT STATEMENT:
+# "ProjectTrace continuously verifies whether what an engineering
+# organization says about its software is still supported by what the
+# software actually implements."
+#
+# THIS IS THE FINAL MASTER DEVELOPMENT PROMPT FOR THE NEXT MAJOR RELEASE.
+######################################################################
+
+======================================================================
+0. READ THIS FIRST — NON-NEGOTIABLE EXECUTION RULES
+======================================================================
+
+You are working on an EXISTING ProjectTrace repository.
+
+DO NOT rebuild ProjectTrace from scratch.
+
+DO NOT replace existing good architecture merely because another design
+would be easier.
+
+FIRST inspect the actual latest repository completely.
+
+Determine:
+
+- what currently exists
+- what genuinely works
+- what tests exist
+- what is partially implemented
+- what is only represented in UI
+- what is only represented in documentation
+- what is hardcoded
+- what is missing
+- what is duplicated
+- what has architectural debt
+- what can be safely evolved.
+
+Treat repository source as the only source of truth for current
+implementation status.
+
+Documentation is not proof of implementation.
+
+UI is not proof of backend implementation.
+
+Tests existing are not proof that tests pass.
+
+Do not claim completion unless verified.
+
+Do not repeatedly stop and ask:
+
+"Should I continue?"
+
+Continue through the complete agreed scope autonomously.
+
+Stop only when:
+
+1. a real external credential/service is required,
+2. a destructive decision genuinely requires owner approval,
+3. requirements conflict in a way that cannot be resolved safely,
+4. external infrastructure is unavailable and no local equivalent can
+   validate the requirement.
+
+DO NOT:
+
+- force push
+- rewrite Git history
+- delete useful existing code
+- delete migrations
+- remove existing product capabilities
+- auto-commit
+- auto-push
+- expose secrets
+- lower security to make tests pass
+- fabricate integrations
+- fabricate benchmarks
+- fabricate test counts
+- fabricate accuracy
+- fabricate false-positive rates
+- fabricate scalability claims
+- fabricate coverage
+- claim enterprise readiness without evidence.
+
+You MAY run and validate ProjectTrace's OWN:
+
+- tests
+- frontend build
+- lint
+- type checking
+- migrations
+- controlled local services
+- benchmark harnesses
+- static validation tools.
+
+However:
+
+PROJECTTRACE MUST NEVER EXECUTE CUSTOMER / IMPORTED REPOSITORY CODE.
+
+Customer repositories remain UNTRUSTED DATA.
+
+======================================================================
+1. YOUR ROLE
+======================================================================
+
+Act simultaneously as:
+
+CEO of ProjectTrace
+Chief Product Officer
+Principal Software Architect
+Principal Static Analysis Engineer
+Compiler Engineer
+Staff Backend Engineer
+Staff Frontend Engineer
+Application Security Engineer
+Cloud Security Engineer
+DevSecOps Architect
+Platform Engineer
+SRE
+Database Architect
+Identity Architect
+GitHub Integration Engineer
+Performance Engineer
+UX Architect
+Developer Experience Engineer
+QA Lead
+Enterprise Security Reviewer
+Technical Writer
+Product Marketing Reviewer
+Experienced Prompt Engineer.
+
+Think like the person who:
+
+- owns the product
+- has to sell it
+- has to defend it to a CTO
+- has to operate it
+- has to secure it
+- has to explain every result
+- has to prove every claim.
+
+Your objective is NOT:
+
+"add features."
+
+Your objective is:
+
+MAKE PROJECTTRACE TRUSTWORTHY ENOUGH THAT A SERIOUS ENGINEERING
+ORGANIZATION CAN PILOT IT AND GRADUALLY TRUST IT.
+
+======================================================================
+2. PROJECTTRACE MUST KEEP ITS IDENTITY
+======================================================================
+
+ProjectTrace must never become merely:
+
+- another linter
+- another SonarQube clone
+- another Wiz clone
+- another vulnerability dashboard
+- another ChatGPT wrapper
+- another developer portal
+- another generic code-search product.
+
+Its fundamental model remains:
+
+ENGINEERING REALITY
+        ↓
+EVIDENCE
+        ↓
+EVIDENCE GRAPH
+        ↓
+ENGINEERING CLAIMS
+        ↓
+VERIFICATION
+        ↓
+DRIFT / IMPACT / QUALITY / SECURITY / RISK
+        ↓
+PR DECISION
+        ↓
+HUMAN OWNERSHIP
+        ↓
+AUDIT HISTORY.
+
+Preserve and strengthen:
+
+Project Evidence Graph
+
+Engineering Claim Ledger
+
+Claim statuses:
+
+VERIFIED
+INFERRED
+UNVERIFIED
+CONTRADICTED
+STALE
+
+Evidence provenance
+
+Evidence authority
+
+Verification scope
+
+Snapshots
+
+Commit awareness
+
+Drift Engine
+
+Impact Engine
+
+PR intelligence
+
+Ownership
+
+Human review
+
+Expiring exceptions
+
+Policies
+
+Audit trail
+
+Ask Engineering.
+
+======================================================================
+3. THIS RELEASE HAS NINE PRIMARY PRODUCT PROGRAMS
+======================================================================
+
+Do not expand into unrelated major product categories.
+
+The nine priorities are:
+
+1. Stable Finding Identity
+2. Configurable Quality Profiles & Gates
+3. Trust & Coverage
+4. Analyzer Accuracy & False-Positive Measurement
+5. Enterprise OIDC + GitHub Enterprise Server
+6. Incremental / Large-Repository Architecture
+7. Deep Infrastructure Analysis
+8. Engineering Changes / Engineering Reality
+9. Enterprise Private Deployment.
+
+Everything else should support these priorities.
+
+======================================================================
+4. CREATE A BASELINE BEFORE CHANGING CODE
+======================================================================
+
+Before implementation, create:
+
+docs/ENTERPRISE_HARDENING_BASELINE.md
+
+Audit the actual repository.
+
+Include:
+
+Current architecture
+
+Current backend stack
+
+Current frontend stack
+
+Current DB model
+
+Current worker/queue model
+
+Current analyzers
+
+Supported languages
+
+Current rule model
+
+Current fingerprints
+
+Current Quality Gate
+
+Current profile configuration
+
+Current IaC analysis
+
+Current authentication
+
+Current GitHub integration
+
+Current secret handling
+
+Current LLM behavior
+
+Current repository limits
+
+Current queue limits
+
+Current tenant isolation
+
+Current audit model
+
+Current deployment architecture
+
+Current tests
+
+Current benchmarks.
+
+For every capability classify:
+
+IMPLEMENTED
+
+PARTIAL
+
+UNIMPLEMENTED
+
+UNMEASURED.
+
+Do not start implementation until this baseline exists.
+
+======================================================================
+5. PROGRAM ONE — STABLE FINDING IDENTITY V2
+======================================================================
+
+CURRENT GOAL:
+
+A finding must remain the SAME finding when its source location moves
+but the underlying issue remains unchanged.
+
+Line number is LOCATION.
+
+Line number must NOT be IDENTITY.
+
+Replace line-sensitive persistent identity with a versioned structural
+finding identity.
+
+Create or evolve models similar to:
+
+FindingIdentity
+
+FindingOccurrence
+
+FindingHistory.
+
+FindingIdentity represents:
+
+the conceptual persistent issue.
+
+FindingOccurrence represents:
+
+where that issue appeared in a specific snapshot.
+
+Potential fingerprint inputs:
+
+rule_id
+
+rule major version
+
+language
+
+repository/component identity
+
+symbol qualified name
+
+normalized AST/token neighborhood
+
+semantic sink/source for flow findings
+
+resource identity for IaC findings
+
+normalized finding type.
+
+Do NOT blindly include:
+
+absolute line number.
+
+Store:
+
+fingerprint_version.
+
+Example:
+
+v2.
+
+The system should distinguish:
+
+IDENTITY
+
+from:
+
+LOCATION.
+
+Each occurrence may have:
+
+snapshot
+
+file
+
+line
+
+column
+
+range
+
+commit
+
+PR.
+
+But the identity remains stable where evidence indicates the same
+underlying issue.
+
+======================================================================
+6. FINDING LINEAGE
+======================================================================
+
+Finding history must support:
+
+first_seen
+
+last_seen
+
+introduced_snapshot
+
+introduced_commit
+
+introduced_PR
+
+resolved_snapshot
+
+resolved_commit
+
+resolved_PR
+
+reopened_count
+
+current_status
+
+review history
+
+exception history.
+
+Tests MUST prove stability across:
+
+blank-line insertion
+
+comment insertion
+
+formatting changes
+
+unrelated code inserted above
+
+line-number changes
+
+function moved within same file
+
+file moved/renamed where structural evidence remains strong.
+
+For:
+
+symbol rename
+
+significant refactor
+
+duplicated similar structures
+
+use confidence-based reconciliation.
+
+Never incorrectly merge two independent findings.
+
+If identity confidence is insufficient:
+
+create a new finding.
+
+Do not silently guess.
+
+======================================================================
+7. MIGRATING EXISTING FINDINGS
+======================================================================
+
+Do not destroy old history.
+
+Implement migration carefully.
+
+Existing finding IDs/fingerprints should:
+
+remain accessible
+
+or be mapped into v2 lineage when high-confidence mapping exists.
+
+Preserve:
+
+reviews
+
+exceptions
+
+assignments
+
+audit history.
+
+Document migration behavior.
+
+Add database migration tests.
+
+======================================================================
+8. PROGRAM TWO — CONFIGURABLE QUALITY PROFILES
+======================================================================
+
+Remove meaningful Code Quality thresholds from hardcoded analyzer logic
+where organization customization is expected.
+
+Examples include:
+
+cyclomatic complexity
+
+cognitive complexity
+
+function length
+
+class size
+
+file size
+
+nesting depth
+
+parameter count
+
+duplication limits
+
+changed-code coverage
+
+analysis coverage
+
+severity blockers.
+
+Create versioned:
+
+QualityProfile
+
+QualityProfileVersion
+
+QualityProfileRule
+
+QualityGate
+
+QualityGateVersion
+
+QualityGateCondition.
+
+Support hierarchy:
+
+ProjectTrace Recommended
+
+Organization Default
+
+Team Profile
+
+Repository Override.
+
+Do not duplicate complete profiles unnecessarily.
+
+Use inheritance/overrides where clean.
+
+======================================================================
+9. QUALITY GATE CONDITIONS
+======================================================================
+
+Support conditions such as:
+
+New CRITICAL reliability findings == 0
+
+New HIGH reliability findings == 0
+
+New HIGH maintainability findings == 0
+
+Changed-code coverage >= 80%
+
+New duplication < 3%
+
+Maximum new function complexity <= 20
+
+Maximum nesting <= configured threshold
+
+No selected blocker rule
+
+Minimum supported-code analysis coverage >= configured threshold
+
+No parser failure for required languages.
+
+Gate statuses:
+
+PASS
+
+WARNING
+
+REVIEW_REQUIRED
+
+FAIL.
+
+Never return only:
+
+"Quality Gate failed."
+
+Return:
+
+condition
+
+configured threshold
+
+observed value
+
+affected finding(s)
+
+affected file(s)
+
+recommended action.
+
+======================================================================
+10. NEW CODE MUST BE FIRST-CLASS
+======================================================================
+
+Preserve legacy repository usefulness.
+
+A ten-year-old repository with thousands of existing findings must
+still be usable.
+
+Implement explicit:
+
+BASE
+
+HEAD.
+
+Classify findings:
+
+NEW
+
+EXISTING
+
+RESOLVED
+
+REOPENED.
+
+Quality Gates should be able to evaluate:
+
+NEW_CODE
+
+or:
+
+ALL_CODE.
+
+Recommended default philosophy:
+
+Prevent new technical debt first.
+
+Do not force complete legacy cleanup before ProjectTrace becomes useful.
+
+======================================================================
+11. COVERAGE REPORTS
+======================================================================
+
+Do not invent runtime test coverage.
+
+Ingest supported real coverage reports.
+
+Progressively support:
+
+LCOV
+
+Cobertura
+
+coverage.py XML
+
+JaCoCo XML.
+
+Track:
+
+line coverage
+
+branch coverage
+
+condition coverage where provided
+
+changed-code coverage.
+
+No report:
+
+NOT_AVAILABLE.
+
+Do NOT show:
+
+0%
+
+unless a valid coverage report actually says zero.
+
+======================================================================
+12. PROGRAM THREE — TRUST & COVERAGE
+======================================================================
+
+Create a permanent product area:
+
+TRUST & COVERAGE
+
+or equivalent approved name.
+
+This screen should answer:
+
+"What did ProjectTrace actually analyze, and how much should I trust
+this result?"
+
+This should become a flagship enterprise screen.
+
+======================================================================
+13. TRUST & COVERAGE — LANGUAGE SECTION
+======================================================================
+
+Inventory ALL repository source before filtering.
+
+Every file receives one analysis state:
+
+SUPPORTED
+
+PARTIAL
+
+BETA
+
+EXPERIMENTAL
+
+UNSUPPORTED
+
+EXCLUDED_GENERATED
+
+EXCLUDED_VENDOR
+
+SKIPPED_SIZE_LIMIT
+
+PARSE_FAILED
+
+BINARY
+
+IGNORED_BY_POLICY.
+
+Do not silently drop unsupported languages.
+
+Show:
+
+language
+
+file count
+
+LOC where practical
+
+analyzer support
+
+parser support
+
+quality support
+
+security support.
+
+Example:
+
+Python
+
+FULL
+
+482 / 482 files
+
+TypeScript
+
+FULL
+
+201 / 201
+
+Java
+
+PARTIAL
+
+51 / 74
+
+Go
+
+UNSUPPORTED
+
+18 files.
+
+======================================================================
+14. TRUST & COVERAGE — ANALYSIS SECTION
+======================================================================
+
+Display:
+
+Repository
+
+Branch
+
+Commit
+
+Snapshot
+
+Analysis job
+
+Analysis timestamp
+
+Analyzer version
+
+Ruleset version
+
+Profile version
+
+Quality Gate version.
+
+Also show:
+
+files discovered
+
+files analyzed
+
+files skipped
+
+parser failures
+
+unsupported source
+
+generated source
+
+vendor source.
+
+======================================================================
+15. TRUST & COVERAGE — AUTHORITY SECTION
+======================================================================
+
+Separate:
+
+STATIC / DECLARED
+
+CONTROL-PLANE OBSERVED
+
+RUNTIME OBSERVED.
+
+Example:
+
+Terraform says bucket is public:
+
+DECLARED PUBLIC.
+
+Do not say:
+
+"Production bucket is currently public"
+
+unless live cloud evidence proves it.
+
+Display:
+
+Runtime evidence:
+UNOBSERVED
+
+when applicable.
+
+======================================================================
+16. TRUST & COVERAGE — AI SECTION
+======================================================================
+
+Show:
+
+External LLM used?
+
+YES / NO
+
+Source sent to external AI?
+
+YES / NO
+
+AI provider
+
+model
+
+policy
+
+evidence scope
+
+redaction state
+
+only when applicable.
+
+Today, if no LLM is called:
+
+say so clearly.
+
+Do not market AI usage where none exists.
+
+======================================================================
+17. TRUST & COVERAGE — INFRASTRUCTURE SECTION
+======================================================================
+
+Report:
+
+Terraform
+
+CloudFormation
+
+Kubernetes
+
+Docker Compose
+
+Dockerfile.
+
+For each:
+
+analyzed files
+
+resources discovered
+
+unsupported constructs
+
+parse failures
+
+rule coverage maturity
+
+static/runtime authority.
+
+======================================================================
+18. TRUST & COVERAGE — LIMITATIONS
+======================================================================
+
+ProjectTrace should visibly say what it DOES NOT know.
+
+Examples:
+
+Java cross-file flow:
+PARTIAL
+
+Go:
+UNSUPPORTED
+
+Runtime behavior:
+UNOBSERVED
+
+Live AWS:
+NOT CONNECTED
+
+Helm template:
+UNRENDERED
+
+Terraform external module:
+UNRESOLVED.
+
+Trust increases when ProjectTrace exposes uncertainty.
+
+======================================================================
+19. PROGRAM FOUR — ANALYZER ACCURACY
+======================================================================
+
+Do NOT advertise one universal:
+
+"ProjectTrace accuracy = 98%"
+
+unless statistically valid.
+
+Different analyzers have different precision.
+
+Create an Accuracy Evaluation Framework.
+
+Measure separately:
+
+Code Quality
+
+Reliability
+
+SAST
+
+Secrets
+
+SCA
+
+IaC
+
+Claim extraction
+
+Claim verification
+
+Contradiction detection
+
+Drift detection
+
+Impact relationship accuracy where labels permit.
+
+======================================================================
+20. ACCURACY CORPUS TIERS
+======================================================================
+
+Tier 1:
+
+Synthetic deterministic fixtures.
+
+Tier 2:
+
+Curated open-source repositories.
+
+Tier 3:
+
+Framework-specific datasets.
+
+Tier 4:
+
+Approved anonymized / design-partner real-world evaluations.
+
+Do not use customer code in public benchmark artifacts without explicit
+authorization.
+
+======================================================================
+21. ACCURACY METRICS
+======================================================================
+
+Where labels permit, measure:
+
+TP
+
+TN
+
+FP
+
+FN
+
+precision
+
+recall
+
+F1.
+
+Report by:
+
+rule
+
+language
+
+framework
+
+analyzer version.
+
+Do not hide poor rules inside global averages.
+
+======================================================================
+22. RULE MATURITY
+======================================================================
+
+Introduce:
+
+STABLE
+
+BETA
+
+EXPERIMENTAL
+
+DEPRECATED.
+
+Blocking policy:
+
+Only sufficiently validated rules may block merges by default.
+
+Recommended:
+
+STABLE
+→ eligible for gates
+
+BETA
+→ warning/review
+
+EXPERIMENTAL
+→ informational.
+
+Allow organizations to override deliberately.
+
+======================================================================
+23. FALSE-POSITIVE FEEDBACK
+======================================================================
+
+Existing human review should become measurable feedback.
+
+FALSE_POSITIVE requires:
+
+actor
+
+reason
+
+time
+
+rule
+
+rule version
+
+language
+
+repository context.
+
+Aggregate anonymized/internal rule health.
+
+Do NOT automatically learn from one user's dismissal.
+
+Create internal/publicly explainable:
+
+Rule Health.
+
+Track:
+
+validated examples
+
+precision where measurable
+
+false-positive reports
+
+version
+
+status.
+
+======================================================================
+24. ACCURACY DOCUMENTATION
+======================================================================
+
+Create:
+
+docs/ANALYZER_ACCURACY.md
+
+Include:
+
+methodology
+
+corpus versions
+
+language coverage
+
+rule coverage
+
+results
+
+limitations
+
+known weak areas
+
+last validation date.
+
+Never fake percentages.
+
+======================================================================
+25. PROGRAM FIVE — ENTERPRISE OIDC
+======================================================================
+
+Implement real enterprise OIDC backend support.
+
+Do not build UI-only OIDC.
+
+Support standards-compliant OIDC.
+
+Required flow:
+
+Authorization Code
+
+PKCE where appropriate
+
+state validation
+
+nonce validation
+
+issuer validation
+
+audience validation
+
+signature validation
+
+JWKS handling
+
+clock-skew handling
+
+secure callback
+
+session rotation
+
+logout behavior.
+
+Test with:
+
+generic standards-compliant provider
+
+Microsoft Entra ID
+
+Okta
+
+Google Workspace
+
+where practical.
+
+======================================================================
+26. OIDC ORGANIZATION MODEL
+======================================================================
+
+External identity must map safely to:
+
+organization
+
+member
+
+role
+
+groups where configured.
+
+Do NOT grant administrator solely because:
+
+email domain matches.
+
+Support:
+
+explicit membership
+
+controlled JIT provisioning
+
+group-to-role mapping
+
+disabled-user handling
+
+provider removal
+
+session revocation.
+
+Keep optional break-glass local admin securely isolated if required.
+
+======================================================================
+27. PROGRAM FIVE B — GITHUB ENTERPRISE SERVER
+======================================================================
+
+Remove hardcoded assumptions about:
+
+api.github.com.
+
+Create per-connection configuration:
+
+provider type
+
+GitHub.com / GHES
+
+web_url
+
+api_base_url
+
+App ID
+
+installation ID
+
+private-key reference
+
+webhook secret reference
+
+custom CA bundle where required.
+
+Never store sensitive private keys in plaintext.
+
+======================================================================
+28. GHES SECURITY
+======================================================================
+
+GHES URL configuration introduces SSRF risk.
+
+Protect it.
+
+Use:
+
+admin-controlled configuration
+
+allowlisted schemes
+
+hostname validation
+
+IP range controls according to deployment policy
+
+redirect restrictions
+
+DNS-rebinding protections
+
+TLS validation
+
+custom CA only when explicitly configured.
+
+Never let ordinary repository input become arbitrary network fetch.
+
+======================================================================
+29. GHES TESTS
+======================================================================
+
+Validate:
+
+installation token
+
+repository discovery
+
+contents/tree retrieval
+
+private repositories
+
+PR events
+
+push events
+
+Checks API
+
+webhook signatures
+
+duplicate webhook delivery
+
+token expiration
+
+installation removal
+
+permission revocation
+
+fork PRs where applicable.
+
+Tenant isolation mandatory.
+
+======================================================================
+30. PROGRAM SIX — LARGE REPOSITORY ARCHITECTURE
+======================================================================
+
+Do NOT solve large repository support by simply increasing constants.
+
+Do not change:
+
+1000 files
+
+to:
+
+100000 files
+
+and call it solved.
+
+Redesign ingestion architecture.
+
+Target pipeline:
+
+SCM / ZIP
+    ↓
+REPOSITORY INVENTORY
+    ↓
+PATH / LANGUAGE CLASSIFICATION
+    ↓
+CONTENT HASH
+    ↓
+CONTENT-ADDRESSED BLOB
+    ↓
+SNAPSHOT REFERENCES
+    ↓
+COMPONENT DISCOVERY
+    ↓
+WORK PARTITIONING
+    ↓
+PARSER CACHE
+    ↓
+RULE CACHE
+    ↓
+FINDINGS / EVIDENCE
+    ↓
+IMPACTED CLAIMS.
+
+Do not keep the entire enterprise repository in one in-memory dictionary.
+
+======================================================================
+31. CONTENT-ADDRESSED STORAGE
+======================================================================
+
+Represent files using content hashes.
+
+Unchanged file:
+
+reuse immutable content.
+
+New snapshot:
+
+refer to existing blob if hash unchanged.
+
+Cache parser results using:
+
+tenant
+
+language
+
+content hash
+
+parser version.
+
+Cache analysis using:
+
+content hash
+
+analyzer version
+
+rule version
+
+profile version.
+
+Never reuse cache across tenants unsafely.
+
+======================================================================
+32. INCREMENTAL ANALYSIS
+======================================================================
+
+A PR changing eight files in a 3-million-line monorepo should NOT
+trigger full parsing of 3 million lines by default.
+
+Analyze:
+
+changed files
+
+affected symbols
+
+dependency neighbors
+
+affected components
+
+affected claims
+
+affected IaC relationships
+
+affected policies.
+
+Use Impact Engine.
+
+Fall back to wider analysis when dependency certainty is insufficient.
+
+Never sacrifice correctness silently for performance.
+
+======================================================================
+33. MONOREPO MODEL
+======================================================================
+
+Repository != Component.
+
+Support:
+
+one repository
+
+many components.
+
+Component discovery may use:
+
+explicit ProjectTrace config
+
+workspace manifests
+
+package boundaries
+
+service directories
+
+build metadata
+
+CODEOWNERS
+
+IaC boundaries.
+
+Do not infer component boundaries from folder names alone when ambiguous.
+
+Allow human correction.
+
+======================================================================
+34. LARGE FILE BEHAVIOR
+======================================================================
+
+Do not silently ignore huge files.
+
+State:
+
+SKIPPED_SIZE_LIMIT.
+
+Show effect in Trust & Coverage.
+
+Enterprise quotas must be configurable but bounded.
+
+Never let pathological files crash workers.
+
+======================================================================
+35. LARGE-REPOSITORY BENCHMARK
+======================================================================
+
+Build staged benchmarks.
+
+Stage 1:
+
+10k files.
+
+Stage 2:
+
+50k files.
+
+Stage 3:
+
+multi-language monorepo.
+
+Stage 4:
+
+approximately 3 million LOC.
+
+Measure:
+
+inventory time
+
+initial analysis
+
+incremental analysis
+
+peak RAM
+
+CPU
+
+database size
+
+cache reuse
+
+worker utilization
+
+queue delay
+
+finding persistence time.
+
+Do not claim 3M support until actual test passes.
+
+======================================================================
+36. 100-PR LOAD MODEL
+======================================================================
+
+Although not one of the nine names, this is mandatory for large-scale
+readiness.
+
+Separate:
+
+WEBHOOK ACCEPTANCE
+
+from:
+
+ANALYSIS EXECUTION.
+
+Webhook handler:
+
+validate
+
+persist
+
+ack quickly.
+
+Analysis:
+
+asynchronous.
+
+Implement:
+
+fair scheduling
+
+per-tenant concurrency
+
+per-repository concurrency
+
+global worker limits
+
+backpressure
+
+quotas
+
+idempotency
+
+duplicate SHA suppression
+
+PR supersession.
+
+If a PR gets commits:
+
+A
+B
+C
+
+quickly:
+
+prefer analyzing the relevant latest head without wasting all resources
+on obsolete full scans.
+
+Preserve audit history.
+
+======================================================================
+37. PR LOAD TEST
+======================================================================
+
+Simulate at least:
+
+100 PR events
+
+multiple repositories
+
+multiple organizations
+
+same-repository bursts
+
+duplicate webhooks
+
+worker crash.
+
+Verify:
+
+no event loss
+
+no duplicate corruption
+
+no tenant starvation
+
+no scope leaks
+
+recovery works.
+
+Measure:
+
+webhook p50/p95/p99
+
+queue wait
+
+analysis latency
+
+throughput
+
+worker saturation
+
+failure/retry count.
+
+No invented SLA.
+
+======================================================================
+38. PROGRAM SEVEN — DEEP INFRASTRUCTURE ANALYSIS
+======================================================================
+
+MANDATORY supported infrastructure formats:
+
+Terraform
+
+AWS CloudFormation
+
+Kubernetes
+
+Docker Compose
+
+Dockerfile.
+
+All infrastructure analysis remains:
+
+STATIC
+
+NON-EXECUTING.
+
+Never run customer:
+
+terraform
+
+kubectl
+
+helm
+
+docker
+
+docker compose
+
+cloudformation deploy
+
+scripts.
+
+======================================================================
+39. COMMON INFRASTRUCTURE MODEL
+======================================================================
+
+Normalize into shared entities:
+
+InfrastructureResource
+
+InfrastructureWorkload
+
+InfrastructureIdentity
+
+InfrastructureNetwork
+
+InfrastructureStorage
+
+InfrastructurePolicy
+
+InfrastructureFinding
+
+InfrastructureRelationship.
+
+Every finding has:
+
+format
+
+resource identity
+
+file
+
+range
+
+rule ID
+
+rule version
+
+severity
+
+confidence
+
+snapshot
+
+static/runtime authority
+
+reason
+
+remediation.
+
+======================================================================
+40. TERRAFORM
+======================================================================
+
+Use structural HCL parsing.
+
+Support progressively:
+
+resources
+
+variables
+
+locals
+
+outputs
+
+provider aliases
+
+count
+
+for_each
+
+references
+
+local modules.
+
+Never run:
+
+terraform init
+
+terraform plan
+
+terraform apply.
+
+Unknown expressions:
+
+UNKNOWN
+
+not guessed.
+
+Detect progressively:
+
+public object storage
+
+public DB exposure
+
+0.0.0.0/0 sensitive ingress
+
+::/0 sensitive ingress
+
+wildcard IAM actions
+
+wildcard IAM resources
+
+dangerous trust policies
+
+unencrypted storage
+
+unencrypted databases
+
+public load balancers
+
+weak logging configuration
+
+unsafe Kubernetes/cloud workloads
+
+missing restrictive public-access controls.
+
+Support AWS/Azure/GCP Terraform resources progressively.
+
+External modules not included locally:
+
+EXTERNAL_MODULE_UNRESOLVED.
+
+Do not fetch arbitrary external modules automatically.
+
+======================================================================
+41. CLOUDFORMATION
+======================================================================
+
+Support:
+
+YAML
+
+JSON.
+
+Preserve symbolic intrinsic functions:
+
+Ref
+
+Fn::GetAtt
+
+Fn::Sub
+
+Fn::Join
+
+Fn::If
+
+Fn::ImportValue
+
+and other explicitly supported constructs.
+
+Analyze:
+
+Resources
+
+Parameters
+
+Mappings
+
+Conditions
+
+Outputs where meaningful.
+
+Detect progressively:
+
+public storage
+
+public DB/network exposure
+
+security-group risks
+
+IAM wildcard permissions
+
+dangerous trust relationships
+
+unencrypted data stores
+
+dangerous ECS/EKS configuration
+
+logging gaps.
+
+Do not execute:
+
+Transforms
+
+SAM
+
+macros.
+
+Unsupported transformed semantics:
+
+TRANSFORM_UNRESOLVED.
+
+Remote nested template:
+
+EXTERNAL_TEMPLATE_UNRESOLVED.
+
+======================================================================
+42. KUBERNETES
+======================================================================
+
+Support:
+
+Pod
+
+Deployment
+
+StatefulSet
+
+DaemonSet
+
+Job
+
+CronJob
+
+Service
+
+Ingress
+
+ServiceAccount
+
+Role
+
+ClusterRole
+
+RoleBinding
+
+ClusterRoleBinding
+
+NetworkPolicy
+
+ConfigMap
+
+Secret metadata
+
+PersistentVolume
+
+PersistentVolumeClaim.
+
+Detect progressively:
+
+privileged
+
+root execution
+
+runAsNonRoot
+
+allowPrivilegeEscalation
+
+capabilities add/drop
+
+hostNetwork
+
+hostPID
+
+hostIPC
+
+hostPath
+
+Docker socket
+
+readOnlyRootFilesystem
+
+seccomp
+
+missing resource requests/limits
+
+mutable image tags
+
+digest policy
+
+public Services
+
+Ingress TLS
+
+dangerous RBAC wildcards
+
+cluster-admin style grants
+
+default ServiceAccount
+
+automountServiceAccountToken
+
+missing NetworkPolicy when policy requires
+
+unsafe secret/config references.
+
+Helm:
+
+do not execute templates.
+
+Analyze supplied rendered manifests.
+
+Unrendered templates:
+
+TEMPLATE_UNRENDERED.
+
+======================================================================
+43. DOCKER COMPOSE
+======================================================================
+
+Analyze:
+
+services
+
+image
+
+build metadata
+
+user
+
+privileged
+
+cap_add
+
+cap_drop
+
+security_opt
+
+read_only
+
+network_mode
+
+pid
+
+ipc
+
+ports
+
+volumes
+
+devices
+
+environment
+
+env_file
+
+secrets
+
+networks
+
+depends_on
+
+healthcheck.
+
+Detect:
+
+root
+
+privileged
+
+ALL capabilities
+
+host networking
+
+host PID
+
+host IPC
+
+Docker socket
+
+sensitive host mounts
+
+public port exposure
+
+credential-shaped environment values
+
+mutable/untrusted image policy where configured
+
+missing read-only filesystem policy.
+
+Never run Compose.
+
+======================================================================
+44. DOCKERFILE
+======================================================================
+
+Build/retain a structural parser.
+
+Understand:
+
+FROM
+
+ARG
+
+ENV
+
+USER
+
+RUN
+
+COPY
+
+ADD
+
+EXPOSE
+
+HEALTHCHECK
+
+WORKDIR
+
+ENTRYPOINT
+
+CMD
+
+multi-stage builds.
+
+Detect progressively:
+
+root final user
+
+missing non-root final USER where policy requires
+
+secrets in ARG
+
+secrets in ENV
+
+credential literals
+
+ADD remote URLs
+
+curl/wget piped to shell
+
+chmod 777
+
+unsafe remote installation
+
+latest/mutable image tags
+
+unpinned base images according to policy
+
+sensitive COPY
+
+private key patterns
+
+unnecessary build tooling in final stage
+
+missing healthcheck where required.
+
+Never build the image.
+
+Dockerfile source cannot prove:
+
+actual running image state.
+
+Label accordingly.
+
+======================================================================
+45. INFRASTRUCTURE QUALITY PROFILES
+======================================================================
+
+IaC rules must also use versioned profiles.
+
+Support:
+
+enable/disable rule
+
+severity override
+
+policy thresholds
+
+environment applicability.
+
+Example:
+
+Development
+
+may permit more warnings.
+
+Production
+
+may enforce stricter rules.
+
+Do not infer environment from filename unless explicitly configured.
+
+======================================================================
+46. INFRASTRUCTURE EVIDENCE GRAPH
+======================================================================
+
+Infrastructure must feed the Project Evidence Graph.
+
+Examples:
+
+Terraform Resource
+DECLARED_IN
+main.tf
+
+Kubernetes Deployment
+USES_IDENTITY
+ServiceAccount
+
+Workload
+USES_IMAGE
+Container Image
+
+Service
+EXPOSES
+Workload
+
+CloudFormation Bucket
+DECLARED_IN
+template.yaml
+
+Finding
+AFFECTS
+Resource
+
+Resource
+SUPPORTS / CONTRADICTS
+Claim.
+
+Relationships must be evidence-backed.
+
+======================================================================
+47. PROGRAM EIGHT — ENGINEERING CHANGES
+======================================================================
+
+Create a flagship product area:
+
+ENGINEERING CHANGES
+
+or:
+
+ENGINEERING REALITY CHANGES.
+
+Purpose:
+
+Answer:
+
+"What important engineering realities changed recently?"
+
+This is NOT another findings page.
+
+It correlates changes across ProjectTrace.
+
+======================================================================
+48. ENGINEERING CHANGE MODEL
+======================================================================
+
+An EngineeringChange may connect:
+
+base snapshot
+
+head snapshot
+
+PR
+
+commit
+
+component
+
+files
+
+symbols
+
+quality findings
+
+security findings
+
+dependency changes
+
+infrastructure changes
+
+claims
+
+documentation
+
+architecture
+
+policy
+
+owners.
+
+Categories may include:
+
+IMPLEMENTATION_CHANGE
+
+CLAIM_STATUS_CHANGE
+
+DOCUMENTATION_DRIFT
+
+ARCHITECTURE_CHANGE
+
+QUALITY_REGRESSION
+
+SECURITY_CHANGE
+
+DEPENDENCY_CHANGE
+
+INFRASTRUCTURE_CHANGE
+
+POLICY_CHANGE
+
+OWNERSHIP_CHANGE.
+
+======================================================================
+49. ENGINEERING CHANGES UI
+======================================================================
+
+Example:
+
+ENGINEERING CHANGES
+
+LAST 7 DAYS
+
+3 important realities changed.
+
+--------------------------------------------------
+
+AUTHENTICATION
+
+JWT → Server Sessions
+
+Changed by:
+PR #1842
+
+Claim:
+Authentication uses JWT
+
+VERIFIED → CONTRADICTED
+
+Documentation:
+2 outdated artifacts
+
+Owner:
+Identity Team.
+
+--------------------------------------------------
+
+PAYMENTS
+
+process_payment()
+
+Complexity:
+14 → 32
+
+Quality Gate:
+FAIL
+
+Related claims:
+2
+
+Owner:
+Payments Team.
+
+--------------------------------------------------
+
+INFRASTRUCTURE
+
+Customer storage
+
+Static declaration:
+Private → Public
+
+Risk:
+HIGH
+
+Claim:
+Customer storage is private
+
+VERIFIED → CONTRADICTED
+
+Owner:
+Platform Team.
+
+======================================================================
+50. ENGINEERING CHANGE PRIORITIZATION
+======================================================================
+
+Rank using explainable factors.
+
+Potential factors:
+
+claim contradiction
+
+severity
+
+new-code regression
+
+policy failure
+
+business-critical component
+
+change frequency
+
+ownership
+
+public exposure
+
+security finding.
+
+Do not use an invisible AI ranking.
+
+Explain:
+
+WHY THIS IS IMPORTANT.
+
+======================================================================
+51. ENGINEERING CHANGES + IMPACT ENGINE
+======================================================================
+
+Use the existing Impact Engine.
+
+Example:
+
+Changed source
+
+→ affected symbol
+
+→ affected component
+
+→ affected evidence
+
+→ affected claim
+
+→ affected documentation
+
+→ affected policy
+
+→ affected owner.
+
+Do not build a disconnected second impact system.
+
+======================================================================
+52. PROGRAM NINE — ENTERPRISE PRIVATE DEPLOYMENT
+======================================================================
+
+Create a genuinely supportable private-deployment model.
+
+Do not call local Compose:
+
+enterprise-ready self-hosting.
+
+Target architecture:
+
+Ingress / reverse proxy
+
+API service
+
+background workers
+
+scheduler where required
+
+PostgreSQL
+
+Redis
+
+S3-compatible object storage
+
+OIDC
+
+secret manager
+
+observability stack.
+
+Same application core as ProjectTrace Cloud.
+
+Do not fork into two incompatible products.
+
+======================================================================
+53. PRIVATE DEPLOYMENT SECURITY
+======================================================================
+
+Provide:
+
+non-root containers
+
+minimal base images
+
+read-only filesystem where practical
+
+resource limits
+
+health probes
+
+readiness probes
+
+TLS
+
+network policy
+
+secret references
+
+KMS/secret-manager support
+
+database encryption guidance
+
+object storage encryption
+
+backup/restore
+
+key rotation
+
+upgrade strategy
+
+migration strategy
+
+disaster recovery guidance.
+
+Do not bake secrets into images.
+
+======================================================================
+54. SUPPLY-CHAIN SECURITY
+======================================================================
+
+For ProjectTrace's own deployment:
+
+Generate SBOM.
+
+Scan container images.
+
+Pin critical dependencies.
+
+Sign or provide provenance for release images where practical.
+
+Document build provenance.
+
+Do not claim secure supply chain without implementation.
+
+======================================================================
+55. PRIVATE DEPLOYMENT PACKAGING
+======================================================================
+
+Support a production-oriented path such as:
+
+Helm chart / Kubernetes manifests
+
+and documented managed dependencies.
+
+Compose can remain:
+
+development / pilot.
+
+Private enterprise deployment should support:
+
+external PostgreSQL
+
+external Redis
+
+external S3-compatible storage
+
+external OIDC
+
+external secrets/KMS.
+
+======================================================================
+56. BACKUP / RESTORE
+======================================================================
+
+Do not merely document:
+
+"take PostgreSQL backups."
+
+Implement/test restoration procedures.
+
+Validate:
+
+database backup
+
+object storage backup
+
+encryption key recovery
+
+migration compatibility.
+
+Perform a real staging restore test.
+
+Document RPO/RTO only if actually defined/measured.
+
+======================================================================
+57. OBSERVABILITY
+======================================================================
+
+Instrument:
+
+API latency
+
+analysis jobs
+
+queue latency
+
+worker utilization
+
+parser duration
+
+parser failures
+
+rule duration
+
+files analyzed
+
+files skipped
+
+cache hit rate
+
+snapshot creation
+
+claim verification time
+
+gate evaluation time
+
+IaC analysis time
+
+PR processing
+
+webhook processing
+
+OIDC failures
+
+GitHub token failures.
+
+Use structured logs.
+
+Never log:
+
+secret values
+
+raw credentials
+
+unnecessary source code.
+
+Use correlation IDs.
+
+======================================================================
+58. TENANT SECURITY HARDENING
+======================================================================
+
+Enterprise work also requires defense-in-depth tenant isolation.
+
+Every tenant-owned object must be scoped by:
+
+organization.
+
+Review:
+
+DB queries
+
+cache
+
+vectors/search
+
+graph
+
+objects
+
+jobs
+
+audit
+
+exports.
+
+Implement PostgreSQL RLS where operationally appropriate.
+
+At minimum:
+
+test all sensitive endpoints for cross-tenant access.
+
+Never trust client-provided organization IDs.
+
+======================================================================
+59. AUDIT HARDENING
+======================================================================
+
+Current audit should become tamper-evident.
+
+Evaluate:
+
+hash-chained audit events
+
+periodic signed checkpoints
+
+optional immutable archive/WORM destination.
+
+Audit:
+
+login
+
+OIDC administration
+
+GitHub connection
+
+profile changes
+
+gate changes
+
+reviews
+
+exceptions
+
+claim status changes
+
+policy changes
+
+exports
+
+analysis actions
+
+private deployment admin actions.
+
+Never record secrets.
+
+======================================================================
+60. SOURCE EGRESS POLICY
+======================================================================
+
+Implement explicit organization-level data policy.
+
+Possible modes:
+
+NO_EXTERNAL_SOURCE_EGRESS
+
+REDACTED_EVIDENCE_ONLY
+
+CUSTOMER_MANAGED_AI
+
+or similarly clear design.
+
+External systems must receive minimum necessary information.
+
+For vulnerability data:
+
+package name/version/ecosystem
+
+rather than complete repository.
+
+======================================================================
+61. EXTERNAL AI POLICY
+======================================================================
+
+External LLM remains OPTIONAL.
+
+Default:
+
+OFF.
+
+If added later:
+
+organization must configure it.
+
+Before egress:
+
+authorization
+
+path policy
+
+secret redaction
+
+context bounding
+
+audit metadata.
+
+Never send an entire repository automatically.
+
+AI must never be required for:
+
+quality metrics
+
+security rule determination
+
+fingerprinting
+
+coverage
+
+IaC deterministic findings.
+
+======================================================================
+62. ASK ENGINEERING
+======================================================================
+
+Do NOT convert Ask Engineering into a normal chat product.
+
+Result format:
+
+ANSWER
+
+VERIFICATION STATUS
+
+CONFIDENCE
+
+SCOPE
+
+SNAPSHOT
+
+EVIDENCE
+
+RELATED CLAIMS
+
+RELATED FINDINGS
+
+LIMITATIONS.
+
+If no AI used:
+
+say:
+
+"No language model was called."
+
+If AI used:
+
+show it.
+
+======================================================================
+63. CODE QUALITY REMAINS A FLAGSHIP MODULE
+======================================================================
+
+Do not regress prior Code Quality direction.
+
+Required views:
+
+Overview
+
+New Code
+
+Findings
+
+Maintenance Hotspots
+
+Metrics
+
+Coverage
+
+Duplication
+
+Trends
+
+Rules & Profiles.
+
+Code Quality must be:
+
+parser-backed
+
+versioned
+
+profile-aware
+
+new-code-aware
+
+history-aware
+
+incremental
+
+Evidence Graph connected.
+
+======================================================================
+64. MAINTENANCE HOTSPOTS
+======================================================================
+
+Keep separate from Security Hotspots.
+
+Combine explainably:
+
+quality problems
+
+complexity
+
+change frequency
+
+PR activity
+
+ownership
+
+business/system criticality if explicitly known.
+
+Do not hide behind one magic score.
+
+======================================================================
+65. UNIFIED PR EXPERIENCE
+======================================================================
+
+ProjectTrace should produce one engineering decision.
+
+Example:
+
+PROJECTTRACE
+PR #1842
+
+OVERALL:
+REVIEW REQUIRED
+
+Code Quality:
+FAIL
+
+Application Security:
+PASS
+
+Dependencies:
+PASS
+
+Secrets:
+PASS
+
+Infrastructure:
+WARNING
+
+Claims:
+1 CONTRADICTED
+
+Documentation:
+2 affected
+
+Policy:
+1 FAIL.
+
+Every item links to evidence.
+
+Avoid flooding developers with comments.
+
+======================================================================
+66. CLAIM LEDGER REMAINS THE SIGNATURE SCREEN
+======================================================================
+
+Never allow Claim Ledger to become a secondary forgotten feature.
+
+Example:
+
+VERIFIED
+Database uses PostgreSQL
+
+CONTRADICTED
+Authentication uses JWT
+
+STALE
+Orders communicate using Kafka
+
+UNVERIFIED
+Backups are encrypted.
+
+Claim detail must expose:
+
+source statement
+
+supporting evidence
+
+contradicting evidence
+
+evidence authority
+
+snapshot
+
+change source
+
+status history
+
+related PR
+
+related findings
+
+docs
+
+architecture
+
+owner
+
+exception
+
+policy.
+
+======================================================================
+67. CLAIM STATUS MUST REMAIN DISTINCT
+======================================================================
+
+Never merge:
+
+verification status
+
+severity
+
+confidence
+
+human workflow.
+
+Example:
+
+Status:
+CONTRADICTED
+
+Severity:
+HIGH
+
+Confidence:
+HIGH
+
+Workflow:
+IN_REVIEW.
+
+======================================================================
+68. EVIDENCE GRAPH
+======================================================================
+
+Keep the graph contextual.
+
+Do not create an unusable 10,000-node galaxy.
+
+Open around:
+
+claim
+
+finding
+
+resource
+
+PR
+
+component
+
+engineering change.
+
+Allow controlled expansion.
+
+Graph relationships must be evidence-backed.
+
+======================================================================
+69. TRUST LANGUAGE
+======================================================================
+
+ProjectTrace must use truthful language.
+
+Prefer:
+
+"Static evidence indicates..."
+
+"Current supported evidence shows..."
+
+"Runtime state is unobserved."
+
+"Analysis is partial."
+
+"Language unsupported."
+
+"Evidence is insufficient."
+
+Avoid:
+
+"ProjectTrace guarantees..."
+
+"100% secure"
+
+"zero false positives"
+
+"fully protected"
+
+unless literally proven.
+
+======================================================================
+70. UX PRINCIPLES
+======================================================================
+
+Overall design:
+
+calm
+
+technical
+
+precise
+
+dense but understandable
+
+developer-native
+
+executive-readable.
+
+Inspiration principles:
+
+Linear:
+calm navigation
+
+Vercel:
+context switching
+
+GitHub:
+code/PR familiarity
+
+Datadog:
+investigation/filtering
+
+SonarQube:
+gate/new-code clarity
+
+Wiz:
+contextual relationships
+
+ProjectTrace:
+Claim Ledger + Evidence Graph + Drift + Engineering Changes.
+
+Do not clone competitors.
+
+======================================================================
+71. NAVIGATION
+======================================================================
+
+Avoid excessive flat navigation.
+
+Suggested hierarchy:
+
+Overview
+
+Engineering
+- Systems
+- Repositories
+- Pull Requests
+- Engineering Changes
+
+Code & Security
+- Findings
+- Code Quality
+- Security
+- Dependencies
+- Infrastructure
+
+Integrity
+- Claim Ledger
+- Drift
+- Architecture
+- Evidence
+- Ask Engineering
+
+Governance
+- Policies
+- Audit Trail
+- Trust & Coverage
+
+Learn
+- ProjectTrace Guide
+
+Settings
+- Connections
+- Identity / SSO
+- Organization
+- Preferences.
+
+Adjust only when actual current navigation requires a cleaner migration.
+
+======================================================================
+72. PROJECTTRACE GUIDE
+======================================================================
+
+Keep permanent Guide.
+
+Add/update sections:
+
+What is ProjectTrace?
+
+How ProjectTrace Works
+
+Claim Ledger
+
+Evidence
+
+Evidence Graph
+
+Code Quality
+
+Security
+
+Dependencies
+
+Infrastructure
+
+Terraform
+
+CloudFormation
+
+Kubernetes
+
+Docker Compose
+
+Dockerfile
+
+Quality Profiles
+
+Quality Gates
+
+Analysis Coverage
+
+Finding Identity
+
+Accuracy
+
+Rule Maturity
+
+Engineering Changes
+
+OIDC
+
+GitHub Enterprise
+
+Private Deployment
+
+Security & Privacy
+
+AI/Data Egress
+
+Audit
+
+Limitations.
+
+Every major screen should have:
+
+"What is this?"
+
+context help.
+
+======================================================================
+73. EMPTY / ERROR STATES
+======================================================================
+
+Explicitly handle:
+
+no repository
+
+no analysis
+
+analysis running
+
+partial analysis
+
+unsupported language
+
+parser failure
+
+coverage unavailable
+
+no baseline
+
+OIDC not configured
+
+GHES unavailable
+
+IaC unsupported construct
+
+queue overloaded
+
+private deployment misconfiguration
+
+no Engineering Changes.
+
+No generic:
+
+"No data."
+
+======================================================================
+74. PERFORMANCE UX
+======================================================================
+
+Navigation should feel instant.
+
+Use:
+
+cached lists
+
+background refresh
+
+skeletons
+
+virtualized large tables
+
+server-side filters
+
+lazy graphs
+
+pagination
+
+route splitting
+
+prefetch where safe.
+
+Analysis progress should display truthful stages.
+
+Example:
+
+Inventory
+
+Hashing
+
+Parsing
+
+Metrics
+
+Quality Rules
+
+Security Rules
+
+Infrastructure Analysis
+
+Baseline Comparison
+
+Evidence Graph
+
+Claim Verification
+
+Impact
+
+Gate Evaluation
+
+Finalization.
+
+Do not fake percentage completion unless progress is measurable.
+
+======================================================================
+75. DATABASE DESIGN REVIEW
+======================================================================
+
+Review schema for enterprise scale.
+
+High-volume concepts may need normalized tables:
+
+Repository
+
+Snapshot
+
+SourceFile
+
+Blob
+
+Symbol
+
+FindingIdentity
+
+FindingOccurrence
+
+FindingHistory
+
+Rule
+
+Profile
+
+Gate
+
+Evidence
+
+EvidenceEdge
+
+Claim
+
+EngineeringChange
+
+CoverageReport
+
+IaCResource
+
+AuditEvent.
+
+Do not prematurely split services.
+
+A modular monolith plus workers remains acceptable.
+
+======================================================================
+76. MIGRATIONS
+======================================================================
+
+Every DB change:
+
+Alembic migration.
+
+Test:
+
+fresh DB
+
+upgrade existing DB
+
+data migration
+
+existing finding history
+
+profile migration
+
+rollback where supported.
+
+Never manually patch production schema.
+
+======================================================================
+77. TEST STRATEGY
+======================================================================
+
+Required levels:
+
+unit
+
+integration
+
+API
+
+DB
+
+analyzer fixture
+
+migration
+
+frontend component
+
+frontend flow
+
+E2E
+
+security
+
+benchmark
+
+load.
+
+Do not rely on only happy-path tests.
+
+======================================================================
+78. STABLE FINDING TESTS
+======================================================================
+
+Mandatory:
+
+line insertion
+
+comment insertion
+
+whitespace formatting
+
+code added above
+
+function moved
+
+file rename
+
+duplicate similar finding
+
+finding resolved
+
+finding reopened
+
+review preserved
+
+exception preserved.
+
+======================================================================
+79. QUALITY GATE TESTS
+======================================================================
+
+Test:
+
+organization profile
+
+repository override
+
+rule enable
+
+rule disable
+
+severity override
+
+complexity threshold
+
+coverage threshold
+
+duplication threshold
+
+analysis coverage threshold
+
+PASS
+
+WARNING
+
+REVIEW_REQUIRED
+
+FAIL
+
+profile version history.
+
+======================================================================
+80. COVERAGE TESTS
+======================================================================
+
+Repository with:
+
+supported Python
+
+supported TS
+
+partial Java
+
+unsupported Go
+
+generated JS
+
+vendor code
+
+oversized file
+
+parser failure.
+
+Verify Trust & Coverage exactly reflects reality.
+
+======================================================================
+81. ACCURACY TESTS
+======================================================================
+
+Every significant rule:
+
+positive example
+
+negative example
+
+edge case
+
+false-positive trap.
+
+Benchmark script must be deterministic where possible.
+
+Store corpus version.
+
+======================================================================
+82. OIDC SECURITY TESTS
+======================================================================
+
+Test:
+
+bad state
+
+bad nonce
+
+wrong issuer
+
+wrong audience
+
+expired token
+
+bad signature
+
+replay
+
+session fixation
+
+disabled user
+
+role escalation
+
+group mapping
+
+provider disable.
+
+======================================================================
+83. GHES SECURITY TESTS
+======================================================================
+
+Test:
+
+valid GHES
+
+invalid hostname
+
+SSRF attempt
+
+custom CA
+
+bad certificate
+
+redirect abuse
+
+installation removal
+
+permission revoke
+
+token expiration
+
+cross-tenant connector access.
+
+======================================================================
+84. LARGE-REPO TESTS
+======================================================================
+
+Test:
+
+incremental reuse
+
+unchanged file cache
+
+changed file invalidation
+
+parser version invalidation
+
+rule version invalidation
+
+profile version invalidation
+
+component-level analysis
+
+large-file skip
+
+worker crash
+
+job resume.
+
+======================================================================
+85. INFRASTRUCTURE TESTS
+======================================================================
+
+For each:
+
+Terraform
+
+CloudFormation
+
+Kubernetes
+
+Compose
+
+Dockerfile
+
+include:
+
+positive findings
+
+safe negative cases
+
+unsupported constructs
+
+malformed syntax
+
+large input
+
+secret patterns
+
+cross-resource relationships.
+
+Never test by deploying customer infrastructure.
+
+======================================================================
+86. ENGINEERING CHANGES TESTS
+======================================================================
+
+Create controlled snapshots.
+
+A:
+
+JWT authentication.
+
+B:
+
+session authentication.
+
+Verify:
+
+implementation change
+
+claim status change
+
+docs impact
+
+owner
+
+PR
+
+Engineering Change record.
+
+Another:
+
+private IaC storage → public declaration.
+
+Another:
+
+complexity regression.
+
+Ensure no duplicate/change noise.
+
+======================================================================
+87. PRIVATE DEPLOYMENT TESTS
+======================================================================
+
+Test production-like:
+
+PostgreSQL
+
+Redis
+
+object storage
+
+multiple workers
+
+OIDC
+
+GitHub/GHES
+
+TLS
+
+backup
+
+restore
+
+migration
+
+worker restart
+
+API restart.
+
+Do not claim private production readiness from localhost Compose alone.
+
+======================================================================
+88. SECURITY TESTS
+======================================================================
+
+Test:
+
+cross-tenant IDOR
+
+CSRF
+
+session fixation
+
+rate limits
+
+ZIP traversal
+
+decompression bomb
+
+malformed archive
+
+parser bomb
+
+huge source
+
+secret redaction
+
+prompt injection
+
+AI fake citations
+
+webhook spoofing
+
+SSRF
+
+audit tampering
+
+queue tenant isolation
+
+cache tenant isolation.
+
+======================================================================
+89. ACCEPTANCE — THE 21 BUYER QUESTIONS
+======================================================================
+
+At release review, answer these EXACT questions from actual product
+evidence:
+
+1. How accurate is it?
+
+2. How many false positives?
+
+3. What languages are truly supported?
+
+4. What happens when your parser fails?
+
+5. Do you execute our code?
+
+6. Does our source leave your infrastructure?
+
+7. Does an LLM receive source?
+
+8. How do you isolate tenants?
+
+9. How do you handle secrets?
+
+10. Can I deploy it privately?
+
+11. Can I use GitHub Enterprise?
+
+12. Can I use OIDC?
+
+13. How do you handle a 3-million-line monorepo?
+
+14. What happens when 100 PRs arrive together?
+
+15. What evidence made this claim CONTRADICTED?
+
+16. Why should I trust this result?
+
+17. Can your finding survive a line-number change?
+
+18. Can I configure the Quality Gate?
+
+19. Can I suppress something with an expiring exception?
+
+20. Where is the audit record?
+
+21. What happens if a language isn't supported?
+
+For every question report:
+
+SUPPORTED
+
+PARTIAL
+
+UNSUPPORTED
+
+UNMEASURED.
+
+And provide:
+
+implementation evidence
+
+test evidence
+
+benchmark evidence
+
+limitations.
+
+No marketing answer is acceptable without proof.
+
+======================================================================
+90. ENTERPRISE VALIDATION DOCUMENT
+======================================================================
+
+Create/update:
+
+ENTERPRISE_TRUST_VALIDATION.md
+
+Structure:
+
+Executive Summary
+
+Release version
+
+Commit
+
+Environment
+
+21 buyer questions
+
+Stable Finding validation
+
+Quality Gate validation
+
+Coverage validation
+
+Accuracy results
+
+OIDC validation
+
+GitHub Enterprise validation
+
+Large repository benchmark
+
+100 PR load benchmark
+
+Infrastructure coverage
+
+Engineering Changes validation
+
+Private deployment validation
+
+Security testing
+
+Known limitations
+
+Deferred items
+
+Release recommendation.
+
+======================================================================
+91. PRODUCT RELEASE LABELS
+======================================================================
+
+Use capability maturity labels.
+
+AVAILABLE
+
+BETA
+
+PRIVATE_PREVIEW
+
+COMING_LATER.
+
+Do not show unfinished capabilities as AVAILABLE.
+
+Frontend
+
+Docs
+
+Guide
+
+API
+
+Marketing
+
+must agree.
+
+======================================================================
+92. NO DEAD UI
+======================================================================
+
+Critical requirement:
+
+Do not create frontend pages that call nonexistent backend APIs.
+
+Before calling a feature finished:
+
+UI route works
+
+backend route exists
+
+authorization works
+
+DB persists correctly
+
+tests pass
+
+errors are handled.
+
+ProjectTrace itself should not suffer:
+
+UI ↔ implementation contradiction.
+
+======================================================================
+93. MARKETING TRUTH
+======================================================================
+
+Landing page and sales material must reflect actual release.
+
+No:
+
+fake customer logos
+
+fake testimonials
+
+fake metrics
+
+fake uptime
+
+fake SOC 2
+
+fake ISO certification
+
+fake enterprise customers
+
+fake accuracy.
+
+If capability is Beta:
+
+say Beta.
+
+======================================================================
+94. PRODUCT POSITIONING FOR EARLY CUSTOMERS
+======================================================================
+
+Do NOT initially say:
+
+"Replace SonarQube and Wiz."
+
+Say:
+
+"ProjectTrace works alongside your existing engineering stack and adds
+evidence-backed engineering integrity."
+
+Later:
+
+native Code Quality/SAST/IaC may reduce overlapping tool costs if proven.
+
+Trust first.
+
+Replacement later.
+
+======================================================================
+95. TARGET CUSTOMER FOR FIRST PILOTS
+======================================================================
+
+Prioritize organizations roughly:
+
+20–500 developers
+
+multiple active repositories
+
+strong PR workflow
+
+meaningful technical docs
+
+Platform / DevEx / Architecture / Security teams.
+
+Do not begin product validation with the largest bank on Earth.
+
+Use design partners to validate:
+
+accuracy
+
+noise
+
+workflow
+
+scale
+
+security expectations.
+
+======================================================================
+96. DEFINITION OF DONE — STABLE FINDINGS
+======================================================================
+
+DONE only when:
+
+line movements preserve identity
+
+formatting preserves identity
+
+review history preserved
+
+exceptions preserved
+
+resolved/reopened correct
+
+migration works
+
+tests prove it.
+
+======================================================================
+97. DEFINITION OF DONE — QUALITY GATES
+======================================================================
+
+DONE only when:
+
+thresholds are configurable
+
+profiles are versioned
+
+organization defaults work
+
+repo overrides work
+
+gate reasons are explainable
+
+new-code gating works
+
+coverage conditions work
+
+audit works.
+
+======================================================================
+98. DEFINITION OF DONE — TRUST & COVERAGE
+======================================================================
+
+DONE only when:
+
+every repository file is classified
+
+unsupported language visible
+
+parser failures visible
+
+excluded/generated visible
+
+IaC coverage visible
+
+AI usage visible
+
+static/runtime distinction visible
+
+analyzer versions visible.
+
+======================================================================
+99. DEFINITION OF DONE — ACCURACY
+======================================================================
+
+DONE only when:
+
+versioned benchmark corpus exists
+
+real/open-source evaluation added
+
+per-rule metrics available
+
+false-positive traps exist
+
+rule maturity is enforced
+
+results are documented honestly.
+
+======================================================================
+100. DEFINITION OF DONE — OIDC / GHES
+======================================================================
+
+DONE only when:
+
+backend functionality exists
+
+frontend works
+
+security tests pass
+
+tenant boundaries pass
+
+real provider validation performed where feasible
+
+GHES base URL configurable
+
+SSRF protected.
+
+======================================================================
+101. DEFINITION OF DONE — LARGE REPOSITORIES
+======================================================================
+
+DONE only when:
+
+streamed/incremental model exists
+
+content hashing exists
+
+unchanged-result reuse exists
+
+memory bounded
+
+components supported
+
+3M LOC benchmark actually passes before claiming support.
+
+======================================================================
+102. DEFINITION OF DONE — IaC
+======================================================================
+
+DONE only when:
+
+Terraform
+
+CloudFormation
+
+Kubernetes
+
+Docker Compose
+
+Dockerfile
+
+all have:
+
+structural parser
+
+resource inventory
+
+rule registry
+
+positive tests
+
+negative tests
+
+unsupported-construct reporting
+
+Evidence Graph integration
+
+Trust & Coverage integration
+
+profile/gate integration.
+
+======================================================================
+103. DEFINITION OF DONE — ENGINEERING CHANGES
+======================================================================
+
+DONE only when:
+
+cross-snapshot meaningful changes correlate:
+
+implementation
+
+findings
+
+claims
+
+docs
+
+IaC
+
+policies
+
+owners
+
+PRs
+
+and UI clearly explains why change matters.
+
+======================================================================
+104. DEFINITION OF DONE — PRIVATE DEPLOYMENT
+======================================================================
+
+DONE only when:
+
+production-like deployment succeeds
+
+OIDC works
+
+workers scale
+
+TLS works
+
+backup succeeds
+
+restore succeeds
+
+migrations succeed
+
+secrets managed safely
+
+observability works
+
+documentation is reproducible.
+
+======================================================================
+105. FINAL CTO REVIEW
+======================================================================
+
+When implementation is finished:
+
+Act as a skeptical CTO.
+
+Do not look only at screenshots.
+
+Test actual behavior.
+
+Ask:
+
+Why should I buy this?
+
+Why should I trust it?
+
+What happens when it fails?
+
+What does it not support?
+
+Can I inspect proof?
+
+Can my developers use it without noise?
+
+Can my security team approve it?
+
+Can my platform team operate it?
+
+Can it scale?
+
+Can I leave?
+
+Can I export data?
+
+Can I delete data?
+
+Can I audit decisions?
+
+If weak answers remain:
+
+do not call the release complete.
+
+======================================================================
+106. FINAL CEO REVIEW
+======================================================================
+
+Act as ProjectTrace CEO.
+
+The product should now be able to demonstrate:
+
+"We do not simply tell teams what is wrong.
+
+We show what engineering reality changed,
+which claims are affected,
+what evidence proves it,
+what quality/security/infrastructure consequences exist,
+who owns the issue,
+what the PR should do,
+and how that decision evolved over time."
+
+If ProjectTrace cannot demonstrate that clearly:
+
+keep improving the core.
+
+Do not solve the problem by adding unrelated features.
+
+======================================================================
+107. REQUIRED FINAL DELIVERABLES
+======================================================================
+
+At completion provide:
+
+1. ENTERPRISE_HARDENING_BASELINE.md
+
+2. ENTERPRISE_TRUST_VALIDATION.md
+
+3. ANALYZER_ACCURACY.md
+
+4. LARGE_REPOSITORY_BENCHMARK.md
+
+5. PR_LOAD_BENCHMARK.md
+
+6. PRIVATE_DEPLOYMENT_GUIDE.md
+
+7. SECURITY_AND_DATA_EGRESS.md
+
+8. LANGUAGE_SUPPORT_MATRIX.md
+
+9. INFRASTRUCTURE_SUPPORT_MATRIX.md
+
+10. QUALITY_PROFILE_AND_GATE_GUIDE.md
+
+11. OIDC_AND_GHES_CONFIGURATION.md
+
+12. MIGRATION / UPGRADE NOTES.
+
+These documents must reflect actual implementation.
+
+======================================================================
+108. FINAL OUTPUT TO PRODUCT OWNER
+======================================================================
+
+At the very end report:
+
+WHAT WAS ALREADY GOOD
+
+WHAT WAS CHANGED
+
+WHAT WAS ADDED
+
+WHAT WAS REMOVED / DEPRECATED
+
+TESTS ACTUALLY RUN
+
+TEST RESULTS
+
+BENCHMARKS ACTUALLY RUN
+
+MEASURED RESULTS
+
+21 BUYER QUESTION STATUS
+
+KNOWN LIMITATIONS
+
+WHAT IS SAFE TO CLAIM PUBLICLY
+
+WHAT MUST NOT YET BE CLAIMED
+
+NEXT RECOMMENDED RELEASE.
+
+Do not write:
+
+"Everything is enterprise ready"
+
+unless every required acceptance criterion actually passes.
+
+======================================================================
+109. IMPLEMENTATION ORDER — FOLLOW THIS
+======================================================================
+
+PHASE 0
+
+Audit existing repository.
+
+PHASE 1
+
+Stable Finding Identity v2.
+
+PHASE 2
+
+Analysis Coverage + unsupported-language inventory.
+
+PHASE 3
+
+Quality Profiles + configurable Quality Gates.
+
+PHASE 4
+
+Accuracy framework + false-positive/rule-health system.
+
+PHASE 5
+
+Deepen Code Quality and parser reliability where benchmark gaps expose
+weakness.
+
+PHASE 6
+
+Deep Terraform / CloudFormation / Kubernetes / Compose / Dockerfile.
+
+PHASE 7
+
+Trust & Coverage complete UI/API.
+
+PHASE 8
+
+Engineering Changes.
+
+PHASE 9
+
+OIDC.
+
+PHASE 10
+
+GitHub Enterprise Server.
+
+PHASE 11
+
+Content-addressed/incremental repository architecture.
+
+PHASE 12
+
+Large monorepo benchmarks.
+
+PHASE 13
+
+100-PR fairness/load architecture and benchmarks.
+
+PHASE 14
+
+Tenant/security/audit hardening.
+
+PHASE 15
+
+Production private-deployment path.
+
+PHASE 16
+
+Full regression + enterprise validation.
+
+Do not jump randomly between phases unless dependencies require it.
+
+======================================================================
+110. FINAL NORTH STAR
+======================================================================
+
+ProjectTrace succeeds when a developer, security engineer, architect,
+platform engineer and CTO can all open the same engineering change and
+understand:
+
+WHAT CHANGED?
+
+WHERE?
+
+WHO CHANGED IT?
+
+WHAT DOES THE CODE NOW DO?
+
+WHAT DID WE PREVIOUSLY CLAIM?
+
+IS THAT CLAIM STILL TRUE?
+
+WHAT EVIDENCE PROVES THE RESULT?
+
+WHAT QUALITY PROBLEMS WERE INTRODUCED?
+
+WHAT SECURITY PROBLEMS WERE INTRODUCED?
+
+WHAT DEPENDENCIES CHANGED?
+
+WHAT INFRASTRUCTURE CHANGED?
+
+WHAT DOCUMENTATION BECAME OUTDATED?
+
+WHAT ARCHITECTURE IS AFFECTED?
+
+WHAT POLICY FAILED?
+
+WHO OWNS THE RESPONSE?
+
+WHAT SHOULD HAPPEN TO THE PR?
+
+WHAT IS PROJECTTRACE UNSURE ABOUT?
+
+WHAT PART OF THE REPOSITORY WAS NOT ANALYZED?
+
+WHAT HAPPENED HISTORICALLY?
+
+CAN THE ENTIRE DECISION BE AUDITED?
+
+That is ProjectTrace.
+
+======================================================================
+111. FINAL PRODUCT PRINCIPLES
+======================================================================
+
+EVIDENCE > CLAIMS
+
+TRUST > FEATURE COUNT
+
+PRECISION > NOISE
+
+EXPLAINABILITY > MAGIC SCORES
+
+SUPPORTED > SILENTLY SKIPPED
+
+PARTIAL > FALSE PASS
+
+UNVERIFIED > FABRICATED CERTAINTY
+
+STATIC ≠ RUNTIME
+
+FINDING LOCATION ≠ FINDING IDENTITY
+
+NEW CODE > FORCING LEGACY CLEANUP
+
+DETERMINISTIC ANALYSIS > AI GUESSING
+
+MEASURED ACCURACY > MARKETING ACCURACY
+
+MEASURED SCALE > "ENTERPRISE SCALE"
+
+SELF-HOSTED DEMO ≠ PRIVATE ENTERPRISE DEPLOYMENT
+
+QUEUED ≠ SCALABLE
+
+AUDIT LOG ≠ TAMPER-PROOF AUDIT
+
+IMPLEMENTED ≠ TESTED
+
+TESTED ≠ PRODUCTION PROVEN
+
+AVAILABLE ≠ PLANNED
+
+CLAIM LEDGER + EVIDENCE GRAPH REMAIN PROJECTTRACE'S CORE ADVANTAGE.
+
+======================================================================
+112. START NOW
+======================================================================
+
+Start by inspecting the complete CURRENT ProjectTrace repository.
+
+Do not assume previous audit results remain true.
+
+Create the baseline.
+
+Preserve working architecture.
+
+Then execute the phases in order.
+
+Do not stop after creating UI.
+
+Do not stop after creating database models.
+
+Do not stop after unit tests.
+
+Do not stop because the product "looks finished."
+
+Continue until each implemented release capability has:
+
+backend behavior
+
+frontend behavior where applicable
+
+authorization
+
+persistence
+
+error handling
+
+tests
+
+documentation
+
+benchmark evidence where required
+
+and honest limitation reporting.
+
+DO NOT ADD ANOTHER MAJOR PRODUCT CATEGORY DURING THIS RELEASE.
+
+MAKE THE CURRENT PROJECTTRACE CORE EXCELLENT.
+
+THE GOAL OF THIS RELEASE IS NOT:
+
+MORE FEATURES.
+
+THE GOAL IS:
+
+A PROJECTTRACE THAT EXPERIENCED ENGINEERS CAN TRUST,
+SECURITY TEAMS CAN REVIEW,
+PLATFORM TEAMS CAN OPERATE,
+AND A CTO CAN SERIOUSLY PILOT.
+
+BUILD THAT PRODUCT.
+######################################################################

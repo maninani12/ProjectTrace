@@ -1,0 +1,120 @@
+"""Pinned TCP destinations with original-host TLS verification and no proxy transport."""
+
+import ipaddress
+import socket
+import ssl
+from urllib.parse import urlsplit
+
+import httpcore
+import httpx
+
+ERRORS = (httpcore.NetworkError, httpcore.TimeoutException, httpcore.ProtocolError, httpcore.UnsupportedProtocol)
+
+
+def destination(url, allowed_hosts):
+    parsed = urlsplit(url)
+    if (
+        parsed.scheme != "https"
+        or not parsed.hostname
+        or parsed.hostname.lower() not in allowed_hosts
+        or parsed.username
+        or parsed.password
+        or parsed.query
+        or parsed.fragment
+    ):
+        raise ValueError("Destination must be an operator-approved HTTPS host without credentials/query/fragment.")
+    return parsed.hostname.lower(), parsed.port or 443
+
+
+class PinnedBackend(httpcore.SyncBackend):
+    def __init__(self, host, port, private_cidrs=()):
+        self.host, self.port = host, port
+        self.private_cidrs = [ipaddress.ip_network(c, strict=True) for c in private_cidrs]
+        self.delegate = httpcore.SyncBackend()
+
+    def connect_tcp(self, host, port, timeout=None, local_address=None, socket_options=None):
+        if host.lower() != self.host or port != self.port:
+            raise httpcore.ConnectError("Destination scope mismatch.")
+        try:
+            resolved = socket.getaddrinfo(host, port, type=socket.SOCK_STREAM)
+            addresses = sorted({entry[4][0] for entry in resolved})
+            if not addresses:
+                raise ValueError()
+            for value in addresses:
+                address = ipaddress.ip_address(value)
+                address = getattr(address, "ipv4_mapped", None) or address
+                if address.is_loopback or address.is_link_local or address.is_unspecified or address.is_multicast:
+                    raise ValueError()
+                if not address.is_global and not any(address in network for network in self.private_cidrs):
+                    raise ValueError()
+        except (ValueError, OSError):
+            raise httpcore.ConnectError("Destination DNS/address policy rejected.") from None
+        # The DNS name is never resolved again for this connection. httpcore keeps
+        # the original URL host for TLS SNI and certificate hostname verification.
+        return self.delegate.connect_tcp(addresses[0], port, timeout, local_address, socket_options)
+
+    def connect_unix_socket(self, *args, **kwargs):
+        raise httpcore.ConnectError("Unix sockets are not authorized for provider transport.")
+
+
+class ResponseStream(httpx.SyncByteStream):
+    def __init__(self, response):
+        self.response = response
+
+    def __iter__(self):
+        try:
+            total = 0
+            for chunk in self.response.iter_stream():
+                total += len(chunk)
+                if total > 24 * 1024 * 1024:
+                    raise httpx.TransportError("Provider response exceeds the transport budget.")
+                yield chunk
+        except ERRORS:
+            raise httpx.TransportError("Provider response transport failed.") from None
+
+    def close(self):
+        self.response.close()
+
+
+class PinnedTransport(httpx.BaseTransport):
+    def __init__(self, url, allowed_hosts, private_cidrs=(), ca_file=None):
+        self.host, self.port = destination(url, allowed_hosts)
+        self.context = ssl.create_default_context(cafile=ca_file)
+        self.pool = httpcore.ConnectionPool(
+            ssl_context=self.context,
+            network_backend=PinnedBackend(self.host, self.port, private_cidrs),
+            max_connections=4,
+            max_keepalive_connections=2,
+            retries=0,
+        )
+
+    def handle_request(self, request):
+        if (
+            request.url.scheme != "https"
+            or request.url.host.lower() != self.host
+            or (request.url.port or 443) != self.port
+        ):
+            raise httpx.TransportError("Provider request escaped the configured destination.")
+        try:
+            response = self.pool.handle_request(
+                httpcore.Request(
+                    method=request.method,
+                    url=httpcore.URL(
+                        scheme=request.url.raw_scheme,
+                        host=request.url.raw_host,
+                        port=request.url.port,
+                        target=request.url.raw_path,
+                    ),
+                    headers=request.headers.raw,
+                    content=request.stream,
+                    extensions=request.extensions,
+                )
+            )
+        except ERRORS:
+            raise httpx.TransportError("Provider connection failed validation or transport.") from None
+        return httpx.Response(
+            response.status, headers=response.headers, stream=ResponseStream(response), extensions=response.extensions
+        )
+
+    def close(self):
+        self.pool.close()

@@ -44,7 +44,10 @@ test("native profiles, static cloud risk and credential-gated AWS inventory", as
   await page.getByLabel("Native gate scope").selectOption("NEW_FINDINGS");
   await page.getByLabel("Restricted licenses").fill("GPL-3.0-only");
   await page
-    .getByRole("button", { name: "Save gate and license policy", exact: true })
+    .getByRole("button", {
+      name: "Save gate, license and infrastructure policy",
+      exact: true,
+    })
     .click();
   await expect(
     page.getByRole("status").filter({ hasText: "Profile saved" }),

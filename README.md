@@ -2,11 +2,13 @@
 
 ProjectTrace connects engineering claims to current software evidence, then shows what changed, what needs review, and who owns the next action.
 
-**Current release: ProjectTrace 1.3.3, a native engineering-integrity platform with bounded static analysis.** Its quality, security, dependency, secrets and infrastructure engines run independently. Northstar’s maintained fixtures are synthetic demo data; this existing workspace also retains an older local import with its historical provenance. Real PostgreSQL, Redis and non-root Linux Celery prefork execution and recovery were validated. Live cloud accounts and GitHub installations remain unverified, and full enterprise release gates remain incomplete. No external AI call is made. See [FINAL_PRODUCT_VALIDATION.md](FINAL_PRODUCT_VALIDATION.md) for the measured scope.
+**Current working tree: ProjectTrace 1.6.0 enterprise hardening candidate.** Native quality has 13 rules, structural finding history, inherited profiles and explainable gates. Encrypted streaming inventories, incremental partitions, Engineering Changes, controlled OIDC/GHES, fair queue claims and private deployment adapters extend the existing platform. Python, JavaScript, TypeScript and Java retain PARTIAL semantic maturity. No SonarQube, Wiz or external AI is required. See [ENTERPRISE_TRUST_VALIDATION.md](ENTERPRISE_TRUST_VALIDATION.md) for measured scope and remaining production requirements.
 
 ## Start on Windows PowerShell
 
 Python 3.14 and Node 24 are required. The exact installed dependency set is recorded in the lockfiles.
+
+These setup commands are for a new local installation. For an existing workspace, follow [the upgrade instructions](docs/UPGRADE_ENTERPRISE_HARDENING.md) and retain its database, encrypted source and keys. Local sign-in and fresh ZIP import steps are in [the login guide](docs/LOCAL_LOGIN_AND_IMPORT.md).
 
 ```powershell
 Set-Location 'C:\Users\sai krishna\OneDrive\Desktop\ProjectTrace'
@@ -21,7 +23,7 @@ Set-Location ..
 & .\scripts\start.ps1
 ```
 
-Open **http://127.0.0.1:5181** and select **Explore Northstar demo**. API: http://127.0.0.1:8011. Existing processes using 8000/5173 are unaffected. Check `data/api-error.log` and `data/ui-error.log` if ports 8011/5181 are occupied.
+Open **http://127.0.0.1:5181**. Select **Analyze a Repository** to create your own empty local workspace and open the ZIP import dialog, **Sign in** for an existing account, or **Explore Demo** for the labeled Northstar investigation. The Guide is at **http://127.0.0.1:5181/guide** and the authorized workspace at `/app`. API: http://127.0.0.1:8011. Check `data/api-error.log` and `data/ui-error.log` if ports 8011/5181 are occupied.
 
 For foreground development, run the API and UI in separate terminals:
 
@@ -75,6 +77,10 @@ Use a dedicated temporary directory for pytest; pytest manages that directory. B
 
 Native implementation claims populate repositories whose README uses other wording. ZIP jobs persist real completion/partial/failure states and sanitized diagnostics. The global repository selector scopes results; Upload new snapshot compares versions; initial contradictions are consistency findings. Connections lists optional enrichment separately. See docs/CURRENT_STATE_AUDIT.md and docs/REPAIR_REPORT.md for evidence and limits.
 
+## Public experience in version 1.4.0
+
+The public page uses real working account/import/demo routes and synthetic source-backed investigation examples. The permanent Guide provides simple and technical explanations, glossary, product map and contextual help throughout the workspace. Public rendering fetches only opaque auth-option flags; workspace and graph bundles are lazy. Production builds prerender 38 public pages. Local builds deliberately block search indexing until an actual public origin is configured. See [Public experience and hosting](docs/PUBLIC_EXPERIENCE.md) and [Constitution execution status](docs/PRODUCT_ROADMAP.md).
+
 ## Native version 1.3.3
 
 The attached latest source ZIP matched all 123 baseline source files at commit `b358f36`. This release evolves the same ProjectTrace folder and preserves the existing accounts, real repositories, history, reviews, URL routes and working version 1.2 behavior.
@@ -122,3 +128,21 @@ FastAPI modular monolith + SQLAlchemy/Alembic; PostgreSQL deployment configurati
 Source is never executed. Repository import does not install dependencies or run builds. The source files in samples are deliberately unsafe **data fixtures**.
 
 See [Architecture](ARCHITECTURE.md), [Security](SECURITY.md), [CEO demo](docs/CEO-DEMO.md), [Testing](docs/TESTING.md), [Release status](docs/RELEASE.md), and [Delivery report](docs/DELIVERY_REPORT.md).
+
+
+## Native Code Intelligence in 1.5.0
+
+Open `/quality` after signing in. Choose repository and HEAD, inspect the nine views, and select a BASE in Rules & Profiles before analyzing a new HEAD. Organization defaults and repository overrides capture enabled rules, severity, thresholds, source scope and gate conditions. Explicit caller BASE takes priority over a configured baseline. Existing snapshots keep their captured settings.
+
+Coverage accepts LCOV, Cobertura/coverage.py XML and JaCoCo XML as data. Missing coverage is unavailable; it is never inferred from source. Producer revision and path mappings must match the selected snapshot. Coverage percentages describe reported executable counters, not all physical source lines or independently verified test execution. Reports append provenance; effective quality/PR gates read them without replacing initial analysis evidence.
+
+Run the local quality CI command with `python -m scripts.quality_gate --head head.zip --base accepted.zip --json quality.json --sarif quality.sarif`. Exit codes: PASS/WARNING 0, FAIL 2, REVIEW_REQUIRED 3, invalid input 4. Imported builds/dependencies/tests are never executed. These commands use ProjectTrace's own installed runtime and parsers.
+
+The reproducible quality benchmark is `python -m scripts.benchmark_quality --output quality-benchmark.json --real-zip repository.zip`. ZIP encoding/binary diagnostics stay in the inventory; unsupported source encoding produces partial analysis. See `docs/CODE_QUALITY_AUDIT.md` for the phase and remaining-scope map.
+
+
+## Enterprise trust foundations (1.6.0)
+
+Open Trust & Coverage for captured historical coverage, capabilities, egress policy, parser limits, rule feedback, expiring exceptions and audit integrity. Infrastructure has dedicated format/resources/findings/coverage views. Optional OIDC supports explicit subjects and controlled verified-email/group provisioning; it is disabled until the operator configures it. Settings also manages per-connection GHES and declared repository components. Existing local login/imports remain available.
+
+Read [enterprise operations](docs/ENTERPRISE_TRUST_OPERATIONS.md), the [hardening baseline](docs/ENTERPRISE_HARDENING_BASELINE.md) and [buyer-question validation](ENTERPRISE_TRUST_VALIDATION.md). Large-repository and 100-PR results describe owned local fixtures only. Production enterprise readiness, complete OS isolation, live GHES/OIDC, representative accuracy and real distributed-worker capacity remain unverified.

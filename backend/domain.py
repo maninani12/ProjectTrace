@@ -6,36 +6,49 @@ from datetime import datetime, timezone
 
 from sqlalchemy import or_, select
 
-from analyzers.engine import VERSION, analyze, hash_text, redact, validate_files
+from analyzers.code_quality.classification import ownership
+from analyzers.engine import PARSER_SIGNATURE, VERSION, analyze, hash_text, redact, validate_files
 from analyzers.verifiers import claim_key
-from backend.db import Audit, CloudAsset, NativeProfile, Record, now
+from backend import quality_domain
+from backend.db import CloudAsset, Record, now
 
 
 def uid():
     return str(uuid.uuid4())
 
 
-def add(db, org, repo, kind, data, natural_key=None):
+def add(db, org, repo, kind, data, natural_key=None, *, defer_flush=False):
+    if kind in {"claim", "finding", "snapshot", "risk_path", "graph_node"}:
+        data = {
+            **data,
+            "trust": {
+                "schema": "projecttrace-trust-v1",
+                "authority": data.get("authority", "STATIC"),
+                "method": data.get("provider", "ProjectTrace deterministic analysis"),
+                "analyzer_version": data.get("analyzer_version", VERSION),
+                "rule_version": data.get("rule_version", VERSION),
+                "confidence": data.get("confidence", "UNSPECIFIED"),
+                "scope": data.get("scope"),
+                "precision": data.get("precision_status", "UNMEASURED"),
+                "runtime_observed": data.get("runtime_observed", False),
+                "limitations": data.get(
+                    "limitations", ["Interpret within the captured evidence and supported static analysis scope."]
+                ),
+            },
+        }
     record = Record(
         id=uid(), organization_id=org, repository_id=repo, kind=kind, natural_key=natural_key or uid(), data=data
     )
     db.add(record)
-    db.flush()
+    if not defer_flush:
+        db.flush()
     return record
 
 
 def audit(db, user, action, target, data, repo=None):
-    db.add(
-        Audit(
-            id=uid(),
-            organization_id=user.organization_id,
-            repository_id=repo,
-            actor=user.email,
-            action=action,
-            target=target,
-            data=data,
-        )
-    )
+    from backend.trust import append_audit
+
+    append_audit(db, user, action, target, data, repo)
 
 
 def policy_gate(claims, findings, exceptions=(), *, new_findings_only=False):
@@ -60,7 +73,7 @@ def policy_gate(claims, findings, exceptions=(), *, new_findings_only=False):
             continue
         if exempt(f) or f.get("review_status") in {"RESOLVED", "FALSE_POSITIVE"}:
             continue
-        if f["severity"] == "CRITICAL" and f.get("confidence") == "HIGH":
+        if f["severity"] == "CRITICAL" and f.get("confidence") == "HIGH" and f.get("blocking_eligible") is True:
             results.append(
                 {
                     "policy": "No high-confidence critical findings",
@@ -122,22 +135,85 @@ def policy_gate(claims, findings, exceptions=(), *, new_findings_only=False):
     return {"overall": status, "mode": "ADVISORY", "results": results}
 
 
-def scoped_snapshot_records(db, organization_id, repository_id, snapshot_id):
-    """Read one graph version, always applying both tenant and repository scope."""
+def snapshot_record_query(organization_id, repository_id, snapshot_id):
+    return select(Record).where(
+        Record.organization_id == organization_id,
+        Record.repository_id == repository_id,
+        or_(
+            Record.data["scope"]["snapshot_id"].as_string() == snapshot_id,
+            Record.data["snapshot_id"].as_string() == snapshot_id,
+        ),
+    )
+
+
+def scoped_snapshot_records(db, organization_id, repository_id, snapshot_id, *, core=False):
+    """Read one authorized version; large analyses keep their non-graph core only."""
     if not snapshot_id:
         return []
-    return list(
-        db.scalars(
-            select(Record).where(
-                Record.organization_id == organization_id,
-                Record.repository_id == repository_id,
-                or_(
-                    Record.data["scope"]["snapshot_id"].as_string() == snapshot_id,
-                    Record.data["snapshot_id"].as_string() == snapshot_id,
-                ),
+    query = snapshot_record_query(organization_id, repository_id, snapshot_id)
+    if core:
+        query = query.where(Record.kind.in_(["claim", "finding", "dependency", "drift"]))
+    return list(db.scalars(query))
+
+
+def impact_graph_records(db, organization_id, repository_id, snapshot_id, changed, *, limit=5000):
+    """Load a bounded reverse neighborhood, never the entire repository graph."""
+    if not snapshot_id or not changed:
+        return [], False
+    base = snapshot_record_query(organization_id, repository_id, snapshot_id)
+    seeds = list(
+        db.scalars(base.where(Record.kind == "evidence", Record.data["path"].as_string().in_(changed)).limit(limit + 1))
+    )
+    truncated = len(seeds) > limit
+    found = {row.id: row for row in seeds[:limit]}
+    frontier, seen = set(found), set()
+    traversable = {
+        "SUPPORTED_BY",
+        "CONTRADICTED_BY",
+        "DOCUMENTED_BY",
+        "DETECTED_IN",
+        "DECLARED_IN",
+        "HAS_FILE_EVIDENCE",
+        "IMPLEMENTED_IN",
+        "DERIVED_FROM",
+        "AFFECTS",
+        "EXPOSES",
+    }
+    for _ in range(5):
+        frontier -= seen
+        if not frontier:
+            break
+        seen.update(frontier)
+        remaining = max(0, limit - len(found))
+        if not remaining:
+            truncated = True
+            break
+        edges = list(
+            db.scalars(
+                base.where(
+                    Record.kind == "edge",
+                    Record.data["target"].as_string().in_(frontier),
+                    Record.data["relationship"].as_string().in_(traversable),
+                )
+                .order_by(Record.id)
+                .limit(remaining + 1)
             )
         )
-    )
+        truncated |= len(edges) > remaining
+        edges = edges[:remaining]
+        for row in edges:
+            found[row.id] = row
+        identifiers = {row.data["source"] for row in edges} - set(found)
+        if len(found) + len(identifiers) > limit:
+            identifiers = set(sorted(identifiers)[: max(0, limit - len(found))])
+            truncated = True
+        nodes = list(db.scalars(base.where(Record.id.in_(identifiers)))) if identifiers else []
+        found.update((row.id, row) for row in nodes)
+        frontier = {row.id for row in nodes}
+        if len(found) >= limit:
+            truncated = True
+            break
+    return list(found.values()), truncated
 
 
 def evidence_signature(item, evidence_by_id):
@@ -279,23 +355,30 @@ def persist_analysis(
     git_commit=None,
     pr_title=None,
     progress=None,
+    job_id=None,
 ):
     if repo.organization_id != user.organization_id:
         raise ValueError("Repository does not belong to the current organization.")
-    files = validate_files(files)
-    digest = hash_text("\n".join(p + ":" + hash_text(t) for p, t in sorted(files.items())))
-    profile_row = db.scalar(
-        select(NativeProfile).where(
-            NativeProfile.organization_id == user.organization_id, NativeProfile.scope_key == repo.id
-        )
+    if job_id:
+        linked_job = db.get(Record, job_id)
+        if not linked_job or (
+            linked_job.kind, linked_job.organization_id, linked_job.repository_id
+        ) != ("job", user.organization_id, repo.id):
+            raise ValueError("Analysis job does not belong to the selected repository.")
+    from backend.repository_store import BlobStore, RepositoryFiles
+
+    stored_input = isinstance(files, RepositoryFiles)
+    if not stored_input:
+        files = validate_files(files, keep_excluded=True)
+    digest = hash_text(
+        "\n".join(p + ":" + (files.hash_for(p) if stored_input else hash_text(files[p])) for p in sorted(files))
     )
-    if profile_row is None:
-        profile_row = db.scalar(
-            select(NativeProfile).where(
-                NativeProfile.organization_id == user.organization_id, NativeProfile.scope_key == "organization"
-            )
-        )
-    profile = {**profile_row.data, "version": profile_row.version} if profile_row else {}
+    if getattr(files, "intake", []):
+        digest = hash_text(digest + json.dumps(files.intake, sort_keys=True))
+    from backend.quality_profiles import effective as effective_profile
+
+    profile, _ = effective_profile(db, user.organization_id, repo.id)
+    base_id = base_id or profile.get("quality", {}).get("baseline_id")
     key = hash_text(
         json.dumps(
             {
@@ -304,6 +387,7 @@ def persist_analysis(
                 "branch": branch,
                 "content": digest,
                 "analyzer": VERSION,
+                "parser_signature": PARSER_SIGNATURE,
                 "base": base_id,
                 "advisories": advisory_cache or {},
                 "native_profile": profile,
@@ -318,8 +402,15 @@ def persist_analysis(
         )
     )
     if existing:
+        if job_id and existing.data.get("job_id") != job_id:
+            existing.data = {**existing.data, "job_id": job_id}
         return existing
-    base = db.get(Record, base_id) if base_id else None
+    if stored_input and base_id:
+        from backend.snapshot_context import comparison_snapshot
+
+        base = comparison_snapshot(db, base_id, user.organization_id, repo.id)
+    else:
+        base = db.get(Record, base_id) if base_id else None
     if base_id and not base:
         raise ValueError("Base snapshot does not exist.")
     if base and (
@@ -329,73 +420,112 @@ def persist_analysis(
     base_data = base.data if base else {}
     if progress:
         progress("PARSING")
-    result = analyze(
-        files,
-        base_data.get("analysis_cache"),
-        progress,
-        verification_context=base_data.get("verification_cache"),
-        profile=profile,
-    )
+    if stored_input:
+        from backend.partitioned_analysis import analyze_inventory
+
+        result = analyze_inventory(
+            db, files, progress=progress, verification_context=base_data.get("verification_cache"), profile=profile
+        )
+    else:
+        result = analyze(
+            files,
+            base_data.get("analysis_cache"),
+            progress,
+            verification_context=base_data.get("verification_cache"),
+            profile=profile,
+        )
     if progress:
         progress("BUILDING_EVIDENCE")
     previous_hashes = base_data.get("hashes", {})
-    hashes = {p: hash_text(t) for p, t in files.items()}
+    hashes = {p: files.hash_for(p) if stored_input else hash_text(files[p]) for p in files}
     changed = sorted(p for p in set(hashes) | set(previous_hashes) if hashes.get(p) != previous_hashes.get(p))
-    model_changed = bool(base) and base_data.get("analyzer_version") != VERSION
-    snapshot = add(
-        db,
-        user.organization_id,
-        repo.id,
-        "snapshot",
-        {
-            "branch": branch,
-            "commit": git_commit or digest[:40],
-            "commit_source": "GIT_SHA" if git_commit else "CONTENT_DIGEST",
-            "hashes": hashes,
-            "changed_files": changed,
-            "comparison": {
-                "source_changed": bool(changed),
-                "analysis_model_changed": model_changed,
-                "base_analyzer_version": base_data.get("analyzer_version"),
-                "head_analyzer_version": VERSION,
-            },
-            "analyzer_version": VERSION,
-            "base_id": base_id,
-            "analysis_at": now(),
-            "status": "PARTIAL"
-            if result["warnings"]
-            else "COMPLETED"
-            if result["findings"]
-            else "COMPLETED_NO_FINDINGS",
-            "warnings": result["warnings"],
-            "claim_extraction": {
-                "state": "COMPLETED",
-                "implementation": sum(c.get("origin") == "IMPLEMENTATION" for c in result["claims"]),
-                "documentation": sum(c.get("origin") == "DOCUMENTATION" for c in result["claims"]),
-                "documentation_files": result["documentation_files"],
-            },
-            "analyzer_results": {
-                "files": len(files),
-                "claims": len(result["claims"]),
-                "native_findings": len(result["findings"]),
-                "dependencies": len(result["dependencies"]),
-                "reused_files": result["reused_files"],
-            },
-            "file_count": len(files),
-            "analysis_cache": result["analysis_cache"],
-            "verification_cache": result.get("verification_cache", {}),
-            "engines": result.get("engines", {}),
-            "native_profile": profile,
-            "quality_metrics": result.get("quality_metrics", []),
-            "reused_files": result["reused_files"],
-            "limitations": [
-                "Static analysis only; runtime not connected.",
-                "Content digest is not a Git commit SHA.",
-                "Unsupported claim types remain unverified.",
-            ],
-        },
-        key,
+    base_parser = base_data.get("parser_signature") or next(
+        (
+            item.get("parser_signature")
+            for item in base_data.get("analysis_cache", {}).values()
+            if item.get("parser_signature")
+        ),
+        None,
     )
+    model_changed = bool(base) and (
+        base_data.get("analyzer_version") != VERSION or bool(base_parser) and base_parser != PARSER_SIGNATURE
+    )
+    captured_snapshot_data = {
+        **({"job_id": job_id} if job_id else {}),
+        "branch": branch,
+        "commit": git_commit or digest[:40],
+        "commit_source": "GIT_SHA" if git_commit else "CONTENT_DIGEST",
+        "hashes": hashes,
+        "changed_files": changed,
+        "comparison": {
+            "source_changed": bool(changed),
+            "analysis_model_changed": model_changed,
+            "base_analyzer_version": base_data.get("analyzer_version"),
+            "head_analyzer_version": VERSION,
+        },
+        "analyzer_version": VERSION,
+        "base_id": base_id,
+        "parser_signature": PARSER_SIGNATURE,
+        "analysis_at": now(),
+        "status": "PARTIAL"
+        if result["warnings"]
+        else "COMPLETED"
+        if result["findings"]
+        else "COMPLETED_NO_FINDINGS",
+        "warnings": result["warnings"],
+        "claim_extraction": {
+            "state": "COMPLETED",
+            "implementation": sum(c.get("origin") == "IMPLEMENTATION" for c in result["claims"]),
+            "documentation": sum(c.get("origin") == "DOCUMENTATION" for c in result["claims"]),
+            "documentation_files": result["documentation_files"],
+        },
+        "analyzer_results": {
+            "files": len(files),
+            "claims": len(result["claims"]),
+            "native_findings": len(result["findings"]),
+            "dependencies": len(result["dependencies"]),
+            "reused_files": result["reused_files"],
+        },
+        "file_count": len(files),
+        "analysis_cache": result["analysis_cache"],
+        **(
+            {"source_storage": result["source_storage"], "source_inventory_id": files.inventory_id}
+            if stored_input
+            else {}
+        ),
+        "verification_cache": result.get("verification_cache", {}),
+        "engines": result.get("engines", {}),
+        "native_profile": profile,
+        "quality_metrics": result.get("quality_metrics", []),
+        "analysis_coverage": result.get("analysis_coverage", {}),
+        "reused_files": result["reused_files"],
+        "limitations": [
+            "Static analysis only; runtime not connected.",
+            "Content digest is not a Git commit SHA.",
+            "Unsupported claim types remain unverified.",
+        ],
+    }
+    initial_snapshot_data = (
+        {name: captured_snapshot_data[name] for name in (
+            "branch", "commit", "analysis_at", "analyzer_version", "parser_signature",
+            "base_id", "status", "limitations", "file_count", "source_inventory_id", "job_id",
+        ) if name in captured_snapshot_data}
+        if stored_input else captured_snapshot_data
+    )
+    # The row ID is needed for dependent records. Persist the repository-sized
+    # captured payload once, after temporary analysis collections are released.
+    snapshot = add(db, user.organization_id, repo.id, "snapshot", initial_snapshot_data, key)
+    if stored_input:
+        from backend.db import SnapshotInventory
+
+        db.add(
+            SnapshotInventory(
+                snapshot_id=snapshot.id,
+                organization_id=user.organization_id,
+                repository_id=repo.id,
+                inventory_id=files.inventory_id,
+            )
+        )
     scope = {
         "organization_id": user.organization_id,
         "system": repo.system,
@@ -409,12 +539,58 @@ def persist_analysis(
         "rule_version": VERSION,
         "analysis_at": snapshot.data["analysis_at"],
     }
-    base_records = scoped_snapshot_records(db, user.organization_id, repo.id, base_id)
-    base_evidence = {r.id: r.data for r in base_records if r.kind == "evidence"}
+
+    def path_scope(path):
+        if stored_input and files.metadata_for(path):
+            metadata = files.metadata_for(path)
+            return {
+                **scope,
+                "component": files.component_for(path),
+                "component_root": metadata.get("component_root", "."),
+                "component_basis": metadata.get("component_basis", "REPOSITORY_ASSIGNMENT"),
+            }
+        return scope
+
+    base_records = scoped_snapshot_records(db, user.organization_id, repo.id, base_id, core=stored_input)
+    if stored_input and base_id:
+        rows = db.execute(
+            snapshot_record_query(user.organization_id, repo.id, base_id)
+            .where(Record.kind == "evidence")
+            .with_only_columns(
+                Record.id,
+                Record.data["path"].as_string().label("path"),
+                Record.data["hash"].as_string().label("hash"),
+                Record.data["source_blob_digest"].as_string().label("source_blob_digest"),
+            )
+        )
+        base_evidence = {row.id: dict(row._mapping) for row in rows}
+    else:
+        base_evidence = {r.id: r.data for r in base_records if r.kind == "evidence"}
     base_claim_records = {r.id: r for r in base_records if r.kind == "claim"}
     base_findings = {r.data.get("fingerprint"): r for r in base_records if r.kind == "finding"}
     evidence, head_evidence = {}, {}
-    for path, source in result["files"].items():
+    added_line_counts = {}
+    evidence_store = files.store if stored_input else None
+    previous_evidence_by_path = {item.get("path"): item for item in base_evidence.values()}
+    for path in result["files"]:
+        previous_file = previous_evidence_by_path.get(path, {})
+        retained_digest = previous_file.get("source_blob_digest") if previous_file.get("hash") == hashes[path] else None
+        if stored_input:
+            if not retained_digest:
+                # RepositoryFiles already decrypts and verifies the captured digest.
+                # Reuse that reference only when redaction leaves the bytes intact.
+                # Changed/redacted evidence still goes through checked blob storage.
+                redacted = redact(files[path])
+                if path not in previous_evidence_by_path:
+                    added_line_counts[path] = len(redacted.splitlines())
+                retained_digest = (
+                    hashes[path]
+                    if hash_text(redacted) == hashes[path]
+                    else evidence_store.put(db, user.organization_id, redacted.encode())[0]
+                )
+            source_data = {"source_blob_digest": retained_digest}
+        else:
+            source_data = {"source": redact(files[path])}
         node = add(
             db,
             user.organization_id,
@@ -422,15 +598,15 @@ def persist_analysis(
             "evidence",
             {
                 "path": path,
-                "source": redact(source),
+                **source_data,
                 "hash": hashes[path],
                 "class": "DOCUMENTATION" if path.endswith(".md") else "SOURCE_CODE",
                 "authority": "DECLARED" if path.endswith(".md") else "STATIC",
-                "scope": scope,
+                "scope": path_scope(path),
             },
         )
         evidence[path] = node.id
-        head_evidence[node.id] = node.data
+        head_evidence[node.id] = {"path": path, "hash": hashes[path]}
     previous_claims = {c.get("claim_key") or claim_key(c): c for c in base_data.get("claims", [])}
     matched_previous_ids = set()
     claims, findings, drifts = [], [], []
@@ -486,7 +662,7 @@ def persist_analysis(
                 "evidence_ids": evidence_ids,
                 "supporting_ids": supporting if data["status"] in {"VERIFIED", "INFERRED"} else [],
                 "contradicting_ids": supporting if data["status"] == "CONTRADICTED" else [],
-                "scope": scope,
+                "scope": path_scope(data["path"]),
                 "owner": previous_data.get("owner", repo.owner) if unchanged else repo.owner,
                 "review_status": previous_data.get("review_status", "OPEN") if unchanged else "OPEN",
                 "review_reason": previous_data.get("review_reason") if unchanged else None,
@@ -641,8 +817,12 @@ def persist_analysis(
             {
                 **data,
                 "evidence_ids": [evidence[data["path"]]],
-                "scope": scope,
-                "owner": repo.owner,
+                "scope": path_scope(data["path"]),
+                **(
+                    ownership(data["path"], files, repo.owner)
+                    if data.get("category") == "QUALITY"
+                    else {"owner": repo.owner}
+                ),
                 "provider": "ProjectTrace native",
             },
         )
@@ -667,7 +847,7 @@ def persist_analysis(
             cached = [{**v, "summary": redact(v.get("summary", ""))} for v in cached]
         data = {
             **d,
-            "scope": scope,
+            "scope": path_scope(d["path"]),
             "vulnerability_status": "VULNERABLE"
             if cached
             else "CHECKED_NO_KNOWN_ADVISORY"
@@ -733,7 +913,7 @@ def persist_analysis(
                 repo.id,
                 "finding",
                 {
-                    "title": f"{d['name']} {d['version']} · {vulnerability['id']}",
+                    "title": f"{d['name']} {d['version']} Â· {vulnerability['id']}",
                     "category": "SCA",
                     "package_key": cache_key,
                     "fingerprint": hash_text(issue_key),
@@ -783,10 +963,23 @@ def persist_analysis(
     if progress:
         progress("CORRELATING")
 
-    old_sources = {item.get("path"): item.get("source", "") for item in base_evidence.values()}
+    old_evidence_by_path = {item.get("path"): item for item in base_evidence.values()}
+
+    def old_source(path):
+        item = old_evidence_by_path.get(path, {})
+        if item.get("source_blob_digest"):
+            return BlobStore().read(user.organization_id, item["source_blob_digest"]).decode("utf-8")
+        if stored_input and item.get("id"):
+            return db.get(Record, item["id"]).data.get("source", "")
+        return item.get("source", "")
+
     changed_lines = {}
     for path in changed:
-        old, head = old_sources.get(path, "").splitlines(), redact(files.get(path, "")).splitlines()
+        if path in added_line_counts:
+            count = added_line_counts[path]
+            changed_lines[path] = [(1, count)] if count else []
+            continue
+        old, head = old_source(path).splitlines(), redact(files.get(path, "")).splitlines()
         changed_lines[path] = [
             (j1 + 1, max(j1 + 1, j2))
             for tag, _, _, j1, j2 in difflib.SequenceMatcher(None, old, head, autojunk=False).get_opcodes()
@@ -795,7 +988,7 @@ def persist_analysis(
     old_signatures = set()
     for prior in base_findings.values():
         item = prior.data
-        lines = old_sources.get(item.get("path"), "").splitlines()
+        lines = old_source(item.get("path")).splitlines()
         line = item.get("line", 1)
         text = lines[line - 1].strip() if isinstance(line, int) and 0 < line <= len(lines) else ""
         old_signatures.add(hash_text(str(item.get("rule")) + ":" + str(item.get("path")) + ":" + text))
@@ -816,6 +1009,23 @@ def persist_analysis(
         )
         rec = db.get(Record, item["id"])
         rec.data = {**rec.data, "delta": item["delta"], "new_code": item["new_code"]}
+    from backend import finding_history
+
+    identity_matches = finding_history.reconcile(db, findings, base, base_records, files)
+    comparison_previous = [dict(r.data, id=r.id) for r in base_records if r.kind == "finding"]
+    for item in findings:
+        match = identity_matches.get(item["id"])
+        if match and match[1] == "EXISTING":
+            for previous in comparison_previous:
+                if previous["id"] == match[0].id:
+                    previous["fingerprint"] = item.get("fingerprint")
+    quality_domain.apply_comparison(
+        db, result["code_quality"], findings, base, changed_lines, model_changed, comparison_previous
+    )
+    for item in findings:
+        if item.get("category") == "QUALITY":
+            record = db.get(Record, item["id"])
+            record.data = {**record.data, **{k: v for k, v in item.items() if k != "id"}}
     # Normalize findings without losing native/advisory provenance.
     # Reviews only
     # carry when the same issue still cites exactly the same source fingerprints.
@@ -829,11 +1039,46 @@ def persist_analysis(
         identity_id = str(
             uuid.uuid5(uuid.NAMESPACE_URL, f"projecttrace:{user.organization_id}:{repo.id}:finding:{fingerprint}")
         )
-        previous_finding = base_findings.get(fingerprint)
+        match = identity_matches.get(record.id)
+        previous_finding = match[0] if match else base_findings.get(fingerprint)
+        if data.get("identity_confidence") == "AMBIGUOUS":
+            previous_finding = None
+            identity_id = uid()
         previous_data = previous_finding.data if previous_finding else {}
+        if previous_data.get("identity_id"):
+            identity_id = previous_data["identity_id"]
         unchanged = bool(previous_finding) and evidence_signature(previous_data, base_evidence) == evidence_signature(
             data, head_evidence
         )
+        if data.get("category") == "QUALITY":
+            unchanged = bool(previous_finding) and previous_data.get("observation_hash") == data.get("observation_hash")
+        elif data.get("fingerprint_version") == "native-statement-v1":
+            unchanged = bool(previous_finding) and previous_data.get("security_context_hash") == data.get(
+                "security_context_hash"
+            )
+            unchanged = unchanged and all(
+                previous_data.get(key) == data.get(key)
+                for key in ("rule_version", "severity", "confidence", "classification")
+            )
+        if data.get("identity_confidence") == previous_data.get("identity_confidence") == "HIGH":
+            unchanged = data.get("structural_context_hash") == previous_data.get("structural_context_hash") and all(
+                previous_data.get(key) == data.get(key)
+                for key in ("rule_version", "severity", "confidence", "classification", "threshold", "measured")
+            )
+        if match and match[1] == "REOPENED":
+            unchanged = False
+        if (
+            data.get("identity_version") == "structural-v2"
+            and data.get("identity_confidence") != "HIGH"
+            and data.get("category") in {"QUALITY", "SAST", "SECRET", "IAC"}
+        ):
+            unchanged = False
+        if match:
+            data = {
+                **data,
+                "delta": match[1],
+                "machine_status": "REOPENED" if match[1] == "REOPENED" else data.get("machine_status", "OPEN"),
+            }
         suffix = data["path"].rsplit(".", 1)[-1].lower()
         record.data = {
             **data,
@@ -842,12 +1087,20 @@ def persist_analysis(
             "provider_finding_id": data.get("provider_finding_id", fingerprint),
             "rule_id": data["rule"],
             "rule_version": data.get("rule_version", VERSION),
-            "language": {"py": "Python", "js": "JavaScript", "ts": "TypeScript", "java": "Java"}.get(
-                suffix, "Configuration"
-            ),
+            "language": data.get("language")
+            or {"py": "Python", "js": "JavaScript", "ts": "TypeScript", "java": "Java"}.get(suffix, "Configuration"),
             "previous_version_id": previous_finding.id if previous_finding else None,
-            "first_seen": previous_data.get("first_seen", previous_finding.created_at if previous_finding else now()),
+            "introduced_snapshot": previous_data.get(
+                "introduced_snapshot", data.get("introduced_snapshot", snapshot.id)
+            ),
+            "last_seen_snapshot": snapshot.id,
+            "introduced_commit": previous_data.get("introduced_commit", snapshot.data["commit"]),
+            "introduced_pr": previous_data.get("introduced_pr", pr_number),
+            "last_seen_commit": snapshot.data["commit"],
+            "first_seen": data.get("first_seen")
+            or previous_data.get("first_seen", previous_finding.created_at if previous_finding else now()),
             "last_seen": now(),
+            "reopened_count": previous_data.get("reopened_count", 0) + int(bool(match) and match[1] == "REOPENED"),
             "review_status": previous_data.get("review_status", "OPEN") if unchanged else "OPEN",
             "review_reason": previous_data.get("review_reason") if unchanged else None,
             "review_identity_id": previous_data.get("review_identity_id", identity_id)
@@ -868,18 +1121,39 @@ def persist_analysis(
         }
         packed_finding.update(record.data)
 
+    finding_history.project(
+        db,
+        snapshot,
+        findings,
+        [r for r in base_records if r.kind == "finding"],
+        identity_matches,
+        model_changed=model_changed,
+        warnings=result["warnings"],
+        files=files,
+    )
+
+    # Graph IDs are assigned before insertion. Flush bounded batches through the
+    # same ORM tenant guards instead of issuing one flush per node and edge.
+    graph_pending = 0
+
+    def graph_add(kind, data):
+        nonlocal graph_pending
+        record = add(db, user.organization_id, repo.id, kind, data, defer_flush=True)
+        graph_pending += 1
+        if graph_pending >= 250:
+            db.flush()
+            graph_pending = 0
+        return record
+
     # Persist structural graph nodes as scoped records rather than drawing invented topology.
     def node(kind, title, **metadata):
         identity = hash_text(json.dumps([kind, title, metadata.get("path"), metadata.get("policy_key")]))
-        return add(
-            db,
-            user.organization_id,
-            repo.id,
+        return graph_add(
             "graph_node",
             {
                 "class": kind,
                 "title": title,
-                "scope": scope,
+                "scope": path_scope(metadata.get("path")),
                 "provenance": "STATIC",
                 "identity_id": str(
                     uuid.uuid5(uuid.NAMESPACE_URL, f"projecttrace:{user.organization_id}:{repo.id}:node:{identity}")
@@ -889,10 +1163,7 @@ def persist_analysis(
         )
 
     def edge(source, target, relationship):
-        add(
-            db,
-            user.organization_id,
-            repo.id,
+        graph_add(
             "edge",
             {"source": source, "target": target, "relationship": relationship, "snapshot_id": snapshot.id},
         )
@@ -904,9 +1175,27 @@ def persist_analysis(
     edge(system_node.id, component_node.id, "CONTAINS")
     edge(component_node.id, repository_node.id, "CONTAINS")
     edge(repository_node.id, snapshot_node.id, "HAS_SNAPSHOT")
+    components = {}
+
+    def file_component(path):
+        scoped = path_scope(path)
+        root = scoped.get("component_root", ".")
+        key = (root, scoped["component"])
+        if key not in components:
+            if root == "." and scoped["component"] == repo.component:
+                components[key] = component_node
+            else:
+                components[key] = node(
+                    "COMPONENT", scoped["component"], path=root, provenance=scoped.get("component_basis", "DECLARED")
+                )
+                edge(repository_node.id, components[key].id, "CONTAINS")
+        return components[key]
+
     for path, eid in evidence.items():
         artifact = node("ARTIFACT", path, path=path, hash=hashes[path])
         edge(snapshot_node.id, artifact.id, "CONTAINS")
+        if stored_input:
+            edge(file_component(path).id, artifact.id, "CONTAINS")
         edge(artifact.id, eid, "HAS_FILE_EVIDENCE")
         if path.endswith(".md"):
             for line_no, line in enumerate(files[path].splitlines(), 1):
@@ -916,7 +1205,7 @@ def persist_analysis(
     for signal in result["signals"]:
         if signal["type"] == "route":
             endpoint = node("API_ENDPOINT", signal["value"], path=signal["path"], line=signal["line"])
-            edge(component_node.id, endpoint.id, "EXPOSES")
+            edge(file_component(signal["path"]).id if stored_input else component_node.id, endpoint.id, "EXPOSES")
             edge(endpoint.id, evidence[signal["path"]], "IMPLEMENTED_IN")
         elif signal["type"] in {"ci", "infrastructure", "database"}:
             declaration = node(
@@ -932,9 +1221,23 @@ def persist_analysis(
     for resource in result.get("cloud_assets", []):
         kind = (
             "CLOUD_IDENTITY"
-            if "iam" in resource["kind"].lower() or resource["kind"] == "ServiceAccount"
+            if "iam" in resource["kind"].lower()
+            or resource["kind"] in {"ServiceAccount", "Role", "ClusterRole", "RoleBinding", "ClusterRoleBinding"}
             else "CONTAINER_WORKLOAD"
-            if resource["provider"] in {"KUBERNETES", "COMPOSE"}
+            if resource["kind"]
+            in {
+                "Pod",
+                "Deployment",
+                "StatefulSet",
+                "DaemonSet",
+                "ReplicaSet",
+                "ReplicationController",
+                "Job",
+                "CronJob",
+                "ContainerWorkload",
+            }
+            else "CONTAINER_IMAGE"
+            if resource["kind"] == "ContainerImage"
             else "CLOUD_RESOURCE"
         )
         resource_node = node(
@@ -947,6 +1250,9 @@ def persist_analysis(
         )
         resource_nodes[(resource["path"], resource["identity"])] = resource_node
         cloud_records.append({"id": resource_node.id, **resource_node.data})
+        # The projection has an immediate FK to the deferred graph record.
+        # Establish that parent before adding the independent projection mapper.
+        db.flush()
         db.add(
             CloudAsset(
                 id=resource_node.id,
@@ -1002,20 +1308,57 @@ def persist_analysis(
             risk_paths.append({"id": risk.id, **risk.data})
     for resource in result.get("cloud_assets", []):
         for relation in resource.get("relations", []):
-            targets = [value for (_, identity), value in resource_nodes.items() if identity == relation["target"]]
+            targets = [
+                value
+                for (target_path, identity), value in resource_nodes.items()
+                if identity == relation["target"]
+                and (not relation.get("target_path") or target_path == relation["target_path"])
+            ]
             if len(targets) == 1:
                 edge(resource_nodes[(resource["path"], resource["identity"])].id, targets[0].id, relation["type"])
+            elif not targets and relation["type"] in {"USES_IMAGE", "BASED_ON"} and not relation.get("target_path"):
+                image = node(
+                    "CONTAINER_IMAGE",
+                    relation["target"],
+                    path=resource["path"],
+                    authority="STATIC",
+                    verification_scope="DECLARED_IMAGE_REFERENCE",
+                    runtime_observed=False,
+                    evidence_ids=[evidence[resource["path"]]],
+                )
+                edge(resource_nodes[(resource["path"], resource["identity"])].id, image.id, relation["type"])
     for signal in result["signals"]:
         if signal["type"] == "function":
             function = node(
                 "FUNCTION", signal["value"], path=signal["path"], line=signal["line"], end_line=signal.get("end_line")
             )
             edge(function.id, evidence[signal["path"]], "IMPLEMENTED_IN")
+            for finding in findings:
+                if (
+                    finding.get("category") == "QUALITY"
+                    and finding["path"] == signal["path"]
+                    and signal["line"] <= finding["line"] <= signal.get("end_line", signal["line"])
+                ):
+                    edge(finding["id"], function.id, "AFFECTS_FUNCTION")
     for claim in claims:
         shared = [f["id"] for f in findings if set(f.get("evidence_ids", [])) & set(claim["evidence_ids"])]
         for fid in shared[:20]:
             edge(fid, claim["id"], "RELATED_EVIDENCE")
-    gate = policy_gate(claims, findings, new_findings_only=profile.get("gate_scope") == "NEW_FINDINGS")
+    for row in result["code_quality"]["inventory"]:
+        row.update(ownership(row["path"], files, repo.owner))
+    for finding in findings:
+        if finding.get("category") == "QUALITY":
+            quality_owner = node("OWNER", finding["owner"], provenance=finding.get("owner_source", "METADATA"))
+            edge(finding["id"], quality_owner.id, "OWNED_BY")
+    quality_gate = quality_domain.persist(db, snapshot, result["code_quality"], findings)
+    gate = quality_domain.merge_gate(
+        policy_gate(
+            claims,
+            [f for f in findings if f.get("category") != "QUALITY"],
+            new_findings_only=profile.get("gate_scope") == "NEW_FINDINGS",
+        ),
+        quality_gate,
+    )
     evaluated = {item["id"]: item for item in [*claims, *findings]}
     for decision in gate["results"]:
         target = decision.get("target")
@@ -1030,9 +1373,30 @@ def persist_analysis(
         )
         if target in evaluated:
             edge(policy.id, target, "DERIVED_FROM")
+        for fid in decision.get("finding_ids", []):
+            if fid in evaluated:
+                edge(policy.id, fid, "DERIVED_FROM")
     db.flush()
-    head_records = scoped_snapshot_records(db, user.organization_id, repo.id, snapshot.id)
-    impact = graph_impact(base_records, head_records, changed, base_id, snapshot.id)
+    if stored_input:
+        head_records = scoped_snapshot_records(db, user.organization_id, repo.id, snapshot.id, core=True)
+        old_graph, old_partial = impact_graph_records(db, user.organization_id, repo.id, base_id, changed)
+        head_graph, head_partial = (
+            impact_graph_records(db, user.organization_id, repo.id, snapshot.id, changed) if base_id else ([], False)
+        )
+        impact = graph_impact([*base_records, *old_graph], [*head_records, *head_graph], changed, base_id, snapshot.id)
+        impact["truncated"] = old_partial or head_partial
+        impact["neighborhood_record_budget"] = 5000
+        if impact["truncated"]:
+            result["warnings"].append(
+                {
+                    "analyzer": "IMPACT",
+                    "state": "PARTIAL",
+                    "message": "Reverse graph neighborhood exceeded its record budget; impact coverage is incomplete.",
+                }
+            )
+    else:
+        head_records = scoped_snapshot_records(db, user.organization_id, repo.id, snapshot.id)
+        impact = graph_impact(base_records, head_records, changed, base_id, snapshot.id)
     impact["verification"] = {
         "reused": result.get("reused_verifications", 0),
         "reverified": result.get("reverified_claims", 0),
@@ -1043,12 +1407,15 @@ def persist_analysis(
     }
     snapshot.data = {
         **snapshot.data,
+        **captured_snapshot_data,
         "claims": claims,
         "findings": findings,
         "dependencies": deps,
         "cloud_assets": cloud_records,
         "risk_paths": risk_paths,
         "changed_lines": changed_lines,
+        "quality_summary": result["code_quality"]["summary"],
+        "quality_gate": quality_gate,
         "finding_delta": {
             state: sum(item.get("delta") == state for item in findings)
             for state in ["NEW", "EXISTING", "ANALYZER_BASELINE"]
@@ -1059,6 +1426,18 @@ def persist_analysis(
         "impact": impact,
         "status": "PARTIAL" if result["warnings"] else "COMPLETED" if findings else "COMPLETED_NO_FINDINGS",
     }
+    if stored_input:
+        # The quality projection and graph are already flushed in this transaction.
+        # Release parsing/correlation working sets before serializing the final
+        # snapshot. Keep its referenced metrics, coverage and captured decisions.
+        # No output is committed here; a later failure still rolls everything back.
+        del result, base_records, head_records, captured_snapshot_data, initial_snapshot_data
+        del base_evidence, head_evidence, evidence
+        del previous_evidence_by_path, old_evidence_by_path
+        del previous_claims, base_claim_records, base_findings
+        import gc
+
+        gc.collect()
     if pr_number:
         add(
             db,
@@ -1079,6 +1458,9 @@ def persist_analysis(
                 "review_status": "OPEN",
             },
         )
+    from backend.engineering_changes import persist as persist_engineering_change
+
+    persist_engineering_change(db, user, repo, snapshot, base, pr_number)
     audit(
         db,
         user,

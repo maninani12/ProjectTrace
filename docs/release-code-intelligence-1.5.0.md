@@ -1,0 +1,7 @@
+# ProjectTrace 1.5.0 release status
+
+Version 1.5 adds native Code Intelligence: twelve quality rules, explicit reliability/maintainability dimensions, explainable metrics and file coverage, stable symbol findings, configured profiles/BASE/gates, normalized duplicate groups, imported coverage counters, observed snapshot trends/hotspots, source/review/owner/graph/PR integration and SARIF/JSON/CSV/CI outputs. Python, JavaScript, TypeScript and Java remain PARTIAL maturity. The existing public site, 31-topic Guide, auth/fresh imports and native security/cloud/claims workflow are preserved.
+
+Current proof is 171 backend tests, 22 frontend tests and ten browser workflows, 38 prerendered/public route checks, six viewport widths and selected axe checks, type/build/lint/compileall, scoped migration/preservation and time-specific dependency audits. Whole-analysis scale remains capped at 1,000 entries/10 MB/512 KB per file. Coverage is a producer report, not independently proven test execution. Git author history, complete semantic analysis, live external publishing and enterprise capacity remain unverified.
+
+Read [current validation](../FINAL_PRODUCT_VALIDATION.md), [Code Quality validation](../CODE_QUALITY_VALIDATION.md), [audit and phase map](CODE_QUALITY_AUDIT.md) and [constitution roadmap](PRODUCT_ROADMAP.md). Historical 1.4 release notes are in release-public-1.4.0.md. No public deployment, new commit or push was performed.

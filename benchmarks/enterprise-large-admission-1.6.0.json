@@ -1,0 +1,14 @@
+{
+  "version": "1.6.0",
+  "method": "SYNTHETIC_ADMISSION_ONLY",
+  "lines": 3000000,
+  "bytes": 18000000,
+  "status": "REJECTED_BY_BOUNDED_INTAKE",
+  "elapsed_ms": 76.013,
+  "python_traced_peak_bytes": 36000722,
+  "analysis_throughput": null,
+  "limitations": [
+    "This validates rejection at the current 512KB/file and 10MB total bounds; it does not analyze a 3M-line repository.",
+    "Streaming/CAS/sharding and successful large-repository measurements are deferred."
+  ]
+}

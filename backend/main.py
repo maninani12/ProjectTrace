@@ -13,15 +13,23 @@ from fastapi import FastAPI, HTTPException, Query, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field
-from sqlalchemy import or_, select, text
+from sqlalchemy import func, or_, select, text
 from sqlalchemy.exc import IntegrityError
 
 from analyzers.engine import MAX_TOTAL_BYTES, read_zip, redact, sbom
 from backend import rate_limit
 from backend.db import Audit, Delivery, Grant, Organization, Record, Repository, Session, User, now
 from backend.domain import add, audit, policy_gate, uid
+from backend.engineering_changes import router as engineering_router
+from backend.finding_api import router as finding_router
+from backend.graph_api import router as graph_router
 from backend.jobs import execute_analysis
+from backend.oidc import router as oidc_router
+from backend.quality_api import router as quality_router
+from backend.scm_connections import router as scm_router
+from backend.scm_webhook import router as scm_webhook_router
 from backend.security import allowed_repositories, authenticate, create_session, passwords, require_repo
+from backend.trust_api import router as trust_router
 
 APP_ENV = os.getenv("APP_ENV", "demo")
 PRODUCTION = APP_ENV == "production"
@@ -50,7 +58,7 @@ async def lifespan(app):
 
 app = FastAPI(
     title="ProjectTrace",
-    version="1.3.3",
+    version="1.6.0",
     lifespan=lifespan,
     docs_url=None if PRODUCTION else "/api/docs",
     openapi_url=None if PRODUCTION else "/api/openapi.json",
@@ -70,18 +78,30 @@ async def security_boundary(request, call_next):
     started = time.perf_counter()
     request_id = uid()
     request.state.request_id = request_id
+    streaming_archive = request.method == "POST" and (
+        request.url.path == "/api/archive/stream/import"
+        or re.fullmatch(r"/api/repositories/[^/]+/source-archive", request.url.path) is not None
+    )
+    if streaming_archive:
+        from backend.repository_store import limits
+
+        body_limit = limits()["archive_bytes"]
+    else:
+        body_limit = MAX_TOTAL_BYTES + 100_000
     content_length = request.headers.get("content-length", "")
-    if content_length and (not content_length.isdigit() or int(content_length) > MAX_TOTAL_BYTES + 100_000):
-        return Response("Request exceeds the 10 MB limit.", status_code=413)
+    if content_length and (not content_length.isdigit() or int(content_length) > body_limit):
+        return Response("Request exceeds the configured body limit.", status_code=413)
     # Bound streamed bodies too, before JSON/multipart parsing.
-    if request.method == "POST":
+    if request.method == "POST" and not streaming_archive:
         body = bytearray()
         async for chunk in request.stream():
             body.extend(chunk)
             if len(body) > MAX_TOTAL_BYTES + 100_000:
-                return Response("Request exceeds the 10 MB limit.", status_code=413)
+                return Response("Request exceeds the configured body limit.", status_code=413)
         request._body = bytes(body)
-    if request.method == "POST" and request.url.path not in {"/api/github/webhook"}:
+    if request.method == "POST" and not (
+        request.url.path == "/api/github/webhook" or request.url.path.startswith("/api/github/webhook/")
+    ):
         if request.headers.get("origin") not in ORIGINS:
             return Response("Origin is not authorized.", status_code=403)
     try:
@@ -151,7 +171,15 @@ class Analyze(StrictModel):
 
 class Review(StrictModel):
     action: Literal[
-        "CONFIRM", "FALSE_POSITIVE", "ACCEPT_RISK", "REQUEST_MORE_EVIDENCE", "ASSIGN", "RESOLVE", "CREATE_EXCEPTION"
+        "CONFIRM",
+        "FALSE_POSITIVE",
+        "ACCEPT_RISK",
+        "REQUEST_MORE_EVIDENCE",
+        "ASSIGN",
+        "RESOLVE",
+        "CREATE_EXCEPTION",
+        "IN_REVIEW",
+        "REOPEN",
     ]
     reason: str = Field(min_length=10, max_length=2000)
     owner: str | None = Field(default=None, max_length=120)
@@ -176,6 +204,7 @@ class NativeProfileBody(StrictModel):
     rules: dict = Field(default_factory=dict)
     licenses: dict[str, list[str]] = Field(default_factory=dict)
     gate_scope: Literal["ALL_FINDINGS", "NEW_FINDINGS"] = "ALL_FINDINGS"
+    infrastructure: dict | None = None
 
 
 class ConnectGitHub(StrictModel):
@@ -183,6 +212,7 @@ class ConnectGitHub(StrictModel):
     system: str = Field(min_length=1, max_length=120)
     owner: str = Field(min_length=1, max_length=120)
     checks_enabled: bool = False
+    connection_id: str | None = Field(default=None, max_length=80)
 
 
 def packed(record):
@@ -196,16 +226,46 @@ def packed(record):
     }
 
 
+def snapshot_preview(snapshot):
+    value = packed(snapshot)
+    for key in (
+        "analysis_cache",
+        "verification_cache",
+        "hashes",
+        "claims",
+        "findings",
+        "quality_metrics",
+        "analysis_coverage",
+    ):
+        value.pop(key, None)
+    value["changed_file_count"] = len(value.get("changed_files", []))
+    value["changed_files"] = value.get("changed_files", [])[:500]
+    value["metadata_preview"] = True
+    if isinstance(value.get("impact"), dict):
+        value["impact"] = {
+            key: entry[:500] if isinstance(entry, list) else entry for key, entry in value["impact"].items()
+        }
+    return value
+
+
 def scope_query(db, user, model=Record):
     ids = [r.id for r in allowed_repositories(db, user)]
-    return select(model).where(
+    query = select(model).where(
         model.organization_id == user.organization_id, or_(model.repository_id.is_(None), model.repository_id.in_(ids))
     )
+    if model is Record and user.role not in {"ORG_OWNER", "ADMIN"}:
+        query = query.where(Record.kind.not_in(["scm_connection", "oidc_provider", "oidc_provider_version"]))
+    return query
 
 
 def authorized_record(db, user, record_id):
     record = db.get(Record, record_id)
     if not record or record.organization_id != user.organization_id:
+        raise HTTPException(404, "Record not available in your authorized scope.")
+    if record.kind in {"scm_connection", "oidc_provider", "oidc_provider_version"} and user.role not in {
+        "ORG_OWNER",
+        "ADMIN",
+    }:
         raise HTTPException(404, "Record not available in your authorized scope.")
     if record.repository_id:
         require_repo(db, user, record.repository_id)
@@ -213,13 +273,80 @@ def authorized_record(db, user, record_id):
 
 
 def current_snapshots(db, user):
-    records = list(
-        db.scalars(scope_query(db, user).where(Record.kind == "snapshot").order_by(Record.created_at.desc()))
+    ranked = (
+        scope_query(db, user)
+        .where(Record.kind == "snapshot")
+        .with_only_columns(
+            Record.id,
+            func.row_number()
+            .over(partition_by=Record.repository_id, order_by=(Record.created_at.desc(), Record.id.desc()))
+            .label("position"),
+        )
+        .subquery()
     )
-    result = {}
-    for record in records:
-        result.setdefault(record.repository_id, record)
-    return result
+    return {
+        row.repository_id: row
+        for row in db.scalars(select(Record).join(ranked, ranked.c.id == Record.id).where(ranked.c.position == 1))
+    }
+
+
+def workspace_snapshots(db, user):
+    from types import SimpleNamespace
+
+    ranked = (
+        scope_query(db, user)
+        .where(Record.kind == "snapshot")
+        .with_only_columns(
+            Record.id,
+            func.row_number()
+            .over(partition_by=Record.repository_id, order_by=(Record.created_at.desc(), Record.id.desc()))
+            .label("position"),
+        )
+        .subquery()
+    )
+    fields = [
+        "branch",
+        "commit",
+        "scope",
+        "status",
+        "file_count",
+        "gate",
+        "changed_files",
+        "engines",
+        "impact",
+        "reused_files",
+        "analyzer_version",
+        "base_id",
+        "warnings",
+        "claim_extraction",
+        "commit_source",
+        "analyzer_results",
+        "parser_signature",
+        "analysis_at",
+        "source_storage",
+    ]
+    query = (
+        select(
+            Record.id,
+            Record.repository_id,
+            Record.version,
+            Record.created_at,
+            *(Record.data[key].label(key) for key in fields),
+        )
+        .join(ranked, ranked.c.id == Record.id)
+        .where(ranked.c.position == 1)
+    )
+    return {
+        row.repository_id: SimpleNamespace(
+            id=row.id,
+            kind="snapshot",
+            repository_id=row.repository_id,
+            version=row.version,
+            created_at=row.created_at,
+            data={key: row._mapping[key] for key in fields if row._mapping[key] is not None},
+        )
+        for row in db.execute(query)
+    }
 
 
 def queued_input(db, user, repo, content, request, *, source="FILES", **options):
@@ -242,7 +369,7 @@ def queued_input(db, user, repo, content, request, *, source="FILES", **options)
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "version": "1.3.3"}
+    return {"status": "ok", "version": app.version}
 
 
 @app.get("/ready")
@@ -250,6 +377,18 @@ def ready():
     try:
         with Session() as db:
             db.execute(select(Organization.id).limit(1))
+            if PRODUCTION:
+                from backend.schema_version import expected_head
+                revision = db.execute(text("SELECT version_num FROM alembic_version")).scalar()
+                if revision != expected_head():
+                    raise ValueError("Migration head mismatch")
+        if PRODUCTION:
+            import redis
+            client = redis.Redis.from_url(os.environ["REDIS_URL"], socket_timeout=2, socket_connect_timeout=2)
+            try:
+                client.ping()
+            finally:
+                client.close()
         return {"status": "ready", "database": "reachable", "worker": "not_checked"}
     except Exception:
         raise HTTPException(503, "Database or migrations are not ready.")
@@ -268,12 +407,36 @@ def demo(request: Request, response: Response):
         return {"csrf": csrf, "email": user.email, "role": user.role, "demo": True}
 
 
+@app.get("/api/auth/options")
+def auth_options(request: Request):
+    """Public navigation flags only; no tenant, account, session or source metadata."""
+    with Session() as db:
+        authenticated = False
+        if request.cookies.get("pt_session"):
+            try:
+                authenticate(db, request)
+                authenticated = True
+            except HTTPException as error:
+                if error.status_code not in (401, 403):
+                    raise
+        return {
+            "authenticated": authenticated,
+            "local_registration": not PRODUCTION,
+            "demo_available": APP_ENV == "demo" and db.get(User, "demo-engineer") is not None,
+        }
+
+
 @app.post("/api/auth/login")
 def login(body: Login, request: Request, response: Response):
     with Session() as db:
         user = db.scalar(select(User).where(User.email == body.email.lower()))
         try:
-            if not user or not passwords.verify(user.password_hash, body.password):
+            if (
+                not user
+                or not user.enabled
+                or not user.local_login_allowed
+                or not passwords.verify(user.password_hash, body.password)
+            ):
                 raise ValueError()
         except Exception:
             raise HTTPException(401, "Email or password is incorrect.")
@@ -336,15 +499,63 @@ def logout(request: Request, response: Response):
 
 
 @app.get("/api/workspace")
-def workspace(request: Request, repository_id: str | None = None):
+def workspace(request: Request, repository_id: str | None = None, summary: bool = False):
     with Session() as db:
         user, _ = authenticate(db, request)
         repos = allowed_repositories(db, user)
         if repository_id:
             require_repo(db, user, repository_id)
             repos = [repo for repo in repos if repo.id == repository_id]
-        snapshots = current_snapshots(db, user)
+        snapshots = workspace_snapshots(db, user)
         snapshots = {rid: snapshot for rid, snapshot in snapshots.items() if rid in {repo.id for repo in repos}}
+        if summary:
+            return {
+                "organization": db.get(Organization, user.organization_id).name,
+                "demo": APP_ENV == "demo" and user.organization_id == "northstar",
+                "analysis": {
+                    "state": "COMPLETED" if snapshots else "NO_REPOSITORY",
+                    "truncated": False,
+                    "warnings": [],
+                },
+                "repositories": [
+                    {
+                        "id": r.id,
+                        "name": r.name,
+                        "system": r.system,
+                        "component": r.component,
+                        "owner": r.owner,
+                        "provider": r.provider,
+                        "snapshot": {
+                            "id": snapshots[r.id].id,
+                            **{
+                                k: snapshots[r.id].data.get(k)
+                                for k in ["branch", "commit", "scope", "status", "file_count", "gate", "changed_files"]
+                            },
+                        }
+                        if r.id in snapshots
+                        else None,
+                    }
+                    for r in repos
+                ],
+                **{
+                    k: []
+                    for k in [
+                        "claim",
+                        "finding",
+                        "evidence",
+                        "edge",
+                        "dependency",
+                        "drift",
+                        "pr",
+                        "review",
+                        "exception",
+                        "job",
+                        "graph_node",
+                        "risk_path",
+                    ]
+                },
+                "limitations": ["Quality uses authorized paginated projections and lazy source inspection."],
+            }
         snapshot_ids = {s.id for s in snapshots.values()}
         query = scope_query(db, user).where(
             or_(
@@ -367,7 +578,15 @@ def workspace(request: Request, repository_id: str | None = None):
             or r.kind in {"pr", "review", "exception", "job", "integration", "policy"}
         ]
         grouped = {
-            kind: [packed(r) for r in current if r.kind == kind]
+            kind: [
+                {
+                    key: value
+                    for key, value in packed(r).items()
+                    if not (kind == "evidence" and key in {"source", "source_blob_digest"})
+                }
+                for r in current
+                if r.kind == kind
+            ]
             for kind in [
                 "claim",
                 "finding",
@@ -450,7 +669,7 @@ def workspace(request: Request, repository_id: str | None = None):
                     "component": r.component,
                     "owner": r.owner,
                     "provider": r.provider,
-                    "snapshot": packed(snapshots[r.id]) if r.id in snapshots else None,
+                    "snapshot": snapshot_preview(snapshots[r.id]) if r.id in snapshots else None,
                     "latest_job": latest_jobs.get(r.id),
                 }
                 for r in repos
@@ -478,7 +697,18 @@ def records(kind: str, request: Request, offset: int = 0, limit: int = 100):
 def record(record_id: str, request: Request):
     with Session() as db:
         user, _ = authenticate(db, request)
-        return packed(authorized_record(db, user, record_id))
+        item = authorized_record(db, user, record_id)
+        result = packed(item)
+        if item.kind == "evidence" and item.data.get("source_blob_digest"):
+            from backend.repository_store import BlobStore
+
+            try:
+                result["source"] = (
+                    BlobStore().read(user.organization_id, item.data["source_blob_digest"]).decode("utf-8")
+                )
+            except ValueError:
+                raise HTTPException(503, "Encrypted evidence source is unavailable or failed its integrity check.")
+        return result
 
 
 @app.get("/api/audit")
@@ -574,6 +804,142 @@ def analyze_repo(repo_id: str, body: Analyze, request: Request):
         return packed(snapshot)
 
 
+class ComponentAssignment(StrictModel):
+    version: int | None = None
+    configuration: dict
+
+
+@app.get("/api/repositories/{repo_id}/components")
+def repository_components(repo_id: str, request: Request):
+    with Session() as db:
+        user, _ = authenticate(db, request)
+        require_repo(db, user, repo_id)
+        row = db.scalar(
+            select(Record).where(
+                Record.organization_id == user.organization_id,
+                Record.repository_id == repo_id,
+                Record.kind == "component_assignment",
+            )
+        )
+        return packed(row) if row else {"version": None, "configuration": {"version": 1, "components": []}}
+
+
+@app.post("/api/repositories/{repo_id}/components")
+def assign_components(repo_id: str, body: ComponentAssignment, request: Request):
+    from backend.repository_store import component_boundaries
+
+    with Session() as db:
+        user, _ = authenticate(db, request, True)
+        require_repo(db, user, repo_id)
+        if user.role not in {"ADMIN", "ORG_OWNER"}:
+            raise HTTPException(403, "An organization administrator must assign component boundaries.")
+        try:
+            component_boundaries(body.configuration, basis="HUMAN_ASSIGNMENT")
+        except ValueError as error:
+            raise HTTPException(422, str(error))
+        row = db.scalar(
+            select(Record).where(
+                Record.organization_id == user.organization_id,
+                Record.repository_id == repo_id,
+                Record.kind == "component_assignment",
+            )
+        )
+        if body.version != (row.version if row else None):
+            raise HTTPException(409, "Component assignment changed; reload its current version.")
+        data = {"configuration": body.configuration, "basis": "HUMAN_ASSIGNMENT", "applies_to": "FUTURE_INVENTORIES"}
+        if row:
+            add(
+                db,
+                user.organization_id,
+                repo_id,
+                "component_assignment_version",
+                {**row.data, "assignment_version": row.version},
+            )
+            row.data = data
+            row.version += 1
+        else:
+            row = add(db, user.organization_id, repo_id, "component_assignment", data)
+        audit(db, user, "COMPONENT_ASSIGNMENT_UPDATED", row.id, {"version": row.version}, repo_id)
+        db.commit()
+        return packed(row)
+
+
+async def streamed_archive(request, db, user, repo, base_id=None):
+    from backend.encrypted_archive import EncryptedArchive
+    from backend.queue import check_capacity
+    from backend.repository_store import RepositoryFiles, archive_items, capture, limits
+
+    check_capacity(db, user, repo)
+    db.commit()  # Release the short admission lock before reading the upload stream.
+    try:
+        policy = limits()
+        with EncryptedArchive(policy["archive_bytes"]) as spool:
+            async for chunk in request.stream():
+                spool.append(chunk)
+            inventory = capture(
+                db, user.organization_id, repo, archive_items(spool, policy), source="ZIP_STREAM", quota=policy
+            )
+        files = RepositoryFiles(db, user.organization_id, repo.id, inventory.id)
+        queued = queued_input(db, user, repo, files, request, source="INVENTORY", base_id=base_id)
+        if queued:
+            return queued
+        snapshot, job = execute_analysis(
+            db,
+            user,
+            repo,
+            files,
+            base_id=base_id,
+            request_id=request.state.request_id,
+            advisory_cache=local_advisories(),
+        )
+        return {"repository_id": repo.id, "snapshot_id": snapshot.id, "job_id": job.id, "state": job.data["state"]}
+    except (ValueError, zipfile.BadZipFile, UnicodeError):
+        raise HTTPException(422, "Archive is invalid or exceeds its configured intake budgets.")
+
+
+@app.post("/api/archive/stream/import")
+async def archive_stream_import(
+    request: Request,
+    name: str = Query(default="Imported repository", min_length=1, max_length=120, pattern=r"^[\w .-]+$"),
+):
+    with Session() as db:
+        user, _ = authenticate(db, request, True)
+        if user.organization_id == "northstar":
+            raise HTTPException(409, "Sign in to your organization workspace before importing source.")
+        if len(allowed_repositories(db, user)) >= 20:
+            raise HTTPException(429, "Workspace repository quota reached.")
+        repo = Repository(
+            id=uid(),
+            organization_id=user.organization_id,
+            name=name,
+            system="Imported System",
+            component=name,
+            owner="Engineering Team",
+            provider="LOCAL",
+        )
+        db.add(repo)
+        db.flush()
+        db.add(Grant(user_id=user.id, repository_id=repo.id))
+        return await streamed_archive(request, db, user, repo)
+
+
+@app.post("/api/repositories/{repo_id}/source-archive")
+async def archive_stream_analyze(repo_id: str, request: Request, base_id: str | None = None):
+    with Session() as db:
+        user, _ = authenticate(db, request, True)
+        repo = require_repo(db, user, repo_id)
+        if base_id:
+            base = authorized_record(db, user, base_id)
+            if base.kind != "snapshot" or base.repository_id != repo.id:
+                raise HTTPException(422, "Base must be a snapshot of the same repository.")
+        if user.organization_id == "northstar":
+            raise HTTPException(409, "Upload snapshots in your real workspace.")
+        if not base_id:
+            previous = current_snapshots(db, user).get(repo.id)
+            base_id = previous.id if previous else None
+        return await streamed_archive(request, db, user, repo, base_id)
+
+
 @app.post("/api/archive/import")
 async def archive_import(
     request: Request,
@@ -608,7 +974,7 @@ async def archive_import(
                 db,
                 user,
                 repo,
-                lambda: read_zip(blob),
+                lambda: read_zip(blob, keep_excluded=True),
                 request_id=request.state.request_id,
                 advisory_cache=local_advisories(),
             )
@@ -643,7 +1009,7 @@ async def archive_analyze(repo_id: str, request: Request, base_id: str | None = 
                 db,
                 user,
                 repo,
-                lambda: read_zip(blob),
+                lambda: read_zip(blob, keep_excluded=True),
                 base_id=base_id,
                 request_id=request.state.request_id,
                 advisory_cache=local_advisories(),
@@ -700,7 +1066,11 @@ def review(record_id: str, body: Review, request: Request):
             "FALSE_POSITIVE": "FALSE_POSITIVE",
             "RESOLVE": "RESOLVED",
             "REQUEST_MORE_EVIDENCE": "REVIEW_REQUIRED",
+            "IN_REVIEW": "IN_REVIEW",
+            "REOPEN": "OPEN",
         }.get(body.action, old)
+        if record.data.get("category") == "QUALITY":
+            status = {"ACCEPT_RISK": "ACCEPTED", "CREATE_EXCEPTION": "EXCEPTION"}.get(body.action, status)
         record.data = {
             **record.data,
             "review_status": status,
@@ -717,9 +1087,17 @@ def review(record_id: str, body: Review, request: Request):
             "old_status": old,
             "new_status": status,
             "identity_id": record.data.get("review_identity_id") or record.data.get("identity_id"),
+            "rule": record.data.get("rule"),
+            "rule_version": record.data.get("rule_version"),
+            "language": record.data.get("language"),
+            "framework": record.data.get("framework", "UNKNOWN"),
         }
         add(db, user.organization_id, record.repository_id, "review", details)
         if body.action in {"ACCEPT_RISK", "CREATE_EXCEPTION"}:
+            from backend.trust import policy
+
+            if body.expires_days > policy(db, user.organization_id)["maximum_exception_days"]:
+                raise HTTPException(422, "Exception exceeds the organization duration policy.")
             add(
                 db,
                 user.organization_id,
@@ -756,12 +1134,18 @@ def gate(snapshot_id: str, request: Request):
             if r.kind == "finding" and r.data.get("scope", {}).get("snapshot_id") == snapshot.id
         ]
         exceptions = [r.data for r in records if r.kind == "exception"]
-        return policy_gate(
+        from backend.db import QualityAnalysis
+        from backend.quality_api import effective_gate
+        from backend.quality_domain import merge_gate
+
+        projection = db.get(QualityAnalysis, snapshot.id)
+        engineering = policy_gate(
             claims,
-            findings,
+            [f for f in findings if not projection or f.get("category") != "QUALITY"],
             exceptions,
             new_findings_only=snapshot.data.get("native_profile", {}).get("gate_scope") == "NEW_FINDINGS",
         )
+        return merge_gate(engineering, effective_gate(db, projection)) if projection else engineering
 
 
 @app.get("/api/sbom/{snapshot_id}")
@@ -1151,16 +1535,25 @@ def connect_github(body: ConnectGitHub, request: Request):
         user, _ = authenticate(db, request, True)
         if user.role not in {"ORG_OWNER", "ADMIN"}:
             raise HTTPException(403, "Connecting an SCM installation requires an organization administrator.")
+        from backend.scm_connections import authorized_connection
+
+        metadata = authorized_connection(db, user, body.connection_id) if body.connection_id else None
         try:
-            adapter = configured_app()
+            adapter = configured_app(metadata) if metadata else configured_app()
             candidates = adapter.repositories()
         except (ValueError, httpx.HTTPError):
             raise HTTPException(503, "GitHub App credentials are missing or the installation connection test failed.")
         candidate = next((r for r in candidates if r["id"] == body.repository_id), None)
         if not candidate:
             raise HTTPException(404, "Repository is outside the authorized GitHub installation.")
+        provider_type = metadata.data["provider_type"] if metadata else "GITHUB"
+        provider_identity = (
+            (metadata.data["api_base_url"].rstrip("/") + "/" + str(body.repository_id))
+            if metadata
+            else str(body.repository_id)
+        )
         existing = db.scalar(
-            select(Repository).where(Repository.provider == "GITHUB", Repository.provider_id == str(body.repository_id))
+            select(Repository).where(Repository.provider == provider_type, Repository.provider_id == provider_identity)
         )
         if existing:
             raise HTTPException(409, "This provider repository is already connected.")
@@ -1171,8 +1564,8 @@ def connect_github(body: ConnectGitHub, request: Request):
             system=body.system,
             component=candidate["name"],
             owner=body.owner,
-            provider="GITHUB",
-            provider_id=str(body.repository_id),
+            provider=provider_type,
+            provider_id=provider_identity,
         )
         db.add(repo)
         db.flush()
@@ -1181,7 +1574,7 @@ def connect_github(body: ConnectGitHub, request: Request):
             select(Record).where(
                 Record.organization_id == user.organization_id,
                 Record.kind == "integration",
-                Record.natural_key == "github",
+                Record.natural_key == ("github:" + metadata.id if metadata else "github"),
             )
         )
         details = {
@@ -1190,12 +1583,35 @@ def connect_github(body: ConnectGitHub, request: Request):
             "owner_id": user.id,
             "checks_enabled": body.checks_enabled,
             "last_sync": None,
-            "installation_id": os.environ["GITHUB_INSTALLATION_ID"],
+            "installation_id": metadata.data["installation_id"] if metadata else os.environ["GITHUB_INSTALLATION_ID"],
+            "connection_id": metadata.id if metadata else None,
         }
         if connection:
             connection.data = details
         else:
-            add(db, user.organization_id, None, "integration", details, "github")
+            add(
+                db,
+                user.organization_id,
+                None,
+                "integration",
+                details,
+                "github:" + metadata.id if metadata else "github",
+            )
+        add(
+            db,
+            user.organization_id,
+            repo.id,
+            "repository_scm",
+            {
+                "connection_id": metadata.id if metadata else None,
+                "provider_repository_id": str(body.repository_id),
+                "provider_type": provider_type,
+                "enabled": True,
+            },
+            repo.id,
+        )
+        if metadata:
+            metadata.data = {**metadata.data, "status": "CONNECTED", "live_verification": "CONNECTION_TESTED"}
         audit(
             db,
             user,
@@ -1252,20 +1668,11 @@ async def webhook(request: Request):
         except (AttributeError, TypeError):
             raise HTTPException(422, "Webhook change scope is invalid.")
         # Durable receipt is distinct from provider fetch/check publication.
-        job = add(
-            db,
-            repo.organization_id,
-            repo.id,
-            "job",
-            {
-                "state": "QUEUED",
-                "event": event,
-                "delivery_id": delivery_id,
-                "repository_id": repo.id,
-                "provider_fetch": "PENDING_CONFIGURATION",
-                **details,
-            },
-        )
+        from backend.scheduling import enqueue_scm
+        try:
+            job = enqueue_scm(db, repo, details, event=event, delivery_id=delivery_id)
+        except ValueError:
+            raise HTTPException(429, "SCM analysis admission quota reached; retry this delivery later.") from None
         try:
             db.commit()
         except IntegrityError:
@@ -1291,16 +1698,19 @@ def control_job(job_id: str, action: Literal["retry", "cancel"], request: Reques
         if job.kind != "job":
             raise HTTPException(422, "An analysis job is required.")
         if action == "cancel":
-            if job.data.get("state") not in {"QUEUED", "FAILED", "PARTIAL"}:
-                raise HTTPException(409, "Only queued or stopped jobs can be cancelled.")
-            from backend.db import AnalysisInput, now
+            if job.data.get("state") in {"COMPLETED", "COMPLETED_NO_FINDINGS", "CANCELLED"}:
+                raise HTTPException(409, "This job has already finished.")
+            from backend.db import AnalysisInput
 
             retained = db.get(AnalysisInput, job.id)
-            if retained:
+            from backend.scheduling import cancel
+            result = cancel(db, job)
+            if retained and result == "CANCELLED":
                 db.delete(retained)
-            job.data = {**job.data, "state": "CANCELLED", "stage": "CANCELLED", "finished_at": now()}
             audit(db, user, "JOB_CANCELLED", job.id, {}, job.repository_id)
             db.commit()
+            if result == "CANCELLATION_REQUESTED":
+                return {**packed(job), "cancellation_requested": True}
         else:
             if os.getenv("JOB_MODE") != "celery":
                 raise HTTPException(503, "The Redis/Celery worker must be configured before retrying provider jobs.")
@@ -1315,7 +1725,7 @@ def control_job(job_id: str, action: Literal["retry", "cancel"], request: Reques
             from backend.db import AnalysisInput
             from backend.queue import dispatch
 
-            if job.data.get("source") in {"ZIP", "FILES"} and not db.get(AnalysisInput, job.id):
+            if job.data.get("source") in {"ZIP", "FILES", "INVENTORY"} and not db.get(AnalysisInput, job.id):
                 raise HTTPException(409, "Retained input is unavailable; upload a fresh snapshot.")
 
             if job.data.get("retry_count", 0) >= 2:
@@ -1380,3 +1790,13 @@ def check_advisories(snapshot_id: str, request: Request):
         except ValueError:
             raise HTTPException(429, "Advisory queue quota reached.")
         return JSONResponse(status_code=202, content={"job_id": job.id, "state": job.data["state"]})
+
+
+app.include_router(quality_router)
+app.include_router(finding_router)
+app.include_router(graph_router)
+app.include_router(engineering_router)
+app.include_router(trust_router)
+app.include_router(oidc_router)
+app.include_router(scm_router)
+app.include_router(scm_webhook_router)

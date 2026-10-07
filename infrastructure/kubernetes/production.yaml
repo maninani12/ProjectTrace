@@ -1,0 +1,236 @@
+# Operator template: configure managed dependencies and verified image digests before applying.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: projecttrace
+  labels:
+    pod-security.kubernetes.io/enforce: restricted
+---
+apiVersion: v1
+kind: ConfigMap
+metadata: {name: projecttrace-runtime, namespace: projecttrace}
+data:
+  APP_ENV: production
+  JOB_MODE: celery
+  CORS_ORIGINS: https://projecttrace.example.invalid
+  DATABASE_URL_FILE: /run/secrets/DATABASE_URL
+  REDIS_URL_FILE: /run/secrets/REDIS_URL
+  ANALYSIS_INPUT_KEY_FILE: /run/secrets/ANALYSIS_INPUT_KEY
+  AUDIT_CHECKPOINT_KEY_FILE: /run/secrets/AUDIT_CHECKPOINT_KEY
+  AUDIT_CHECKPOINT_KEY_ID: operator-managed-v1
+  SOURCE_BLOB_BACKEND: s3
+  SOURCE_BLOB_DIR: /scratch/blobs
+  SOURCE_UPLOAD_DIR: /scratch/uploads
+  SOURCE_S3_ENDPOINT: https://storage.example.invalid
+  SOURCE_S3_ALLOWED_HOSTS: storage.example.invalid
+  SOURCE_S3_BUCKET: projecttrace-private
+  SOURCE_S3_REGION: us-east-1
+  AWS_EC2_METADATA_DISABLED: "true"
+  AWS_ACCESS_KEY_ID_FILE: /run/secrets/AWS_ACCESS_KEY_ID
+  AWS_SECRET_ACCESS_KEY_FILE: /run/secrets/AWS_SECRET_ACCESS_KEY
+  OSV_ENABLED: "0"
+  LLM_PROVIDER: disabled
+  QUEUE_GLOBAL: "4"
+  QUEUE_TENANT: "2"
+  QUEUE_REPOSITORY: "1"
+  REPOSITORY_ANALYSIS_SECONDS: "900"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: projecttrace-api, namespace: projecttrace}
+spec:
+  replicas: 2
+  selector: {matchLabels: {app: projecttrace-api}}
+  template:
+    metadata: {labels: {app: projecttrace-api, projecttrace-role: application}}
+    spec:
+      automountServiceAccountToken: false
+      securityContext: {runAsNonRoot: true, runAsUser: 10001, runAsGroup: 10001, fsGroup: 10001, seccompProfile: {type: RuntimeDefault}}
+      containers:
+        - name: api
+          image: projecttrace-api:operator-pinned
+          ports: [{containerPort: 8011}]
+          envFrom: [{configMapRef: {name: projecttrace-runtime}}]
+          securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: [ALL]}}
+          resources: {requests: {cpu: 250m, memory: 256Mi}, limits: {cpu: "2", memory: 1Gi}}
+          readinessProbe: {httpGet: {path: /ready, port: 8011}, periodSeconds: 10}
+          livenessProbe: {httpGet: {path: /health, port: 8011}, initialDelaySeconds: 20, periodSeconds: 20}
+          volumeMounts: [{name: secrets, mountPath: /run/secrets, readOnly: true}, {name: scratch, mountPath: /scratch}, {name: temp, mountPath: /tmp}]
+      volumes:
+        - name: secrets
+          secret: {secretName: projecttrace-managed, defaultMode: 288}
+        - name: scratch
+          emptyDir: {sizeLimit: 2Gi}
+        - name: temp
+          emptyDir: {sizeLimit: 128Mi}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: projecttrace-worker, namespace: projecttrace}
+spec:
+  replicas: 2
+  selector: {matchLabels: {app: projecttrace-worker}}
+  template:
+    metadata: {labels: {app: projecttrace-worker, projecttrace-role: application}}
+    spec:
+      automountServiceAccountToken: false
+      securityContext: {runAsNonRoot: true, runAsUser: 10001, runAsGroup: 10001, fsGroup: 10001, seccompProfile: {type: RuntimeDefault}}
+      containers:
+        - name: worker
+          image: projecttrace-api:operator-pinned
+          command: [celery, -A, workers.tasks, worker, --queues=native,scm,advisory,celery, --concurrency=1, --loglevel=INFO]
+          envFrom: [{configMapRef: {name: projecttrace-runtime}}]
+          securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: [ALL]}}
+          resources: {requests: {cpu: 500m, memory: 512Mi}, limits: {cpu: "2", memory: 2Gi}}
+          readinessProbe: {exec: {command: [python, -m, scripts.worker_probe]}, initialDelaySeconds: 30, periodSeconds: 30, timeoutSeconds: 10}
+          volumeMounts: [{name: secrets, mountPath: /run/secrets, readOnly: true}, {name: scratch, mountPath: /scratch}, {name: temp, mountPath: /tmp}]
+      volumes:
+        - name: secrets
+          secret: {secretName: projecttrace-managed, defaultMode: 288}
+        - name: scratch
+          emptyDir: {sizeLimit: 512Mi}
+        - name: temp
+          emptyDir: {sizeLimit: 128Mi}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: projecttrace-large-worker, namespace: projecttrace}
+spec:
+  replicas: 1
+  selector: {matchLabels: {app: projecttrace-large-worker}}
+  template:
+    metadata: {labels: {app: projecttrace-large-worker, projecttrace-role: application}}
+    spec:
+      automountServiceAccountToken: false
+      securityContext: {runAsNonRoot: true, runAsUser: 10001, runAsGroup: 10001, fsGroup: 10001, seccompProfile: {type: RuntimeDefault}}
+      containers:
+        - name: worker
+          image: projecttrace-api:operator-pinned
+          command: [celery, -A, workers.tasks, worker, --queues=large, --concurrency=1, --loglevel=INFO]
+          envFrom: [{configMapRef: {name: projecttrace-runtime}}]
+          securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: [ALL]}}
+          resources: {requests: {cpu: "1", memory: 1Gi}, limits: {cpu: "4", memory: 3Gi}}
+          readinessProbe: {exec: {command: [python, -m, scripts.worker_probe]}, initialDelaySeconds: 30, periodSeconds: 30, timeoutSeconds: 10}
+          volumeMounts: [{name: secrets, mountPath: /run/secrets, readOnly: true}, {name: scratch, mountPath: /scratch}, {name: temp, mountPath: /tmp}]
+      volumes:
+        - name: secrets
+          secret: {secretName: projecttrace-managed, defaultMode: 288}
+        - name: scratch
+          emptyDir: {sizeLimit: 512Mi}
+        - name: temp
+          emptyDir: {sizeLimit: 128Mi}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: projecttrace-scheduler, namespace: projecttrace}
+spec:
+  replicas: 1
+  strategy: {type: Recreate}
+  selector: {matchLabels: {app: projecttrace-scheduler}}
+  template:
+    metadata: {labels: {app: projecttrace-scheduler, projecttrace-role: application}}
+    spec:
+      automountServiceAccountToken: false
+      securityContext: {runAsNonRoot: true, runAsUser: 10001, runAsGroup: 10001, fsGroup: 10001, seccompProfile: {type: RuntimeDefault}}
+      containers:
+        - name: scheduler
+          image: projecttrace-api:operator-pinned
+          command: [celery, -A, workers.tasks, beat, --loglevel=INFO, --schedule=/tmp/celerybeat-schedule]
+          envFrom: [{configMapRef: {name: projecttrace-runtime}}]
+          securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: [ALL]}}
+          resources: {requests: {cpu: 100m, memory: 128Mi}, limits: {cpu: 500m, memory: 256Mi}}
+          volumeMounts: [{name: secrets, mountPath: /run/secrets, readOnly: true}, {name: temp, mountPath: /tmp}]
+      volumes:
+        - name: secrets
+          secret: {secretName: projecttrace-managed, defaultMode: 288}
+        - name: temp
+          emptyDir: {sizeLimit: 128Mi}
+---
+apiVersion: batch/v1
+kind: Job
+metadata: {name: projecttrace-migrate-release, namespace: projecttrace}
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      automountServiceAccountToken: false
+      restartPolicy: Never
+      securityContext: {runAsNonRoot: true, runAsUser: 10001, runAsGroup: 10001, fsGroup: 10001, seccompProfile: {type: RuntimeDefault}}
+      containers:
+        - name: migrate
+          image: projecttrace-api:operator-pinned
+          command: [alembic, upgrade, head]
+          envFrom: [{configMapRef: {name: projecttrace-runtime}}]
+          securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: [ALL]}}
+          resources: {requests: {cpu: 100m, memory: 128Mi}, limits: {cpu: "1", memory: 512Mi}}
+          volumeMounts: [{name: secrets, mountPath: /run/secrets, readOnly: true}, {name: temp, mountPath: /tmp}]
+      volumes:
+        - name: secrets
+          secret: {secretName: projecttrace-managed, defaultMode: 288}
+        - name: temp
+          emptyDir: {sizeLimit: 128Mi}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: projecttrace-api, namespace: projecttrace}
+spec: {selector: {app: projecttrace-api}, ports: [{port: 8011, targetPort: 8011}]}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: projecttrace-frontend, namespace: projecttrace}
+spec:
+  replicas: 2
+  selector: {matchLabels: {app: projecttrace-frontend}}
+  template:
+    metadata: {labels: {app: projecttrace-frontend}}
+    spec:
+      automountServiceAccountToken: false
+      securityContext: {runAsNonRoot: true, runAsUser: 101, runAsGroup: 101, fsGroup: 101, seccompProfile: {type: RuntimeDefault}}
+      containers:
+        - name: frontend
+          image: projecttrace-frontend:operator-pinned
+          ports: [{containerPort: 8080}]
+          securityContext: {allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: {drop: [ALL]}}
+          resources: {requests: {cpu: 50m, memory: 64Mi}, limits: {cpu: 500m, memory: 256Mi}}
+          readinessProbe: {httpGet: {path: /, port: 8080}, periodSeconds: 10}
+          volumeMounts: [{name: nginx, mountPath: /etc/nginx/conf.d}, {name: temp, mountPath: /tmp}]
+      volumes:
+        - name: nginx
+          configMap: {name: projecttrace-nginx}
+        - name: temp
+          emptyDir: {sizeLimit: 128Mi}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: projecttrace-frontend, namespace: projecttrace}
+spec: {selector: {app: projecttrace-frontend}, ports: [{port: 8080, targetPort: 8080}]}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata: {name: projecttrace, namespace: projecttrace}
+spec:
+  ingressClassName: nginx
+  tls: [{hosts: [projecttrace.example.invalid], secretName: projecttrace-ingress-tls}]
+  rules:
+    - host: projecttrace.example.invalid
+      http:
+        paths: [{path: /, pathType: Prefix, backend: {service: {name: projecttrace-frontend, port: {number: 8080}}}}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: projecttrace-default-deny, namespace: projecttrace}
+spec: {podSelector: {}, policyTypes: [Ingress, Egress]}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: {name: projecttrace-internal, namespace: projecttrace}
+spec:
+  podSelector: {}
+  policyTypes: [Ingress, Egress]
+  ingress: [{from: [{podSelector: {}}]}]
+  egress:
+    - to: [{podSelector: {}}]
+    - to: [{namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: kube-system}}}]
+      ports: [{protocol: UDP, port: 53}, {protocol: TCP, port: 53}]
+# Install operator-specific ingress-controller access and exact managed DB/Redis/
+# object-store/IdP/SCM egress rules. This closed base deliberately grants none.

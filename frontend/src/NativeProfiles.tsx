@@ -1,6 +1,11 @@
 import { useEffect, useLayoutEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "./api";
+import ComponentAssignments from "./ComponentAssignments";
+import InfrastructurePolicy, {
+  defaultInfrastructure,
+  type InfrastructureSettings,
+} from "./InfrastructurePolicy";
 
 type Rule = {
   id: string;
@@ -17,6 +22,7 @@ type Profile = {
   rules: Record<string, { enabled?: boolean; severity?: string }>;
   licenses: { approved?: string[]; restricted?: string[] };
   gate_scope?: string;
+  infrastructure?: InfrastructureSettings;
 };
 
 export default function NativeProfiles({
@@ -33,6 +39,7 @@ export default function NativeProfiles({
   const [approved, setApproved] = useState("");
   const [restricted, setRestricted] = useState("");
   const [busy, setBusy] = useState(false);
+  const [infrastructure, setInfrastructure] = useState(defaultInfrastructure);
   const rules = useQuery({
     queryKey: ["native-rules"],
     queryFn: () => api<{ rules: Rule[] }>("/native/rules"),
@@ -50,6 +57,10 @@ export default function NativeProfiles({
     setGateScope(profile.data?.gate_scope || "ALL_FINDINGS");
     setApproved(profile.data?.licenses.approved?.join(", ") || "");
     setRestricted(profile.data?.licenses.restricted?.join(", ") || "");
+    setInfrastructure({
+      ...defaultInfrastructure,
+      ...profile.data?.infrastructure,
+    });
   }, [repository, profile.data]);
   useEffect(() => setMessage(""), [repository]);
   const selectedRule = rules.data?.rules.find((rule) => rule.id === selected);
@@ -75,6 +86,7 @@ export default function NativeProfiles({
             .filter(Boolean),
         },
         gate_scope: gateScope,
+        infrastructure,
       });
       await profile.refetch();
       setMessage(
@@ -195,18 +207,27 @@ export default function NativeProfiles({
               onChange={(event) => setRestricted(event.target.value)}
             />
           </label>
+          <InfrastructurePolicy
+            value={infrastructure}
+            onChange={setInfrastructure}
+            disabled={!canEdit || !profile.data || busy}
+            selectedRule={selected}
+          />
           {canEdit && (
             <button
               className="secondary"
               disabled={!profile.data || busy}
               onClick={() => save()}
             >
-              {busy ? "Saving…" : "Save gate and license policy"}
+              {busy
+                ? "Saving…"
+                : "Save gate, license and infrastructure policy"}
             </button>
           )}
           {message && <p role="status">{message}</p>}
         </>
       )}
+      <ComponentAssignments repository={repository} canEdit={canEdit} />
     </section>
   );
 }

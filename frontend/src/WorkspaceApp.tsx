@@ -80,6 +80,7 @@ import NativeProfiles from "./NativeProfiles";
 const CodeQuality = lazy(() => import("./CodeQuality"));
 const EnterpriseTrust = lazy(() => import("./EnterpriseTrust"));
 const Infrastructure = lazy(() => import("./Infrastructure"));
+const EngineeringChanges = lazy(() => import("./EngineeringChanges"));
 const Graph = lazy(() => import("./Graph"));
 const navigation = [
   {
@@ -90,6 +91,7 @@ const navigation = [
       ["Components", Layers],
       ["Repositories", GitBranch],
       ["Pull Requests", GitPullRequest],
+      ["Engineering Changes", Activity],
     ],
   },
   {
@@ -148,6 +150,8 @@ const descriptions: Record<string, string> = {
     "Immutable source snapshots form the foundation of every engineering conclusion.",
   "Pull Requests":
     "Understand how a change affects security, engineering claims, and documentation in one review.",
+  "Engineering Changes":
+    "Trace important BASE-to-HEAD changes through claims, source evidence, quality, security, infrastructure, ownership and policy.",
   Findings:
     "One review queue for native analysis and external evidence, with source-level provenance.",
   "Code Quality":
@@ -862,9 +866,16 @@ function WorkspaceApp() {
                       onOpen={open}
                     />
                   </Suspense>
+                ) : page === "Engineering Changes" ? (
+                  <Suspense fallback={<p>Loading Engineering Changes…</p>}>
+                    <EngineeringChanges repository={repoFilter} onOpen={open} />
+                  </Suspense>
                 ) : page === "Trust & Coverage" ? (
                   <Suspense fallback={<p>Loading Trust &amp; Coverage…</p>}>
-                    <EnterpriseTrust role={identity.role} />
+                    <EnterpriseTrust
+                      role={identity.role}
+                      repository={repoFilter}
+                    />
                   </Suspense>
                 ) : [
                     "Findings",
@@ -2758,11 +2769,30 @@ function Inspector({
   const [owner, setOwner] = useState(item.owner || "");
   const [expiresDays, setExpiresDays] = useState(7);
   const [tab, setTab] = useState("Evidence");
+  const [historyOffset, setHistoryOffset] = useState(0);
+  const findingHistory = useQuery({
+    queryKey: ["finding-history", item.id, historyOffset],
+    queryFn: () =>
+      api<{
+        identity_version: string;
+        total: number;
+        items: {
+          id: string;
+          status: string;
+          at: string;
+          reason: string;
+          path?: string;
+          line?: number;
+        }[];
+      }>(`/findings/${item.id}/history?offset=${historyOffset}&limit=50`),
+    enabled: item.kind === "finding" && tab === "History",
+  });
   useEffect(() => {
     setOwner(item.owner || "");
     setReason("");
     setAction("CONFIRM");
     setTab("Evidence");
+    setHistoryOffset(0);
   }, [item.id]);
   const linkedEvidence = new Set(item.evidence_ids || []);
   data.edge.forEach((edge) => {
@@ -3110,7 +3140,55 @@ function Inspector({
           </>
         ) : tab === "History" ? (
           <div className="audit-list">
-            {item.history?.length ? (
+            {item.kind === "finding" ? (
+              findingHistory.isLoading ? (
+                <p>Loading finding history…</p>
+              ) : findingHistory.isError ? (
+                <p>Finding history could not be loaded.</p>
+              ) : (
+                <>
+                  <p>
+                    {findingHistory.data?.identity_version} ·{" "}
+                    {findingHistory.data?.total || 0} recorded observations
+                  </p>
+                  {findingHistory.data?.items.map((h) => (
+                    <div key={h.id}>
+                      <div className="audit-dot" />
+                      <div>
+                        <Badge value={h.status} />
+                        <p>{h.reason}</p>
+                        <small>
+                          {h.path}
+                          {h.line ? `:${h.line}` : ""} · {date(h.at)}
+                        </small>
+                      </div>
+                    </div>
+                  ))}
+                  <button
+                    disabled={!historyOffset}
+                    onClick={() =>
+                      setHistoryOffset(Math.max(0, historyOffset - 50))
+                    }
+                  >
+                    Newer observations
+                  </button>
+                  <button
+                    disabled={
+                      historyOffset + 50 >= (findingHistory.data?.total || 0)
+                    }
+                    onClick={() => setHistoryOffset(historyOffset + 50)}
+                  >
+                    Older observations
+                  </button>
+                  {!findingHistory.data?.total && (
+                    <p>
+                      Earlier findings retain their snapshot and audit history.
+                      Structural lineage starts with a new analysis.
+                    </p>
+                  )}
+                </>
+              )
+            ) : item.history?.length ? (
               item.history.map((h, i) => (
                 <div key={i}>
                   <div className="audit-dot" />
@@ -3252,8 +3330,8 @@ function ImportDialog({
     try {
       const result = await api<{ repository_id: string; state?: string }>(
         target === "NEW"
-          ? "/archive/import?name=" + encodeURIComponent(name)
-          : "/repositories/" + encodeURIComponent(target) + "/archive/analyze",
+          ? "/archive/stream/import?name=" + encodeURIComponent(name)
+          : "/repositories/" + encodeURIComponent(target) + "/source-archive",
         undefined,
         file,
       );
@@ -3312,8 +3390,9 @@ function ImportDialog({
           />
         </label>
         <div className="context-note">
-          10 MB total · 1,000 files · 512 KB per file. Symlinks and unsafe paths
-          are rejected. Nested archives and binaries are skipped.
+          Encrypted streaming import · configured repository quotas · 512 KB
+          parser budget per file. Unsafe paths and symlinks are rejected.
+          Oversized and unsupported files remain visible in coverage.
         </div>
         {error && (
           <p className="error" role="alert">

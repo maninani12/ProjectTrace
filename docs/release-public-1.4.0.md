@@ -1,0 +1,7 @@
+# ProjectTrace 1.4.0 release status
+
+Version 1.4.0 adds the public landing page, permanent 31-topic Guide, shared theme/source/status components, contextual help and working account-to-import/demo transitions. Production builds supply 38 correctly routed public HTML pages with metadata and optional real-origin SEO. Native engine/rule version remains 1.3.3; no schema migration or analyzer replacement is included.
+
+Fresh checks passed: 132 backend tests, 22 frontend tests, nine Chromium workflows, Ruff/compileall/TypeScript/build, all 38 exact public pages with JavaScript off, selected axe accessibility checks, both locked dependency audits and user-row preservation/integrity. Lighthouse lab performance is 98 mobile/100 desktop; accessibility and best practices score 100. SEO is 63 because the actual local build blocks indexing until a real public origin is configured. These are local lab results, not production or field measurements.
+
+Earlier native benchmark and real PostgreSQL/Redis/non-root Linux prefork/crash-recovery proof is retained with the original tested versions. Docker/Compose/images, production restore, live cloud/GitHub, complete SAST/IAM/runtime models, enterprise identity/source lifecycle, semantic AI and sustained capacity remain unverified or deferred. See the authoritative [Final validation](../FINAL_PRODUCT_VALIDATION.md), [Public experience](PUBLIC_EXPERIENCE.md) and [Constitution roadmap](PRODUCT_ROADMAP.md). Historical reports remain labeled historical. No public deployment, new commit or push was performed.

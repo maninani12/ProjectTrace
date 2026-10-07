@@ -54,7 +54,11 @@ def test_native_duplicate_body_fingerprint_preserves_operators():
     different = analyze({"main.js": "function plus(x){" + body + "} function minus(x){" + body.replace("+", "-") + "}"})
     assert not any(item["rule"] == "PT-QUALITY-007" for item in different["findings"])
     identical = analyze({"main.js": "function first(x){" + body + "} function second(x){ /* comment */ " + body + "}"})
-    assert any(item["rule"] == "PT-QUALITY-007" for item in identical["findings"])
+    # The 1.5 noise guard excludes one-line boilerplate; substantial blocks remain detected.
+    assert not any(item["rule"] == "PT-QUALITY-007" for item in identical["findings"])
+    substantial = "\n".join(f"const value{i}=x+{i};" for i in range(10)) + "\nreturn value0;"
+    repeated = analyze({"main.js": "function first(x){\n" + substantial + "\n}\nfunction second(x){\n" + substantial + "\n}"})
+    assert any(item["rule"] == "PT-QUALITY-007" for item in repeated["findings"])
 
 
 def test_python_source_assignment_local_helper_sink_flow():

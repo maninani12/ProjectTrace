@@ -1,0 +1,183 @@
+{
+  "version": "1.6.0",
+  "recorded_utc": "2026-10-06T18:28:07.287104+00:00",
+  "environment": {
+    "os": "Windows",
+    "python": "3.14.3",
+    "database": "SQLite",
+    "job_mode": "sync",
+    "browser": "Chromium",
+    "deployment": "local development"
+  },
+  "parser_signature": "c0199f7fe4b0bfb432bd513988a834a19970de5f7962e3654f674d7e7446c283",
+  "backend_full_suite": {
+    "passed": 206,
+    "failures": 0,
+    "duration_seconds": 305.7,
+    "warning": "Starlette testclient/httpx deprecation",
+    "scope": "Full suite before the final parser-signature baseline guard; that final change is covered by the focused run below."
+  },
+  "backend_final_focused": {
+    "passed": 41,
+    "failures": 0,
+    "duration_seconds": 92.51,
+    "files": [
+      "tests/test_graph_impact.py",
+      "tests/test_enterprise_trust.py"
+    ],
+    "scope": "Includes final parser-signature baseline guard, JSON infrastructure, source metadata, OIDC, egress, audit, tenant, exception and identity behavior."
+  },
+  "frontend_unit": {
+    "passed": 22,
+    "failures": 0,
+    "duration_seconds": 25.85
+  },
+  "browser_full_suite": {
+    "startTime": "2026-10-06T18:13:23.579Z",
+    "duration": 239198.043,
+    "expected": 11,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "browser_final_focused": {
+    "startTime": "2026-10-06T18:26:36.220Z",
+    "duration": 19932.036,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0,
+    "scope": "Final live API and capability-table layout, tenant policy/audit, all infrastructure views, authorized source evidence, selected axe checks and mobile widths."
+  },
+  "build": {
+    "typescript": "PASS",
+    "production_build": "PASS",
+    "public_prerender_routes": 40,
+    "guide_topics": 33
+  },
+  "source_checks": {
+    "ruff": "PASS",
+    "compileall": "PASS",
+    "git_diff_check": "PASS"
+  },
+  "preservation": {
+    "organizations": {
+      "original_rows": 61,
+      "current_rows": 74,
+      "missing_or_changed_original_rows": 0
+    },
+    "users": {
+      "original_rows": 61,
+      "current_rows": 74,
+      "missing_or_changed_original_rows": 0
+    },
+    "repositories": {
+      "original_rows": 52,
+      "current_rows": 64,
+      "missing_or_changed_original_rows": 0
+    },
+    "repository_grants": {
+      "original_rows": 52,
+      "current_rows": 64,
+      "missing_or_changed_original_rows": 0
+    },
+    "sessions": {
+      "original_rows": 118,
+      "current_rows": 138,
+      "missing_or_changed_original_rows": 0
+    },
+    "records": {
+      "original_rows": 34850,
+      "current_rows": 49958,
+      "missing_or_changed_original_rows": 0
+    },
+    "audit_events": {
+      "original_rows": 2004,
+      "current_rows": 2580,
+      "missing_or_changed_original_rows": 0
+    },
+    "webhook_deliveries": {
+      "original_rows": 0,
+      "current_rows": 0,
+      "missing_or_changed_original_rows": 0
+    },
+    "analysis_inputs": {
+      "original_rows": 0,
+      "current_rows": 0,
+      "missing_or_changed_original_rows": 0
+    },
+    "native_profiles": {
+      "original_rows": 17,
+      "current_rows": 21,
+      "missing_or_changed_original_rows": 0
+    },
+    "cloud_assets": {
+      "original_rows": 94,
+      "current_rows": 147,
+      "missing_or_changed_original_rows": 0
+    },
+    "quality_analyses": {
+      "original_rows": 40,
+      "current_rows": 63,
+      "missing_or_changed_original_rows": 0
+    },
+    "quality_occurrences": {
+      "original_rows": 182,
+      "current_rows": 333,
+      "missing_or_changed_original_rows": 0
+    },
+    "snapshot_payloads": {
+      "original": 139,
+      "missing_or_changed": 0
+    },
+    "credential_hashes": {
+      "original": 61,
+      "missing_or_changed": 0
+    },
+    "foreign_key_violations": 0,
+    "quick_check": "ok",
+    "migration": "0007",
+    "method": "Consistent SQLite backup; compare original rows across common columns. No raw row or credential values emitted."
+  },
+  "real_zip_static_refresh": {
+    "existing_repositories": 3,
+    "captured_files_each": 47,
+    "quality_findings_each": 22,
+    "state_each": "PARTIAL",
+    "source_changed_each": false,
+    "analysis_model_changed_each": true,
+    "baseline_version": "1.5.0",
+    "final_version": "1.6.0",
+    "historical_snapshots_preserved": true,
+    "executed_project_code": false
+  },
+  "benchmark_files": [
+    "enterprise-labeled-accuracy-1.6.0.json",
+    "enterprise-large-admission-1.6.0.json",
+    "enterprise-receipts-1.6.0.json"
+  ],
+  "not_validated": [
+    "Representative population precision/recall/false-positive rate",
+    "Complete OS parser sandbox",
+    "PostgreSQL RLS and complete compound tenant constraints",
+    "Live OIDC provider interoperability",
+    "GHES (implementation absent)",
+    "Hardened private production install/restore/keys",
+    "Successful three-million-line repository analysis",
+    "100 concurrent PR worker throughput/fairness/SLA",
+    "Immutable external audit archival and checkpoint rotation"
+  ],
+  "final_label_alignment": {
+    "capability_api_test": "PASS",
+    "passed": 1,
+    "duration_seconds": 5.29,
+    "typescript_build": "PASS",
+    "ruff_diff_check": "PASS",
+    "scope": "Three-million-line target explicitly unsupported by intake limits; concurrent PRs unmeasured; infrastructure scope truncation notice and Guide wording."
+  },
+  "packaging_base_commit": "b4ec29fd4df964aa10e722eb6a4d8b5216e92b64",
+  "buyer_report_structure": {
+    "exact_questions": 21,
+    "required_evidence_fields_each": "PASS"
+  }
+}

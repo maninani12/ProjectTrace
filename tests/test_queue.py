@@ -11,7 +11,10 @@ from backend.db import AnalysisInput, Record
 
 
 def account(client):
-    registered = client.post("/api/auth/register", json={"email": "queue@example.com", "password": "Strong-test-password-123!", "organization": "Queue tests"})
+    registered = client.post(
+        "/api/auth/register",
+        json={"email": "queue@example.com", "password": "Strong-test-password-123!", "organization": "Queue tests"},
+    )
     client.headers["x-csrf-token"] = registered.json()["csrf"]
 
 
@@ -34,7 +37,9 @@ def test_queued_import_encrypts_input_and_worker_persists_stages(client, monkeyp
     with zipfile.ZipFile(archive, "w") as bundle:
         bundle.writestr("README.md", "Authentication uses JWT.")
         bundle.writestr("app.py", f'import fastapi\npassword = "{secret}"\n')
-    response = client.post("/api/archive/import?name=Queued", content=archive.getvalue(), headers={"content-type": "application/zip"})
+    response = client.post(
+        "/api/archive/import?name=Queued", content=archive.getvalue(), headers={"content-type": "application/zip"}
+    )
     assert response.status_code == 202
     result = response.json()
     assert result["snapshot_id"] is None and result["state"] == "QUEUED"
@@ -57,10 +62,27 @@ def test_queued_import_encrypts_input_and_worker_persists_stages(client, monkeyp
     tasks.analyze_job.run(result["job_id"])  # Delivery is idempotent.
 
 
+def test_queued_zip_retains_unsupported_encoding_diagnostics(client, monkeypatch):
+    tasks, _ = queued(client, monkeypatch)
+    stream = io.BytesIO()
+    with zipfile.ZipFile(stream, "w") as archive:
+        archive.writestr("app.py", "def work(): pass".encode("utf-16"))
+    response = client.post(
+        "/api/archive/import?name=Encoded", content=stream.getvalue(), headers={"content-type": "application/zip"}
+    )
+    assert response.status_code == 202
+    tasks.analyze_job.run(response.json()["job_id"])
+    repo_id = response.json()["repository_id"]
+    quality = client.get(f"/api/code-quality/{repo_id}/overview").json()
+    assert quality["state"] == "PARTIAL" and quality["scope_counts"]["UNSUPPORTED_ENCODING"] == 1
+
+
 def test_queue_failed_dispatch_cancel_and_tenant_scope(client, monkeypatch):
     tasks, _ = queued(client, monkeypatch)
+
     def unavailable(*args, **kwargs):
         raise ConnectionError("Synthetic broker outage")
+
     monkeypatch.setattr(tasks.celery, "send_task", unavailable)
     result = client.post("/api/import", json={"name": "Retained", "files": {"app.py": "import fastapi"}}).json()
     assert result["dispatch"] == "PENDING_RETRY"
@@ -69,7 +91,14 @@ def test_queue_failed_dispatch_cancel_and_tenant_scope(client, monkeypatch):
         assert db.get(AnalysisInput, result["job_id"]) is None
     tasks.analyze_job.run(result["job_id"])
     assert client.get("/api/record/" + result["job_id"]).json()["state"] == "CANCELLED"
-    other = client.post("/api/auth/register", json={"email": "queue-other@example.com", "password": "Strong-test-password-123!", "organization": "Other queue"})
+    other = client.post(
+        "/api/auth/register",
+        json={
+            "email": "queue-other@example.com",
+            "password": "Strong-test-password-123!",
+            "organization": "Other queue",
+        },
+    )
     client.headers["x-csrf-token"] = other.json()["csrf"]
     assert client.get("/api/record/" + result["job_id"]).status_code == 404
     assert client.post(f"/api/jobs/{result['job_id']}/retry").status_code == 404
@@ -79,7 +108,9 @@ def test_expired_queued_input_fails_safely(client, monkeypatch):
     tasks, _ = queued(client, monkeypatch)
     result = client.post("/api/import", json={"name": "Expiry", "files": {"app.py": "import fastapi"}}).json()
     with main.Session() as db:
-        db.get(AnalysisInput, result["job_id"]).expires_at = (datetime.now(timezone.utc) - timedelta(seconds=1)).isoformat()
+        db.get(AnalysisInput, result["job_id"]).expires_at = (
+            datetime.now(timezone.utc) - timedelta(seconds=1)
+        ).isoformat()
         db.commit()
     with pytest.raises(ValueError):
         tasks.analyze_job.run(result["job_id"])
@@ -93,7 +124,9 @@ def test_scheduler_purges_expired_inputs_and_marks_stopped_jobs(client, monkeypa
     tasks, _ = queued(client, monkeypatch)
     result = client.post("/api/import", json={"name": "Purge", "files": {"app.py": "import fastapi"}}).json()
     with main.Session() as db:
-        db.get(AnalysisInput, result["job_id"]).expires_at = (datetime.now(timezone.utc) - timedelta(seconds=1)).isoformat()
+        db.get(AnalysisInput, result["job_id"]).expires_at = (
+            datetime.now(timezone.utc) - timedelta(seconds=1)
+        ).isoformat()
         db.commit()
     assert tasks.expire_inputs.run() == {"expired_inputs": 1}
     assert tasks.expire_inputs.run() == {"expired_inputs": 0}

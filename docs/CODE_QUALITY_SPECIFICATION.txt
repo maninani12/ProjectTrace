@@ -1,0 +1,4838 @@
+######################################################################
+# PROJECTTRACE
+# MASTER CODE QUALITY / CODE INTELLIGENCE EXECUTION PROMPT
+# INDUSTRY-READY NATIVE STATIC ANALYSIS PLATFORM
+######################################################################
+
+IMPORTANT:
+
+This specification defines the approved direction for ProjectTrace
+Code Quality / Code Intelligence.
+
+Treat the CURRENT implementation as a BASELINE.
+
+Do NOT assume the current Code Quality module is industry-ready merely
+because:
+
+- it renders successfully
+- it produces some findings
+- tests pass
+- metrics appear on screen
+- regex rules work
+- a quality score exists
+- the dashboard looks polished
+
+The objective is to transform ProjectTrace Code Quality into a
+professional engineering capability that experienced developers can
+trust on real repositories.
+
+DO NOT rebuild working functionality unnecessarily.
+
+FIRST:
+
+inspect the actual latest ProjectTrace repository.
+
+Determine:
+
+what currently exists
+what actually works
+what is superficial
+what is duplicated
+what is incomplete
+what is technically weak
+what should be retained
+what should be refactored
+what should be replaced.
+
+Do not guess implementation status.
+
+======================================================================
+1. YOUR ROLE
+======================================================================
+
+Act as the OWNER of ProjectTrace Code Intelligence.
+
+Simultaneously act as:
+
+Principal Static Analysis Engineer
+Compiler Engineer
+Staff Backend Engineer
+Staff Frontend Engineer
+Developer Tools Product Engineer
+Software Quality Architect
+Security Engineer
+Performance Engineer
+Database Architect
+UX Architect
+QA Engineer
+Developer Experience Engineer
+Technical Writer
+Product Owner.
+
+Your job is not:
+
+"add some code-quality cards."
+
+Your job is:
+
+create a trustworthy native Code Intelligence platform.
+
+Take routine technical decisions autonomously.
+
+Do not repeatedly ask:
+
+"Should I continue?"
+
+Continue through the agreed implementation scope.
+
+Stop only for genuine blockers.
+
+Never:
+
+fake analyzer depth
+fake language support
+fake metrics
+fake coverage
+fake benchmark results
+fake quality scores
+fake tests
+fake scalability
+fake false-positive rates.
+
+======================================================================
+2. PROJECTTRACE PRODUCT CONTEXT
+======================================================================
+
+ProjectTrace is:
+
+Unified Engineering Integrity, Quality & Security Platform.
+
+Core statement:
+
+"ProjectTrace continuously verifies whether what an engineering
+organization says about its software is still supported by what the
+software actually implements."
+
+Code Quality is NOT an isolated side product.
+
+Code Quality creates ENGINEERING EVIDENCE.
+
+Flow:
+
+SOURCE CODE
+    ↓
+CODE INTELLIGENCE
+    ↓
+QUALITY FINDINGS + METRICS
+    ↓
+PROJECT EVIDENCE GRAPH
+    ↓
+COMPONENTS / CLAIMS / PRS / OWNERS
+    ↓
+IMPACT + POLICY + RISK
+    ↓
+ENGINEERING DECISION.
+
+Every important Code Quality result should eventually be able to connect
+to:
+
+Repository
+Snapshot
+Commit
+PR
+File
+Symbol
+Component
+Owner
+Claim
+Finding
+Policy
+Audit history.
+
+======================================================================
+3. PRODUCT PRINCIPLE
+======================================================================
+
+ProjectTrace Code Quality must answer:
+
+Is this code healthy?
+
+What changed?
+
+Did this PR introduce new technical debt?
+
+Where exactly is the problem?
+
+Why was it detected?
+
+What rule detected it?
+
+How confident is the analysis?
+
+Is it new or legacy?
+
+Who owns it?
+
+How often is this code changed?
+
+Is this code becoming worse?
+
+What should the developer do?
+
+What else does this change affect?
+
+What evidence proves the conclusion?
+
+If the product cannot answer these questions clearly, the module is not
+finished.
+
+======================================================================
+4. INDUSTRY REFERENCE STRATEGY
+======================================================================
+
+Study interaction and engineering principles from mature products.
+
+SONARQUBE
+
+Learn from:
+
+Quality Gates
+New Code
+Overall Code
+Quality Profiles
+complexity
+duplication
+coverage
+rule documentation
+issue lifecycle.
+
+GITHUB CODE QUALITY / CODE SCANNING
+
+Learn from:
+
+source-level findings
+PR annotations
+repository context
+organization health/trends
+developer-native workflow.
+
+JETBRAINS QODANA
+
+Learn from:
+
+baseline comparison
+inspection profiles
+current vs existing problems
+coverage ingestion
+quality gates
+SARIF interoperability.
+
+CODACY
+
+Learn from:
+
+organization coding standards
+metrics
+coverage
+duplication
+repository/team configuration.
+
+CODESCENE
+
+Learn from:
+
+change hotspots
+code health
+change frequency
+change coupling
+technical-debt prioritization.
+
+DEEPSOURCE
+
+Learn from:
+
+finding explanations
+contextual remediation
+developer workflow.
+
+PMD / CPD
+
+Learn from:
+
+AST-based analysis
+dedicated duplicate-code analysis.
+
+IMPORTANT:
+
+Do NOT copy:
+
+their source code
+their proprietary algorithms
+their UI
+their trademarks
+their rule descriptions verbatim
+their scoring formulas
+their proprietary product structure.
+
+Learn the principles.
+
+Build ProjectTrace-native implementation.
+
+======================================================================
+5. PRODUCT POSITIONING
+======================================================================
+
+ProjectTrace Code Quality should ultimately be understood as:
+
+"Natively analyze code quality and connect quality problems with
+engineering evidence, change history, claims, ownership and pull
+requests."
+
+It should NOT be marketed as:
+
+"our version of SonarQube."
+
+It must become ProjectTrace Code Intelligence.
+
+======================================================================
+6. INITIAL LANGUAGE SCOPE
+======================================================================
+
+Prioritize serious support for:
+
+Python
+TypeScript
+JavaScript
+Java.
+
+Support must be honest.
+
+Per language report:
+
+FULL
+PARTIAL
+BETA
+EXPERIMENTAL
+UNSUPPORTED.
+
+Never show:
+
+"Repository analyzed successfully"
+
+if substantial source was unsupported.
+
+======================================================================
+7. ANALYSIS COVERAGE
+======================================================================
+
+Every analysis must calculate and expose coverage.
+
+Example:
+
+ANALYSIS COVERAGE
+
+Python
+
+FULL
+
+482 / 482 supported source files analyzed.
+
+
+TypeScript
+
+FULL
+
+201 / 201.
+
+
+Java
+
+BETA
+
+51 / 74.
+
+
+Rust
+
+NOT SUPPORTED
+
+18 source files.
+
+
+Generated Code
+
+EXCLUDED
+
+144 files.
+
+
+Vendor Code
+
+EXCLUDED
+
+2,804 files.
+
+Explain:
+
+why files were excluded
+why files were unsupported
+what the Quality Gate covers.
+
+Never silently ignore unsupported source.
+
+======================================================================
+8. LANGUAGE DETECTION
+======================================================================
+
+Create reliable language classification.
+
+Use:
+
+extensions
+known manifests
+directory conventions
+parser confirmation where useful.
+
+Avoid incorrectly counting:
+
+generated output
+vendor dependencies
+compiled output
+coverage output
+minified assets
+
+as first-party source.
+
+======================================================================
+9. ANALYZER ARCHITECTURE
+======================================================================
+
+Target architecture:
+
+REPOSITORY SNAPSHOT
+        ↓
+FILE CLASSIFICATION
+        ↓
+LANGUAGE DETECTOR
+        ↓
+PARSER ADAPTER
+        ↓
+AST / TOKEN MODEL
+        ↓
+SYMBOL INDEX
+        ↓
+CONTROL FLOW GRAPH
+        ↓
+DATA FLOW where needed
+        ↓
+METRICS ENGINE
+        ↓
+QUALITY RULE ENGINE
+        ↓
+DUPLICATION ENGINE
+        ↓
+COVERAGE IMPORT
+        ↓
+BASELINE / DIFF ENGINE
+        ↓
+FINDING NORMALIZER
+        ↓
+FINDING FINGERPRINT
+        ↓
+QUALITY GATE
+        ↓
+EVIDENCE GRAPH
+        ↓
+PR RESULT
+        ↓
+HISTORY / TRENDS.
+
+Do not implement the mature architecture as:
+
+file
+→ regex
+→ random warning
+→ dashboard.
+
+======================================================================
+10. PARSER-FIRST ANALYSIS
+======================================================================
+
+For mature language support:
+
+use real parsing.
+
+Build:
+
+PythonParserAdapter
+TypeScriptParserAdapter
+JavaScriptParserAdapter
+JavaParserAdapter
+
+or equivalent abstractions appropriate to the current architecture.
+
+Analyzer should understand where feasible:
+
+modules
+imports
+functions
+methods
+classes
+interfaces
+control structures
+expressions
+calls
+exceptions
+returns
+variables
+symbols.
+
+Regex may remain for:
+
+narrow textual checks
+comments
+specific configuration markers
+simple patterns where AST provides no benefit.
+
+Regex must not be the main implementation strategy for professional
+Code Quality.
+
+======================================================================
+11. SYMBOL MODEL
+======================================================================
+
+Store meaningful symbols:
+
+Module
+Class
+Interface
+Function
+Method
+Constructor
+Property
+Field
+Variable where useful.
+
+Each relevant symbol should carry:
+
+language
+repository
+snapshot
+file
+qualified name
+range
+hash
+metrics
+ownership context where available.
+
+This supports:
+
+stable findings
+metrics
+hotspots
+impact
+historical comparison.
+
+======================================================================
+12. CONTROL FLOW
+======================================================================
+
+Create control-flow representation where required.
+
+Understand:
+
+branches
+loops
+returns
+exceptions
+break
+continue
+logical decisions.
+
+Control flow supports:
+
+complexity
+unreachable code
+reliability checks
+later SAST integration.
+
+Avoid building multiple incompatible CFG implementations across
+ProjectTrace.
+
+Code Quality and SAST should reuse shared language-analysis
+infrastructure where technically appropriate.
+
+======================================================================
+13. QUALITY DIMENSIONS
+======================================================================
+
+Do not collapse all Code Quality into one mysterious number.
+
+Primary dimensions:
+
+RELIABILITY
+
+and
+
+MAINTAINABILITY.
+
+RELIABILITY examples:
+
+probable bugs
+resource misuse
+incorrect control flow
+incorrect exception behavior
+unsafe API misuse
+nullability problems where reliable
+incorrect comparisons
+logic mistakes
+language/framework mistakes.
+
+MAINTAINABILITY examples:
+
+cyclomatic complexity
+cognitive complexity
+deep nesting
+long functions
+large classes
+large files
+excessive parameters
+duplication
+dead code
+overly complicated expressions
+poor structure
+repeated responsibility
+maintainability smells.
+
+Keep SECURITY separate.
+
+Do not inflate Code Quality counts by inserting security findings into
+quality totals.
+
+======================================================================
+14. SEVERITY
+======================================================================
+
+Use a consistent severity system:
+
+INFO
+LOW
+MEDIUM
+HIGH
+CRITICAL.
+
+Severity must not mean:
+
+confidence.
+
+Maintain separately:
+
+severity
+confidence
+review status.
+
+Example:
+
+Severity:
+HIGH
+
+Confidence:
+HIGH
+
+Lifecycle:
+OPEN.
+
+======================================================================
+15. RULE ENGINE
+======================================================================
+
+Create a first-class rule registry.
+
+Each rule requires:
+
+rule_id
+rule_version
+language
+quality dimension
+category
+default severity
+confidence expectations
+title
+description
+why it matters
+detection methodology
+default threshold
+configurable parameters
+bad example
+good example
+remediation
+references
+tags
+status
+supported language versions
+supported framework versions where relevant
+introduced analyzer version
+deprecated analyzer version where applicable.
+
+Example rule:
+
+PT-PY-COMP-001
+
+Cyclomatic Complexity Exceeds Threshold
+
+Language:
+Python
+
+Dimension:
+Maintainability
+
+Severity:
+HIGH
+
+Default threshold:
+15
+
+Detection:
+AST + CFG.
+
+======================================================================
+16. RULE VERSIONING
+======================================================================
+
+Rules evolve.
+
+Never silently change behavior.
+
+Track:
+
+rule version
+analyzer version
+parser version.
+
+If a rule changes significantly:
+
+historical findings must remain explainable.
+
+Do not make old results impossible to reproduce.
+
+======================================================================
+17. RULE STATUS
+======================================================================
+
+Support:
+
+STABLE
+BETA
+EXPERIMENTAL
+DEPRECATED.
+
+Only mature rules should be enabled by default in recommended enterprise
+profiles.
+
+Experimental rules should not silently block PRs.
+
+======================================================================
+18. RULE QUALITY
+======================================================================
+
+Do not chase:
+
+"number of rules."
+
+Prioritize:
+
+precision
+explainability
+developer usefulness
+low noise.
+
+A smaller trustworthy ruleset is superior to thousands of poor rules.
+
+Measure each important rule against fixtures.
+
+======================================================================
+19. QUALITY PROFILES
+======================================================================
+
+Create configurable profiles.
+
+At minimum:
+
+ProjectTrace Recommended
+
+Organization Default
+
+Team Profile where supported
+
+Repository Override.
+
+A profile controls:
+
+enabled rules
+disabled rules
+thresholds
+severity overrides
+language applicability.
+
+Do not require editing source code to change quality policy.
+
+======================================================================
+20. QUALITY PROFILE UX
+======================================================================
+
+UI:
+
+CODE QUALITY
+→ RULES & PROFILES.
+
+Show:
+
+Profile name
+
+Languages
+
+Rules enabled
+
+Modified rules
+
+Repository overrides
+
+Last changed
+
+Changed by.
+
+Allow:
+
+search rules
+
+filter by:
+
+language
+severity
+dimension
+category
+status.
+
+======================================================================
+21. CORE METRICS
+======================================================================
+
+Implement and document supported metrics such as:
+
+Physical lines
+Logical lines where appropriate
+
+Files
+
+Classes
+
+Functions / methods
+
+Cyclomatic Complexity
+
+Cognitive Complexity
+or a clearly documented ProjectTrace equivalent
+
+Nesting Depth
+
+Function Length
+
+Class Size
+
+File Size
+
+Parameter Count
+
+Duplication
+
+Coverage from external reports
+
+Issue counts
+
+New issue counts.
+
+Do not invent metrics without explaining the definition.
+
+======================================================================
+22. CYCLOMATIC COMPLEXITY
+======================================================================
+
+Calculate structurally.
+
+Document exactly what increments complexity for each language.
+
+Example concepts:
+
+if
+else-if where applicable
+loops
+case branches
+logical branches where chosen
+catch blocks where chosen.
+
+Do not produce inconsistent scores between runs.
+
+======================================================================
+23. COGNITIVE COMPLEXITY
+======================================================================
+
+Either:
+
+implement a documented ProjectTrace Cognitive Complexity model
+
+or:
+
+use another well-defined non-proprietary equivalent.
+
+Do not claim exact compatibility with proprietary scoring unless it is
+actually implemented and legally appropriate.
+
+Explain:
+
+nesting penalty
+decision contribution
+recursion treatment where relevant
+language-specific handling.
+
+======================================================================
+24. FUNCTION SIZE
+======================================================================
+
+Detect oversized functions/methods.
+
+Possible dimensions:
+
+logical statements
+physical lines
+complexity
+nesting.
+
+Do not use one universal threshold blindly.
+
+Profiles may configure thresholds.
+
+======================================================================
+25. CLASS / TYPE SIZE
+======================================================================
+
+Detect oversized classes/types using explainable measures.
+
+Examples:
+
+method count
+field count
+lines
+responsibility indicators where reliable.
+
+Avoid subjective "bad class" conclusions without evidence.
+
+======================================================================
+26. PARAMETER COUNT
+======================================================================
+
+Detect functions with excessive parameter count.
+
+Support configurable thresholds.
+
+Recognize common framework patterns and language constructs to minimize
+false positives.
+
+======================================================================
+27. NESTING
+======================================================================
+
+Calculate maximum nesting.
+
+Show contributors.
+
+Example:
+
+Function:
+processPayment()
+
+Maximum nesting:
+6
+
+Recommended threshold:
+4.
+
+Finding must show which constructs create nesting.
+
+======================================================================
+28. DUPLICATION ENGINE
+======================================================================
+
+Build a real duplication engine.
+
+Do NOT rely solely on raw string matching.
+
+Prefer:
+
+token normalization
+AST normalization
+language-aware comparison.
+
+Normalize where appropriate:
+
+whitespace
+comments
+identifier names where carefully designed
+literal variation
+formatting.
+
+Avoid falsely calling common boilerplate meaningful duplication.
+
+======================================================================
+29. DUPLICATION OUTPUT
+======================================================================
+
+Store:
+
+duplicate group ID
+
+repository
+
+snapshot
+
+files
+
+ranges
+
+normalized fingerprint
+
+token/statement count
+
+duplicated lines
+
+similarity level where meaningful.
+
+UI should show:
+
+side-by-side comparison.
+
+======================================================================
+30. DUPLICATION UI
+======================================================================
+
+CODE QUALITY
+→ DUPLICATION.
+
+Show:
+
+Overall duplication
+
+New-code duplication
+
+Duplicated blocks
+
+Duplicated lines
+
+Most duplicated files
+
+Largest duplicate groups.
+
+Example:
+
+orders/create.ts
+88–129
+
+↕
+
+orders/update.ts
+105–146
+
+[COMPARE BLOCKS]
+
+Do not show only:
+
+"7 duplicates."
+
+======================================================================
+31. GENERATED CODE
+======================================================================
+
+Identify generated code.
+
+Signals may include:
+
+known directories
+generated comments
+generated filenames
+build output patterns
+tool-specific conventions.
+
+Examples:
+
+dist
+build
+generated
+target
+coverage
+node_modules
+vendor
+compiled artifacts.
+
+Generated code may be:
+
+excluded
+reported separately
+analyzed under explicit configuration.
+
+It must not distort quality.
+
+======================================================================
+32. VENDOR CODE
+======================================================================
+
+External vendored code should not normally count against first-party
+quality.
+
+Detect and report exclusions.
+
+Never silently analyze node_modules and claim poor repository quality.
+
+======================================================================
+33. ANALYSIS SCOPE
+======================================================================
+
+Provide configuration for:
+
+include paths
+exclude paths
+generated patterns
+vendor patterns
+test paths
+language overrides.
+
+Store effective configuration with the snapshot.
+
+======================================================================
+34. NEW CODE — CRITICAL REQUIREMENT
+======================================================================
+
+New-code analysis is mandatory for industry use.
+
+Support comparison:
+
+BASE
+versus
+HEAD.
+
+Examples:
+
+default branch baseline
+
+previous snapshot
+
+PR target branch
+
+specific commit.
+
+Identify:
+
+new files
+
+modified files
+
+new functions
+
+changed functions
+
+new findings
+
+resolved findings
+
+unchanged existing findings.
+
+======================================================================
+35. NEW CODE PRODUCT PRINCIPLE
+======================================================================
+
+A company should be able to improve quality without first fixing an
+entire legacy repository.
+
+ProjectTrace must support:
+
+"Do not introduce new technical debt."
+
+Therefore:
+
+New Code should normally be more important for PR gates than legacy
+debt.
+
+======================================================================
+36. BASELINE
+======================================================================
+
+Support an explicit baseline.
+
+Baseline may represent:
+
+previous accepted snapshot
+default branch state
+specific commit
+organizationally chosen baseline.
+
+Classify:
+
+NEW
+EXISTING
+RESOLVED
+REOPENED.
+
+Never compare arbitrarily chosen snapshots without showing them.
+
+======================================================================
+37. NEW CODE UI
+======================================================================
+
+CODE QUALITY
+→ NEW CODE.
+
+Show:
+
+Base commit
+
+Head commit
+
+PR where relevant
+
+Changed files
+
+New issues
+
+Resolved issues
+
+Reopened issues
+
+New duplication
+
+Complexity delta
+
+Changed-code coverage if report exists
+
+Gate result.
+
+Example:
+
+BASE
+
+main @ a3842fd
+
+HEAD
+
+PR #1842 @ ae98c4a
+
+Changed Files
+17
+
+New Findings
+3
+
+Resolved
+2
+
+New Duplication
+1.2%
+
+Complexity Delta
++11.
+
+======================================================================
+38. STABLE FINDING FINGERPRINTS
+======================================================================
+
+Do not identify findings using line number alone.
+
+Example:
+
+Finding appears at line 80.
+
+Developer adds 10 lines above it.
+
+Finding moves to line 90.
+
+It should remain:
+
+the SAME finding.
+
+Fingerprint should consider:
+
+organization
+repository
+rule
+language
+symbol
+normalized AST/token context
+structural location
+relevant semantic context.
+
+Fingerprint design must be versioned.
+
+======================================================================
+39. FINDING HISTORY
+======================================================================
+
+Track:
+
+first_seen
+
+last_seen
+
+introduced_snapshot
+
+introduced_commit
+
+introduced_PR where known
+
+resolved_snapshot
+
+resolved_commit
+
+resolved_PR where known
+
+reopened_count
+
+current_state.
+
+This powers trends and audit.
+
+======================================================================
+40. FINDING LIFECYCLE
+======================================================================
+
+Support:
+
+OPEN
+
+CONFIRMED
+
+IN_REVIEW
+
+FALSE_POSITIVE
+
+ACCEPTED
+
+RESOLVED
+
+EXCEPTION.
+
+Machine status must remain separate from human workflow state where
+needed.
+
+Never delete findings merely because a reviewer dismissed them.
+
+Preserve audit history.
+
+======================================================================
+41. FALSE POSITIVE
+======================================================================
+
+False-positive action requires:
+
+actor
+reason
+timestamp.
+
+Optionally:
+
+scope
+rule
+file
+symbol.
+
+Do not use false-positive status as silent suppression.
+
+======================================================================
+42. EXCEPTIONS
+======================================================================
+
+Exception requires:
+
+reason
+owner
+scope
+created date
+expiry date
+approver where organization policy requires.
+
+Expired exception:
+
+REVIEW_REQUIRED.
+
+======================================================================
+43. COVERAGE
+======================================================================
+
+ProjectTrace must NOT invent runtime test coverage through static source
+inspection.
+
+Coverage must come from real reports.
+
+Support progressively:
+
+LCOV
+
+Cobertura XML
+
+coverage.py XML
+
+JaCoCo XML
+
+Istanbul / Jest / Vitest compatible LCOV where applicable.
+
+======================================================================
+44. COVERAGE MODEL
+======================================================================
+
+Track:
+
+line coverage
+branch coverage
+condition coverage where report provides it
+changed-code coverage.
+
+Store:
+
+report type
+source
+snapshot
+timestamp
+validity
+mapping status.
+
+======================================================================
+45. MISSING COVERAGE
+======================================================================
+
+If no coverage report exists:
+
+show:
+
+COVERAGE NOT AVAILABLE.
+
+Explain:
+
+"No supported coverage report was supplied.
+ProjectTrace cannot determine actual runtime coverage from static source
+alone."
+
+Provide setup guidance.
+
+Never show:
+
+0%
+
+when the correct status is:
+
+UNKNOWN / NOT PROVIDED.
+
+======================================================================
+46. COVERAGE UI
+======================================================================
+
+CODE QUALITY
+→ COVERAGE.
+
+Example:
+
+Overall Line Coverage
+81.4%
+
+Changed Code
+89.7%
+
+Branch Coverage
+76%
+
+Report
+coverage/lcov.info
+
+Snapshot
+ae98c4a
+
+Status
+VALID.
+
+Allow drill-down:
+
+Repository
+Directory
+File.
+
+======================================================================
+47. MAINTENANCE HOTSPOTS
+======================================================================
+
+Create ProjectTrace-specific:
+
+MAINTENANCE HOTSPOTS.
+
+Do NOT confuse with:
+
+Security Hotspots.
+
+Maintenance Hotspots prioritize code using multiple factors.
+
+Possible factors:
+
+complexity
+code-quality findings
+duplication
+change frequency
+recent PR count
+number of contributors
+ownership instability
+business criticality when known
+impact graph relationships.
+
+======================================================================
+48. HOTSPOT PRINCIPLE
+======================================================================
+
+Bad code that is never touched may be less urgent than moderately bad
+code changed every week.
+
+Prioritize:
+
+technical risk
++
+change activity.
+
+Never hide the factors behind a magic number.
+
+======================================================================
+49. HOTSPOT UI
+======================================================================
+
+CODE QUALITY
+→ MAINTENANCE HOTSPOTS.
+
+Example:
+
+1. payments/service.py
+
+Priority:
+HIGH
+
+Why:
+
+Cognitive complexity:
+32
+
+Changed:
+41 times in 90 days
+
+Open quality findings:
+8
+
+Authors:
+7
+
+Owner:
+Payments Team.
+
+Allow:
+
+[OPEN FILE]
+[VIEW HISTORY]
+[VIEW FINDINGS]
+[VIEW IMPACT].
+
+======================================================================
+50. CHANGE FREQUENCY
+======================================================================
+
+Use repository history where available.
+
+Track carefully:
+
+file changes
+symbol changes where feasible
+PR frequency
+authors.
+
+Do not interpret high change frequency as bad by itself.
+
+It becomes meaningful only combined with quality/context.
+
+======================================================================
+51. CHANGE COUPLING
+======================================================================
+
+Where data supports it, identify files/components that frequently change
+together.
+
+Example:
+
+payments/service.py
+
+frequently changes with:
+
+payments/schema.py
+payments/repository.py.
+
+Use as engineering insight.
+
+Do not claim architectural dependency solely from co-change data.
+
+======================================================================
+52. TRENDS
+======================================================================
+
+Industry quality requires history.
+
+CODE QUALITY
+→ TRENDS.
+
+Show time series for:
+
+Maintainability findings
+
+Reliability findings
+
+New debt
+
+Resolved debt
+
+Duplication
+
+Complexity
+
+Coverage
+
+Gate pass rate
+
+Maintenance hotspots.
+
+======================================================================
+53. TREND INTEGRITY
+======================================================================
+
+Historical trends are only meaningful when analysis remains comparable.
+
+Record:
+
+analyzer version
+rule versions
+profile
+coverage state
+scope.
+
+If methodology changes substantially:
+
+annotate trend.
+
+Do not present incompatible historical values as perfectly comparable.
+
+======================================================================
+54. QUALITY GATES
+======================================================================
+
+Create ProjectTrace Quality Gates.
+
+Results:
+
+PASS
+
+WARNING
+
+REVIEW_REQUIRED
+
+FAIL.
+
+Gate conditions are configurable.
+
+Examples:
+
+No new CRITICAL reliability finding.
+
+No new HIGH maintainability finding.
+
+New duplication < 3%.
+
+Changed-code coverage >= 80%.
+
+No function introduced above complexity 20.
+
+No unreviewed blocker rule.
+
+======================================================================
+55. GATE PRINCIPLE
+======================================================================
+
+Every gate result must answer:
+
+What failed?
+
+Why?
+
+What threshold?
+
+Which finding?
+
+What changed?
+
+What can the developer do?
+
+Never return only:
+
+"Quality Gate Failed."
+
+======================================================================
+56. QUALITY GATE UI
+======================================================================
+
+CODE QUALITY OVERVIEW.
+
+Top:
+
+QUALITY GATE
+
+REVIEW REQUIRED.
+
+Then:
+
+2 CONDITIONS FAILED.
+
+Example:
+
+FAIL
+
+New cognitive complexity.
+
+process_payment()
+
+32 > configured limit 15.
+
+
+REVIEW REQUIRED
+
+1 High maintainability finding introduced.
+
+Then:
+
+[VIEW BLOCKERS].
+
+======================================================================
+57. QUALITY GATE + PROJECTTRACE PR GATE
+======================================================================
+
+Code Quality has its own gate.
+
+But ProjectTrace also has ONE unified PR result.
+
+Example:
+
+PROJECTTRACE PR CHECK
+
+Code Quality:
+FAIL
+
+Application Security:
+PASS
+
+Dependencies:
+PASS
+
+Secrets:
+PASS
+
+Infrastructure:
+WARNING
+
+Claims:
+1 CONTRADICTED
+
+Overall:
+REVIEW REQUIRED.
+
+Do not make developers inspect separate disconnected systems.
+
+======================================================================
+58. CODE QUALITY OVERVIEW UX
+======================================================================
+
+Recommended navigation:
+
+CODE QUALITY
+
+Overview
+
+New Code
+
+Findings
+
+Maintenance Hotspots
+
+Metrics
+
+Coverage
+
+Duplication
+
+Trends
+
+Rules & Profiles.
+
+Keep this structure stable unless user research proves a better one.
+
+======================================================================
+59. CODE QUALITY OVERVIEW
+======================================================================
+
+The first screen should answer:
+
+"Can this change/repository meet our quality expectations?"
+
+Top section:
+
+repository
+branch
+snapshot
+analysis time
+profile
+coverage status.
+
+Then:
+
+QUALITY GATE.
+
+Then:
+
+NEW CODE.
+
+Then:
+
+OVERALL CODE.
+
+Then:
+
+TOP ISSUES.
+
+Then:
+
+HOTSPOTS.
+
+Then:
+
+TREND SNAPSHOT.
+
+Avoid a wall of 20 KPI cards.
+
+======================================================================
+60. NEW CODE VS OVERALL CODE
+======================================================================
+
+Always visibly distinguish:
+
+NEW CODE
+
+from:
+
+OVERALL CODE.
+
+Example:
+
+NEW CODE
+
+Maintainability:
+FAIL
+
+Reliability:
+PASS
+
+Coverage:
+89%
+
+Duplication:
+1.2%.
+
+
+OVERALL CODE
+
+Existing debt:
+428 findings.
+
+Do not let legacy debt hide new regressions.
+
+======================================================================
+61. FINDINGS PAGE
+======================================================================
+
+Table-first.
+
+Columns:
+
+Severity
+
+Dimension
+
+Rule
+
+Finding
+
+File / Symbol
+
+New / Existing
+
+Owner
+
+Status
+
+Introduced
+
+Age.
+
+Filters:
+
+New Code / Overall
+
+Severity
+
+Reliability / Maintainability
+
+Language
+
+Rule
+
+Repository
+
+Component
+
+Directory
+
+Owner
+
+Status
+
+PR
+
+Age.
+
+======================================================================
+62. FINDING INSPECTOR
+======================================================================
+
+Click finding:
+
+open a side drawer or focused inspector.
+
+Show:
+
+Title
+
+Severity
+
+Confidence
+
+Dimension
+
+Rule ID
+
+Rule version
+
+File
+
+Symbol
+
+Line/range
+
+New/Existing
+
+Why detected
+
+Detection evidence
+
+Metric values
+
+Configured threshold
+
+Code excerpt
+
+History
+
+Owner
+
+PR
+
+Remediation.
+
+Actions:
+
+Assign
+
+Confirm
+
+In Review
+
+False Positive
+
+Accept
+
+Exception
+
+Resolve.
+
+======================================================================
+63. FINDING EXPLANATION
+======================================================================
+
+Bad:
+
+"High complexity detected."
+
+Good:
+
+"process_payment() has cognitive complexity 32.
+
+The active profile permits 15.
+
+Contributing structures include:
+
+5 nested branches
+3 loops
+2 exception branches
+multiple compound conditions."
+
+Explain WHY the value exists.
+
+======================================================================
+64. SOURCE VIEW
+======================================================================
+
+Show line-level code.
+
+Highlight:
+
+primary location
+
+secondary locations where useful.
+
+For complexity:
+
+highlight structural contributors if feasible.
+
+For duplication:
+
+highlight both duplicate blocks.
+
+Do not make users manually search source files.
+
+======================================================================
+65. METRICS PAGE
+======================================================================
+
+Organize metrics into meaningful groups.
+
+SIZE
+
+Files
+
+Functions
+
+Classes
+
+Lines.
+
+COMPLEXITY
+
+Total Cyclomatic Complexity
+
+Average Function Complexity
+
+Highest Function Complexity
+
+Cognitive Complexity
+
+Maximum Nesting.
+
+STRUCTURE
+
+Function Length
+
+Class Size
+
+Parameter Count.
+
+DUPLICATION
+
+Duplicated Blocks
+
+Duplicated Lines
+
+Duplication Density.
+
+TEST COVERAGE
+
+Line Coverage
+
+Branch Coverage
+
+Changed-Code Coverage.
+
+Do not overload overview with all metrics.
+
+======================================================================
+66. METRIC DRILL-DOWN
+======================================================================
+
+Every aggregate metric should be drillable.
+
+Example:
+
+Highest complexity.
+
+Click:
+
+payments/service.py
+
+process_payment()
+
+Complexity:
+32.
+
+Then show source and contributors.
+
+Aggregate numbers without navigation are weak UX.
+
+======================================================================
+67. QUALITY RATING
+======================================================================
+
+Do NOT invent a ProjectTrace:
+
+"Quality Score 92/100"
+
+unless:
+
+formula is documented
+weights are transparent
+normalization is justified
+developer testing validates usefulness.
+
+Prefer understandable states:
+
+GOOD
+
+NEEDS ATTENTION
+
+POOR
+
+or:
+
+PASS
+WARNING
+REVIEW REQUIRED
+FAIL.
+
+If numeric index is later created:
+
+document the full formula in ProjectTrace Guide.
+
+======================================================================
+68. RELIABILITY UI
+======================================================================
+
+Show:
+
+Open reliability findings
+
+New reliability findings
+
+Resolved
+
+Top affected files
+
+Rules.
+
+Finding examples:
+
+resource leak
+incorrect exception handling
+wrong comparison
+unsafe state handling.
+
+Do not mix security vulnerabilities into reliability unless rule
+taxonomy explicitly justifies it.
+
+======================================================================
+69. MAINTAINABILITY UI
+======================================================================
+
+Show:
+
+Complexity
+
+Duplication
+
+Long functions
+
+Deep nesting
+
+Large classes
+
+Repeated structure
+
+Maintainability findings
+
+Hotspots.
+
+Focus on actionable problems.
+
+======================================================================
+70. TEST FILES
+======================================================================
+
+Detect tests separately.
+
+Quality profiles may treat:
+
+production code
+
+test code
+
+generated code
+
+examples
+
+differently.
+
+Do not apply every production rule blindly to tests.
+
+======================================================================
+71. FRAMEWORK AWARENESS
+======================================================================
+
+Where supported, analyzer should understand common frameworks.
+
+Examples:
+
+Python:
+
+FastAPI
+Django
+Flask.
+
+TypeScript/JavaScript:
+
+React
+Node
+Express
+NestJS.
+
+Java:
+
+Spring
+Jakarta.
+
+Framework-specific rules must be carefully benchmarked.
+
+======================================================================
+72. SOURCE CONFIGURATION
+======================================================================
+
+Recognize repository configuration where relevant.
+
+Examples:
+
+tsconfig
+
+pyproject
+
+package manifest
+
+Maven/Gradle configuration.
+
+Do not execute project build tools merely to understand configuration.
+
+Imported repository code remains untrusted.
+
+======================================================================
+73. NEVER EXECUTE IMPORTED CODE
+======================================================================
+
+Code Quality analysis must not run:
+
+npm install
+
+pip install
+
+mvn
+
+gradle
+
+project scripts
+
+shell files
+
+PowerShell
+
+compiled binaries
+
+Makefiles
+
+Dockerfiles.
+
+Static analysis must remain safe.
+
+======================================================================
+74. LARGE REPOSITORY SUPPORT
+======================================================================
+
+Plan for:
+
+large repos
+
+monorepos
+
+multiple languages
+
+generated files
+
+many findings.
+
+Do not load all ASTs into memory if unnecessary.
+
+Use:
+
+streaming
+batching
+content hashes
+persistent caches
+worker jobs.
+
+======================================================================
+75. INCREMENTAL ANALYSIS
+======================================================================
+
+Mandatory.
+
+Reuse prior results when:
+
+file content unchanged
+
+analyzer unchanged
+
+parser unchanged
+
+rule/profile unchanged.
+
+Cache key should include relevant versions.
+
+Analyze changed code intelligently.
+
+Do not reparse everything for a one-file PR unless necessary.
+
+======================================================================
+76. DEPENDENCY GRAPH WITH QUALITY
+======================================================================
+
+Where reliable:
+
+connect quality findings to:
+
+files
+symbols
+components
+dependencies.
+
+Do not overclaim runtime relationships.
+
+======================================================================
+77. PROJECTTRACE EVIDENCE GRAPH INTEGRATION
+======================================================================
+
+Quality findings become Evidence Graph entities.
+
+Example:
+
+Quality Finding
+        ↓
+DETECTED_IN
+        ↓
+Function
+        ↓
+DEFINED_IN
+        ↓
+File
+        ↓
+BELONGS_TO
+        ↓
+Component
+        ↓
+OWNED_BY
+        ↓
+Team.
+
+Finding may also relate to:
+
+CHANGED_BY
+PR
+
+AFFECTS
+Claim
+
+VIOLATES
+Policy.
+
+======================================================================
+78. CLAIM INTEGRATION
+======================================================================
+
+Quality findings may become evidence for relevant engineering claims.
+
+Example claim:
+
+"Payment processing is isolated from validation."
+
+ProjectTrace observes:
+
+one large function combining:
+
+validation
+authorization
+payment execution
+persistence.
+
+This MAY contribute evidence.
+
+Do not automatically contradict semantic architecture claims based only
+on one complexity rule.
+
+Use evidence authority and confidence correctly.
+
+======================================================================
+79. IMPACT ENGINE
+======================================================================
+
+Quality changes should participate in impact analysis.
+
+Example:
+
+PR modifies:
+
+payments/service.py.
+
+Impact Engine finds:
+
+Component:
+Payments.
+
+Quality:
+Complexity regression.
+
+Related claims:
+2.
+
+Related docs:
+1.
+
+Owner:
+Payments Team.
+
+Policy:
+New complexity limit violated.
+
+This is a ProjectTrace differentiator.
+
+======================================================================
+80. PR INTEGRATION
+======================================================================
+
+For every PR analysis, Code Quality returns:
+
+Changed files
+
+New findings
+
+Resolved findings
+
+Reopened findings
+
+Complexity delta
+
+New duplication
+
+Changed-code coverage if available
+
+Gate result.
+
+Annotate changed code where SCM integration supports it.
+
+======================================================================
+81. PR ANNOTATIONS
+======================================================================
+
+PR comment/annotation should be concise.
+
+Example:
+
+HIGH · Maintainability
+
+process_payment() cognitive complexity increased:
+
+14 → 32
+
+Allowed:
+15
+
+Introduced in this PR.
+
+[View in ProjectTrace]
+
+Do not spam 500 comments.
+
+Aggregate where appropriate.
+
+======================================================================
+82. SARIF
+======================================================================
+
+Support SARIF 2.1.0 export where appropriate.
+
+Map:
+
+rule
+
+severity
+
+message
+
+location
+
+help
+
+fingerprint.
+
+Validate SARIF.
+
+Do not advertise interoperability until exported files pass schema/tool
+validation.
+
+======================================================================
+83. IMPORTED ANALYSIS
+======================================================================
+
+ProjectTrace may optionally ingest third-party static-analysis evidence
+in the future.
+
+But:
+
+native ProjectTrace Code Quality remains independent.
+
+External results should be labeled with source.
+
+Do not silently mix external and native findings.
+
+======================================================================
+84. OWNER MAPPING
+======================================================================
+
+Determine ownership from reliable sources such as:
+
+component ownership
+
+team assignments
+
+CODEOWNERS
+
+repository configuration
+
+explicit ProjectTrace ownership.
+
+Do not guess owners from commit frequency alone.
+
+Change history may be shown separately as:
+
+contributors.
+
+======================================================================
+85. CODE OWNERSHIP UX
+======================================================================
+
+Finding:
+
+Owner:
+Payments Team.
+
+Contributors:
+7.
+
+Last significant author:
+...
+
+Keep:
+
+ownership
+
+and:
+
+authorship
+
+separate.
+
+======================================================================
+86. TECHNICAL DEBT
+======================================================================
+
+Do not present technical debt as an arbitrary number of hours unless the
+calculation is transparent.
+
+Prefer:
+
+finding count
+
+severity
+
+hotspot priority
+
+age
+
+change frequency
+
+ownership
+
+trend.
+
+If estimated remediation effort is introduced:
+
+label as estimate
+
+document methodology.
+
+======================================================================
+87. QUALITY TRENDS
+======================================================================
+
+Provide repository and organization trends.
+
+Possible views:
+
+7 days
+
+30 days
+
+90 days
+
+custom range.
+
+Metrics:
+
+New findings
+
+Resolved findings
+
+Open findings
+
+Gate pass rate
+
+Complexity
+
+Duplication
+
+Coverage
+
+Hotspot count.
+
+======================================================================
+88. ORGANIZATION QUALITY VIEW
+======================================================================
+
+Later / enterprise scope:
+
+show systems/repos grouped by:
+
+Healthy
+
+Needs Attention
+
+Failing Gates
+
+Improving
+
+Regressing.
+
+Avoid comparing projects using misleading universal metrics.
+
+Normalize carefully.
+
+======================================================================
+89. QUALITY POLICY
+======================================================================
+
+Quality Gates may feed ProjectTrace Policy Engine.
+
+Example:
+
+POLICY
+
+All production APIs must pass the Recommended Code Quality Gate.
+
+Result:
+
+FAIL.
+
+Reason:
+
+identity-api
+
+new HIGH maintainability finding.
+
+Keep:
+
+rule engine
+
+quality gate
+
+organization policy
+
+as related but distinct layers.
+
+======================================================================
+90. PROJECTTRACE GUIDE
+======================================================================
+
+ProjectTrace Guide must explain Code Quality simply.
+
+SIMPLE VIEW:
+
+"Code Quality checks whether your source code is becoming difficult to
+understand, unreliable or expensive to change."
+
+Explain:
+
+Reliability
+
+Maintainability
+
+Complexity
+
+Duplication
+
+Coverage
+
+New Code
+
+Quality Gate
+
+Baseline
+
+Hotspot.
+
+TECHNICAL VIEW:
+
+Explain:
+
+AST
+
+CFG
+
+rule engine
+
+fingerprinting
+
+coverage reports
+
+diff analysis
+
+profiles
+
+metrics.
+
+======================================================================
+91. QUALITY GATE GUIDE EXAMPLE
+======================================================================
+
+Simple:
+
+"A Quality Gate is a set of rules that decides whether a change meets
+your team's quality standards."
+
+Example:
+
+No new High problems.
+
+Changed-code coverage >= 80%.
+
+No new duplicated block above policy.
+
+Then:
+
+PASS / REVIEW REQUIRED / FAIL.
+
+======================================================================
+92. CODE QUALITY EMPTY STATES
+======================================================================
+
+Handle separately:
+
+Analysis not run
+
+Analysis running
+
+No quality problems
+
+No new problems
+
+No coverage report
+
+Unsupported language
+
+No baseline
+
+No repository
+
+No history
+
+Filters returned nothing
+
+Analysis partial
+
+Analysis failed.
+
+Never use one generic:
+
+"No data."
+
+======================================================================
+93. ANALYSIS PROGRESS
+======================================================================
+
+Show truthful stages.
+
+Example:
+
+Analyzing Code Quality
+
+✓ Source classified
+
+✓ Python parsed
+
+✓ TypeScript parsed
+
+● Computing metrics
+
+○ Finding duplication
+
+○ Applying quality rules
+
+○ Comparing baseline
+
+○ Evaluating quality gate.
+
+Never fake percentages.
+
+======================================================================
+94. ANALYSIS FAILURE
+======================================================================
+
+Partial language failure must not invalidate all useful results.
+
+Example:
+
+ANALYSIS PARTIAL.
+
+Python:
+COMPLETE
+
+TypeScript:
+COMPLETE
+
+Java:
+FAILED PARSER ON 2 FILES.
+
+Show:
+
+affected files
+reason
+retry option.
+
+Never display:
+
+COMPLETE
+
+when significant steps failed.
+
+======================================================================
+95. ANALYZER SECURITY
+======================================================================
+
+Repository content is untrusted.
+
+Parsers:
+
+sandbox where appropriate
+
+resource-limit
+
+timeout
+
+memory-limit
+
+no arbitrary network
+
+read-only source.
+
+Protect against:
+
+parser bombs
+
+pathological syntax
+
+huge files
+
+deep nesting
+
+malformed encodings.
+
+======================================================================
+96. RESOURCE LIMITS
+======================================================================
+
+Configure:
+
+maximum source size
+
+maximum AST complexity
+
+parser timeout
+
+rule timeout
+
+duplication workload limits.
+
+When exceeded:
+
+report:
+
+SKIPPED_RESOURCE_LIMIT
+
+not:
+
+PASS.
+
+======================================================================
+97. DATABASE MODEL
+======================================================================
+
+Use normalized storage.
+
+Potential entities:
+
+Analyzer
+
+AnalyzerVersion
+
+LanguageSupport
+
+QualityRule
+
+QualityRuleVersion
+
+QualityProfile
+
+QualityProfileRule
+
+QualityGate
+
+QualityGateCondition
+
+QualityAnalysis
+
+QualityMetric
+
+Symbol
+
+QualityFinding
+
+FindingFingerprint
+
+FindingHistory
+
+CoverageReport
+
+CoverageMetric
+
+DuplicateGroup
+
+DuplicateOccurrence
+
+MaintenanceHotspot
+
+QualityTrendPoint.
+
+Adapt to current ProjectTrace architecture rather than blindly creating
+duplicates.
+
+======================================================================
+98. SNAPSHOT INTEGRATION
+======================================================================
+
+All results must belong to:
+
+organization
+
+repository
+
+snapshot
+
+commit
+
+branch
+
+analysis job
+
+analyzer version
+
+profile.
+
+No orphan metrics.
+
+======================================================================
+99. ANALYSIS REPRODUCIBILITY
+======================================================================
+
+Store enough metadata to understand:
+
+which analyzer produced result
+
+which rule version
+
+which profile
+
+which repository snapshot
+
+which exclusions
+
+which coverage report.
+
+Exact deterministic reproduction is the goal where practical.
+
+======================================================================
+100. FALSE POSITIVE BENCHMARK
+======================================================================
+
+Create negative fixtures.
+
+Example:
+
+code that looks complicated but is acceptable
+
+test fixtures containing intentional duplicate strings
+
+safe exception patterns
+
+generated code
+
+framework idioms
+
+valid resource management.
+
+The analyzer must prove it does NOT flag everything.
+
+======================================================================
+101. BENCHMARK CORPUS
+======================================================================
+
+Create controlled repositories/fixtures containing:
+
+simple clean functions
+
+deep nesting
+
+high cyclomatic complexity
+
+high cognitive complexity
+
+long function
+
+large class
+
+excessive parameters
+
+duplicate blocks
+
+near-duplicate blocks
+
+unreachable code
+
+resource misuse
+
+exception mistakes
+
+generated code
+
+vendor code
+
+tests
+
+unsupported language
+
+mixed language
+
+large files
+
+baseline findings
+
+new findings
+
+resolved findings
+
+line movement
+
+renamed symbols
+
+PR changes
+
+coverage report
+
+missing coverage report
+
+malformed coverage report
+
+false-positive traps.
+
+Document expected results.
+
+======================================================================
+102. ANALYZER TESTS
+======================================================================
+
+Every rule needs:
+
+positive test
+
+negative test
+
+edge case
+
+parser failure test where useful
+
+version test.
+
+Do not merge rules with only positive examples.
+
+======================================================================
+103. FINDING STABILITY TEST
+======================================================================
+
+Test:
+
+original file:
+
+finding at line 50.
+
+insert 20 lines above.
+
+result:
+
+same finding ID.
+
+Move function where feasible:
+
+attempt to preserve identity.
+
+Rename function:
+
+document whether it creates new finding or maintains identity.
+
+======================================================================
+104. BASELINE TEST
+======================================================================
+
+Snapshot A:
+
+10 findings.
+
+Snapshot B:
+
+2 new
+
+3 resolved
+
+7 unchanged.
+
+Expected:
+
+NEW = 2
+
+RESOLVED = 3
+
+EXISTING = 7.
+
+Do not double count.
+
+======================================================================
+105. DUPLICATION TEST
+======================================================================
+
+Test:
+
+exact duplicate
+
+renamed-variable duplicate
+
+formatted duplicate
+
+comment differences
+
+small common boilerplate
+
+large meaningful duplicate.
+
+Validate useful precision.
+
+======================================================================
+106. COVERAGE TEST
+======================================================================
+
+Test:
+
+valid LCOV
+
+valid Cobertura
+
+valid JaCoCo
+
+missing report
+
+bad paths
+
+malformed report
+
+report from wrong snapshot.
+
+Never silently map incorrect coverage.
+
+======================================================================
+107. QUALITY GATE TEST
+======================================================================
+
+Test:
+
+PASS
+
+WARNING
+
+REVIEW_REQUIRED
+
+FAIL.
+
+Every result must list exact conditions.
+
+======================================================================
+108. PERFORMANCE TESTS
+======================================================================
+
+Measure:
+
+parse throughput
+
+metrics throughput
+
+rules throughput
+
+duplication analysis
+
+baseline comparison
+
+database persistence
+
+large-table retrieval
+
+PR incremental analysis.
+
+Report:
+
+p50
+
+p95
+
+p99 where appropriate.
+
+Never invent performance numbers.
+
+======================================================================
+109. LARGE REPOSITORY BENCHMARK
+======================================================================
+
+Create/generate a realistic test corpus.
+
+Measure:
+
+10k files
+
+50k files where feasible
+
+mixed languages
+
+large history
+
+many findings.
+
+Watch:
+
+RAM
+
+CPU
+
+DB size
+
+queue latency.
+
+Use measurements to optimize.
+
+======================================================================
+110. CACHING
+======================================================================
+
+Cache immutable results using:
+
+tenant
+
+repository
+
+file hash
+
+analyzer version
+
+parser version
+
+rule/profile version.
+
+Do not allow cross-tenant cache contamination.
+
+======================================================================
+111. BACKGROUND JOBS
+======================================================================
+
+Long quality analysis should run asynchronously.
+
+Possible phases:
+
+QUEUED
+
+CLASSIFYING
+
+PARSING
+
+INDEXING
+
+METRICS
+
+RULES
+
+DUPLICATION
+
+COVERAGE
+
+BASELINE_COMPARISON
+
+GATE_EVALUATION
+
+EVIDENCE_CORRELATION
+
+FINALIZING
+
+COMPLETED
+
+PARTIAL
+
+FAILED
+
+CANCELLED.
+
+======================================================================
+112. UI PERFORMANCE
+======================================================================
+
+Large finding tables must remain responsive.
+
+Use:
+
+pagination or virtualization
+
+server-side filtering
+
+debounced search
+
+query caching
+
+lazy source loading.
+
+Do not send 50,000 findings in one browser response.
+
+======================================================================
+113. FINDING SEARCH
+======================================================================
+
+Search by:
+
+rule
+
+message
+
+file
+
+symbol
+
+owner
+
+component.
+
+Provide structured filters for other dimensions.
+
+Search should work predictably.
+
+======================================================================
+114. SAVED VIEWS
+======================================================================
+
+Support useful saved views later or when current architecture permits.
+
+Examples:
+
+My Team's New Issues
+
+PR Blockers
+
+High Complexity
+
+Unowned Hotspots
+
+New Reliability Issues.
+
+Organization-shared views may require permissions.
+
+======================================================================
+115. EXPORT
+======================================================================
+
+Potential exports:
+
+CSV
+
+SARIF
+
+JSON API.
+
+Ensure authorization.
+
+Large exports should be background jobs.
+
+======================================================================
+116. API DESIGN
+======================================================================
+
+Provide stable APIs for:
+
+quality summary
+
+metrics
+
+findings
+
+finding detail
+
+new-code analysis
+
+duplication
+
+coverage
+
+trends
+
+profiles
+
+gates.
+
+Avoid giant endpoint returning the entire quality domain.
+
+======================================================================
+117. FRONTEND DESIGN
+======================================================================
+
+ProjectTrace Code Quality should feel:
+
+professional
+
+dense but understandable
+
+developer-native
+
+fast
+
+precise.
+
+Avoid:
+
+giant colorful metric cards
+
+donut chart overload
+
+gauge overload
+
+meaningless gradients
+
+3D charts
+
+huge whitespace
+
+marketing-like language inside product.
+
+======================================================================
+118. VISUAL REFERENCE PRINCIPLES
+======================================================================
+
+Use:
+
+SonarQube
+
+for:
+
+gate clarity
+new-code separation.
+
+GitHub
+
+for:
+
+source context
+PR familiarity.
+
+Datadog-style interaction
+
+for:
+
+filtering
+side-panel investigation.
+
+Linear
+
+for:
+
+overall polish
+density
+keyboard behavior.
+
+CodeScene
+
+for:
+
+hotspot thinking.
+
+Do NOT clone screens.
+
+======================================================================
+119. CODE QUALITY PAGE HEADER
+======================================================================
+
+Persistent context:
+
+ProjectTrace / System / Repository.
+
+Repository:
+
+identity-api.
+
+Branch:
+
+main.
+
+Snapshot:
+
+ae98c4a.
+
+Analysis:
+
+Complete.
+
+Profile:
+
+ProjectTrace Recommended.
+
+Coverage:
+
+Available / Missing.
+
+Actions:
+
+Run Analysis
+
+Compare
+
+Configure.
+
+======================================================================
+120. QUALITY OVERVIEW EXAMPLE
+======================================================================
+
+CODE QUALITY
+
+identity-api
+
+main @ ae98c4a
+
+QUALITY GATE
+
+● REVIEW REQUIRED
+
+2 conditions failed.
+
+
+NEW CODE
+
+Reliability
+PASS
+
+Maintainability
+FAIL
+
+Coverage
+89%
+
+Duplication
+1.2%
+
+Complexity
++11.
+
+
+OVERALL
+
+Reliability Findings
+12
+
+Maintainability Findings
+61
+
+Existing Technical Debt
+Visible but non-blocking according to current gate.
+
+
+BLOCKERS
+
+HIGH
+
+Excessive Cognitive Complexity
+
+payments/service.py
+
+process_payment()
+
+32 > 15.
+
+======================================================================
+121. MAINTENANCE HOTSPOT EXAMPLE
+======================================================================
+
+PAYMENTS/SERVICE.PY
+
+Priority:
+HIGH.
+
+Why:
+
+Complexity:
+Very High.
+
+Changed:
+41 times in 90 days.
+
+Open findings:
+8.
+
+Contributors:
+7.
+
+Owner:
+Payments Team.
+
+Affected Claims:
+2.
+
+Related PRs:
+9.
+
+This is uniquely powerful when combined with ProjectTrace Evidence
+Graph.
+
+======================================================================
+122. NO MYSTERY SCORES
+======================================================================
+
+Do not create:
+
+Maintainability = 87%
+
+unless fully defined.
+
+Prefer:
+
+Maintainability:
+NEEDS ATTENTION.
+
+Reason:
+
+4 new High findings.
+
+Maximum new complexity:
+32.
+
+Duplication:
+1.2%.
+
+Every conclusion must be explainable.
+
+======================================================================
+123. SUPPORTED LANGUAGE PAGE / GUIDE
+======================================================================
+
+Expose a support matrix.
+
+Example:
+
+Python
+
+Parser:
+STABLE
+
+Complexity:
+SUPPORTED
+
+Duplication:
+SUPPORTED
+
+Reliability Rules:
+SUPPORTED
+
+Framework Rules:
+PARTIAL.
+
+
+TypeScript
+
+...
+
+Java
+
+BETA.
+
+This prevents false expectations.
+
+======================================================================
+124. ANALYZER VERSION PAGE
+======================================================================
+
+Allow technical users to see:
+
+ProjectTrace Code Analyzer 1.x
+
+Parser versions
+
+Ruleset version
+
+Profile version.
+
+Useful for reproducibility.
+
+======================================================================
+125. NOISE CONTROL
+======================================================================
+
+Provide safeguards:
+
+generated code exclusion
+
+test-code awareness
+
+framework awareness
+
+duplicate suppression
+
+stable fingerprints
+
+threshold configuration
+
+false-positive feedback.
+
+Analyze false-positive patterns.
+
+Do not simply allow users to silence everything.
+
+======================================================================
+126. REMEDIATION
+======================================================================
+
+Every important finding should have practical remediation.
+
+Avoid vague advice:
+
+"Improve this code."
+
+Provide:
+
+what structure caused problem
+
+possible refactoring direction
+
+relevant language example
+
+trade-offs.
+
+Do not automatically rewrite code unless a separate safe remediation
+workflow is explicitly implemented.
+
+======================================================================
+127. AI IN CODE QUALITY
+======================================================================
+
+AI may assist:
+
+explanation
+
+remediation suggestions
+
+summarization.
+
+AI must NOT be the source of deterministic metrics.
+
+AI must NOT decide complexity.
+
+AI must NOT fabricate rule violations.
+
+AI output must be labeled where applicable.
+
+The analyzer remains deterministic-first.
+
+======================================================================
+128. SECURITY + QUALITY SHARED INFRASTRUCTURE
+======================================================================
+
+Where technically beneficial, share:
+
+parser
+
+AST
+
+symbols
+
+CFG
+
+file classifier
+
+snapshot
+
+incremental cache
+
+with native SAST.
+
+Avoid parsing the same repository five separate times.
+
+But maintain clear logical separation between:
+
+quality rules
+
+security rules.
+
+======================================================================
+129. DATA RETENTION
+======================================================================
+
+Respect organization retention policies for:
+
+source snippets
+
+AST artifacts
+
+coverage reports
+
+quality history.
+
+Avoid storing full source redundantly when evidence references suffice.
+
+======================================================================
+130. ACCESS CONTROL
+======================================================================
+
+All Code Quality endpoints require tenant authorization.
+
+Ensure users cannot:
+
+change another organization's quality profile
+
+read another repo
+
+read private source snippets
+
+export unauthorized findings.
+
+======================================================================
+131. AUDIT
+======================================================================
+
+Audit:
+
+profile changes
+
+gate changes
+
+finding review changes
+
+exceptions
+
+false positives
+
+manual ownership changes
+
+reanalyze operations.
+
+======================================================================
+132. MIGRATIONS
+======================================================================
+
+All database schema changes require proper migrations.
+
+Test:
+
+upgrade from current ProjectTrace DB
+
+fresh install
+
+rollback where supported.
+
+Do not manually mutate production schemas.
+
+======================================================================
+133. OBSERVABILITY
+======================================================================
+
+Instrument:
+
+files classified
+
+files parsed
+
+files skipped
+
+parse errors
+
+rule runtime
+
+findings created
+
+duplicates detected
+
+cache hits
+
+cache misses
+
+coverage import status
+
+baseline comparison time
+
+gate evaluation time.
+
+Never log sensitive source unnecessarily.
+
+======================================================================
+134. ERROR HANDLING
+======================================================================
+
+An analyzer error should show:
+
+which analyzer
+
+which file
+
+which phase
+
+whether analysis continued
+
+whether results are partial.
+
+Avoid generic:
+
+"Something went wrong."
+
+======================================================================
+135. PROJECTTRACE GUIDE — CODE QUALITY PAGE
+======================================================================
+
+Add permanent documentation inside ProjectTrace Guide.
+
+Explain in simple language:
+
+What is Code Quality?
+
+What is Maintainability?
+
+What is Reliability?
+
+What is Complexity?
+
+What is Duplication?
+
+What is New Code?
+
+What is a Baseline?
+
+What is Coverage?
+
+What is a Quality Gate?
+
+What is a Maintenance Hotspot?
+
+What is a Quality Profile?
+
+What should I fix first?
+
+Then technical details.
+
+======================================================================
+136. "WHAT SHOULD I FIX FIRST?"
+======================================================================
+
+ProjectTrace should provide an explainable prioritization.
+
+Example ordering may consider:
+
+Gate blocker
+
+Severity
+
+New vs legacy
+
+Reliability vs maintainability
+
+Change frequency
+
+Critical component
+
+Ownership
+
+Policy.
+
+Explain WHY.
+
+Never use invisible AI ranking.
+
+======================================================================
+137. PROJECTTRACE DIFFERENTIATION
+======================================================================
+
+Standalone quality tools usually say:
+
+"Function complexity is high."
+
+ProjectTrace should eventually say:
+
+"process_payment() complexity increased from 14 → 32 in PR #1842.
+
+This function belongs to Payments Service.
+
+It changed 41 times in the past 90 days.
+
+It currently has 8 quality findings.
+
+Payments Team owns it.
+
+Two engineering claims depend on this component.
+
+The current quality policy is violated.
+
+Recommended priority: HIGH."
+
+This is the desired ProjectTrace advantage.
+
+======================================================================
+138. IMPLEMENTATION ORDER
+======================================================================
+
+Do not attempt everything randomly.
+
+PHASE 0 — AUDIT CURRENT CODE
+
+Inspect existing implementation.
+
+Document:
+
+Current parsers
+
+Current rules
+
+Current metrics
+
+Current DB schema
+
+Current APIs
+
+Current UI
+
+Current tests
+
+Current limitations.
+
+Preserve good work.
+
+
+PHASE 1 — ANALYSIS FOUNDATION
+
+File classification
+
+Language support model
+
+Parser adapters
+
+AST abstraction
+
+Symbol model
+
+Analyzer versioning.
+
+
+PHASE 2 — METRICS
+
+Cyclomatic complexity
+
+Cognitive complexity / equivalent
+
+Function length
+
+Class size
+
+File size
+
+Parameter count
+
+Nesting.
+
+
+PHASE 3 — RULE ENGINE
+
+Rule registry
+
+Rule versioning
+
+Profiles
+
+Core maintainability rules
+
+Core reliability rules
+
+Rule documentation.
+
+
+PHASE 4 — FINDING MODEL
+
+Normalized findings
+
+Stable fingerprints
+
+History
+
+Lifecycle
+
+Ownership.
+
+
+PHASE 5 — DUPLICATION
+
+Token / AST-normalized detection
+
+Duplicate groups
+
+UI comparison.
+
+
+PHASE 6 — BASELINE / NEW CODE
+
+Base/head comparison
+
+New/existing/resolved
+
+New-code metrics.
+
+
+PHASE 7 — COVERAGE
+
+Coverage report ingestion
+
+Changed-code coverage
+
+Coverage UI.
+
+
+PHASE 8 — QUALITY GATES
+
+Gate conditions
+
+Repository profiles
+
+ProjectTrace PR integration.
+
+
+PHASE 9 — HOTSPOTS
+
+Repository history
+
+Change frequency
+
+Maintenance Hotspots
+
+Change coupling where reliable.
+
+
+PHASE 10 — TRENDS
+
+Historical metrics
+
+Improvement/regression
+
+organization views where in scope.
+
+
+PHASE 11 — EVIDENCE GRAPH
+
+Quality finding relationships
+
+Claim impact
+
+Policy
+
+PR
+
+Owner
+
+Audit.
+
+
+PHASE 12 — ENTERPRISE HARDENING
+
+Incremental analysis
+
+performance
+
+scalability
+
+SARIF
+
+exports
+
+RBAC
+
+observability.
+
+======================================================================
+139. DO NOT ADVANCE BLINDLY
+======================================================================
+
+Each phase requires:
+
+implementation
+
+unit tests
+
+integration tests
+
+fixture tests
+
+UI validation
+
+performance validation where relevant
+
+documentation.
+
+Do not mark:
+
+"Phase complete"
+
+because files were created.
+
+======================================================================
+140. DEFINITION OF INDUSTRY-READY
+======================================================================
+
+Do NOT call ProjectTrace Code Quality industry-ready until all release
+requirements in scope are verified.
+
+Required foundation:
+
+parser-backed analysis
+
+serious Python support
+
+serious TypeScript/JavaScript support
+
+serious Java support or clearly labeled Beta if that is the truthful
+release state
+
+language coverage reporting
+
+maintainability
+
+reliability
+
+complexity
+
+duplication
+
+coverage ingestion
+
+new-code analysis
+
+baseline
+
+profiles
+
+quality gates
+
+stable finding identity
+
+finding lifecycle
+
+generated/vendor exclusions
+
+PR analysis
+
+CI gate
+
+historical trends
+
+maintenance hotspots
+
+rule documentation
+
+analyzer versioning
+
+benchmark corpus
+
+false-positive testing
+
+incremental analysis
+
+performance measurement
+
+Evidence Graph integration.
+
+If something remains partial:
+
+label it partial.
+
+======================================================================
+141. ACCEPTANCE TEST — EXPERIENCED DEVELOPER
+======================================================================
+
+Give ProjectTrace a real repository.
+
+Developer should be able to answer:
+
+Which files were analyzed?
+
+Which languages are supported?
+
+Which files were excluded?
+
+Why did the gate fail?
+
+Which new problem did this PR introduce?
+
+Where is the exact source?
+
+Which rule detected it?
+
+Why is it considered a problem?
+
+What threshold applies?
+
+When was it introduced?
+
+Who owns it?
+
+Has it existed before?
+
+Is it frequently modified?
+
+What remediation is recommended?
+
+What related claims/policies exist?
+
+If these answers are difficult to find:
+
+UX is not complete.
+
+======================================================================
+142. ACCEPTANCE TEST — LEGACY REPOSITORY
+======================================================================
+
+Use a deliberately messy repository.
+
+ProjectTrace should allow:
+
+existing issues remain visible
+
+new-code gate still useful
+
+PR can be judged independently
+
+new debt clearly separated
+
+baseline explicit.
+
+If legacy debt makes the product unusable:
+
+new-code model is incomplete.
+
+======================================================================
+143. ACCEPTANCE TEST — CLEAN REPOSITORY
+======================================================================
+
+Clean code should not generate hundreds of meaningless warnings.
+
+Measure noise.
+
+Quality Gate should pass when appropriate.
+
+======================================================================
+144. ACCEPTANCE TEST — LINE MOVEMENT
+======================================================================
+
+Move code without changing the issue.
+
+Expected:
+
+same finding history.
+
+Not:
+
+new finding + resolved old finding.
+
+======================================================================
+145. ACCEPTANCE TEST — PR
+======================================================================
+
+PR introduces:
+
+one complex function
+
+one duplicate block.
+
+Expected:
+
+New findings:
+correct.
+
+Existing:
+unchanged.
+
+Gate:
+appropriate.
+
+PR:
+annotated.
+
+Evidence:
+traceable.
+
+======================================================================
+146. ACCEPTANCE TEST — COVERAGE
+======================================================================
+
+Without report:
+
+NOT AVAILABLE.
+
+With valid report:
+
+metrics shown.
+
+With invalid report:
+
+REPORT INVALID / PARTIAL.
+
+Never:
+
+fabricated coverage.
+
+======================================================================
+147. ACCEPTANCE TEST — UNSUPPORTED LANGUAGE
+======================================================================
+
+Repository contains unsupported source.
+
+Expected:
+
+language reported
+
+files counted
+
+status UNSUPPORTED
+
+gate scope explained.
+
+Never:
+
+silently skipped.
+
+======================================================================
+148. ACCEPTANCE TEST — PERFORMANCE
+======================================================================
+
+Test realistic repositories.
+
+Ensure:
+
+UI remains usable
+
+analysis does not exhaust memory
+
+workers recover
+
+timeouts behave
+
+incremental analysis improves repeated runs.
+
+Document actual measurements.
+
+======================================================================
+149. FINAL VALIDATION REPORT
+======================================================================
+
+Produce:
+
+CODE_QUALITY_VALIDATION.md
+
+Include:
+
+Architecture
+
+Supported languages
+
+Support maturity per language
+
+Parser status
+
+Rule counts by language
+
+Rule statuses
+
+Metrics supported
+
+Duplication status
+
+Coverage formats
+
+New-code support
+
+Baseline support
+
+Profiles
+
+Quality Gates
+
+PR support
+
+SARIF
+
+Generated-code handling
+
+Finding lifecycle
+
+Fingerprint strategy
+
+Hotspot methodology
+
+Trend methodology
+
+Incremental analysis
+
+Cache strategy
+
+Performance results
+
+Benchmark corpus
+
+False positives observed
+
+Known limitations
+
+Deferred work.
+
+Do not fabricate percentages.
+
+======================================================================
+150. FINAL UI REVIEW
+======================================================================
+
+Manually inspect:
+
+Overview
+
+New Code
+
+Findings
+
+Finding Inspector
+
+Maintenance Hotspots
+
+Metrics
+
+Coverage
+
+Duplication
+
+Trends
+
+Rules & Profiles.
+
+Check:
+
+alignment
+
+density
+
+filtering
+
+empty states
+
+error states
+
+loading
+
+keyboard navigation
+
+responsive behavior
+
+dark mode
+
+source readability
+
+drawer behavior.
+
+Functional but confusing:
+
+NOT DONE.
+
+Beautiful but shallow:
+
+NOT DONE.
+
+======================================================================
+151. FINAL TECHNICAL REVIEW
+======================================================================
+
+Verify:
+
+No arbitrary repository execution
+
+No fake metrics
+
+No invented coverage
+
+No unsupported language presented as supported
+
+No finding identity based solely on line number
+
+No giant full-repository rescans without reason
+
+No tenant data leak
+
+No unversioned rule changes
+
+No silent parser failures
+
+No generated/vendor distortion
+
+No mystery score.
+
+======================================================================
+152. PRODUCT OWNER QUESTIONS
+======================================================================
+
+Before declaring Code Quality ready, answer with proof:
+
+Can ProjectTrace parse supported source structurally?
+
+Can it calculate explainable complexity?
+
+Can it identify maintainability problems?
+
+Can it identify reliability problems?
+
+Can it detect duplication meaningfully?
+
+Can it import real coverage?
+
+Can it distinguish New Code?
+
+Can it use a baseline?
+
+Can organizations configure profiles?
+
+Can organizations configure gates?
+
+Can findings survive harmless line movement?
+
+Can developers review/resolve findings?
+
+Can generated/vendor code be excluded correctly?
+
+Can ProjectTrace show analysis coverage?
+
+Can PRs receive quality results?
+
+Can history show improvement/regression?
+
+Can ProjectTrace identify maintenance hotspots?
+
+Can every important finding explain why it exists?
+
+Can findings connect to owners?
+
+Can findings connect into the Evidence Graph?
+
+Can quality findings affect ProjectTrace policies?
+
+Can quality changes contribute to Impact analysis?
+
+Can a senior developer trust the result?
+
+If any release-scope answer is:
+
+NO
+
+continue working.
+
+======================================================================
+153. PRODUCT PRINCIPLES
+======================================================================
+
+TRUST > RULE COUNT
+
+PRECISION > NOISE
+
+EXPLAINABILITY > MAGIC SCORE
+
+NEW CODE > FORCING LEGACY CLEANUP
+
+STRUCTURAL ANALYSIS > REGEX
+
+REAL COVERAGE > INFERRED COVERAGE
+
+STABLE FINDINGS > LINE-NUMBER ALERTS
+
+CONTEXT > ISOLATED WARNING
+
+QUALITY HISTORY > SNAPSHOT COUNTS
+
+ACTIONABILITY > DASHBOARD DECORATION
+
+INCREMENTAL ANALYSIS > FULL RESCAN
+
+MEASURED PERFORMANCE > SCALABILITY CLAIMS
+
+PROJECTTRACE EVIDENCE > DISCONNECTED TOOL OUTPUT.
+
+======================================================================
+154. PRODUCT NORTH STAR
+======================================================================
+
+A developer should be able to open Code Quality and immediately
+understand:
+
+Can this code be accepted?
+
+What new problem was introduced?
+
+Why is it a problem?
+
+Where is it?
+
+How significant is it?
+
+Who owns it?
+
+How often is this code touched?
+
+How has quality changed?
+
+What should be fixed first?
+
+What evidence supports the result?
+
+What other ProjectTrace objects are affected?
+
+The experience should feel like:
+
+professional static analysis
++
+change intelligence
++
+engineering context
++
+ProjectTrace evidence.
+
+======================================================================
+155. FINAL INSTRUCTION
+======================================================================
+
+START FROM THE ACTUAL CURRENT PROJECTTRACE REPOSITORY.
+
+DO NOT GUESS.
+
+DO NOT REBUILD WORKING PARTS UNNECESSARILY.
+
+AUDIT THE EXISTING CODE QUALITY IMPLEMENTATION FIRST.
+
+IDENTIFY THE REAL GAPS.
+
+THEN EVOLVE IT INTO:
+
+A PARSER-BACKED
+
+VERSIONED
+
+CONFIGURABLE
+
+LOW-NOISE
+
+NEW-CODE-AWARE
+
+BASELINE-AWARE
+
+PR-NATIVE
+
+HISTORY-AWARE
+
+COVERAGE-AWARE
+
+DUPLICATION-AWARE
+
+HOTSPOT-AWARE
+
+EVIDENCE-CONNECTED
+
+INDUSTRY-QUALITY CODE INTELLIGENCE PLATFORM.
+
+Do not stop when:
+
+the page looks good.
+
+Do not stop when:
+
+some rules work.
+
+Do not stop when:
+
+tests merely compile.
+
+Finish only when the implemented release scope is demonstrated through
+real repositories, benchmark fixtures, tests, UI validation and
+measured results.
+
+BUILD CODE QUALITY THAT EXPERIENCED ENGINEERS CAN TRUST.
+
+BUILD IT AS PROJECTTRACE.
+######################################################################

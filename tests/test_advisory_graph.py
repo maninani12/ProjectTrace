@@ -20,6 +20,8 @@ def account(client, files):
         },
     )
     client.headers["x-csrf-token"] = registered.json()["csrf"]
+    policy = client.get("/api/trust/policy").json()
+    assert client.post("/api/trust/policy", json={**policy, "package_coordinate_advisories": True}).status_code == 200
     response = client.post("/api/import", json={"name": "Packages", "files": files})
     assert response.status_code == 200, response.text
     return response.json()

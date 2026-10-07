@@ -8,6 +8,8 @@ from pathlib import Path
 def main():
     # -I removes user paths; explicitly add only this installed ProjectTrace root.
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    from backend.process_limits import self_limits
+    self_limits(512 * 1024 * 1024, 25)
     from analyzers.engine import finding
     from analyzers.languages import LANGUAGES, _analyze_language
 

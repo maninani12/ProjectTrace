@@ -1,12 +1,14 @@
-FROM python:3.14-slim
+ARG PYTHON_IMAGE=python:3.14-slim
+FROM ${PYTHON_IMAGE}
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 WORKDIR /app
 COPY requirements.lock .
-RUN pip install --no-cache-dir -r requirements.lock && useradd --create-home --uid 10001 projecttrace
+RUN pip install --no-cache-dir -r requirements.lock && useradd --create-home --uid 10001 projecttrace && mkdir -p /app/data && chown projecttrace:projecttrace /app/data
 COPY backend backend
 COPY analyzers analyzers
 COPY integrations integrations
 COPY workers workers
+COPY scripts scripts
 COPY samples samples
 COPY alembic.ini .
 USER projecttrace

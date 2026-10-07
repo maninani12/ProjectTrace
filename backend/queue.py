@@ -6,11 +6,11 @@ import os
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from cryptography.fernet import Fernet
+from cryptography.fernet import Fernet, MultiFernet
 from sqlalchemy import select
 
 from analyzers.engine import MAX_TOTAL_BYTES
-from backend.db import AnalysisInput, Organization, Record, now
+from backend.db import AnalysisInput, Record, now
 from backend.domain import add, audit
 from backend.jobs import TERMINAL
 
@@ -30,54 +30,101 @@ def cipher():
             except FileExistsError:
                 pass
         value = path.read_bytes().strip()
-    return Fernet(value.encode() if isinstance(value, str) else value)
+    current = Fernet(value.encode() if isinstance(value, str) else value)
+    previous = json.loads(os.getenv("ANALYSIS_PREVIOUS_KEYS", "[]"))
+    if not isinstance(previous, list) or len(previous) > 3 or any(not isinstance(key, str) for key in previous):
+        raise ValueError("Previous analysis keys must be a bounded operator-owned list.")
+    return MultiFernet([current, *[Fernet(key.encode()) for key in previous]]) if previous else current
 
 
 def dispatch(db, job):
+    from backend.scheduling import register
     from workers.tasks import celery
 
-    task = "projecttrace.advisories" if job.data.get("type") == "ADVISORIES" else (
-        "projecttrace.analyze" if job.data.get("source") in {"ZIP", "FILES"} else "projecttrace.github_delivery"
-    )
+    if job.data.get("state") == "QUEUED":
+        register(db, job)
+        db.commit()
+
+    if job.data.get("type") == "ADVISORIES":
+        task = "projecttrace.advisories"
+    elif job.data.get("source") == "INVENTORY":
+        task = "projecttrace.analyze_inventory"
+    elif job.data.get("source") in {"ZIP", "FILES"}:
+        task = "projecttrace.analyze"
+    else:
+        task = "projecttrace.github_delivery"
     try:
         celery.send_task(task, args=[job.id], task_id=job.id, retry=False)
-        job.data = {**job.data, "dispatch": "SENT"}
+        job.data = {**job.data, "dispatch": "SENT", "last_dispatched_at": now()}
     except Exception:
-        job.data = {**job.data, "dispatch": "PENDING_RETRY", "warnings": ["Queue dispatch unavailable; retry this retained job."]}
+        job.data = {
+            **job.data,
+            "dispatch": "PENDING_RETRY",
+            "last_dispatched_at": now(),
+            "warnings": ["Queue dispatch unavailable; retry this retained job."],
+        }
     db.commit()
 
 
 def check_capacity(db, user, repo):
-    # PostgreSQL serializes admission within a tenant. SQLite is the local adapter.
-    db.scalar(select(Organization).where(Organization.id == user.organization_id).with_for_update())
-    jobs = list(db.scalars(select(Record).where(Record.organization_id == user.organization_id, Record.kind == "job")))
-    active = [j for j in jobs if j.data.get("state") not in TERMINAL]
-    if len(active) >= 10 or sum(j.repository_id == repo.id for j in active) >= 2:
-        raise ValueError("Analysis queue quota reached; finish or cancel existing jobs before submitting more input.")
+    from backend.scheduling import check_capacity as admit
+    admit(db, user.organization_id, repo.id)
 
 
 def enqueue_analysis(db, user, repo, content, *, source="FILES", request_id=None, **options):
     check_capacity(db, user, repo)
-    if source == "ZIP":
+    if source == "INVENTORY":
+        from backend.repository_store import RepositoryFiles
+
+        if not isinstance(content, RepositoryFiles) or (content.organization_id, content.repository_id) != (
+            user.organization_id,
+            repo.id,
+        ):
+            raise ValueError("Inventory queue input scope is invalid.")
+        value = {"inventory_id": content.inventory_id}
+    elif source == "ZIP":
         if len(content) > MAX_TOTAL_BYTES:
             raise ValueError("Archive exceeds the bounded input size.")
         value = {"archive": base64.b64encode(content).decode()}
     else:
         from analyzers.engine import validate_files
 
-        value = {"files": validate_files(content)}
-    job = add(db, user.organization_id, repo.id, "job", {
-        "state": "QUEUED", "stage": "QUEUED", "queued_at": now(), "started_at": None,
-        "finished_at": None, "user_id": user.id, "request_id": request_id,
-        "source": source, "execution": "CELERY", "options": options,
-        "warnings": [], "errors": [], "stages": [], "dispatch": "PENDING",
-    })
-    db.add(AnalysisInput(
-        job_id=job.id, organization_id=user.organization_id, repository_id=repo.id,
-        ciphertext=cipher().encrypt(json.dumps(value).encode()).decode(),
-        expires_at=(datetime.now(timezone.utc) + timedelta(hours=72)).isoformat(),
-    ))
+        clean = validate_files(content, keep_excluded=True)
+        value = {"files": clean, "intake": getattr(clean, "intake", [])}
+    job = add(
+        db,
+        user.organization_id,
+        repo.id,
+        "job",
+        {
+            "state": "QUEUED",
+            "stage": "QUEUED",
+            "queued_at": now(),
+            "started_at": None,
+            "finished_at": None,
+            "user_id": user.id,
+            "request_id": request_id,
+            "source": source,
+            "execution": "CELERY",
+            "options": options,
+            "warnings": [],
+            "errors": [],
+            "stages": [],
+            "dispatch": "PENDING",
+        },
+    )
+    db.add(
+        AnalysisInput(
+            job_id=job.id,
+            organization_id=user.organization_id,
+            repository_id=repo.id,
+            ciphertext=cipher().encrypt(json.dumps(value).encode()).decode(),
+            expires_at=(datetime.now(timezone.utc) + timedelta(hours=72)).isoformat(),
+        )
+    )
     audit(db, user, "ANALYSIS_QUEUED", job.id, {"source": source}, repo.id)
+    from backend.scheduling import register
+    register(db, job)
     db.commit()
     dispatch(db, job)
     return job
@@ -92,11 +139,17 @@ def load_input(db, job):
         db.commit()
         raise ValueError("Retained input has expired; upload a fresh snapshot.")
     content = json.loads(cipher().decrypt(value.ciphertext.encode()))
+    if job.data.get("source") == "INVENTORY":
+        from backend.repository_store import RepositoryFiles
+
+        return RepositoryFiles(db, job.organization_id, job.repository_id, content["inventory_id"])
     if job.data.get("source") == "ZIP":
         from analyzers.engine import read_zip
 
-        return read_zip(base64.b64decode(content["archive"], validate=True))
-    return content["files"]
+        return read_zip(base64.b64decode(content["archive"], validate=True), keep_excluded=True)
+    from analyzers.source_input import SourceFiles
+
+    return SourceFiles(content["files"], intake=content.get("intake", []))
 
 
 def purge_expired_inputs(db):
@@ -104,8 +157,12 @@ def purge_expired_inputs(db):
     for retained in expired:
         job = db.get(Record, retained.job_id)
         if job and job.data.get("state") not in TERMINAL:
-            job.data = {**job.data, "state": "FAILED", "finished_at": now(),
-                        "errors": ["Retained input expired; upload a fresh snapshot."]}
+            job.data = {
+                **job.data,
+                "state": "FAILED",
+                "finished_at": now(),
+                "errors": ["Retained input expired; upload a fresh snapshot."],
+            }
         db.delete(retained)
     db.commit()
     return len(expired)

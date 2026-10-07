@@ -38,6 +38,9 @@ type Configuration = {
     max_new_duplication_percent: number | null;
     min_changed_coverage: number | null;
     min_analysis_coverage_percent: number | null;
+    max_new_nesting?: number | null;
+    required_languages?: string[];
+    conditions?: Row[];
   };
 };
 type Overview = {
@@ -995,13 +998,32 @@ function QualityProfiles({
   snapshots: Row[];
 }) {
   const [scope, setScope] = useState("REPOSITORY");
-  const repoId = scope === "ORGANIZATION" ? null : repository;
+  const [teamId, setTeamId] = useState("");
+  const repoId = scope === "REPOSITORY" ? repository : null;
+  const profileParams = new URLSearchParams({
+    ...(repoId ? { repository_id: repoId } : {}),
+    ...(scope === "TEAM" ? { team_id: teamId } : {}),
+  });
   const profile = useQuery({
-    queryKey: ["quality-profile", repoId],
+    queryKey: ["quality-profile", repoId, scope, teamId],
     queryFn: () =>
-      api<{ version: number; configuration: Configuration; source: string }>(
-        `/code-quality/profiles/current${repoId ? `?repository_id=${repoId}` : ""}`,
+      api<{
+        version: number;
+        configuration: Configuration;
+        overrides?: Row;
+        source: string;
+        inheritance?: { scope: string; version: number }[];
+        team_id?: string;
+      }>(`/code-quality/profiles/current?${profileParams}`),
+    enabled: scope !== "TEAM" || !!teamId,
+  });
+  const versions = useQuery({
+    queryKey: ["quality-profile-versions", repoId, scope, teamId],
+    queryFn: () =>
+      api<{ items: Row[]; total: number }>(
+        `/code-quality/profiles/versions?${profileParams}`,
       ),
+    enabled: scope !== "TEAM" || !!teamId,
   });
   const rules = useQuery({
     queryKey: ["quality-rules"],
@@ -1011,6 +1033,12 @@ function QualityProfiles({
   const [rule, setRule] = useState("PT-QUALITY-001");
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
+  const [conditionId, setConditionId] = useState("custom-condition");
+  const [conditionMetric, setConditionMetric] = useState("finding_count");
+  const [conditionOperator, setConditionOperator] = useState("LTE");
+  const [conditionThreshold, setConditionThreshold] = useState(0);
+  const [conditionFailure, setConditionFailure] = useState("REVIEW_REQUIRED");
+  const [conditionBlocking, setConditionBlocking] = useState(false);
   useEffect(() => {
     setDraft(
       profile.data?.configuration
@@ -1026,12 +1054,33 @@ function QualityProfiles({
     if (!draft || !profile.data) return;
     setBusy(true);
     try {
+      function overrides(before: Row, after: Row, existing: Row): Row {
+        const result = structuredClone(existing);
+        for (const [key, value] of Object.entries(after)) {
+          if (JSON.stringify(value) === JSON.stringify(before[key])) continue;
+          result[key] =
+            value && typeof value === "object" && !Array.isArray(value)
+              ? overrides(
+                  (before[key] || {}) as Row,
+                  value as Row,
+                  (existing[key] || {}) as Row,
+                )
+              : value;
+        }
+        return result;
+      }
       await api("/code-quality/profiles/current", {
         repository_id: repoId,
+        team_id: scope === "TEAM" ? teamId : null,
         expected_version: profile.data.version,
-        configuration: draft,
+        configuration: overrides(
+          profile.data.configuration as unknown as Row,
+          draft as unknown as Row,
+          profile.data.overrides || {},
+        ),
       });
       await profile.refetch();
+      await versions.refetch();
       setMessage(
         "Profile saved. Analyze a new HEAD snapshot to apply it. Historical snapshots retain their captured settings.",
       );
@@ -1045,16 +1094,56 @@ function QualityProfiles({
     <section className="settings-panel">
       <h2>Native quality rules and profiles</h2>
       <p>
-        Recommended defaults can be overridden at organization or repository
-        scope. No repository configuration code executes.
+        Recommended defaults inherit through organization, team and repository
+        scope. Each save captures an immutable version. No repository
+        configuration code executes.
       </p>
       <label>
         Profile scope
         <select value={scope} onChange={(e) => setScope(e.target.value)}>
           <option value="REPOSITORY">Repository override</option>
           <option value="ORGANIZATION">Organization default</option>
+          <option value="TEAM">Team profile</option>
         </select>
       </label>
+      <label>
+        Team profile ID
+        <input
+          value={teamId}
+          onChange={(e) => setTeamId(e.target.value)}
+          placeholder="For example, payments"
+          pattern="[A-Za-z0-9_-]{1,60}"
+        />
+      </label>
+      {scope === "REPOSITORY" && canEdit && (
+        <button
+          disabled={busy || !profile.data}
+          onClick={async () => {
+            if (!profile.data) return;
+            setBusy(true);
+            try {
+              await api("/code-quality/profiles/team-assignment", {
+                repository_id: repository,
+                team_id: teamId || null,
+                expected_version: profile.data.version,
+              });
+              await profile.refetch();
+              await versions.refetch();
+              setMessage(
+                "Team assignment saved and audited. Analyze a new HEAD to apply it.",
+              );
+            } catch (error) {
+              setMessage(
+                error instanceof Error ? error.message : "Assignment failed.",
+              );
+            } finally {
+              setBusy(false);
+            }
+          }}
+        >
+          {teamId ? "Assign team profile" : "Clear team assignment"}
+        </button>
+      )}
       {profile.isError ? (
         <p className="error">{profile.error.message}</p>
       ) : !draft ? (
@@ -1063,6 +1152,12 @@ function QualityProfiles({
         <form onSubmit={save} className="quality-form">
           <p>
             Source: {profile.data?.source} · version {profile.data?.version}
+          </p>
+          <p>
+            Inheritance: Recommended
+            {profile.data?.inheritance
+              ?.map((p) => ` → ${p.scope} v${p.version}`)
+              .join("")}
           </p>
           <fieldset disabled={!canEdit || busy}>
             <legend>Quality configuration</legend>
@@ -1295,6 +1390,173 @@ function QualityProfiles({
               request review; imported test coverage and explicitly configured
               parsed-file coverage use their measured evidence.
             </p>
+            <label>
+              Maximum nesting (blank disables)
+              <input
+                type="number"
+                min={0}
+                max={100}
+                value={draft.gate.max_new_nesting ?? ""}
+                onChange={(e) =>
+                  setDraft({
+                    ...draft,
+                    gate: {
+                      ...draft.gate,
+                      max_new_nesting:
+                        e.target.value === "" ? null : Number(e.target.value),
+                    },
+                  })
+                }
+              />
+            </label>
+            <label>
+              Required parser languages
+              <input
+                defaultValue={draft.gate.required_languages?.join(", ") || ""}
+                key={String(profile.data?.version) + scope + "required"}
+                onBlur={(e) =>
+                  setDraft({
+                    ...draft,
+                    gate: {
+                      ...draft.gate,
+                      required_languages: e.target.value
+                        .split(",")
+                        .map((s) => s.trim())
+                        .filter(Boolean),
+                    },
+                  })
+                }
+                placeholder="Python, TypeScript"
+              />
+            </label>
+            <fieldset>
+              <legend>Additional gate condition</legend>
+              <label>
+                Name
+                <input
+                  value={conditionId}
+                  onChange={(e) => setConditionId(e.target.value)}
+                  maxLength={100}
+                />
+              </label>
+              <label>
+                Measurement
+                <select
+                  value={conditionMetric}
+                  onChange={(e) => setConditionMetric(e.target.value)}
+                >
+                  {[
+                    "finding_count",
+                    "cyclomatic",
+                    "nesting",
+                    "parameters",
+                    "length",
+                    "cognitive_approximation",
+                    "changed_coverage",
+                    "analysis_coverage",
+                    "duplication_percent",
+                    "parser_failures",
+                  ].map((m) => (
+                    <option key={m} value={m}>
+                      {m.replaceAll("_", " ")}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Comparison
+                <select
+                  value={conditionOperator}
+                  onChange={(e) => setConditionOperator(e.target.value)}
+                >
+                  {["EQ", "LT", "LTE", "GT", "GTE"].map((op) => (
+                    <option key={op}>{op}</option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Threshold
+                <input
+                  type="number"
+                  min={0}
+                  max={10000}
+                  value={conditionThreshold}
+                  onChange={(e) =>
+                    setConditionThreshold(Number(e.target.value))
+                  }
+                />
+              </label>
+              <label>
+                When exceeded
+                <select
+                  value={conditionFailure}
+                  onChange={(e) => setConditionFailure(e.target.value)}
+                >
+                  {["WARNING", "REVIEW_REQUIRED", "FAIL"].map((s) => (
+                    <option key={s}>{s}</option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={conditionBlocking}
+                  onChange={(e) => setConditionBlocking(e.target.checked)}
+                />
+                Deliberately permit this condition to block despite unmeasured
+                rule precision
+              </label>
+              <button
+                type="button"
+                disabled={
+                  !conditionId ||
+                  draft.gate.conditions?.some((c) => c.id === conditionId)
+                }
+                onClick={() =>
+                  setDraft({
+                    ...draft,
+                    gate: {
+                      ...draft.gate,
+                      conditions: [
+                        ...(draft.gate.conditions || []),
+                        {
+                          id: conditionId,
+                          metric: conditionMetric,
+                          operator: conditionOperator,
+                          threshold: conditionThreshold,
+                          failure: conditionFailure,
+                          allow_unvalidated_blocking: conditionBlocking,
+                        },
+                      ],
+                    },
+                  })
+                }
+              >
+                Add condition
+              </button>
+              {draft.gate.conditions?.map((c) => (
+                <p key={String(c.id)}>
+                  {String(c.id)} · {String(c.metric)} {String(c.operator)}{" "}
+                  {String(c.threshold)} · {String(c.failure)}{" "}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setDraft({
+                        ...draft,
+                        gate: {
+                          ...draft.gate,
+                          conditions: draft.gate.conditions?.filter(
+                            (item) => item.id !== c.id,
+                          ),
+                        },
+                      })
+                    }
+                  >
+                    Remove condition
+                  </button>
+                </p>
+              ))}
+            </fieldset>
             <button type="submit">
               {busy ? "Saving…" : "Save quality profile"}
             </button>
@@ -1308,6 +1570,25 @@ function QualityProfiles({
           <p role="status">{message}</p>
         </form>
       )}
+      <details>
+        <summary>
+          Profile and gate version history ({versions.data?.total || 0})
+        </summary>
+        {versions.isError ? (
+          <p>Version history could not be loaded.</p>
+        ) : (
+          versions.data?.items.map((v) => (
+            <p key={String(v.id)}>
+              Version {String(v.version)} · gate {String(v.gate_version)} ·{" "}
+              {String(v.actor)} · {String(v.recorded_at)}
+            </p>
+          ))
+        )}
+        <p>
+          Earlier snapshots retain their settings. New versions apply to
+          subsequent analyses.
+        </p>
+      </details>
       <details>
         <summary>
           Implemented quality registry ({rules.data?.rules.length || 0} rules)

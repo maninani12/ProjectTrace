@@ -1,0 +1,42 @@
+{
+  "state": "MEASURED_CONTROLLED_LOCAL",
+  "database": "LOCAL_SQLITE",
+  "queue_adapter": "FOUR_CONTROLLED_THREADS_USING_PRODUCTION_CLAIMS_AND_GHES_WORKER",
+  "broker_qualification": "UNMEASURED_REDIS_CELERY_POSTGRESQL",
+  "primary_pr_events": 100,
+  "http_requests": 115,
+  "duplicate_delivery_responses": 10,
+  "retained_delivery_receipts": 105,
+  "jobs": 100,
+  "job_states": {
+    "CANCELLED": 20,
+    "COMPLETED_NO_FINDINGS": 80
+  },
+  "snapshots": 80,
+  "tenant_completed": {
+    "alpha": 40,
+    "beta": 40
+  },
+  "tenant_scope_verified": true,
+  "owned_worker_exit_code": 73,
+  "recovered_jobs": 1,
+  "lease_expiry_advanced_for_crash_test": true,
+  "webhook_p50_ms": 28.505,
+  "webhook_p95_ms": 61.644,
+  "webhook_p99_ms": 65.262,
+  "worker_attempt_p50_ms": 435.831,
+  "worker_attempt_p95_ms": 1625.911,
+  "queue_wait_p50_ms": 12015.814,
+  "queue_wait_p95_ms": 21241.83,
+  "worker_threads": 4,
+  "peak_busy_threads": 4,
+  "deferred_attempts": 7,
+  "failures": [],
+  "wall_seconds": 25.972,
+  "customer_code_executed": false,
+  "limitations": [
+    "Local HTTP TestClient excludes network/TLS latency; adapter serves owned inert source.",
+    "Lease expiry was advanced after an actual owned subprocess exit; production crash timing is unmeasured.",
+    "Busy threads include database lock waits and deferred deliveries; CPU saturation is unmeasured."
+  ]
+}

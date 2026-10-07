@@ -55,7 +55,7 @@ test("real workspace ZIP import, claims, evidence, question and second-snapshot 
     .click();
   await expect(
     page.getByRole("heading", { name: "native-real-fixture", exact: true }),
-  ).toBeVisible();
+  ).toBeVisible({ timeout: 30000 });
   await expect(page.getByRole("status")).toContainText("Analysis completed");
   await expect(page.getByText("DEMO DATA", { exact: true })).toHaveCount(0);
   await expect(

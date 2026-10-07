@@ -1,10 +1,19 @@
 """Structured, non-executing infrastructure inventory and ProjectTrace rules."""
 
+import hashlib
 import json
-from pathlib import PurePosixPath
+import os
+import subprocess
+import sys
+import tempfile
+from pathlib import Path, PurePosixPath
 
 import hcl2
 import yaml
+
+from analyzers.infrastructure_deep import checks as deep_checks
+from analyzers.infrastructure_deep import config as infrastructure_config
+from analyzers.infrastructure_extra import KUBERNETES_KINDS, dockerfile, enrich_document, terraform
 
 
 class InfrastructureLoader(yaml.SafeLoader):
@@ -28,6 +37,7 @@ InfrastructureLoader.add_multi_constructor("!", intrinsic)
 def mapping(loader, node):
     result = yaml.SafeLoader.construct_mapping(loader, node)
     result["__line__"] = node.start_mark.line + 1
+    result["__end_line__"] = max(result["__line__"], node.end_mark.line + (1 if node.end_mark.column else 0))
     return result
 
 
@@ -60,17 +70,74 @@ def bounded_yaml(source):
     return list(yaml.load_all(source, Loader=InfrastructureLoader))
 
 
-def structured_iac(path, source, make_finding):
+def structured_iac(path, source, make_finding, settings=None):
+    """Dedicated process and bounded I/O; complete OS sandbox remains unverified."""
+    environment = {key: os.environ[key] for key in ("SystemRoot", "WINDIR", "TEMP", "TMP") if key in os.environ}
+    try:
+        if len(source.encode()) > 512000:
+            raise ValueError("Input budget exceeded")
+        with tempfile.TemporaryDirectory(prefix="projecttrace-iac-") as directory:
+            result = subprocess.run(
+                [sys.executable, "-I", "-B", str(Path(__file__).with_name("iac_worker.py"))],
+                input=json.dumps({"path": path, "source": source, "settings": settings or {}}).encode(),
+                capture_output=True,
+                timeout=15,
+                cwd=directory,
+                env=environment,
+            )
+        if result.returncode or len(result.stdout) > 8 * 1024 * 1024:
+            raise ValueError("Parser process failed or exceeded its output budget")
+        findings, assets, warnings = json.loads(result.stdout)
+        return (
+            [{**make_finding(item["rule"], path, item["line"], item["explanation"]), **item} for item in findings],
+            assets,
+            warnings,
+        )
+    except Exception as error:
+        return (
+            [],
+            [],
+            [
+                {
+                    "analyzer": "IAC",
+                    "path": path,
+                    "code": type(error).__name__,
+                    "state": "PARTIAL",
+                    "message": "Isolated infrastructure parser failed or exceeded its budget; this file is not fully analyzed.",
+                }
+            ],
+        )
+
+
+def _structured_iac(path, source, make_finding, settings=None):
     findings, assets, warnings = [], [], []
+    settings = infrastructure_config(settings)
     suffix = PurePosixPath(path).suffix.lower()
 
     def asset(identity, kind, properties, line=1, provider="STATIC"):
+        def canonical(value):
+            if isinstance(value, dict):
+                return {
+                    k: canonical(v) for k, v in value.items() if k not in {"__line__", "__start_line__", "__end_line__"}
+                }
+            if isinstance(value, list):
+                return [canonical(v) for v in value]
+            return value
+
         result = {
             "identity": identity,
             "kind": kind,
             "provider": provider,
             "path": path,
             "line": line,
+            "end_line": line,
+            "format": "TERRAFORM"
+            if path.endswith((".tf", ".tf.json"))
+            else "DOCKERFILE"
+            if PurePosixPath(path).name.startswith("Dockerfile")
+            else "CLOUDFORMATION"
+            if provider == "AWS"
+            else provider,
             "authority": "STATIC",
             "verification_scope": "DECLARED_CONFIGURATION",
             "public": "UNKNOWN",
@@ -78,6 +145,9 @@ def structured_iac(path, source, make_finding):
             "runtime_observed": False,
             "relations": [],
             "rule_ids": [],
+            "resource_context_hash": hashlib.sha256(
+                json.dumps(canonical(properties), sort_keys=True).encode()
+            ).hexdigest(),
         }
         tags = properties.get("tags", {}) if isinstance(properties, dict) else {}
         result["environment"] = next(
@@ -94,7 +164,11 @@ def structured_iac(path, source, make_finding):
     def report(rule, target, explanation, line=None):
         item = make_finding(rule, path, line or target["line"], explanation)
         item["resource_identity"] = target["identity"]
+        item["resource_context_hash"] = target["resource_context_hash"]
         item["classification"] = "SECURITY_HOTSPOT"
+        item["infrastructure_format"] = target["format"]
+        item["authority"] = "STATIC"
+        item["verification_scope"] = "DECLARED_CONFIGURATION"
         findings.append(item)
         target["rule_ids"].append(rule)
 
@@ -132,10 +206,18 @@ def structured_iac(path, source, make_finding):
                 )
 
     try:
-        if suffix == ".tf":
-            parsed = hcl2.loads(
-                source, serialization_options=hcl2.SerializationOptions(strip_string_quotes=True, with_meta=True)
-            )
+        if suffix == ".tf" or path.endswith(".tf.json"):
+            if path.endswith(".tf.json"):
+                document = json.loads(source)
+                parsed = {
+                    key: [{name: value} for name, value in values.items()]
+                    for key, values in document.items()
+                    if isinstance(values, dict)
+                }
+            else:
+                parsed = hcl2.loads(
+                    source, serialization_options=hcl2.SerializationOptions(strip_string_quotes=True, with_meta=True)
+                )
             for block in parsed.get("resource", []):
                 for kind, names in block.items():
                     if kind.startswith("__") or not isinstance(names, dict):
@@ -223,12 +305,38 @@ def structured_iac(path, source, make_finding):
                         ) in {"blob", "container"}:
                             target["public"] = "DECLARED_PUBLIC"
                             report("PT-IAC-003", target, "The storage container explicitly declares anonymous access.")
-        elif PurePosixPath(path).name == "Dockerfile":
-            target = asset("dockerfile:" + path, "ContainerImage", {})
-            for line, content in enumerate(source.splitlines(), 1):
-                parts = content.strip().split(maxsplit=1)
-                if len(parts) == 2 and parts[0].upper() == "USER" and parts[1].split(":")[0] in {"root", "0"}:
-                    report("PT-IAC-002", target, "Dockerfile USER explicitly selects root.", line)
+            terraform(parsed, assets, asset, report, warnings, path)
+        elif PurePosixPath(path).name.startswith("Dockerfile"):
+            dockerfile(path, source, asset, report)
+            final = next(a for a in assets if a.get("final_stage"))
+            if settings["require_healthcheck"] and not any(
+                i["opcode"] == "HEALTHCHECK" for i in final.get("instructions", [])
+            ):
+                report("PT-IAC-030", final, "The configured final-image healthcheck requirement is not declared.")
+            from analyzers.finding_identity import digest
+
+            normalized = []
+            for a in assets:
+                for instruction in a.get("instructions", []):
+                    first, last = instruction["line"], instruction["end_line"]
+                    normalized.append(
+                        (
+                            a["stage"],
+                            instruction["opcode"],
+                            " ".join(s.strip() for s in source.splitlines()[first - 1 : last]),
+                        )
+                    )
+            for item in findings:
+                item.update(
+                    structural_key=digest(
+                        [item["rule"], item["resource_identity"].replace(path, "<file>"), item["explanation"]]
+                    ),
+                    structural_context_hash=digest(normalized),
+                    file_structure_hash=digest(normalized),
+                    identity_version="structural-v2",
+                    identity_confidence="HIGH",
+                    identity_method="DOCKER_INSTRUCTIONS",
+                )
         elif suffix in {".yaml", ".yml", ".json"}:
             docs = [json.loads(source)] if suffix == ".json" else bounded_yaml(source)
             for doc in docs:
@@ -247,21 +355,12 @@ def structured_iac(path, source, make_finding):
                             check_policy(props["PolicyDocument"], target, report)
                         if props.get("BucketEncryption"):
                             target["encryption"] = "DECLARED_ENABLED"
-                elif doc.get("kind") in {
-                    "Pod",
-                    "Deployment",
-                    "StatefulSet",
-                    "DaemonSet",
-                    "Job",
-                    "CronJob",
-                    "Service",
-                    "ServiceAccount",
-                }:
+                elif doc.get("kind") in KUBERNETES_KINDS:
                     meta, kind = doc.get("metadata", {}), doc["kind"]
                     target = asset(
                         f"{kind}/{meta.get('namespace', 'default')}/{meta.get('name', 'unnamed')}",
                         kind,
-                        {},
+                        doc,
                         doc.get("__line__", 1),
                         "KUBERNETES",
                     )
@@ -292,7 +391,9 @@ def structured_iac(path, source, make_finding):
                     for name, props in doc["services"].items():
                         if not isinstance(props, dict):
                             continue
-                        target = asset("compose:" + name, "ContainerWorkload", {}, props.get("__line__", 1), "COMPOSE")
+                        target = asset(
+                            "compose:" + name, "ContainerWorkload", props, props.get("__line__", 1), "COMPOSE"
+                        )
                         if props.get("privileged") is True:
                             report("PT-IAC-001", target, "Compose service explicitly enables privileged mode.")
                         if str(props.get("user", "")).split(":")[0] in {"root", "0"}:
@@ -313,6 +414,21 @@ def structured_iac(path, source, make_finding):
                                     target,
                                     "A sensitive host filesystem or container control socket is mounted.",
                                 )
+                enrich_document(doc, assets, asset, report, path)
+                deep_checks(doc, assets, asset, report, path, settings)
+                if doc.get("Transform") or any(
+                    isinstance(r, dict) and r.get("Type") == "AWS::CloudFormation::Stack"
+                    for r in doc.get("Resources", {}).values()
+                ):
+                    warnings.append(
+                        {
+                            "analyzer": "IAC",
+                            "path": path,
+                            "code": "TRANSFORM_UNRESOLVED" if doc.get("Transform") else "EXTERNAL_TEMPLATE_UNRESOLVED",
+                            "state": "PARTIAL",
+                            "message": "CloudFormation transforms/nested stacks are retained as declarations; expansion or remote template fetching is not performed.",
+                        }
+                    )
     except Exception as error:
         # No source, templates or credential values enter diagnostics.
         warnings.append(
@@ -341,6 +457,12 @@ def check_policy(policy, target, report):
                 "PT-IAC-005",
                 target,
                 "An Allow statement grants wildcard actions; effective permissions and escalation are unproven.",
+            )
+        if "*" in resources:
+            report(
+                "PT-IAC-022",
+                target,
+                "An Allow statement uses wildcard resources; whether individual actions support narrower scope requires review.",
             )
         if statement.get("Principal") == "*" and "*" in resources:
             target["public"] = "POTENTIAL_EXPOSURE" if statement.get("Condition") else "DECLARED_PUBLIC"
