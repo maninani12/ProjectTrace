@@ -6,7 +6,7 @@ import time
 from collections import Counter
 
 from analyzers.code_quality import FINGERPRINT_VERSION, VERSION
-from analyzers.code_quality.classification import LANGUAGES, classify
+from analyzers.code_quality.classification import LANGUAGES, classify, coverage_source
 from analyzers.code_quality.coverage import absent, percent
 from analyzers.code_quality.duplication import detect
 from analyzers.code_quality.rules import DEFINITIONS, config
@@ -337,9 +337,18 @@ def compare(quality, findings, previous, changed_lines, *, base_id=None, model_c
 
 
 def gate(quality, findings, coverage=None):
-    if quality["state"] == "NOT_AVAILABLE" and not any(
-        r["kind"] in {"SOURCE", "TEST", "EXAMPLE", "UNSUPPORTED", "UNSUPPORTED_ENCODING", "SKIPPED_SIZE_LIMIT"}
-        for r in quality["inventory"]
+    settings = quality["configuration"]["gate"]
+    measurement_required = settings.get("min_analysis_coverage_percent") is not None or any(
+        c["metric"] in {"analysis_coverage", "parser_failures", "changed_coverage"}
+        for c in settings.get("conditions", [])
+    )
+    if (
+        not measurement_required
+        and quality["state"] == "NOT_AVAILABLE"
+        and not any(
+            r["kind"] in {"SOURCE", "TEST", "EXAMPLE", "UNSUPPORTED", "UNSUPPORTED_ENCODING", "SKIPPED_SIZE_LIMIT"}
+            for r in quality["inventory"]
+        )
     ):
         return {
             "status": "PASS",
@@ -445,13 +454,9 @@ def gate(quality, findings, coverage=None):
         )
     report = coverage or quality["coverage"]
     if settings.get("min_analysis_coverage_percent") is not None:
-        eligible = [
-            row
-            for row in quality["inventory"]
-            if row["kind"] in {"SOURCE", "TEST", "EXAMPLE", "UNSUPPORTED", "UNSUPPORTED_ENCODING", "SKIPPED_SIZE_LIMIT"}
-        ]
+        eligible = [row for row in quality["inventory"] if coverage_source(row)]
         parsed = sum(row.get("parser_state") == "COMPLETED" for row in eligible)
-        actual = round(100 * parsed / len(eligible), 2) if eligible else None
+        actual = 100 * parsed / len(eligible) if eligible else None
         condition(
             "Quality: parsed-file analysis coverage",
             actual,
@@ -473,7 +478,7 @@ def gate(quality, findings, coverage=None):
         r
         for r in quality["inventory"]
         if r.get("language") in required
-        and r["kind"] in {"SOURCE", "TEST", "EXAMPLE", "SKIPPED_SIZE_LIMIT", "UNSUPPORTED_ENCODING"}
+        and coverage_source(r)
         and r.get("parser_state") != "COMPLETED"
     ]
     if required:
@@ -490,13 +495,9 @@ def gate(quality, findings, coverage=None):
             blocking_eligible=True,
             precision_status="NOT_APPLICABLE",
         )
-    eligible_inventory = [
-        r
-        for r in quality["inventory"]
-        if r["kind"] in {"SOURCE", "TEST", "EXAMPLE", "UNSUPPORTED", "UNSUPPORTED_ENCODING", "SKIPPED_SIZE_LIMIT"}
-    ]
+    eligible_inventory = [r for r in quality["inventory"] if coverage_source(r)]
     parsed_percent = (
-        round(100 * sum(r.get("parser_state") == "COMPLETED" for r in eligible_inventory) / len(eligible_inventory), 2)
+        100 * sum(r.get("parser_state") == "COMPLETED" for r in eligible_inventory) / len(eligible_inventory)
         if eligible_inventory
         else None
     )

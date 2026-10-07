@@ -1,0 +1,12 @@
+{
+  "expected": 3,
+  "unexpected": 0,
+  "flaky": 0,
+  "skipped": 0,
+  "duration_seconds": 25.58149,
+  "workflows": [
+    "tenant trust controls, audit integrity and native infrastructure evidence",
+    "captured comparisons, component corrections, historical coverage and paged graph",
+    "Phase 2 captured inventory, versions, filtering, paging and history"
+  ]
+}

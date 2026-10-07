@@ -12,9 +12,13 @@ Validation: 138 related backend tests passed in 188.91 seconds after structural 
 
 Implemented complete captured file inventory, per-file states, parser success versus semantic maturity, metadata and authorized pagination/filtering, binary and per-file oversize skips. Aggregate archive/count/compression safety limits still apply. Source, runtime and AI authority remain explicit. A failed Python parser-state classification was corrected; focused coverage and native regression passed. Full Trust & Coverage controls and infrastructure depth are later ordered phases.
 
+**COMPLETE — PHASE 2 CLOSED, 2026-10-07.** Final closure verification is recorded separately in [PHASE_2_CLOSURE.md](PHASE_2_CLOSURE.md): 141 focused backend tests, 324 complete regression tests, 26 frontend unit tests, TypeScript/build and three Chromium workflows passed. New analyses conservatively inventory unknown source and shebang hints, preserve encoding gaps and unknown LOC, handle Dockerfile variants, keep exclusions out of parser success, and compare unrounded coverage ratios in gates. The Trust UI reads captured authority rather than fabricating legacy measurements. Earlier candidate reports and source archives remain historical; the Phase 2 receipt binds this verification separately.
+
 ## Phase 3: profiles and gates
 
 Added Recommended/organization/team/repository inheritance with partial overrides, organization-scoped team assignment, immutable profile/gate version records, lineage in captured analysis, file-size threshold rule, nesting and required-language conditions, and bounded declarative gate conditions with affected files/values. Explicit administrator overrides may opt an unqualified condition into blocking; default unmeasured rule precision remains advisory. 47 relevant tests passed; full regression through this phase passed **226 tests in 376.77 seconds**. Frontend tests/build passed.
+
+After Phase 2 final closure, [Phase 3 follow-up](PHASE_3_VERIFICATION.md) reproduced and repaired a required-parser PASS for an unsupported extensionless language hint. Included-source membership now matches coverage. Current follow-up: 66 focused checks, 325 complete backend tests in 597.77 seconds and four Chromium workflows passed. Frontend sources are unchanged from the fresh Phase 2 26-test/typecheck/build pass. Original credentials, snapshots, encrypted blobs and key remain intact. The separate Phase 3 receipt preserves earlier evidence scope; this is local profile/gate verification, not production acceptance.
 
 ## Phases 4–5: accuracy and measured parser gaps
 

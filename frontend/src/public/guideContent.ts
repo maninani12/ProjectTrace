@@ -101,7 +101,7 @@ export const guideTopics: GuideTopic[] = [
     "Upload → analysis → evidence → claim verification → review and audit.",
     ["repositories", "evidence", "claims", "reviews"],
     "Check analysis coverage before interpreting a result.",
-    "Unsupported files and failed engines make coverage partial; no finding does not automatically mean safe.",
+    "Unsupported files and failed engines make coverage partial; no finding does not automatically mean safe. Unknown source stays visible as UNKNOWN / UNSUPPORTED. Coverage counts parsed programming source against included source, including unsupported and oversized source; vendor/generated/policy exclusions, binary, docs and infrastructure configuration are excluded. Infrastructure coverage is shown separately. All current analyzers have PARTIAL semantic maturity. A parser completing does not prove full language or security support. Historical snapshots without coverage remain LEGACY_NOT_MEASURED.",
     "Content hashes and analyzer versions drive cached observation reuse. Graph records and snapshots are committed atomically. Queued execution uses encrypted, expiring inputs.",
   ),
   topic(

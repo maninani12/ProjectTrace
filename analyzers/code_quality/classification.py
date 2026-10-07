@@ -34,7 +34,105 @@ OTHER_LANGUAGES = {
     ".r": "R",
     ".vue": "Vue",
     ".svelte": "Svelte",
+    ".kts": "Kotlin",
+    ".hpp": "C++",
+    ".cxx": "C++",
+    ".hxx": "C++",
+    ".zsh": "Shell",
+    ".ps1": "PowerShell",
+    ".lua": "Lua",
+    ".pl": "Perl",
 }
+NON_SOURCE_SUFFIXES = {
+    ".md",
+    ".txt",
+    ".json",
+    ".yaml",
+    ".yml",
+    ".tf",
+    ".toml",
+    ".xml",
+    ".ini",
+    ".env",
+    ".example",
+    ".lock",
+    ".csv",
+    ".svg",
+    ".css",
+    ".html",
+}
+NON_SOURCE_NAMES = {"CODEOWNERS", ".env", ".gitignore", ".dockerignore", "LICENSE", "NOTICE"}
+BINARY_SUFFIXES = {
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".gif",
+    ".ico",
+    ".pdf",
+    ".zip",
+    ".gz",
+    ".woff",
+    ".woff2",
+    ".exe",
+    ".dll",
+    ".bin",
+}
+
+
+def binary_input(path, raw):
+    if PurePosixPath(path).suffix.lower() in BINARY_SUFFIXES:
+        return True
+    if b"\x00" in raw:
+        try:
+            raw.decode("utf-8")
+        except UnicodeDecodeError:
+            # Non-UTF-8 source (including UTF-16) remains an explicit encoding gap.
+            return False
+        return True
+    return False
+
+
+def source_language(path, source=""):
+    """Explicit extensions/filenames and a bounded shebang; never semantic detection."""
+    p = PurePosixPath(path)
+    language = LANGUAGES.get(p.suffix.lower()) or OTHER_LANGUAGES.get(p.suffix.lower())
+    if language:
+        return language
+    if p.name == "Makefile":
+        return "Make"
+    first = source[:200].split("\n", 1)[0]
+    if first.startswith("#!"):
+        for pattern, name in (
+            (r"\bpython(?:[23](?:\.\d+)?)?\b", "Python"),
+            (r"\b(?:ba|z|k)?sh\b", "Shell"),
+            (r"\bnode\b", "JavaScript"),
+            (r"\bruby\b", "Ruby"),
+            (r"\bperl\b", "Perl"),
+        ):
+            if re.search(pattern, first):
+                return name
+        return "UNKNOWN"
+    if (
+        p.suffix.lower() in NON_SOURCE_SUFFIXES | BINARY_SUFFIXES
+        or p.name in NON_SOURCE_NAMES
+        or p.name.startswith("Dockerfile")
+        or path.endswith(".tf.json")
+    ):
+        return None
+    return "UNKNOWN"
+
+
+def coverage_source(row):
+    return row["kind"] in {
+        "SOURCE",
+        "TEST",
+        "EXAMPLE",
+        "UNSUPPORTED",
+        "UNSUPPORTED_ENCODING",
+        "SKIPPED_SIZE_LIMIT",
+    } and bool(row.get("language"))
+
+
 VENDOR = {"node_modules", "vendor", ".venv", "venv", "third_party", "third-party"}
 GENERATED = {"dist", "build", "target", "generated", "__pycache__", ".next", "coverage", "htmlcov"}
 
@@ -56,8 +154,8 @@ def classify(files, scope=None):
         p = PurePosixPath(path)
         language = (
             scope.get("language_overrides", {}).get(path)
-            or LANGUAGES.get(p.suffix.lower())
-            or OTHER_LANGUAGES.get(p.suffix.lower())
+            or (metadata or {}).get("source_language")
+            or source_language(path, source)
         )
         kind, reason = "SOURCE", "Recognized source extension."
         parts = set(p.parts)
@@ -84,11 +182,13 @@ def classify(files, scope=None):
                 if language
                 else ("EXCLUDED_BINARY", "Non-UTF-8 binary/non-source entry; no source parser was run.")
             )
+            if diagnostics[path].get("state") == "BINARY":
+                kind, reason = "EXCLUDED_BINARY", "Binary format or NUL bytes; no source parser was run."
             if diagnostics[path].get("state") == "SKIPPED_SIZE_LIMIT":
                 kind, reason = "SKIPPED_SIZE_LIMIT", "File exceeds the parser byte budget; no source parser was run."
-        elif language not in set(LANGUAGES.values()):
+        elif language not in set(LANGUAGES.values()) or p.suffix.lower() not in LANGUAGES:
             kind, reason = (
-                ("UNSUPPORTED", "No native quality parser for this source language.")
+                ("UNSUPPORTED", "No native quality parser selected for this filename/language.")
                 if language
                 else ("NON_SOURCE", "Documentation/configuration/report or unrecognized non-source file.")
             )

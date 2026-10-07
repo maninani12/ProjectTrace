@@ -1,0 +1,86 @@
+{
+  "schema": "projecttrace-phase3-followup-v1",
+  "state": "LOCAL_PROFILES_AND_GATES_VERIFIED",
+  "verified_at": "2026-10-07T15:31:07.179509+00:00",
+  "application_version": "1.6.0",
+  "phase2_state": "PHASE_2_CLOSED",
+  "base_commit": "b34a2734c2734539d5c35b05e1639f1972aa65c8",
+  "change": "Required-language parser gates include unsupported source selected by bounded language hints; no extensionless parser is added.",
+  "backend_focused": {
+    "tests": 66,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "duration_seconds": 48.806,
+    "evidence": "phase3-focused.xml"
+  },
+  "backend_regression": {
+    "tests": 325,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "duration_seconds": 597.726,
+    "evidence": "phase3-regression.xml"
+  },
+  "browser": {
+    "expected": 4,
+    "unexpected": 0,
+    "flaky": 0,
+    "skipped": 0,
+    "duration_seconds": 65.862241,
+    "workflows": [
+      "native quality views, stable evidence review, profile and real coverage import",
+      "tenant trust controls, audit integrity and native infrastructure evidence",
+      "captured comparisons, component corrections, historical coverage and paged graph",
+      "Phase 2 captured inventory, versions, filtering, paging and history"
+    ]
+  },
+  "frontend": {
+    "unit_tests_passed": 26,
+    "typecheck": "PASS",
+    "production_build": "PASS",
+    "public_routes_prerendered": 41,
+    "scope": "Unchanged frontend from Phase 2 verification; browser workflows freshly rerun against final backend."
+  },
+  "implementation_sha256": {
+    "analyzers/analysis_coverage.py": "293abfc14dcb6abf25351867eeb3556b6c6710a55a85fa86bb2e3f900bcd633f",
+    "analyzers/code_quality/classification.py": "250210184ae260e555760c1a0d6d7091f970738d2517c024092b234f142bb6bb",
+    "analyzers/code_quality/core.py": "2496bbce78d1a85ecbe208d35eb7292e022aeca66e9626c3647b9aedf3be0b00",
+    "analyzers/capabilities.py": "98a13fb86835363ad528003c020343fe7799442b79a6220074ab943348fb21b1",
+    "analyzers/engine.py": "c5b0535b51ffe2acd1e29fa8e3bee458e70a9b181e2c39d775f057ee72d9ea6a",
+    "backend/repository_store.py": "9b14a9289e2504e1e7284cddd366f42a1dfbd705b41cde2756a218b163993a65",
+    "backend/domain.py": "6b387765c69480d37d4519ffc4ab151d581d3450be5493a7a085b8af8e5d8d25",
+    "backend/trust_api.py": "5158491653971628b6cc1e54f543bc55610b5f2ba7100fe86bbb9812581e2f81",
+    "backend/partitioned_analysis.py": "61c9715b30da768e4396576a493c58f3816d069d6f7c14f12a48be7b0c98f8c8",
+    "frontend/src/EnterpriseTrust.tsx": "bb941c29ee1184f4044857a21df7406fd7438992c068b084e36a943876034d58",
+    "frontend/src/public/guideContent.ts": "c506ef9c701d84b3880632abec965628975dc6e83f65ec4c8ee6c1e16176feab",
+    "tests/test_analysis_coverage.py": "6989fc900872941b35de6ca7916f1227638bccddf9b57ea0588ec9be00444ab6",
+    "tests/test_code_quality.py": "ae4f8a8296070ceb92a35732624e4ca76487fedb3bf675a7cb189d26062fca46",
+    "tests/test_enterprise_trust.py": "a21f1b23a5578a928738db8f51d08c1456027dc51a755e80769bcf48e4939b90",
+    "tests/test_repository_store.py": "c691c92bd6536dfa2614b0d2ff4a5d4793193d2056306895b07e6599bf211829",
+    "tests/test_trust_controls.py": "d181ce1664c591f550492eba8b6a21206527319babd7d5df3830975dcaad4f9f",
+    "frontend/src/AnalysisCoverage.test.tsx": "f4de309985768d93d908e7be058e14fbae2fea6f5cffb27d6ec1ec0f2aa9a608",
+    "frontend/e2e/phase2-coverage.spec.ts": "c89e6d732f5e1e31f5df436db00e2b2a782f6159d74f18ebc6dd8d527a773876",
+    "frontend/e2e/enterprise-trust.spec.ts": "7d30e520b9c1a73af38780488a497c87903a57541dd8e6762b45a31b95736ab1",
+    "frontend/e2e/hardening.spec.ts": "431ef9db454450e89b38dd95ec0e4263676598f5aee8d9dbf45455a0091a09bc",
+    "tests/test_quality_profiles.py": "d8ccffd9c71486c0a7be2cc9c6b5aa23e5d0bbce68510610c790e75b95546315",
+    "backend/quality_api.py": "651ccf7a36aec4399b488c0f00efdbe6473a5ebbb6e741007de5bb3a60b1afa8",
+    "backend/quality_domain.py": "a0fc1b47cd25ed97a73b356c61b31c2f816e7b335c9f8f47bc36774aba37ace9",
+    "analyzers/code_quality/rules.py": "e251f10e79218a5b1a9681169778b820a583e410e75a330611c1a710f53528e1",
+    "frontend/e2e/code-quality.spec.ts": "970903f3e1d06b2dfacc2ef07c0b9d1293002b9e4c1e2ce7b38f1d00116625be"
+  },
+  "changed_phase2_implementation": [
+    "analyzers/code_quality/core.py"
+  ],
+  "evidence_sha256": {
+    "phase2-closure-verification.json": "a8ff3743b57dfaf06cb4ddaf89465748b802c2a265f41220f78ffcb77ecabd4a",
+    "phase3-focused.xml": "ca2486aa5986330078159eb3228f39e6d0c437167601d445ca70e54b18acb043",
+    "phase3-regression.xml": "87585148a49ec40bae2051cc4c7ddb3ffbf09b8ec5a20375d426ee1c6eb2666b",
+    "phase3-browser-verification.json": "ccae88895ecafa038dfc2cf46382124f6166d6e51fe9fd4983153cd4f5d5beab",
+    "phase3-saved-data-preservation.json": "1b927e2c446a62775dcdc37cf7cb25bc2b6341804d491d1314b86121e8682cf1"
+  },
+  "limitations": [
+    "Local controlled profile/gate verification does not establish representative rule precision or production enterprise acceptance.",
+    "Earlier receipts retain their historical code scope; Phase 2 inventory behavior passed again in the complete current regression."
+  ]
+}

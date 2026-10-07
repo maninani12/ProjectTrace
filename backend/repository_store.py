@@ -161,7 +161,9 @@ class RepositoryFiles(Mapping):
     def native_path(path):
         p = PurePosixPath(path)
         return not any(part in SKIP_PARTS for part in p.parts) and (
-            p.suffix.lower() in TEXT_SUFFIXES or p.name in {"Dockerfile", "CODEOWNERS", "Makefile", ".env"}
+            p.suffix.lower() in TEXT_SUFFIXES
+            or p.name in {"Dockerfile", "CODEOWNERS", "Makefile", ".env"}
+            or p.name.startswith("Dockerfile")
         )
 
     def __len__(self):
@@ -241,15 +243,22 @@ def capture(db, organization_id, repository, items, *, source="OWNED_STREAM", qu
             with db.no_autoflush:
                 digest, reused_blob = store.put(db, organization_id, value)
             reused += reused_blob
-            try:
-                text = value.decode("utf-8")
-            except UnicodeDecodeError:
-                pass
+            from analyzers.code_quality.classification import binary_input
+
+            if binary_input(canonical, value):
+                data = {**data, "state": "BINARY"}
+            else:
+                try:
+                    text = value.decode("utf-8")
+                except UnicodeDecodeError:
+                    pass
         if text is not None:
             from analyzers.analysis_coverage import infrastructure_format
+            from analyzers.code_quality.classification import source_language
 
             data = {
                 "infrastructure_format": infrastructure_format(canonical, text),
+                "source_language": source_language(canonical, text),
                 "iac_candidate": is_iac_source(canonical, text),
                 "bytes": len(value),
                 "physical_lines": len(text.splitlines()),

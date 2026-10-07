@@ -1,0 +1,52 @@
+{
+  "schema_before": "0007",
+  "schema_after": "0013",
+  "tables": {
+    "organizations": {
+      "before": 74,
+      "after": 74,
+      "missing_pre_upgrade_ids": 0
+    },
+    "users": {
+      "before": 74,
+      "after": 74,
+      "missing_pre_upgrade_ids": 0
+    },
+    "repositories": {
+      "before": 64,
+      "after": 64,
+      "missing_pre_upgrade_ids": 0
+    },
+    "records": {
+      "before": 49958,
+      "after": 54914,
+      "missing_pre_upgrade_ids": 0
+    },
+    "audit_events": {
+      "before": 2580,
+      "after": 2733,
+      "missing_pre_upgrade_ids": 0
+    },
+    "sessions": {
+      "before": 138,
+      "after": 139,
+      "missing_pre_upgrade_ids": 0
+    }
+  },
+  "pre_upgrade_credentials": {
+    "checked": 74,
+    "changed": 0
+  },
+  "pre_upgrade_snapshots": {
+    "checked": 162,
+    "changed": 0
+  },
+  "foreign_key_failures": 0,
+  "integrity": "ok",
+  "pre_final_backup_encrypted_blobs": {
+    "checked": 50,
+    "missing": 0,
+    "changed": 0
+  },
+  "original_analysis_key_unchanged": true
+}

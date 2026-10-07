@@ -4,6 +4,8 @@
 
 This is the existing ProjectTrace 1.6.0 codebase with an additive enterprise hardening candidate in the working tree. It preserves the Claim Ledger, authoritative Evidence Graph, existing native quality/security/cloud capabilities and public product experience. No SonarQube, Wiz or external AI dependency was introduced. This is not production enterprise acceptance.
 
+Subsequent Phase 2 closure verification is documented in [docs/PHASE_2_CLOSURE.md](docs/PHASE_2_CLOSURE.md). It covers complete intake inventory, unsupported/unknown source, parser failures, exclusions, truthful coverage/gates, historical/granted access and captured UI authority. Earlier broad candidate reports, benchmarks and archives below retain their original code/test scope; they are not fresh verification of these later changes. Current analyzer maturity remains PARTIAL and external production acceptance remains incomplete.
+
 ## Release version, commit and environment
 
 Analyzer/package version remains **1.6.0**; this delivery is a hardening candidate, not an invented published version. Base commit: `663770fffd4b1f5f532b6bd7b59949eb1183a3ee`; changes are uncommitted. Tests ran on Windows 11, Python 3.14.3, local SQLite, synchronous native analysis and Chromium. Controlled PR load used four threads and an owned crashed subprocess. No live PostgreSQL/Redis/Celery cluster, Docker/Kubernetes runtime, IdP, GHES or S3 service was available. Only owned ProjectTrace code/helpers were executed; customer source remained inert.

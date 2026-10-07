@@ -6,6 +6,19 @@ from analyzers.engine import analyze
 from tests.test_enterprise_trust import owner
 
 
+def test_required_parser_cannot_pass_for_extensionless_language_hint():
+    result = analyze(
+        {"scripts/run": "#!/usr/bin/env python3\nprint('owned fixture')\n"},
+        profile={"quality": {"gate": {"scope": "OVERALL", "required_languages": ["Python"]}}},
+    )
+    row = result["analysis_coverage"]["inventory"][0]
+    assert row["language"] == "Python" and row["analysis_state"] == "UNSUPPORTED"
+    evaluation = gate(result["code_quality"], result["findings"])
+    condition = next(r for r in evaluation["results"] if r["policy"] == "Quality: required language parsers")
+    assert condition["result"] == "FAIL" and condition["file_paths"] == ["scripts/run"]
+    assert evaluation["status"] == "FAIL"
+
+
 def test_team_inheritance_overrides_versions_and_scope(client):
     client = owner(client)
     imported = client.post(

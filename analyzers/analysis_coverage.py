@@ -4,6 +4,7 @@ from collections import Counter, defaultdict
 from pathlib import PurePosixPath
 
 from analyzers.capabilities import registry
+from analyzers.code_quality.classification import coverage_source
 
 
 def infrastructure_format(path, source):
@@ -40,7 +41,7 @@ def build(files, analyzed_files, quality, signals, warnings, version):
         metadata = files.metadata_for(path) if hasattr(files, "metadata_for") else None
         language = (
             (
-                (metadata or {}).get("infrastructure_format")
+                (metadata or {}).get("infrastructure_format") or infrastructure_format(path, "")
                 if metadata
                 else infrastructure_format(path, files.get(path, ""))
             )
@@ -75,10 +76,27 @@ def build(files, analyzed_files, quality, signals, warnings, version):
             )
             if not iac and entry.get("parser_state") == "PARTIAL":
                 state = "PARSE_FAILED"
-        if iac_parse_failed:
+        excluded = kind in {
+            "EXCLUDED_GENERATED",
+            "EXCLUDED_VENDOR",
+            "SKIPPED_SIZE_LIMIT",
+            "EXCLUDED_BINARY",
+            "EXCLUDED_CONFIG",
+            "UNSUPPORTED_ENCODING",
+        }
+        if iac_parse_failed and not excluded:
             state = "PARSE_FAILED"
-        elif iac and diagnostics[path]:
+        elif iac and diagnostics[path] and not excluded:
             state = "PARTIAL"
+        if state in {
+            "EXCLUDED_GENERATED",
+            "EXCLUDED_VENDOR",
+            "SKIPPED_SIZE_LIMIT",
+            "BINARY",
+            "IGNORED_BY_POLICY",
+            "UNSUPPORTED",
+        }:
+            parsed = False
         # Configuration/docs still receive declared inventory; no invented source-language coverage.
         if kind == "NON_SOURCE" and not iac:
             state = "PARTIAL" if path in analyzed_files else "IGNORED_BY_POLICY"
@@ -88,6 +106,7 @@ def build(files, analyzed_files, quality, signals, warnings, version):
                 **({"component": files.component_for(path)} if hasattr(files, "component_for") else {}),
                 "language": language,
                 "kind": kind,
+                "coverage_source": coverage_source(entry),
                 "analysis_state": state,
                 "bytes": entry["bytes"],
                 "loc": entry["physical_lines"],
@@ -121,11 +140,7 @@ def build(files, analyzed_files, quality, signals, warnings, version):
                 "maturity": capabilities.get(language, {}).get("maturity", "UNSUPPORTED"),
             }
         )
-    source = [
-        r
-        for r in rows
-        if r["kind"] in {"SOURCE", "TEST", "EXAMPLE", "UNSUPPORTED", "UNSUPPORTED_ENCODING", "SKIPPED_SIZE_LIMIT"}
-    ]
+    source = [r for r in rows if r["coverage_source"]]
     complete = sum(r["source_parser_completed"] for r in source)
     return {
         "schema": "projecttrace-analysis-coverage-v1",
@@ -136,7 +151,7 @@ def build(files, analyzed_files, quality, signals, warnings, version):
             "files_with_native_scan": sum(r["native_scan_performed"] for r in rows),
             "source_files": len(source),
             "source_files_parsed": complete,
-            "source_analysis_percent": round(100 * complete / len(source), 2) if source else None,
+            "source_analysis_percent": round(100 * complete / len(source), 6) if source else None,
             "states": dict(Counter(r["analysis_state"] for r in rows)),
         },
         "authority": "STATIC / DECLARED",

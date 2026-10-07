@@ -84,6 +84,11 @@ type Coverage = {
   profile_version?: number;
   job_id?: string;
   analysis_at?: string;
+  authority?: string;
+  runtime_evidence?: string;
+  customer_code_executed?: boolean;
+  external_llm_used?: boolean;
+  source_sent_to_external_ai?: boolean;
   ruleset_version?: string;
   quality_gate_version?: string;
   infrastructure?: {
@@ -433,9 +438,28 @@ export default function EnterpriseTrust({
                     : `${coverage.data.summary.source_analysis_percent}%`}
                 </p>
                 <p>
-                  Static and declared evidence. Runtime evidence: UNOBSERVED.
-                  Customer code executed: NO. External LLM used: NO. Source sent
-                  to external AI: NO.
+                  {coverage.data?.authority || "Authority not measured"}.
+                  Runtime evidence:{" "}
+                  {coverage.data?.runtime_evidence || "Not measured"}. Customer
+                  code executed:{" "}
+                  {coverage.data?.customer_code_executed === false
+                    ? "NO"
+                    : coverage.data?.customer_code_executed === true
+                      ? "YES"
+                      : "Not measured"}
+                  . External LLM used:{" "}
+                  {coverage.data?.external_llm_used === false
+                    ? "NO"
+                    : coverage.data?.external_llm_used === true
+                      ? "YES"
+                      : "Not measured"}
+                  . Source sent to external AI:{" "}
+                  {coverage.data?.source_sent_to_external_ai === false
+                    ? "NO"
+                    : coverage.data?.source_sent_to_external_ai === true
+                      ? "YES"
+                      : "Not measured"}
+                  .
                 </p>
                 <p>
                   {Object.entries(coverage.data?.summary.states || {})
@@ -493,7 +517,6 @@ export default function EnterpriseTrust({
                       <option value="">All states</option>
                       {[
                         "PARTIAL",
-                        "SUPPORTED",
                         "UNSUPPORTED",
                         "PARSE_FAILED",
                         "EXCLUDED_GENERATED",

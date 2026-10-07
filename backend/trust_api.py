@@ -9,7 +9,7 @@ from pydantic import BaseModel, ConfigDict, Field, StrictBool
 from sqlalchemy import func, select
 
 from analyzers.capabilities import registry
-from analyzers.engine import VERSION, redact
+from analyzers.engine import VERSION, redact, redact_metadata
 from backend.accuracy import report as accuracy_report
 from backend.db import CloudAsset, QualityAnalysis, Record, TenantPolicy
 from backend.domain import audit
@@ -255,9 +255,42 @@ def analysis_coverage(
                     "Run a new analysis to capture complete file coverage; previous snapshots remain unchanged."
                 ],
             }
+        inventory_fields = {
+            "path",
+            "component",
+            "language",
+            "kind",
+            "coverage_source",
+            "analysis_state",
+            "bytes",
+            "loc",
+            "reason",
+            "parser",
+            "parser_state",
+            "analyzer_support",
+            "quality_support",
+            "security_support",
+            "source_parser_completed",
+            "native_scan_performed",
+            "authority",
+            "runtime_observed",
+            "precision",
+        }
+        inventory = [
+            redact_metadata(
+                {
+                    **{k: v for k, v in row.items() if k in inventory_fields},
+                    "diagnostics": [
+                        {k: d.get(k) for k in ("analyzer", "code", "state", "message")}
+                        for d in row.get("diagnostics", [])
+                    ],
+                }
+            )
+            for row in coverage["inventory"]
+        ]
         selected = [
             r
-            for r in coverage["inventory"]
+            for r in inventory
             if (not state or r["analysis_state"] == state)
             and (not q or q.lower() in r["path"].lower() or q.lower() in r["language"].lower())
         ]
@@ -289,21 +322,36 @@ def analysis_coverage(
         }
         infrastructure = []
         for label, key in formats.items():
-            inventory = [r for r in coverage["inventory"] if r["language"] == label]
+            format_inventory = [r for r in inventory if r["language"] == label]
             infrastructure.append(
                 {
                     "format": key,
-                    "files": len(inventory),
-                    "analyzed_files": sum(r["native_scan_performed"] for r in inventory),
+                    "files": len(format_inventory),
+                    "analyzed_files": sum(r["native_scan_performed"] for r in format_inventory),
                     "resources": counts.get(key, 0),
-                    "parse_failures": sum(r["analysis_state"] == "PARSE_FAILED" for r in inventory),
+                    "parse_failures": sum(r["analysis_state"] == "PARSE_FAILED" for r in format_inventory),
                     "maturity": "PARTIAL",
                     "authority": "STATIC",
                     "runtime_evidence": "UNOBSERVED",
-                    "diagnostics": [{"path": r["path"], **d} for r in inventory for d in r["diagnostics"]],
+                    "diagnostics": [{"path": r["path"], **d} for r in format_inventory for d in r["diagnostics"]],
                 }
             )
-        return {k: v for k, v in coverage.items() if k != "inventory"} | {
+        return {
+            k: redact_metadata(v)
+            for k, v in coverage.items()
+            if k
+            in {
+                "schema",
+                "summary",
+                "languages",
+                "authority",
+                "runtime_evidence",
+                "customer_code_executed",
+                "external_llm_used",
+                "source_sent_to_external_ai",
+                "limitations",
+            }
+        } | {
             "state": snapshot.data["status"],
             "repository_id": snapshot.repository_id,
             "snapshot_id": snapshot.id,

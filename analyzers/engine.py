@@ -14,6 +14,7 @@ from urllib.parse import quote
 
 from analyzers.analysis_coverage import build as build_analysis_coverage
 from analyzers.baseline import context_signals, implementation_claims, inventory
+from analyzers.code_quality.classification import binary_input
 from analyzers.code_quality.core import build as quality_build
 from analyzers.code_quality.rules import RULES as QUALITY_RULES
 from analyzers.finding_identity import annotate as annotate_finding_identity
@@ -136,16 +137,23 @@ def validate_files(files, *, keep_excluded=False):
         raise ValueError(f"Repository must contain 1–{MAX_FILES} files.")
     size = sum(row["bytes"] for row in intake if row.get("state") != "SKIPPED_SIZE_LIMIT")
     clean = SourceFiles(intake=intake)
+    seen_paths = {str(safe_path(row["path"])) for row in intake}
+    if len(seen_paths) != len(intake):
+        raise ValueError("Repository contains duplicate paths.")
     if size > MAX_TOTAL_BYTES:
         raise ValueError("Repository exceeds the configured total size limit.")
     for path, source in files.items():
         p = safe_path(path)
+        if str(p) in seen_paths:
+            raise ValueError("Repository contains duplicate paths.")
+        seen_paths.add(str(p))
         if not keep_excluded and any(part in SKIP_PARTS for part in p.parts):
             continue
         if (
             not keep_excluded
             and p.suffix.lower() not in TEXT_SUFFIXES
             and p.name not in {"Dockerfile", "CODEOWNERS", "Makefile", ".env"}
+            and not p.name.startswith("Dockerfile")
         ):
             continue
         if not isinstance(source, str):
@@ -158,15 +166,20 @@ def validate_files(files, *, keep_excluded=False):
                     "path": str(p),
                     "bytes": n,
                     "hash": hash_text(source),
-                    "physical_lines": len(source.splitlines()),
+                    "physical_lines": None,
                     "state": "SKIPPED_SIZE_LIMIT",
                 }
             )
             continue
         if n > MAX_FILE_BYTES or size > MAX_TOTAL_BYTES:
             raise ValueError("Repository exceeds the configured file or total size limit.")
+        if keep_excluded and binary_input(str(p), source.encode()):
+            clean.intake.append(
+                {"path": str(p), "bytes": n, "hash": hash_text(source), "physical_lines": None, "state": "BINARY"}
+            )
+            continue
         clean[str(p)] = source
-    if not clean and not (keep_excluded and intake):
+    if not clean and not (keep_excluded and clean.intake):
         raise ValueError("Repository contains no supported text files.")
     return clean
 
@@ -217,6 +230,17 @@ def read_zip(blob, *, keep_excluded=False):
                 )
                 continue
             raw = archive.read(entry)
+            if keep_excluded and binary_input(canonical, raw):
+                files.intake.append(
+                    {
+                        "path": canonical,
+                        "bytes": len(raw),
+                        "hash": hashlib.sha256(raw).hexdigest(),
+                        "physical_lines": None,
+                        "state": "BINARY",
+                    }
+                )
+                continue
             try:
                 files[canonical] = raw.decode("utf-8")
             except UnicodeDecodeError:
