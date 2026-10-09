@@ -23,16 +23,14 @@ afterEach(() => {
 describe("Public product experience", () => {
   it("explains the product without fetching private workspace data", async () => {
     window.history.replaceState({}, "", "/");
-    const fetcher = vi
-      .fn()
-      .mockResolvedValue({
-        ok: true,
-        json: async () => ({
-          authenticated: false,
-          local_registration: true,
-          demo_available: true,
-        }),
-      });
+    const fetcher = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        authenticated: false,
+        local_registration: true,
+        demo_available: true,
+      }),
+    });
     vi.stubGlobal("fetch", fetcher);
     render(<App />);
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
@@ -153,18 +151,45 @@ describe("Public product experience", () => {
     ).not.toBeInTheDocument();
     expect(screen.queryByLabelText("Password")).not.toBeInTheDocument();
   });
+  it("shows an unavailable account-options read without asserting registration is disabled", () => {
+    render(
+      <ThemeProvider>
+        <PublicSession.Provider
+          value={{
+            authenticated: false,
+            local_registration: false,
+            demo_available: false,
+            ready: true,
+            error: "Rate limit reached. Try again in one minute.",
+          }}
+        >
+          <MemoryRouter>
+            <AuthPage register />
+          </MemoryRouter>
+        </PublicSession.Provider>
+      </ThemeProvider>,
+    );
+    expect(screen.getByRole("alert")).toHaveTextContent("Rate limit reached");
+    expect(
+      screen.getByRole("button", { name: "Create workspace & continue" }),
+    ).toBeDisabled();
+    expect(
+      screen.queryByText(/Local account creation is disabled/),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Retry connection" }),
+    ).toBeInTheDocument();
+  });
   it("creates an empty local workspace and returns directly to source import", async () => {
-    const fetcher = vi
-      .fn()
-      .mockResolvedValue({
-        ok: true,
-        json: async () => ({
-          email: "test@example.com",
-          role: "ORG_OWNER",
-          csrf: "test-only-csrf",
-          demo: false,
-        }),
-      });
+    const fetcher = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        email: "test@example.com",
+        role: "ORG_OWNER",
+        csrf: "test-only-csrf",
+        demo: false,
+      }),
+    });
     vi.stubGlobal("fetch", fetcher);
     function Destination() {
       const location = useLocation();

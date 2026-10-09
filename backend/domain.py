@@ -1,16 +1,20 @@
 import difflib
 import json
+import time
 import uuid
-from collections import deque
+from collections import defaultdict, deque
 from datetime import datetime, timezone
+from functools import lru_cache
 
 from sqlalchemy import or_, select
 
-from analyzers.code_quality.classification import ownership
+from analyzers.code_quality.classification import ownership, ownership_rules
 from analyzers.engine import PARSER_SIGNATURE, VERSION, analyze, hash_text, redact, validate_files
 from analyzers.verifiers import claim_key
 from backend import quality_domain
+from backend.analysis_budget import checkpoint as output_checkpoint
 from backend.db import CloudAsset, Record, now
+from backend.record_identity import record_uid
 
 
 def uid():
@@ -18,6 +22,13 @@ def uid():
 
 
 def add(db, org, repo, kind, data, natural_key=None, *, defer_flush=False):
+    checkpoint = db.info.get("analysis_output_checkpoint")
+    if checkpoint:
+        output_checkpoint(db, flush=not defer_flush)
+        count = db.info.get("analysis_output_records", 0) + 1
+        db.info["analysis_output_records"] = count
+        if count >= 250:
+            db.info["analysis_output_records"] = 0
     if kind in {"claim", "finding", "snapshot", "risk_path", "graph_node"}:
         data = {
             **data,
@@ -36,11 +47,15 @@ def add(db, org, repo, kind, data, natural_key=None, *, defer_flush=False):
                 ),
             },
         }
+    identity = record_uid()
     record = Record(
-        id=uid(), organization_id=org, repository_id=repo, kind=kind, natural_key=natural_key or uid(), data=data
+        id=identity, organization_id=org, repository_id=repo, kind=kind, natural_key=natural_key or identity, data=data
     )
     db.add(record)
-    if not defer_flush:
+    # Output rows use explicit UUIDs, so dependent graph JSON can refer to a
+    # pending row. Keep snapshots immediately flushed for their SQL FK, and
+    # bound other publication batches to 250 rows in the same atomic transaction.
+    if not defer_flush and (not checkpoint or kind == "snapshot" or count >= 250):
         db.flush()
     return record
 
@@ -402,8 +417,8 @@ def persist_analysis(
         )
     )
     if existing:
-        if job_id and existing.data.get("job_id") != job_id:
-            existing.data = {**existing.data, "job_id": job_id}
+        # Idempotent reuse must retain the snapshot's original capture/job
+        # provenance. Each later job already links to this snapshot separately.
         return existing
     if stored_input and base_id:
         from backend.snapshot_context import comparison_snapshot
@@ -434,6 +449,8 @@ def persist_analysis(
             verification_context=base_data.get("verification_cache"),
             profile=profile,
         )
+    if getattr(progress, "retain_completed_analysis", None):
+        progress.retain_completed_analysis(result, files)
     if progress:
         progress("BUILDING_EVIDENCE")
     previous_hashes = base_data.get("hashes", {})
@@ -474,7 +491,7 @@ def persist_analysis(
         else "COMPLETED_NO_FINDINGS",
         "warnings": result["warnings"],
         "claim_extraction": {
-            "state": "COMPLETED",
+            "state": result.get("engines", {}).get("CLAIMS", {}).get("state", "UNKNOWN"),
             "implementation": sum(c.get("origin") == "IMPLEMENTATION" for c in result["claims"]),
             "documentation": sum(c.get("origin") == "DOCUMENTATION" for c in result["claims"]),
             "documentation_files": result["documentation_files"],
@@ -489,7 +506,8 @@ def persist_analysis(
         "file_count": len(files),
         "analysis_cache": result["analysis_cache"],
         **(
-            {"source_storage": result["source_storage"], "source_inventory_id": files.inventory_id}
+            {"source_storage": result["source_storage"], "source_inventory_id": files.inventory_id,
+             "source_provenance": files.data.get("provenance", {})}
             if stored_input
             else {}
         ),
@@ -572,7 +590,11 @@ def persist_analysis(
     added_line_counts = {}
     evidence_store = files.store if stored_input else None
     previous_evidence_by_path = {item.get("path"): item for item in base_evidence.values()}
+    publication_performance = getattr(progress, "performance", None)
+    publication_started = time.perf_counter()
     for path in result["files"]:
+        output_checkpoint(db)
+        file_started = time.perf_counter()
         previous_file = previous_evidence_by_path.get(path, {})
         retained_digest = previous_file.get("source_blob_digest") if previous_file.get("hash") == hashes[path] else None
         if stored_input:
@@ -580,14 +602,24 @@ def persist_analysis(
                 # RepositoryFiles already decrypts and verifies the captured digest.
                 # Reuse that reference only when redaction leaves the bytes intact.
                 # Changed/redacted evidence still goes through checked blob storage.
-                redacted = redact(files[path])
+                read_started = time.perf_counter()
+                source = files[path]
+                if publication_performance:
+                    publication_performance.record("EVIDENCE_SOURCE_READ", time.perf_counter() - read_started)
+                redact_started = time.perf_counter()
+                redacted = redact(source)
+                if publication_performance:
+                    publication_performance.record("EVIDENCE_REDACTION", time.perf_counter() - redact_started)
                 if path not in previous_evidence_by_path:
                     added_line_counts[path] = len(redacted.splitlines())
+                store_started = time.perf_counter()
                 retained_digest = (
                     hashes[path]
                     if hash_text(redacted) == hashes[path]
                     else evidence_store.put(db, user.organization_id, redacted.encode())[0]
                 )
+                if publication_performance:
+                    publication_performance.record("EVIDENCE_BLOB_STORE", time.perf_counter() - store_started)
             source_data = {"source_blob_digest": retained_digest}
         else:
             source_data = {"source": redact(files[path])}
@@ -607,10 +639,20 @@ def persist_analysis(
         )
         evidence[path] = node.id
         head_evidence[node.id] = {"path": path, "hash": hashes[path]}
+        if publication_performance:
+            publication_performance.record("EVIDENCE_FILE", time.perf_counter() - file_started, path)
+    if publication_performance:
+        publication_performance.record("EVIDENCE_FILES", time.perf_counter() - publication_started)
+    publication_started = time.perf_counter()
     previous_claims = {c.get("claim_key") or claim_key(c): c for c in base_data.get("claims", [])}
     matched_previous_ids = set()
     claims, findings, drifts = [], [], []
+    # Strong references to this attempt's findings prevent repeated SELECTs and
+    # per-finding autoflushes after SQLAlchemy's weak identity map releases rows.
+    finding_records = {}
     for data in result["claims"]:
+        from backend.claim_read import inventory_basis
+        data = inventory_basis(data)
         data = data.copy()
         signals = data.pop("signals")
         key = data.get("claim_key") or claim_key(data)
@@ -751,6 +793,7 @@ def persist_analysis(
                 },
             )
             findings.append({"id": record.id, **record.data})
+            finding_records[record.id] = record
             add(
                 db,
                 user.organization_id,
@@ -771,6 +814,8 @@ def persist_analysis(
             },
             repo.id,
         )
+    if publication_performance:
+        publication_performance.record("PUBLISH_CLAIMS", time.perf_counter() - publication_started)
     if base and changed:
         current_keys = {c["claim_key"] for c in claims}
         for key, previous in previous_claims.items():
@@ -808,7 +853,12 @@ def persist_analysis(
         }
         event = add(db, user.organization_id, repo.id, "analysis_change", change)
         audit(db, user, "ANALYSIS_RULES_CHANGED", event.id, change, repo.id)
+    publication_started = time.perf_counter()
+    owners_by_path = {}
+    owner_rules = ownership_rules(files)
     for data in result["findings"]:
+        if data.get("category") == "QUALITY" and data["path"] not in owners_by_path:
+            owners_by_path[data["path"]] = ownership(data["path"], files, repo.owner, rules=owner_rules)
         record = add(
             db,
             user.organization_id,
@@ -819,7 +869,7 @@ def persist_analysis(
                 "evidence_ids": [evidence[data["path"]]],
                 "scope": path_scope(data["path"]),
                 **(
-                    ownership(data["path"], files, repo.owner)
+                    owners_by_path[data["path"]]
                     if data.get("category") == "QUALITY"
                     else {"owner": repo.owner}
                 ),
@@ -827,6 +877,7 @@ def persist_analysis(
             },
         )
         findings.append({"id": record.id, **record.data})
+        finding_records[record.id] = record
         add(
             db,
             user.organization_id,
@@ -839,6 +890,9 @@ def persist_analysis(
                 "snapshot_id": snapshot.id,
             },
         )
+    if publication_performance:
+        publication_performance.record("PUBLISH_FINDINGS", time.perf_counter() - publication_started)
+    publication_started = time.perf_counter()
     deps, sca_issues = [], {}
     for d in result["dependencies"]:
         cache_key = f"{d['ecosystem']}:{d['name']}@{d['version']}"
@@ -941,6 +995,7 @@ def persist_analysis(
             )
             sca_issues[issue_key] = record
             findings.append({"id": record.id, **record.data})
+            finding_records[record.id] = record
             add(
                 db,
                 user.organization_id,
@@ -960,8 +1015,11 @@ def persist_analysis(
                     "snapshot_id": snapshot.id,
                 },
             )
+    if publication_performance:
+        publication_performance.record("PUBLISH_DEPENDENCIES", time.perf_counter() - publication_started)
     if progress:
         progress("CORRELATING")
+    correlation_started = time.perf_counter()
 
     old_evidence_by_path = {item.get("path"): item for item in base_evidence.values()}
 
@@ -973,66 +1031,95 @@ def persist_analysis(
             return db.get(Record, item["id"]).data.get("source", "")
         return item.get("source", "")
 
+    @lru_cache(maxsize=1)
+    def head_lines(path):
+        # One parser-bounded file only; preserve whole-file redaction and offsets.
+        return redact(files.get(path, "")).splitlines()
+
+    @lru_cache(maxsize=1)
+    def old_lines(path):
+        return old_source(path).splitlines()
+
     changed_lines = {}
     for path in changed:
+        output_checkpoint(db)
         if path in added_line_counts:
             count = added_line_counts[path]
             changed_lines[path] = [(1, count)] if count else []
             continue
-        old, head = old_source(path).splitlines(), redact(files.get(path, "")).splitlines()
+        old, head = old_lines(path), head_lines(path)
         changed_lines[path] = [
             (j1 + 1, max(j1 + 1, j2))
             for tag, _, _, j1, j2 in difflib.SequenceMatcher(None, old, head, autojunk=False).get_opcodes()
             if tag != "equal"
         ]
     old_signatures = set()
+    prior_by_path = defaultdict(list)
     for prior in base_findings.values():
-        item = prior.data
-        lines = old_source(item.get("path")).splitlines()
-        line = item.get("line", 1)
-        text = lines[line - 1].strip() if isinstance(line, int) and 0 < line <= len(lines) else ""
-        old_signatures.add(hash_text(str(item.get("rule")) + ":" + str(item.get("path")) + ":" + text))
+        output_checkpoint(db)
+        prior_by_path[prior.data.get("path")].append(prior)
+    for path, priors in prior_by_path.items():
+        output_checkpoint(db)
+        lines = old_lines(path)
+        for prior in priors:
+            output_checkpoint(db)
+            item = prior.data
+            line = item.get("line", 1)
+            text = lines[line - 1].strip() if isinstance(line, int) and 0 < line <= len(lines) else ""
+            old_signatures.add(hash_text(str(item.get("rule")) + ":" + str(item.get("path")) + ":" + text))
+    findings_by_path = defaultdict(list)
     for item in findings:
-        lines = redact(files.get(item["path"], "")).splitlines()
-        text = lines[item["line"] - 1].strip() if 0 < item.get("line", 1) <= len(lines) else ""
-        signature = hash_text(str(item.get("rule")) + ":" + item["path"] + ":" + text)
-        item["delta"] = (
-            "ANALYZER_BASELINE"
-            if model_changed and not changed
-            else "EXISTING"
-            if signature in old_signatures
-            else "NEW"
-        )
-        item["new_code"] = not base or any(
-            lo <= item.get("end_line", item["line"]) and hi >= item["line"]
-            for lo, hi in changed_lines.get(item["path"], [])
-        )
-        rec = db.get(Record, item["id"])
-        rec.data = {**rec.data, "delta": item["delta"], "new_code": item["new_code"]}
+        output_checkpoint(db)
+        findings_by_path[item["path"]].append(item)
+    for path, path_findings in findings_by_path.items():
+        output_checkpoint(db)
+        lines = head_lines(path)
+        for item in path_findings:
+            output_checkpoint(db)
+            text = lines[item["line"] - 1].strip() if 0 < item.get("line", 1) <= len(lines) else ""
+            signature = hash_text(str(item.get("rule")) + ":" + item["path"] + ":" + text)
+            item["delta"] = (
+                "ANALYZER_BASELINE"
+                if model_changed and not changed
+                else "EXISTING"
+                if signature in old_signatures
+                else "NEW"
+            )
+            item["new_code"] = not base or any(
+                lo <= item.get("end_line", item["line"]) and hi >= item["line"]
+                for lo, hi in changed_lines.get(item["path"], [])
+            )
+            rec = finding_records[item["id"]]
+            rec.data = {**rec.data, "delta": item["delta"], "new_code": item["new_code"]}
     from backend import finding_history
 
     identity_matches = finding_history.reconcile(db, findings, base, base_records, files)
     comparison_previous = [dict(r.data, id=r.id) for r in base_records if r.kind == "finding"]
+    comparison_by_id = {item["id"]: item for item in comparison_previous}
     for item in findings:
+        output_checkpoint(db)
         match = identity_matches.get(item["id"])
         if match and match[1] == "EXISTING":
-            for previous in comparison_previous:
-                if previous["id"] == match[0].id:
-                    previous["fingerprint"] = item.get("fingerprint")
+            previous = comparison_by_id.get(match[0].id)
+            if previous:
+                previous["fingerprint"] = item.get("fingerprint")
     quality_domain.apply_comparison(
         db, result["code_quality"], findings, base, changed_lines, model_changed, comparison_previous
     )
     for item in findings:
+        output_checkpoint(db)
         if item.get("category") == "QUALITY":
-            record = db.get(Record, item["id"])
+            record = finding_records[item["id"]]
             record.data = {**record.data, **{k: v for k, v in item.items() if k != "id"}}
     # Normalize findings without losing native/advisory provenance.
     # Reviews only
     # carry when the same issue still cites exactly the same source fingerprints.
+    claims_by_id = {claim["id"]: claim for claim in claims}
     for packed_finding in findings:
-        record = db.get(Record, packed_finding["id"])
+        output_checkpoint(db)
+        record = finding_records[packed_finding["id"]]
         data = record.data
-        related_claim = next((c for c in claims if c["id"] == data.get("claim_id")), None)
+        related_claim = claims_by_id.get(data.get("claim_id"))
         fingerprint = data.get("fingerprint") or hash_text(
             f"{data['rule']}:{data['path']}:{(related_claim or {}).get('claim_key', data['title'])}"
         )
@@ -1121,6 +1208,9 @@ def persist_analysis(
         }
         packed_finding.update(record.data)
 
+    if publication_performance:
+        publication_performance.record("FINDING_CORRELATION", time.perf_counter() - correlation_started)
+    correlation_started = time.perf_counter()
     finding_history.project(
         db,
         snapshot,
@@ -1131,10 +1221,15 @@ def persist_analysis(
         warnings=result["warnings"],
         files=files,
     )
+    if publication_performance:
+        publication_performance.record("FINDING_HISTORY", time.perf_counter() - correlation_started)
+    correlation_started = time.perf_counter()
 
     # Graph IDs are assigned before insertion. Flush bounded batches through the
     # same ORM tenant guards instead of issuing one flush per node and edge.
     graph_pending = 0
+
+    output_checkpoint(db, force=True)
 
     def graph_add(kind, data):
         nonlocal graph_pending
@@ -1192,6 +1287,7 @@ def persist_analysis(
         return components[key]
 
     for path, eid in evidence.items():
+        output_checkpoint(db, flush=False)
         artifact = node("ARTIFACT", path, path=path, hash=hashes[path])
         edge(snapshot_node.id, artifact.id, "CONTAINS")
         if stored_input:
@@ -1199,10 +1295,17 @@ def persist_analysis(
         edge(artifact.id, eid, "HAS_FILE_EVIDENCE")
         if path.endswith(".md"):
             for line_no, line in enumerate(files[path].splitlines(), 1):
+                output_checkpoint(db, flush=False)
                 if line.startswith("#"):
                     section = node("DOCUMENTATION_SECTION", redact(line.lstrip("# ")), path=path, line=line_no)
                     edge(section.id, eid, "DOCUMENTED_BY")
+    output_checkpoint(db, force=True)
+    graph_pending = 0
+    if publication_performance:
+        publication_performance.record("ARTIFACT_GRAPH", time.perf_counter() - correlation_started)
+    correlation_started = time.perf_counter()
     for signal in result["signals"]:
+        output_checkpoint(db)
         if signal["type"] == "route":
             endpoint = node("API_ENDPOINT", signal["value"], path=signal["path"], line=signal["line"])
             edge(file_component(signal["path"]).id if stored_input else component_node.id, endpoint.id, "EXPOSES")
@@ -1219,6 +1322,7 @@ def persist_analysis(
     cloud_records, risk_paths = [], []
     resource_nodes = {}
     for resource in result.get("cloud_assets", []):
+        output_checkpoint(db)
         kind = (
             "CLOUD_IDENTITY"
             if "iam" in resource["kind"].lower()
@@ -1307,7 +1411,9 @@ def persist_analysis(
             risk = add(db, user.organization_id, repo.id, "risk_path", path_data)
             risk_paths.append({"id": risk.id, **risk.data})
     for resource in result.get("cloud_assets", []):
+        output_checkpoint(db)
         for relation in resource.get("relations", []):
+            output_checkpoint(db)
             targets = [
                 value
                 for (target_path, identity), value in resource_nodes.items()
@@ -1327,30 +1433,61 @@ def persist_analysis(
                     evidence_ids=[evidence[resource["path"]]],
                 )
                 edge(resource_nodes[(resource["path"], resource["identity"])].id, image.id, relation["type"])
+    if publication_performance:
+        publication_performance.record("CONFIGURATION_GRAPH", time.perf_counter() - correlation_started)
+    correlation_started = time.perf_counter()
+    quality_findings_by_path = defaultdict(list)
+    for item in findings:
+        output_checkpoint(db)
+        if item.get("category") == "QUALITY":
+            quality_findings_by_path[item["path"]].append(item)
+    # Configuration projections have SQL FKs and their own ordering. Drain that
+    # work before the function writer counts only its graph rows in each batch.
+    output_checkpoint(db, force=True)
+    graph_pending = 0
     for signal in result["signals"]:
+        output_checkpoint(db, flush=False)
         if signal["type"] == "function":
             function = node(
                 "FUNCTION", signal["value"], path=signal["path"], line=signal["line"], end_line=signal.get("end_line")
             )
             edge(function.id, evidence[signal["path"]], "IMPLEMENTED_IN")
-            for finding in findings:
+            for finding in quality_findings_by_path.get(signal["path"], ()):
+                output_checkpoint(db, flush=False)
                 if (
                     finding.get("category") == "QUALITY"
                     and finding["path"] == signal["path"]
                     and signal["line"] <= finding["line"] <= signal.get("end_line", signal["line"])
                 ):
                     edge(finding["id"], function.id, "AFFECTS_FUNCTION")
+    output_checkpoint(db, force=True)
+    graph_pending = 0
+    if publication_performance:
+        publication_performance.record("FUNCTION_GRAPH", time.perf_counter() - correlation_started)
+    correlation_started = time.perf_counter()
     for claim in claims:
+        output_checkpoint(db)
         shared = [f["id"] for f in findings if set(f.get("evidence_ids", [])) & set(claim["evidence_ids"])]
         for fid in shared[:20]:
             edge(fid, claim["id"], "RELATED_EVIDENCE")
     for row in result["code_quality"]["inventory"]:
-        row.update(ownership(row["path"], files, repo.owner))
+        output_checkpoint(db)
+        if row["path"] not in owners_by_path:
+            owners_by_path[row["path"]] = ownership(row["path"], files, repo.owner, rules=owner_rules)
+        row.update(owners_by_path[row["path"]])
     for finding in findings:
+        output_checkpoint(db)
         if finding.get("category") == "QUALITY":
             quality_owner = node("OWNER", finding["owner"], provenance=finding.get("owner_source", "METADATA"))
             edge(finding["id"], quality_owner.id, "OWNED_BY")
+    if publication_performance:
+        publication_performance.record("OWNERSHIP_GRAPH", time.perf_counter() - correlation_started)
+    correlation_started = time.perf_counter()
+    output_checkpoint(db, force=True)
+    graph_pending = 0
     quality_gate = quality_domain.persist(db, snapshot, result["code_quality"], findings)
+    # Typed projections must not occupy an extra slot beside a full graph batch.
+    output_checkpoint(db, force=True)
     gate = quality_domain.merge_gate(
         policy_gate(
             claims,
@@ -1361,6 +1498,7 @@ def persist_analysis(
     )
     evaluated = {item["id"]: item for item in [*claims, *findings]}
     for decision in gate["results"]:
+        output_checkpoint(db)
         target = decision.get("target")
         policy = node(
             "POLICY",
@@ -1377,6 +1515,9 @@ def persist_analysis(
             if fid in evaluated:
                 edge(policy.id, fid, "DERIVED_FROM")
     db.flush()
+    if publication_performance:
+        publication_performance.record("POLICY_PROJECTION", time.perf_counter() - correlation_started)
+    correlation_started = time.perf_counter()
     if stored_input:
         head_records = scoped_snapshot_records(db, user.organization_id, repo.id, snapshot.id, core=True)
         old_graph, old_partial = impact_graph_records(db, user.organization_id, repo.id, base_id, changed)
@@ -1405,6 +1546,8 @@ def persist_analysis(
             c["id"] for c in claims if c.get("origin") == "DOCUMENTATION" and not c.get("verification_reused")
         ],
     }
+    if publication_performance:
+        publication_performance.record("IMPACT_GRAPH", time.perf_counter() - correlation_started)
     snapshot.data = {
         **snapshot.data,
         **captured_snapshot_data,
@@ -1435,6 +1578,7 @@ def persist_analysis(
         del base_evidence, head_evidence, evidence
         del previous_evidence_by_path, old_evidence_by_path
         del previous_claims, base_claim_records, base_findings
+        del finding_records, findings_by_path, prior_by_path, comparison_by_id, claims_by_id
         import gc
 
         gc.collect()
@@ -1475,4 +1619,7 @@ def persist_analysis(
         },
         repo.id,
     )
+    from backend.workspace_read import project_snapshot
+
+    project_snapshot(db, snapshot)
     return snapshot

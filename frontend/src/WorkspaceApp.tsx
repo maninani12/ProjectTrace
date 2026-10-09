@@ -47,10 +47,9 @@ import {
   Waypoints,
   X,
 } from "lucide-react";
-import { api, setCSRF } from "./api";
+import { api, APIError, setCSRF } from "./api";
 import {
   analysisLabel,
-  scopeWorkspace,
   emptyMessage,
   isAnalysisActive,
   repositoryState,
@@ -73,6 +72,7 @@ import type {
   Item,
   Repository,
   Workspace,
+  RecordPage,
 } from "./api";
 
 import NativeProfiles from "./NativeProfiles";
@@ -436,12 +436,23 @@ export default function WorkspaceScreen() {
   );
 }
 
+async function loadWorkspaceSummary(path: string) {
+  const result = await api<Workspace>(path);
+  if (!result.counts?.complete)
+    throw new Error(
+      "Complete workspace summary is unavailable. Refresh after the API is ready; preview rows cannot verify zero results.",
+    );
+  return result;
+}
+
 function WorkspaceApp() {
   const client = useQueryClient();
   const location = useLocation();
   const routerNavigate = useNavigate();
   const [identity, setIdentity] = useState<Identity | null>(null);
   const [identityLoaded, setIdentityLoaded] = useState(false);
+  const [identityError, setIdentityError] = useState("");
+  const [identityAttempt, setIdentityAttempt] = useState(0);
   const page = pageForRoute(location.pathname);
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("ALL");
@@ -453,20 +464,44 @@ function WorkspaceApp() {
   const [command, setCommand] = useState(false);
   const [mobile, setMobile] = useState(false);
   const [error, setError] = useState("");
-  const workspace = useQuery({
+  const [recordOffset, setRecordOffset] = useState(0);
+  const [repositoryOffset, setRepositoryOffset] = useState(0);
+  const [repositorySearch, setRepositorySearch] = useState("");
+  const [catalogOffset, setCatalogOffset] = useState(0);
+  const listView = ["Systems", "Components", "Repositories"].includes(page);
+  const tenantKey = identity?.email;
+  const catalog = useQuery({
+    queryKey: ["workspace", "catalog", tenantKey, catalogOffset],
+    queryFn: () =>
+      api<Workspace>(
+        `/repositories?include_analysis=false&limit=100&offset=${catalogOffset}`,
+      ),
+    enabled: !!identity,
+    retry: false,
+    staleTime: 10000,
+  });
+  const repositoryList = useQuery({
     queryKey: [
       "workspace",
-      ["Code Quality", "Infrastructure", "Trust & Coverage"].includes(page)
-        ? "quality"
-        : "full",
+      "repository-list",
+      tenantKey,
+      repoFilter,
+      repositorySearch,
+      repositoryOffset,
     ],
     queryFn: () =>
       api<Workspace>(
-        ["Code Quality", "Infrastructure", "Trust & Coverage"].includes(page)
-          ? "/workspace?summary=1"
-          : "/workspace",
+        "/repositories?" +
+          new URLSearchParams({
+            offset: String(repositoryOffset),
+            limit: "25",
+            search: repositorySearch,
+            ...(repoFilter !== "ALL" ? { repository_id: repoFilter } : {}),
+          }),
       ),
-    enabled: !!identity,
+    enabled: !!identity && listView,
+    retry: false,
+    staleTime: 10000,
     refetchInterval: (query) =>
       query.state.data?.repositories.some((repo) =>
         isAnalysisActive(repositoryState(repo)),
@@ -474,20 +509,142 @@ function WorkspaceApp() {
         ? 1500
         : false,
   });
-  const data = useMemo(
-    () =>
-      workspace.data ? scopeWorkspace(workspace.data, repoFilter) : undefined,
-    [workspace.data, repoFilter],
-  );
+  useEffect(() => setRepositoryOffset(0), [repoFilter, repositorySearch]);
+  const workspace = useQuery({
+    queryKey: ["workspace", "summary", tenantKey, "ALL"],
+    queryFn: () => loadWorkspaceSummary("/workspace?summary=1"),
+    enabled: !!identity && !listView && repoFilter === "ALL",
+    retry: false,
+    staleTime: 10000,
+    refetchInterval: (query) =>
+      query.state.data?.repositories.some((repo) =>
+        isAnalysisActive(repositoryState(repo)),
+      )
+        ? 1500
+        : false,
+  });
+  const scopedSummary = useQuery({
+    queryKey: ["workspace", "summary", tenantKey, "scope", repoFilter],
+    queryFn: () =>
+      loadWorkspaceSummary(
+        "/workspace?summary=1&repository_id=" + encodeURIComponent(repoFilter),
+      ),
+    enabled: !!identity && !listView && repoFilter !== "ALL",
+    retry: false,
+    staleTime: 10000,
+    refetchInterval: (query) =>
+      query.state.data?.repositories.some((repo) =>
+        isAnalysisActive(repositoryState(repo)),
+      )
+        ? 1500
+        : false,
+  });
+  const summary = listView
+    ? repositoryList
+    : repoFilter === "ALL"
+      ? workspace
+      : scopedSummary;
+  const scopeRepositories = [...(catalog.data?.repositories || [])];
+  for (const repo of summary.data?.repositories || []) {
+    if (
+      repo.id === repoFilter &&
+      !scopeRepositories.some((item) => item.id === repo.id)
+    )
+      scopeRepositories.push(repo);
+  }
+  const recordView = [
+    "Claim Ledger",
+    "Architecture",
+    "API Integrity",
+    "Findings",
+    "Security",
+    "Secrets",
+    "Drift",
+    "Dependencies",
+    "Evidence",
+    "Pull Requests",
+    "Reviews",
+    "Cloud",
+    "Cloud Assets",
+    "Cloud Identities",
+    "Exposure",
+    "Risk Paths",
+  ].includes(page);
+  const records = useQuery({
+    queryKey: [
+      "workspace-records",
+      tenantKey,
+      page,
+      repoFilter,
+      query,
+      filter,
+      recordOffset,
+      summary.data?.repositories.map((repo) => repo.snapshot?.id).join(","),
+    ],
+    queryFn: () => {
+      const params = new URLSearchParams({
+        view: page,
+        offset: String(recordOffset),
+        limit: "50",
+        search: query,
+        state: filter,
+        ...(repoFilter !== "ALL" ? { repository_id: repoFilter } : {}),
+      });
+      for (const repo of summary.data?.repositories || []) {
+        if (repo.snapshot) params.append("snapshot_ids", repo.snapshot.id);
+      }
+      return api<RecordPage>("/workspace/records?" + params);
+    },
+    enabled: !!identity && !!summary.data && recordView,
+  });
+  useEffect(() => setRecordOffset(0), [page, repoFilter, query, filter]);
   useEffect(() => {
+    setFilter("ALL");
+    setQuery("");
+  }, [page]);
+  const data = useMemo(() => {
+    if (!summary.data) return undefined;
+    if (!recordView || !records.data) return summary.data;
+    const result = { ...summary.data, record_page: records.data };
+    for (const kind of [
+      "claim",
+      "finding",
+      "evidence",
+      "dependency",
+      "drift",
+      "pr",
+      "graph_node",
+      "risk_path",
+    ] as const) {
+      result[kind] = records.data.items.filter((item) => item.kind === kind);
+    }
+    return result;
+  }, [summary.data, records.data, recordView]);
+  useEffect(() => {
+    let current = true;
+    setIdentityLoaded(false);
+    setIdentityError("");
     api<Identity>("/auth/me")
       .then((i) => {
+        if (!current) return;
         setCSRF(i.csrf);
         setIdentity(i);
       })
-      .catch(() => {})
-      .finally(() => setIdentityLoaded(true));
-  }, []);
+      .catch((error: unknown) => {
+        if (current && !(error instanceof APIError && error.status === 401))
+          setIdentityError(
+            error instanceof Error
+              ? error.message
+              : "Workspace access could not be checked.",
+          );
+      })
+      .finally(() => {
+        if (current) setIdentityLoaded(true);
+      });
+    return () => {
+      current = false;
+    };
+  }, [identityAttempt]);
   useEffect(() => {
     const fn = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === "k") {
@@ -528,22 +685,24 @@ function WorkspaceApp() {
     }
   }, [identity, location.pathname, location.search, routerNavigate]);
   const filtered = (items: Item[]) =>
-    items.filter(
-      (i) =>
-        (repoFilter === "ALL" ||
-          i.scope?.repository_id === repoFilter ||
-          i.repository_id === repoFilter) &&
-        (filter === "ALL" ||
-          i.status === filter ||
-          i.severity === filter ||
-          i.category === filter ||
-          i.classification === filter ||
-          i.review_status === filter) &&
-        (query === "" ||
-          JSON.stringify([label(i), i.path, i.owner, i.category])
-            .toLowerCase()
-            .includes(query.toLowerCase())),
-    );
+    recordView
+      ? items
+      : items.filter(
+          (i) =>
+            (repoFilter === "ALL" ||
+              i.scope?.repository_id === repoFilter ||
+              i.repository_id === repoFilter) &&
+            (filter === "ALL" ||
+              i.status === filter ||
+              i.severity === filter ||
+              i.category === filter ||
+              i.classification === filter ||
+              i.review_status === filter) &&
+            (query === "" ||
+              JSON.stringify([label(i), i.path, i.owner, i.category])
+                .toLowerCase()
+                .includes(query.toLowerCase())),
+        );
   const tableEmpty = data
     ? emptyMessage(page, data, query !== "" || filter !== "ALL")
     : ["Loading analysis", ""];
@@ -554,10 +713,21 @@ function WorkspaceApp() {
         Checking workspace access…
       </main>
     );
+  if (!identity && identityError)
+    return (
+      <main className="loading">
+        <h1>Workspace access unavailable</h1>
+        <p role="alert">{identityError}</p>
+        <button onClick={() => setIdentityAttempt((attempt) => attempt + 1)}>
+          Retry access
+        </button>
+      </main>
+    );
   if (!identity)
     return (
       <AuthPage
         onAuthenticated={(result, demo) => {
+          client.clear();
           setRepoFilter("ALL");
           setSelected(null);
           setIdentity(result);
@@ -605,9 +775,12 @@ function WorkspaceApp() {
                 >
                   <Icon size={16} />
                   <span>{name}</span>
-                  {name === "Drift" && !!data?.drift.length && (
-                    <span className="nav-count">{data.drift.length}</span>
-                  )}
+                  {name === "Drift" &&
+                    !!(data?.counts?.totals.drift ?? data?.drift.length) && (
+                      <span className="nav-count">
+                        {data?.counts?.totals.drift ?? data?.drift.length}
+                      </span>
+                    )}
                 </button>
               ))}
             </div>
@@ -678,12 +851,35 @@ function WorkspaceApp() {
               }}
             >
               <option value="ALL">All repositories</option>
-              {workspace.data?.repositories.map((r) => (
+              {scopeRepositories.map((r) => (
                 <option key={r.id} value={r.id}>
                   {r.name}
                 </option>
               ))}
             </select>
+            {(catalogOffset > 0 || catalog.data?.repository_page?.has_more) && (
+              <>
+                <button
+                  disabled={!catalogOffset}
+                  onClick={() =>
+                    setCatalogOffset(Math.max(0, catalogOffset - 100))
+                  }
+                >
+                  Previous repository choices
+                </button>
+                <button
+                  disabled={!catalog.data?.repository_page?.has_more}
+                  onClick={() => setCatalogOffset(catalogOffset + 100)}
+                >
+                  Next repository choices
+                </button>
+              </>
+            )}
+            {catalog.isError && (
+              <button onClick={() => catalog.refetch()}>
+                Retry repository choices
+              </button>
+            )}
             <span
               className={
                 "analysis-state " +
@@ -692,10 +888,14 @@ function WorkspaceApp() {
               role="status"
             >
               <i />{" "}
-              {workspace.isError
-                ? "Analysis data unavailable"
-                : workspace.isLoading
-                  ? "Loading analysis status"
+              {summary.isError
+                ? listView
+                  ? "Repository data unavailable"
+                  : "Analysis data unavailable"
+                : summary.isLoading
+                  ? listView
+                    ? "Loading repositories"
+                    : "Loading analysis status"
                   : analysisLabel(data?.analysis?.state || "UNKNOWN")}
             </span>
             <button
@@ -764,14 +964,17 @@ function WorkspaceApp() {
                 </button>
               )}
           </div>
-          {workspace.isLoading ? (
+          {summary.isLoading ? (
             <div className="loading">
-              <LoaderCircle className="spin" /> Loading engineering evidence…
+              <LoaderCircle className="spin" />{" "}
+              {listView
+                ? "Loading repositories…"
+                : "Loading engineering evidence…"}
             </div>
-          ) : workspace.isError ? (
+          ) : summary.isError ? (
             <div className="error" role="alert">
-              {workspace.error.message}
-              <button onClick={() => workspace.refetch()}>Retry</button>
+              {summary.error.message}
+              <button onClick={() => summary.refetch()}>Retry</button>
             </div>
           ) : (
             data && (
@@ -781,12 +984,65 @@ function WorkspaceApp() {
                     {warning}
                   </p>
                 ))}
+                {listView && (
+                  <div className="filters">
+                    <label>
+                      Search repositories{" "}
+                      <input
+                        aria-label="Search repositories"
+                        value={repositorySearch}
+                        onChange={(event) =>
+                          setRepositorySearch(event.target.value)
+                        }
+                      />
+                    </label>
+                    <span>
+                      {data.repository_page?.total} matching repositories
+                    </span>
+                    <button
+                      disabled={!repositoryOffset}
+                      onClick={() =>
+                        setRepositoryOffset(Math.max(0, repositoryOffset - 25))
+                      }
+                    >
+                      Previous repositories
+                    </button>
+                    <button
+                      disabled={!data.repository_page?.has_more}
+                      onClick={() => setRepositoryOffset(repositoryOffset + 25)}
+                    >
+                      Next repositories
+                    </button>
+                  </div>
+                )}
                 {!data.repositories.length &&
                 !["Connections", "Settings", "Audit Trail"].includes(page) ? (
-                  <Empty title="Import a repository to begin analysis.">
-                    Use Import repository to upload your own source ZIP. Native
-                    analysis works without external connections.
+                  <Empty
+                    title={
+                      listView &&
+                      (repositorySearch ||
+                        repositoryOffset ||
+                        repoFilter !== "ALL")
+                        ? "No repositories match this selection."
+                        : "Import a repository to begin analysis."
+                    }
+                  >
+                    {listView &&
+                    (repositorySearch ||
+                      repositoryOffset ||
+                      repoFilter !== "ALL")
+                      ? "Change the search, repository selection or page."
+                      : "Use Import repository to upload your own source ZIP. Native analysis works without external connections."}
                   </Empty>
+                ) : recordView && records.isLoading ? (
+                  <p role="status">Loading this page of records…</p>
+                ) : recordView && records.isError ? (
+                  <div className="error" role="alert">
+                    Records unavailable: {records.error.message}
+                    <button onClick={() => records.refetch()}>
+                      Retry records
+                    </button>
+                  </div>
                 ) : page === "Overview" ? (
                   <Overview data={data} onOpen={open} navigate={navigate} />
                 ) : ["Systems", "Components", "Repositories"].includes(page) ? (
@@ -794,6 +1050,11 @@ function WorkspaceApp() {
                     data={data}
                     page={page}
                     navigate={navigate}
+                    onExplore={(id) => {
+                      setRepoFilter(id);
+                      setSelected(null);
+                      navigate("Evidence");
+                    }}
                     onImport={(repository) => {
                       setImportTarget(repository || "NEW");
                       setImporting(true);
@@ -808,7 +1069,7 @@ function WorkspaceApp() {
                       setQuery={setQuery}
                       repoFilter={repoFilter}
                       setRepoFilter={setRepoFilter}
-                      repositories={data.repositories}
+                      repositories={scopeRepositories}
                       statuses={[
                         "VERIFIED",
                         "INFERRED",
@@ -824,15 +1085,14 @@ function WorkspaceApp() {
                           : "Current engineering claims"}
                       </h2>
                       <span>
-                        {
+                        {data.record_page?.total ??
                           filtered(
                             data.claim.filter(
                               (i) =>
                                 page !== "Architecture" ||
                                 i.category === "ARCHITECTURE",
                             ),
-                          ).length
-                        }{" "}
+                          ).length}{" "}
                         claims
                       </span>
                     </div>
@@ -862,6 +1122,11 @@ function WorkspaceApp() {
                   <Suspense fallback={<p>Loading Infrastructure…</p>}>
                     <Infrastructure
                       repository={repoFilter}
+                      snapshot={
+                        repoFilter !== "ALL"
+                          ? data.repositories[0]?.snapshot?.id
+                          : undefined
+                      }
                       role={identity.role}
                       onOpen={open}
                     />
@@ -875,6 +1140,11 @@ function WorkspaceApp() {
                     <EnterpriseTrust
                       role={identity.role}
                       repository={repoFilter}
+                      currentSnapshot={
+                        repoFilter !== "ALL"
+                          ? data.repositories[0]?.snapshot?.id
+                          : undefined
+                      }
                     />
                   </Suspense>
                 ) : [
@@ -890,7 +1160,7 @@ function WorkspaceApp() {
                         <div key={s}>
                           <span>{s.toLowerCase()}</span>
                           <strong>
-                            {
+                            {data.record_page?.severity_counts[s] ??
                               data.finding.filter(
                                 (f) =>
                                   f.severity === s &&
@@ -903,8 +1173,7 @@ function WorkspaceApp() {
                                       f.category === "QUALITY") ||
                                     (page === "Infrastructure" &&
                                       f.category === "IAC")),
-                              ).length
-                            }
+                              ).length}
                           </strong>
                         </div>
                       ))}
@@ -926,7 +1195,7 @@ function WorkspaceApp() {
                                 item.classification === "SECURITY_HOTSPOT",
                             ).length
                           }{" "}
-                          security hotspots
+                          security hotspots on this page
                         </strong>
                         <p>
                           Static flows show modeled source-to-sink paths.
@@ -943,7 +1212,7 @@ function WorkspaceApp() {
                       setQuery={setQuery}
                       repoFilter={repoFilter}
                       setRepoFilter={setRepoFilter}
-                      repositories={data.repositories}
+                      repositories={scopeRepositories}
                       statuses={[
                         "CRITICAL",
                         "HIGH",
@@ -995,7 +1264,7 @@ function WorkspaceApp() {
                       setQuery={setQuery}
                       repoFilter={repoFilter}
                       setRepoFilter={setRepoFilter}
-                      repositories={data.repositories}
+                      repositories={scopeRepositories}
                       statuses={[
                         "CONTRADICTED",
                         "UNVERIFIED",
@@ -1114,6 +1383,29 @@ function WorkspaceApp() {
                     Choose a page in the workspace navigation.
                   </Empty>
                 )}
+                {recordView && records.data && !records.isError && (
+                  <div className="filters" aria-label="Record pagination">
+                    <span>
+                      {records.data.total === 0
+                        ? "0 matching records"
+                        : `${records.data.offset + 1}–${Math.min(records.data.offset + records.data.items.length, records.data.total)} of ${records.data.total} matching records`}
+                    </span>
+                    <button
+                      disabled={!recordOffset || records.isFetching}
+                      onClick={() =>
+                        setRecordOffset(Math.max(0, recordOffset - 50))
+                      }
+                    >
+                      Previous records
+                    </button>
+                    <button
+                      disabled={!records.data.has_more || records.isFetching}
+                      onClick={() => setRecordOffset(recordOffset + 50)}
+                    >
+                      Next records
+                    </button>
+                  </div>
+                )}
               </>
             )
           )}
@@ -1134,8 +1426,11 @@ function WorkspaceApp() {
           role={identity.role}
           onOpen={open}
           onUpdated={(item) => {
-            setSelected(item);
+            setSelected((current) =>
+              current?.id === item.id ? item : current,
+            );
             client.invalidateQueries({ queryKey: ["workspace"] });
+            client.invalidateQueries({ queryKey: ["workspace-records"] });
             client.invalidateQueries({ queryKey: ["audit"] });
             client.invalidateQueries({ queryKey: ["quality-rows"] });
             client.invalidateQueries({ queryKey: ["quality-overview"] });
@@ -1144,12 +1439,16 @@ function WorkspaceApp() {
       )}
       {importing && (
         <ImportDialog
-          repositories={workspace.data?.repositories || []}
+          repositories={data?.repositories || []}
           initialTarget={importTarget}
           onRefresh={() =>
             client.invalidateQueries({ queryKey: ["workspace"] })
           }
           onClose={() => setImporting(false)}
+          onConnect={() => {
+            setImporting(false);
+            navigate("Connections");
+          }}
           onDone={(repository) => {
             setRepoFilter(repository);
             setImporting(false);
@@ -1276,7 +1575,7 @@ function Filters({
   );
 }
 
-function Overview({
+export function Overview({
   data,
   onOpen,
   navigate,
@@ -1285,7 +1584,11 @@ function Overview({
   onOpen: (i: Item) => void;
   navigate: (s: string) => void;
 }) {
-  const verified = data.claim.filter((c) => c.status === "VERIFIED").length;
+  const claimCount = data.counts?.totals.claim ?? data.claim.length;
+  const claimStatus = (state: string) =>
+    data.counts?.claim_status[state] ??
+    data.claim.filter((c) => c.status === state).length;
+  const verified = claimStatus("VERIFIED");
   const contradicted = data.claim
     .filter((c) => c.status === "CONTRADICTED")
     .sort(
@@ -1306,6 +1609,22 @@ function Overview({
     );
   return (
     <>
+      {data.repositories.some((repo) =>
+        isAnalysisActive(repositoryState(repo)),
+      ) && (
+        <p className="context-note" role="status">
+          Analysis is still running. These counts describe published snapshots
+          and exclude unfinished attempts.
+        </p>
+      )}
+      {data.repositories.some((repo) => repo.snapshot) &&
+        ["FAILED", "CANCELLED"].includes(data.analysis.state) && (
+          <p className="context-note" role="status">
+            The latest attempt {data.analysis.state.toLowerCase()}. These counts
+            describe retained published snapshots; unfinished attempts are
+            excluded.
+          </p>
+        )}
       <div className="stats">
         <div>
           <span>Engineering systems</span>
@@ -1316,22 +1635,20 @@ function Overview({
         </div>
         <div>
           <span>Engineering claims</span>
-          <strong>{data.claim.length}</strong>
+          <strong>{claimCount}</strong>
           <small>{verified} directly verified</small>
         </div>
         <div>
           <span>Claims to review</span>
-          <strong className="warning-text">
-            {data.claim.filter((c) => c.status !== "VERIFIED").length}
-          </strong>
+          <strong className="warning-text">{claimCount - verified}</strong>
           <small>
-            {contradicted.length} contradicted · {data.drift.length} drift
-            events
+            {claimStatus("CONTRADICTED")} contradicted ·{" "}
+            {data.counts?.totals.drift ?? data.drift.length} drift events
           </small>
         </div>
         <div>
           <span>Material findings</span>
-          <strong>{risk.length}</strong>
+          <strong>{data.counts?.material_findings ?? risk.length}</strong>
           <small>High or critical · static evidence</small>
         </div>
       </div>
@@ -1404,12 +1721,12 @@ function Overview({
           </div>
           <div className="coverage-number">
             {verified}
-            <span> / {data.claim.length}</span>
+            <span> / {claimCount}</span>
           </div>
           <p>claims directly supported by current static evidence</p>
           <div
             className="coverage-bar"
-            aria-label={`${verified} of ${data.claim.length} verified`}
+            aria-label={`${verified} of ${claimCount} verified`}
           >
             {[
               "VERIFIED",
@@ -1422,7 +1739,7 @@ function Overview({
                 key={s}
                 className={s.toLowerCase()}
                 style={{
-                  flex: data.claim.filter((c) => c.status === s).length,
+                  flex: claimStatus(s),
                 }}
               />
             ))}
@@ -1440,9 +1757,7 @@ function Overview({
                   <i className={s.toLowerCase()} />
                   {s.toLowerCase()}
                 </span>
-                <strong>
-                  {data.claim.filter((c) => c.status === s).length}
-                </strong>
+                <strong>{claimStatus(s)}</strong>
               </div>
             ))}
           </div>
@@ -1479,14 +1794,19 @@ function Overview({
                   {repo.name} · {repo.owner}
                 </small>
               </div>
-              <span>{claims.length} claims</span>
+              <span>
+                {data.counts?.repositories[repo.id]?.totals.claim ??
+                  claims.length}{" "}
+                claims
+              </span>
               <Badge
                 value={
                   !["COMPLETED", "COMPLETED_NO_FINDINGS"].includes(
                     repositoryState(repo),
                   )
                     ? repositoryState(repo)
-                    : findings.length
+                    : (data.counts?.repositories[repo.id]?.totals.finding ??
+                        findings.length)
                       ? "REVIEW_REQUIRED"
                       : "NO_FINDINGS_IN_SCOPE"
                 }
@@ -1506,7 +1826,11 @@ function Overview({
         items={risk.slice(0, 5)}
         mode="finding"
         onOpen={onOpen}
-        emptyTitle="No high or critical findings in the current results."
+        emptyTitle={
+          data.counts?.material_findings
+            ? `${data.counts.material_findings} findings require review; open All findings.`
+            : "No high or critical findings in the current results."
+        }
         emptyDetail="Review analyzer coverage and unchecked dependencies before drawing a security conclusion."
       />
       <AnalysisCoverage data={data} />
@@ -1521,23 +1845,42 @@ function Overview({
   );
 }
 
-function RepositoryPage({
+export function RepositoryPage({
   data,
   page,
   navigate,
   onImport,
+  onExplore,
 }: {
   data: Workspace;
   page: string;
   navigate: (s: string) => void;
   onImport: (repository?: string) => void;
+  onExplore?: (repository: string) => void;
 }) {
+  const client = useQueryClient();
+  const [retrying, setRetrying] = useState<string | null>(null);
+  const [retryError, setRetryError] = useState("");
+  async function retryAnalysis(jobId: string) {
+    setRetrying(jobId);
+    setRetryError("");
+    try {
+      await api(`/jobs/${jobId}/retry`, {});
+      await client.invalidateQueries({ queryKey: ["workspace"] });
+    } catch (error) {
+      setRetryError(
+        error instanceof Error ? error.message : "Analysis retry failed.",
+      );
+    } finally {
+      setRetrying(null);
+    }
+  }
   return (
     <>
       <div className="section-head">
         <h2>
-          {data.repositories.length} repositories ·{" "}
-          {new Set(data.repositories.map((r) => r.system)).size} systems
+          {data.repository_page?.total ?? data.repositories.length} repositories
+          · {data.repositories.length} on this page
         </h2>
         {data.demo && (
           <span className="subtle">
@@ -1545,6 +1888,11 @@ function RepositoryPage({
           </span>
         )}
       </div>
+      {retryError && (
+        <p className="error" role="alert">
+          {retryError}
+        </p>
+      )}
       <div className="repo-grid">
         {data.repositories.map((r) => (
           <article className="repo-card" key={r.id}>
@@ -1565,7 +1913,7 @@ function RepositoryPage({
             <dl>
               <dt>Owner</dt>
               <dd>{r.owner}</dd>
-              <dt>Source files</dt>
+              <dt>Captured text files</dt>
               <dd>
                 {r.snapshot ? r.snapshot.file_count : "Awaiting snapshot"}
               </dd>
@@ -1608,11 +1956,48 @@ function RepositoryPage({
                 {error}
               </p>
             ))}
+            {r.latest_job?.error_detail?.budget && (
+              <p className="context-note">
+                {r.latest_job.error_detail.budget}:{" "}
+                {r.latest_job.error_detail.actual} /{" "}
+                {r.latest_job.error_detail.maximum}
+              </p>
+            )}
+            {r.latest_job?.error_detail?.remediation && (
+              <p className="context-note">
+                {r.latest_job.error_detail.remediation}
+              </p>
+            )}
+            {r.snapshot?.source_provenance?.source_url && (
+              <p className="subtle">
+                {r.snapshot.source_provenance.source_url} ·{" "}
+                {r.snapshot.source_provenance.ref}
+              </p>
+            )}
             {!data.demo && (
               <button className="secondary" onClick={() => onImport(r.id)}>
                 Upload new snapshot
               </button>
             )}
+            {!data.demo &&
+              (data.capabilities?.job_mode === "celery" ||
+                (data.capabilities?.job_mode === "local" &&
+                  (["ZIP", "LOCAL", "GITHUB_PUBLIC"].includes(r.provider) ||
+                    data.capabilities.private_scm_available))) &&
+              r.latest_job &&
+              ["FAILED", "PARTIAL", "QUEUED"].includes(
+                r.latest_job.state || "",
+              ) && (
+                <button
+                  className="secondary"
+                  disabled={retrying !== null}
+                  onClick={() => retryAnalysis(r.latest_job!.id)}
+                >
+                  {retrying === r.latest_job.id
+                    ? "Retrying analysis…"
+                    : "Retry analysis"}
+                </button>
+              )}
             <div className="repo-card-footer">
               <span className="subtle">
                 {r.snapshot
@@ -1623,21 +2008,98 @@ function RepositoryPage({
               </span>
               <button
                 className="text-button"
-                onClick={() => navigate("Evidence")}
+                onClick={() =>
+                  onExplore ? onExplore(r.id) : navigate("Evidence")
+                }
               >
                 Explore <ArrowRight size={14} />
               </button>
             </div>
+            {r.snapshot && <RepositoryDiagnostics repository={r} />}
           </article>
         ))}
       </div>
       <div className="context-note">
-        A local content digest is displayed as the snapshot identifier. It is
-        not presented as a Git commit SHA. One repository can serve multiple
-        components in the future mapping model.
+        ZIP snapshots use a content digest. GitHub snapshots identify the
+        resolved provider commit and ref. Review Trust & Coverage for partial,
+        skipped and unsupported files before drawing conclusions.
       </div>
       {page === "Repositories" && <AnalysisCoverage data={data} />}
     </>
+  );
+}
+
+function RepositoryDiagnostics({ repository }: { repository: Repository }) {
+  const [expanded, setExpanded] = useState(false);
+  const snapshot = repository.snapshot;
+  const diagnostic = useQuery({
+    queryKey: ["repository-diagnostics", repository.id, snapshot?.id],
+    queryFn: () =>
+      api<{
+        partial_engines: Record<string, string>;
+        warning_count: number;
+        warnings: { path?: string; message: string }[];
+        warnings_complete: boolean;
+        effective_claim_extraction_state: string;
+      }>(
+        `/repositories/${encodeURIComponent(repository.id)}/analysis?snapshot_id=${encodeURIComponent(snapshot!.id)}`,
+      ),
+    enabled: expanded && !!snapshot,
+    retry: false,
+  });
+  if (!snapshot) return null;
+  return (
+    <details onToggle={(event) => setExpanded(event.currentTarget.open)}>
+      <summary>Analysis diagnostics · {snapshot.status}</summary>
+      <p>
+        Snapshot <code>{snapshot.id}</code> · runtime unobserved
+      </p>
+      {snapshot.coverage_summary && (
+        <p>
+          {snapshot.coverage_summary.source_files_parsed} /{" "}
+          {snapshot.coverage_summary.source_files} source files parsed (
+          {snapshot.coverage_summary.source_analysis_percent?.toFixed(2)}%).
+        </p>
+      )}
+      {diagnostic.isLoading ? (
+        <p role="status">Loading diagnostics…</p>
+      ) : diagnostic.isError ? (
+        <p role="alert">
+          Diagnostics unavailable: {diagnostic.error.message}{" "}
+          <button onClick={() => diagnostic.refetch()}>
+            Retry diagnostics
+          </button>
+        </p>
+      ) : (
+        diagnostic.data && (
+          <>
+            <p>
+              Claim extraction:{" "}
+              {diagnostic.data.effective_claim_extraction_state}.{" "}
+              {diagnostic.data.warning_count} recorded diagnostics.
+            </p>
+            {Object.entries(diagnostic.data.partial_engines).map(
+              ([name, state]) => (
+                <p key={name}>
+                  {name}: {state}
+                </p>
+              ),
+            )}
+            {diagnostic.data.warnings.map((warning, i) => (
+              <p key={i}>
+                {warning.path}: {warning.message}
+              </p>
+            ))}
+            {!diagnostic.data.warnings_complete && (
+              <p>
+                First 50 diagnostics shown. Trust &amp; Coverage provides
+                paginated file coverage.
+              </p>
+            )}
+          </>
+        )
+      )}
+    </details>
   );
 }
 
@@ -1769,6 +2231,8 @@ export function ImpactSummary({
       </div>
       {compared.map((repository) => {
         const impact = repository.snapshot!.impact!;
+        const impactCount = (key: string, fallback: number) =>
+          repository.snapshot!.impact_list_counts?.[key] ?? fallback;
         const affected = records.filter((record) =>
           impact.affected_claims.includes(record.id),
         );
@@ -1783,24 +2247,54 @@ export function ImpactSummary({
             </div>
             <div className="impact-counts">
               <span>
-                <strong>{impact.changed_files.length}</strong> changed files
+                <strong>
+                  {impactCount("changed_files", impact.changed_files.length)}
+                </strong>{" "}
+                changed files
               </span>
               <span>
-                <strong>{impact.affected_claims.length}</strong> affected claims
+                <strong>
+                  {impactCount(
+                    "affected_claims",
+                    impact.affected_claims.length,
+                  )}
+                </strong>{" "}
+                affected claims
               </span>
               <span>
-                <strong>{impact.affected_documentation?.length || 0}</strong>{" "}
+                <strong>
+                  {impactCount(
+                    "affected_documentation",
+                    impact.affected_documentation?.length || 0,
+                  )}
+                </strong>{" "}
                 documentation paths
               </span>
               <span>
-                <strong>{impact.affected_api?.length || 0}</strong> API nodes
+                <strong>
+                  {impactCount(
+                    "affected_api",
+                    impact.affected_api?.length || 0,
+                  )}
+                </strong>{" "}
+                API nodes
               </span>
               <span>
-                <strong>{impact.affected_findings?.length || 0}</strong>{" "}
+                <strong>
+                  {impactCount(
+                    "affected_findings",
+                    impact.affected_findings?.length || 0,
+                  )}
+                </strong>{" "}
                 findings
               </span>
               <span>
-                <strong>{impact.affected_policies?.length || 0}</strong>{" "}
+                <strong>
+                  {impactCount(
+                    "affected_policies",
+                    impact.affected_policies?.length || 0,
+                  )}
+                </strong>{" "}
                 policies
               </span>
             </div>
@@ -1812,7 +2306,7 @@ export function ImpactSummary({
               </p>
             )}
             <details>
-              <summary>Changed source paths</summary>
+              <summary>Changed source paths (bounded preview)</summary>
               <div className="file-list">
                 {impact.changed_files.map((path) => (
                   <div key={path}>
@@ -1835,9 +2329,9 @@ export function ImpactSummary({
             ))}
             {!!impact.removed_claims?.length && (
               <p className="subtle">
-                {impact.removed_claims.length} prior claim identities
-                disappeared from this snapshot; their evidence remains in
-                snapshot history.
+                {impactCount("removed_claims", impact.removed_claims.length)}{" "}
+                prior claim identities disappeared from this snapshot; their
+                evidence remains in snapshot history.
               </p>
             )}
           </article>
@@ -1894,7 +2388,10 @@ function Dependencies({
   return (
     <>
       <div className="section-head">
-        <h2>{data.dependency.length} dependency declarations</h2>
+        <h2>
+          {data.counts?.totals.dependency ?? data.dependency.length} dependency
+          declarations
+        </h2>
         <button
           className="secondary"
           disabled={
@@ -1932,8 +2429,9 @@ function Dependencies({
       )}
       <div
         className="coverage-counts"
-        aria-label="Dependency advisory coverage"
+        aria-label="Dependency advisory coverage on this page"
       >
+        <span>Current page:</span>
         {[
           "VULNERABLE",
           "CHECKED_NO_KNOWN_ADVISORY",
@@ -2053,11 +2551,22 @@ function PullRequests({
   data: Workspace;
   onOpen: (i: Item) => void;
 }) {
-  const pr = data.pr[0];
+  const [selectedPr, setSelectedPr] = useState("");
+  const pr = data.pr.find((item) => item.id === selectedPr) || data.pr[0];
   const gate = useQuery({
     queryKey: ["gate", pr?.head_id],
     queryFn: () => api<Gate>("/gate/" + pr?.head_id),
     enabled: !!pr,
+  });
+  const [claimOffset, setClaimOffset] = useState(0);
+  useEffect(() => setClaimOffset(0), [pr?.id]);
+  const claimImpact = useQuery({
+    queryKey: ["pr-claims", pr?.head_id, claimOffset],
+    queryFn: () =>
+      api<RecordPage>(
+        `/workspace/records?view=Claim%20Ledger&snapshot_id=${encodeURIComponent(pr!.head_id!)}&offset=${claimOffset}&limit=50`,
+      ),
+    enabled: !!pr?.head_id,
   });
   if (!pr)
     return (
@@ -2069,6 +2578,20 @@ function PullRequests({
   return (
     <>
       <div className="pr-heading">
+        <label>
+          Pull request analysis
+          <select
+            aria-label="Pull request analysis"
+            value={pr.id}
+            onChange={(event) => setSelectedPr(event.target.value)}
+          >
+            {data.pr.map((item) => (
+              <option key={item.id} value={item.id}>
+                #{item.number} · {item.title}
+              </option>
+            ))}
+          </select>
+        </label>
         <GitPullRequest size={25} />
         <div>
           <h2>
@@ -2102,12 +2625,33 @@ function PullRequests({
           <div className="section-head section-space">
             <h2>Claim impact</h2>
           </div>
-          <DataTable
-            items={data.claim.filter(
-              (c) => c.scope?.snapshot_id === pr.head_id,
-            )}
-            onOpen={onOpen}
-          />
+          {claimImpact.isLoading ? (
+            <p role="status">Loading claim impact…</p>
+          ) : claimImpact.isError ? (
+            <p role="alert" className="error">
+              Claim impact unavailable: {claimImpact.error.message}
+            </p>
+          ) : (
+            <>
+              <DataTable
+                items={claimImpact.data?.items || []}
+                onOpen={onOpen}
+              />
+              <p>{claimImpact.data?.total} claims in this head snapshot</p>
+              <button
+                disabled={!claimOffset}
+                onClick={() => setClaimOffset(Math.max(0, claimOffset - 50))}
+              >
+                Previous claims
+              </button>
+              <button
+                disabled={!claimImpact.data?.has_more}
+                onClick={() => setClaimOffset(claimOffset + 50)}
+              >
+                Next claims
+              </button>
+            </>
+          )}
         </section>
         <section className="gate-panel">
           <div className="section-head">
@@ -2149,9 +2693,25 @@ function Evidence({
     if (!data.evidence.some((e) => e.id === id)) setId(data.evidence[0]?.id);
   }, [data.evidence, id]);
   const node = data.evidence.find((e) => e.id === id);
-  const related = [...data.claim, ...data.finding].filter((c) =>
-    c.evidence_ids?.includes(id),
-  );
+  const source = useQuery({
+    queryKey: ["evidence-source", id],
+    queryFn: () => api<Item>("/record/" + encodeURIComponent(id || "")),
+    enabled: !!id,
+  });
+  const [relatedOffset, setRelatedOffset] = useState(0);
+  useEffect(() => setRelatedOffset(0), [id]);
+  const linked = useQuery({
+    queryKey: ["evidence-neighborhood", id, relatedOffset],
+    queryFn: () =>
+      api<{ nodes: Item[]; total: number }>(
+        `/graph/neighborhood?node_id=${encodeURIComponent(id || "")}&offset=${relatedOffset}&limit=50`,
+      ),
+    enabled: !!id,
+  });
+  const related =
+    linked.data?.nodes.filter((item) =>
+      ["claim", "finding"].includes(item.kind || ""),
+    ) || [];
   return (
     <div className="evidence-layout">
       <aside>
@@ -2182,7 +2742,15 @@ function Evidence({
           <code>{node?.path}</code>
           <Badge value={node?.authority} />
         </div>
-        <Source item={node} />
+        {source.isLoading ? (
+          <p role="status">Loading redacted source…</p>
+        ) : source.isError ? (
+          <p className="error" role="alert">
+            Source unavailable: {source.error.message}
+          </p>
+        ) : (
+          <Source item={source.data} />
+        )}
         <div className="source-scope">
           <code>
             {node?.scope?.branch} @ {node?.scope?.commit.slice(0, 12)}
@@ -2192,7 +2760,13 @@ function Evidence({
       </section>
       <aside className="related-panel">
         <span className="eyebrow">CONNECTED CONCLUSIONS</span>
-        {related.length ? (
+        {linked.isLoading ? (
+          <p role="status">Loading connected conclusions…</p>
+        ) : linked.isError ? (
+          <p className="error" role="alert">
+            Connected evidence unavailable: {linked.error.message}
+          </p>
+        ) : related.length ? (
           related.map((c) => (
             <button
               className="related-item"
@@ -2206,8 +2780,25 @@ function Evidence({
           ))
         ) : (
           <p className="subtle">
-            No current claim or finding is linked to this artifact.
+            No claim or finding in this page of recorded relationships.
           </p>
+        )}
+        {!!linked.data && (
+          <div className="filters">
+            <span>{linked.data.total} recorded relationships</span>
+            <button
+              disabled={!relatedOffset}
+              onClick={() => setRelatedOffset(Math.max(0, relatedOffset - 50))}
+            >
+              Previous relationships
+            </button>
+            <button
+              disabled={relatedOffset + 50 >= linked.data.total}
+              onClick={() => setRelatedOffset(relatedOffset + 50)}
+            >
+              Next relationships
+            </button>
+          </div>
         )}
       </aside>
     </div>
@@ -2234,25 +2825,37 @@ function Investigation({
   const [answer, setAnswer] = useState<Answer | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const scopeIds = data.repositories.map((r) => r.id).join(",");
+  const scopeIds = data.repositories
+    .map((r) => `${r.id}:${r.snapshot?.id || ""}`)
+    .join(",");
+  const requestGeneration = useRef(0);
   useEffect(() => {
+    requestGeneration.current++;
     if (repo && !data.repositories.some((r) => r.id === repo))
       setRepo(data.repositories.length === 1 ? data.repositories[0].id : "");
     setAnswer(null);
     setError("");
-  }, [scopeIds]);
+    setBusy(false);
+  }, [scopeIds, repo]);
   async function submit(e: FormEvent) {
     e.preventDefault();
     setBusy(true);
     setError("");
+    const generation = requestGeneration.current;
     try {
-      setAnswer(
-        await api<Answer>("/ask", { question, repository_id: repo || null }),
-      );
+      const result = await api<Answer>("/ask", {
+        question,
+        repository_id: repo || null,
+        snapshot_ids: data.repositories
+          .filter((r) => !repo || r.id === repo)
+          .flatMap((r) => (r.snapshot ? [r.snapshot.id] : [])),
+      });
+      if (requestGeneration.current === generation) setAnswer(result);
     } catch (e) {
-      setError((e as Error).message);
+      if (requestGeneration.current === generation)
+        setError((e as Error).message);
     } finally {
-      setBusy(false);
+      if (requestGeneration.current === generation) setBusy(false);
     }
   }
   return (
@@ -2415,6 +3018,17 @@ function AuditPage({
 }
 
 function PolicyPage({ data }: { data: Workspace }) {
+  const [offset, setOffset] = useState(0);
+  const repository =
+    data.repositories.length === 1 ? data.repositories[0].id : "ALL";
+  useEffect(() => setOffset(0), [repository]);
+  const exceptions = useQuery({
+    queryKey: ["policy-exceptions", repository, offset],
+    queryFn: () =>
+      api<{ items: Item[]; total: number; has_more: boolean }>(
+        `/trust/exceptions?offset=${offset}&limit=50${repository === "ALL" ? "" : "&repository_id=" + encodeURIComponent(repository)}`,
+      ),
+  });
   return (
     <>
       <div className="context-note">
@@ -2450,10 +3064,20 @@ function PolicyPage({ data }: { data: Workspace }) {
       </div>
       <div className="section-head section-space">
         <h2>Expiring exceptions</h2>
-        <span>{data.exception.length} recorded</span>
+        <span>
+          {exceptions.data
+            ? `${exceptions.data.total} recorded`
+            : "Count unavailable"}
+        </span>
       </div>
-      {data.exception.length ? (
-        data.exception.map((e) => (
+      {exceptions.isLoading ? (
+        <p role="status">Loading exceptions…</p>
+      ) : exceptions.isError ? (
+        <p role="alert" className="error">
+          Exceptions unavailable: {exceptions.error.message}
+        </p>
+      ) : exceptions.data?.items.length ? (
+        exceptions.data.items.map((e) => (
           <p key={e.id}>
             {e.reason} · expires {date(e.expires_at)}
           </p>
@@ -2463,6 +3087,22 @@ function PolicyPage({ data }: { data: Workspace }) {
           Administrators and security reviewers can accept scoped risk with a
           reason and expiry. Expired exceptions no longer change the gate.
         </Empty>
+      )}
+      {!!exceptions.data?.total && (
+        <div className="filters">
+          <button
+            disabled={!offset}
+            onClick={() => setOffset(Math.max(0, offset - 50))}
+          >
+            Previous exceptions
+          </button>
+          <button
+            disabled={!exceptions.data.has_more}
+            onClick={() => setOffset(offset + 50)}
+          >
+            Next exceptions
+          </button>
+        </div>
       )}
     </>
   );
@@ -3091,14 +3731,14 @@ function Inspector({
             ) : (
               <p>
                 {qualitySource.isLoading || linkedSource.isLoading
-                  ? "Loading source evidence… "
+                  ? "Loading source evidence…"
                   : qualitySource.isError
-                    ? qualitySource.error.message + " "
+                    ? "Source evidence unavailable: " +
+                      qualitySource.error.message
                     : linkedSource.isError
-                      ? linkedSource.error.message + " "
-                      : ""}
-                No source artifact is attached to this result. Review its scope
-                and analyzer limitation.
+                      ? "Source evidence unavailable: " +
+                        linkedSource.error.message
+                      : "No source artifact is attached to this result. Review its scope and analyzer limitation."}
               </p>
             )}
             {item.vulnerabilities?.map((v) => (
@@ -3304,37 +3944,61 @@ function Inspector({
   );
 }
 
-function ImportDialog({
+export function ImportDialog({
   repositories,
   initialTarget,
   onRefresh,
   onClose,
   onDone,
+  onConnect,
 }: {
   onClose: () => void;
   onDone: (repository: string) => void;
   repositories: Repository[];
   initialTarget: string;
   onRefresh: () => void;
+  onConnect: () => void;
 }) {
-  const [target, setTarget] = useState(initialTarget);
+  const destinations = repositories.filter((r) =>
+    ["ZIP", "LOCAL"].includes(r.provider),
+  );
+  const [target, setTarget] = useState(
+    destinations.some((r) => r.id === initialTarget) ? initialTarget : "NEW",
+  );
+  const [mode, setMode] = useState<"ZIP" | "PUBLIC">("ZIP");
+  const [url, setUrl] = useState("");
+  const [ref, setRef] = useState("");
+  const requestKey = useRef(crypto.randomUUID());
   const [name, setName] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   async function submit(e: FormEvent) {
     e.preventDefault();
-    if (!file) return;
+    if (mode === "ZIP" && !file) return;
     setBusy(true);
     setError("");
     try {
-      const result = await api<{ repository_id: string; state?: string }>(
-        target === "NEW"
-          ? "/archive/stream/import?name=" + encodeURIComponent(name)
-          : "/repositories/" + encodeURIComponent(target) + "/source-archive",
-        undefined,
-        file,
-      );
+      const result =
+        mode === "PUBLIC"
+          ? await api<{ repository_id: string }>("/github/public/import", {
+              url,
+              ref: ref || null,
+              request_key: requestKey.current,
+            })
+          : await api<{ repository_id: string; state?: string }>(
+              target === "NEW"
+                ? "/archive/stream/import?name=" +
+                    encodeURIComponent(name) +
+                    "&request_key=" +
+                    requestKey.current
+                : "/repositories/" +
+                    encodeURIComponent(target) +
+                    "/source-archive?request_key=" +
+                    requestKey.current,
+              undefined,
+              file || undefined,
+            );
       onDone(result.repository_id);
     } catch (e) {
       setError((e as Error).message);
@@ -3345,54 +4009,124 @@ function ImportDialog({
   }
   return (
     <Modal title="Import a repository snapshot" onClose={onClose}>
+      <div className="section-head" aria-label="Import source">
+        <button
+          className={mode === "ZIP" ? "primary" : "secondary"}
+          disabled={busy}
+          onClick={() => {
+            setMode("ZIP");
+            setError("");
+          }}
+        >
+          Upload ZIP
+        </button>
+        <button
+          className={mode === "PUBLIC" ? "primary" : "secondary"}
+          disabled={busy}
+          onClick={() => {
+            setMode("PUBLIC");
+            setError("");
+          }}
+        >
+          Public GitHub URL
+        </button>
+        <button className="secondary" disabled={busy} onClick={onConnect}>
+          Connect private GitHub
+        </button>
+      </div>
       <form className="import-form" onSubmit={submit}>
         <p>
-          Upload a ZIP of source files. ProjectTrace scans the files as
-          untrusted data and stores redacted evidence.
+          {mode === "ZIP"
+            ? "Upload source files for a separate ZIP snapshot."
+            : "Import a public repository once, pinned to its resolved Git commit. No GitHub App or webhook is required."}{" "}
+          ProjectTrace inspects source as untrusted data and stores redacted
+          evidence.
         </p>
-        <label>
-          Destination
-          <select
-            aria-label="Import destination"
-            value={target}
-            onChange={(e) => setTarget(e.target.value)}
-          >
-            <option value="NEW">New repository</option>
-            {repositories
-              .filter((r) => r.provider !== "DEMO")
-              .map((r) => (
-                <option key={r.id} value={r.id}>
-                  {r.name} · new snapshot
-                </option>
-              ))}
-          </select>
-        </label>
-        {target === "NEW" && (
-          <label>
-            Repository name
-            <input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              maxLength={120}
-              pattern="[\w .-]+"
-              placeholder="checkout-api"
-            />
-          </label>
+        {mode === "PUBLIC" ? (
+          <>
+            <label>
+              Public repository URL
+              <input
+                type="url"
+                required
+                value={url}
+                onChange={(e) => {
+                  setUrl(e.target.value);
+                  requestKey.current = crypto.randomUUID();
+                }}
+                placeholder="https://github.com/owner/repository"
+                maxLength={500}
+              />
+            </label>
+            <label>
+              Branch, tag or commit (optional)
+              <input
+                value={ref}
+                onChange={(e) => {
+                  setRef(e.target.value);
+                  requestKey.current = crypto.randomUUID();
+                }}
+                maxLength={256}
+                placeholder="Default branch"
+              />
+            </label>
+          </>
+        ) : (
+          <>
+            <label>
+              Destination
+              <select
+                aria-label="Import destination"
+                value={target}
+                onChange={(e) => {
+                  setTarget(e.target.value);
+                  requestKey.current = crypto.randomUUID();
+                }}
+              >
+                <option value="NEW">New repository</option>
+                {destinations.map((r) => (
+                  <option key={r.id} value={r.id}>
+                    {r.name} · new snapshot
+                  </option>
+                ))}
+              </select>
+            </label>
+            {target === "NEW" && (
+              <label>
+                Repository name
+                <input
+                  value={name}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                    requestKey.current = crypto.randomUUID();
+                  }}
+                  required
+                  maxLength={120}
+                  pattern="[\w .-]+"
+                  placeholder="checkout-api"
+                />
+              </label>
+            )}
+            <label>
+              Source archive
+              <input
+                type="file"
+                accept=".zip"
+                required
+                onChange={(e) => {
+                  setFile(e.target.files?.[0] || null);
+                  requestKey.current = crypto.randomUUID();
+                }}
+              />
+            </label>
+          </>
         )}
-        <label>
-          Source archive
-          <input
-            type="file"
-            accept=".zip"
-            required
-            onChange={(e) => setFile(e.target.files?.[0] || null)}
-          />
-        </label>
         <div className="context-note">
-          Encrypted streaming import · configured repository quotas · 512 KB
-          parser budget per file. Unsafe paths and symlinks are rejected.
-          Oversized and unsupported files remain visible in coverage.
+          Encrypted streaming intake · 512,000 bytes per-file parser limit.
+          Unsafe paths, encrypted entries and decompression bombs are rejected.
+          Symlinks are recorded as UNSUPPORTED without being followed.
+          Oversized, binary and unsupported files remain visible in Trust &
+          Coverage.
         </div>
         {error && (
           <p className="error" role="alert">
@@ -3405,9 +4139,15 @@ function ImportDialog({
           ) : (
             <Upload size={16} />
           )}{" "}
-          {target === "NEW"
-            ? "Analyze source snapshot"
-            : "Analyze and compare snapshot"}
+          {busy
+            ? mode === "PUBLIC"
+              ? "Requesting public snapshot…"
+              : "Uploading and capturing source…"
+            : mode === "PUBLIC"
+              ? "Import public snapshot"
+              : target === "NEW"
+                ? "Analyze source snapshot"
+                : "Analyze and compare snapshot"}
         </button>
       </form>
     </Modal>

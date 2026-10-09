@@ -43,16 +43,19 @@ export default function Infrastructure({
   repository,
   role,
   onOpen,
+  snapshot,
 }: {
   repository: string;
   role: string;
   onOpen: (item: Item) => void;
+  snapshot?: string;
 }) {
   const [tab, setTab] = useState("Overview");
   const [offset, setOffset] = useState(0);
-  useEffect(() => setOffset(0), [repository, tab]);
+  useEffect(() => setOffset(0), [repository, tab, snapshot]);
   const suffix = new URLSearchParams({ offset: String(offset), limit: "100" });
   if (repository !== "ALL") suffix.set("repository_id", repository);
+  if (snapshot) suffix.set("snapshot_id", snapshot);
   const format = tab.toUpperCase();
   const formatted = [
     "TERRAFORM",
@@ -66,6 +69,7 @@ export default function Infrastructure({
     queryKey: [
       "infrastructure",
       repository,
+      snapshot,
       offset,
       formatted ? format : "ALL",
     ],

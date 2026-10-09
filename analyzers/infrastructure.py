@@ -6,6 +6,7 @@ import os
 import subprocess
 import sys
 import tempfile
+import time
 from pathlib import Path, PurePosixPath
 
 import hcl2
@@ -14,6 +15,7 @@ import yaml
 from analyzers.infrastructure_deep import checks as deep_checks
 from analyzers.infrastructure_deep import config as infrastructure_config
 from analyzers.infrastructure_extra import KUBERNETES_KINDS, dockerfile, enrich_document, terraform
+from analyzers.parser_protocol import completed_packets
 
 
 class InfrastructureLoader(yaml.SafeLoader):
@@ -107,6 +109,50 @@ def structured_iac(path, source, make_finding, settings=None):
                 }
             ],
         )
+
+
+def structured_iac_batch(files, make_finding, settings=None, *, performance=None):
+    """Reuse one bounded owned process per partition; retain per-file failures."""
+    result, batch, size = {}, {}, 0
+
+    def parse_batch():
+        if not batch:
+            return
+        environment = {key: os.environ[key] for key in ("SystemRoot", "WINDIR", "TEMP", "TMP") if key in os.environ}
+        try:
+            started = time.perf_counter()
+            with tempfile.TemporaryDirectory(prefix="projecttrace-iac-") as directory:
+                try:
+                    reply = subprocess.run([sys.executable, "-I", "-B", str(Path(__file__).with_name("iac_worker.py"))],
+                                           input=json.dumps({"files": batch, "settings": settings or {}}, ensure_ascii=False).encode(),
+                                           capture_output=True, timeout=15, cwd=directory, env=environment)
+                    output, failure_code = reply.stdout, "HELPER_PROCESS_LIMIT"
+                except subprocess.TimeoutExpired as error:
+                    output, failure_code = error.stdout or b"", "HELPER_TIMEOUT"
+            parsed = completed_packets(output, batch, 8 * 1024 * 1024, performance, "IAC")
+            if performance:
+                performance.record("IAC_HELPER", time.perf_counter() - started)
+            for path in batch.keys() - parsed.keys():
+                parsed[path] = ([], [], [{"analyzer": "IAC", "path": path, "code": failure_code, "state": "PARTIAL",
+                                          "budget": "IAC_HELPER_SECONDS", "maximum": 15,
+                                          "message": "Infrastructure helper stopped before completing this file; completed file results were retained."}])
+            for path, (findings, assets, warnings) in parsed.items():
+                result[path] = ([{**make_finding(item["rule"], path, item["line"], item["explanation"]), **item} for item in findings], assets, warnings)
+        except Exception as error:
+            for path in batch:
+                result[path] = ([], [], [{"analyzer": "IAC", "path": path, "code": type(error).__name__, "state": "PARTIAL",
+                                         "message": "Isolated infrastructure partition failed or exceeded its budget; this file is not fully analyzed."}])
+
+    for path, source in files.items():
+        raw_size = len(source.encode())
+        if raw_size > 512_000:
+            raise ValueError("Infrastructure source exceeds its per-file parser limit")
+        if batch and (len(batch) >= 100 or size + raw_size > 2_000_000):
+            parse_batch()
+            batch, size = {}, 0
+        batch[path], size = source, size + raw_size
+    parse_batch()
+    return result
 
 
 def _structured_iac(path, source, make_finding, settings=None):

@@ -101,7 +101,7 @@ export default function AuthPage({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoDemo, options.ready, options.demo_available]);
   const registrationDisabled =
-    register && options.ready && !options.local_registration;
+    register && options.ready && !options.error && !options.local_registration;
   return (
     <div className="login">
       <div className="login-story">
@@ -257,12 +257,15 @@ export default function AuthPage({
               </small>
             </>
           )}
-          {autoDemo && options.ready && !options.demo_available && (
-            <p role="status">
-              The hosted demo is disabled on this server. The public
-              investigation examples and Guide remain available.
-            </p>
-          )}
+          {autoDemo &&
+            options.ready &&
+            !options.error &&
+            !options.demo_available && (
+              <p role="status">
+                The hosted demo is disabled on this server. The public
+                investigation examples and Guide remain available.
+              </p>
+            )}
           {error && (
             <p role="alert" className="error">
               {error}

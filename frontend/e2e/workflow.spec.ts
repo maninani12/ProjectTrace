@@ -1,6 +1,127 @@
 import { test, expect } from "@playwright/test";
 import path from "node:path";
 const proof = process.env.PROJECTTRACE_PROOF || "test-results";
+test("a delayed review response cannot reopen a closed evidence inspector", async ({
+  page,
+}) => {
+  await page.goto("/login");
+  await page.getByRole("button", { name: "Explore Northstar demo" }).click();
+  await page.getByRole("button", { name: "Close dialog", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Inspect the evidence", exact: true })
+    .click();
+  const inspector = page.getByRole("dialog", { name: "Evidence inspector" });
+  await inspector.getByRole("button", { name: "Review", exact: true }).click();
+  await inspector
+    .getByLabel("Reason", { exact: true })
+    .fill("Confirmed source evidence while testing a delayed review response.");
+  let release!: () => void;
+  let stored!: () => void;
+  const delayed = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  const saved = new Promise<void>((resolve) => {
+    stored = resolve;
+  });
+  await page.route("**/api/record/*/review", async (route) => {
+    const response = await route.fetch();
+    expect(response.status()).toBe(200);
+    stored();
+    await delayed;
+    await route.fulfill({ response });
+  });
+  await inspector.getByRole("button", { name: "Record review" }).click();
+  await saved;
+  await inspector
+    .getByRole("button", { name: "Close dialog", exact: true })
+    .click();
+  await expect(inspector).toHaveCount(0);
+  const response = page.waitForResponse(
+    (result) =>
+      result.url().endsWith("/review") && result.request().method() === "POST",
+  );
+  const refreshed = page.waitForResponse((result) =>
+    result.url().includes("/api/workspace?summary=1"),
+  );
+  release();
+  expect((await response).status()).toBe(200);
+  // The review completion invalidates the workspace. Wait for that refresh
+  // so this assertion observes the callback, rather than an earlier render.
+  expect((await refreshed).status()).toBe(200);
+  await expect(
+    page.getByRole("button", { name: "Claim Ledger", exact: true }),
+  ).toBeEnabled();
+  await page.getByRole("button", { name: "Claim Ledger", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Claim Ledger", exact: true }),
+  ).toBeVisible();
+  await expect(inspector).toHaveCount(0);
+});
+
+test("investigation pins displayed snapshots and ignores a response after its scope changes", async ({
+  page,
+}) => {
+  await page.goto("/login");
+  await page.getByRole("button", { name: "Explore Northstar demo" }).click();
+  await page.getByRole("button", { name: "Close dialog", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Ask Engineering", exact: true })
+    .click();
+  let release!: () => void;
+  let stored!: () => void;
+  const delayed = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  const saved = new Promise<void>((resolve) => {
+    stored = resolve;
+  });
+  await page.route("**/api/ask", async (route) => {
+    const payload = route.request().postDataJSON();
+    expect(payload.repository_id).toBe("identity");
+    expect(payload.snapshot_ids).toHaveLength(1);
+    const response = await route.fetch();
+    expect(response.status()).toBe(200);
+    const answer = await response.json();
+    expect(answer.snapshot_ids).toEqual({ identity: payload.snapshot_ids[0] });
+    stored();
+    await delayed;
+    await route.fulfill({ response });
+  });
+  await page.getByRole("button", { name: "Investigate with evidence" }).click();
+  await saved;
+  await page.getByLabel("Investigation repository").selectOption("clean");
+  const response = page.waitForResponse((result) =>
+    result.url().endsWith("/api/ask"),
+  );
+  release();
+  const delayedResponse = await response;
+  expect(delayedResponse.status()).toBe(200);
+  await delayedResponse.finished();
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+      ),
+  );
+  await expect(
+    page.getByRole("heading", {
+      name: /current static evidence configures server-side session/,
+    }),
+  ).toHaveCount(0);
+  await page.unroute("**/api/ask");
+  const next = page.waitForResponse((result) =>
+    result.url().endsWith("/api/ask"),
+  );
+  await page.getByRole("button", { name: "Investigate with evidence" }).click();
+  const answer = await (await next).json();
+  expect(Object.keys(answer.snapshot_ids)).toEqual(["clean"]);
+  await expect(
+    page.getByRole("heading", {
+      name: /current static evidence configures server-side session/,
+    }),
+  ).toHaveCount(0);
+});
+
 test("CEO and engineer evidence workflow", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));

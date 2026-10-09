@@ -54,6 +54,15 @@ export type Impact = {
   }[];
 };
 export type Item = {
+  error_detail?: {
+    code: string;
+    message: string;
+    budget?: string;
+    actual?: number | string;
+    maximum?: number;
+    remediation?: string;
+  };
+  retry_count?: number;
   dimension?: string;
   symbol?: string;
   measured?: number;
@@ -194,7 +203,22 @@ export type Snapshot = {
   gate: Gate;
   scope: Scope;
   status: string;
+  changed_files_count?: number;
+  warnings_count?: number;
+  coverage_summary?: {
+    source_analysis_percent?: number;
+    source_files?: number;
+    source_files_parsed?: number;
+  };
+  impact_list_counts?: Record<string, number>;
   commit_source?: string;
+  source_provenance?: {
+    source?: string;
+    source_url?: string;
+    ref?: string;
+    commit?: string;
+    archive_sha256?: string;
+  };
   engines?: Record<string, EngineResult>;
   impact?: Impact;
   reused_files?: number;
@@ -229,6 +253,13 @@ export type Repository = {
   latest_job?: Item;
 };
 export type Workspace = {
+  repository_page?: {
+    offset: number;
+    limit: number;
+    total: number;
+    has_more: boolean;
+    search: string;
+  };
   organization: string;
   demo: boolean;
   repositories: Repository[];
@@ -246,7 +277,32 @@ export type Workspace = {
   graph_node: Item[];
   risk_path?: Item[];
   analysis: { state: string; truncated?: boolean; warnings?: string[] };
-  capabilities?: { job_mode: "sync" | "celery"; advisories_enabled: boolean };
+  counts?: WorkspaceCounts & {
+    complete: boolean;
+    scope: string;
+    repositories: Record<string, WorkspaceCounts>;
+  };
+  record_page?: RecordPage;
+  capabilities?: {
+    job_mode: "sync" | "local" | "celery";
+    advisories_enabled: boolean;
+    private_scm_available?: boolean;
+  };
+};
+export type WorkspaceCounts = {
+  totals: Record<string, number>;
+  claim_status: Record<string, number>;
+  finding_severity: Record<string, number>;
+  material_findings: number;
+};
+export type RecordPage = {
+  items: Item[];
+  total: number;
+  offset: number;
+  limit: number;
+  has_more: boolean;
+  severity_counts: Record<string, number>;
+  snapshot_ids: Record<string, string>;
 };
 export type Identity = {
   email: string;
@@ -268,36 +324,66 @@ let csrf = "";
 export function setCSRF(value: string) {
   csrf = value;
 }
+export class APIError extends Error {
+  constructor(
+    message: string,
+    readonly status: number,
+  ) {
+    super(message);
+    this.name = "APIError";
+  }
+}
+
 export async function api<T>(
   path: string,
   body?: unknown,
   raw?: Blob,
 ): Promise<T> {
-  const response = await fetch("/api" + path, {
-    credentials: "include",
-    method: body !== undefined || raw ? "POST" : "GET",
-    headers: {
-      ...(raw
-        ? { "Content-Type": "application/zip" }
-        : body !== undefined
-          ? { "Content-Type": "application/json" }
-          : {}),
-      "X-CSRF-Token": csrf,
-    },
-    body: raw || (body !== undefined ? JSON.stringify(body) : undefined),
-  });
-  if (!response.ok) {
-    let message = await response.text();
-    try {
-      const error = JSON.parse(message);
-      message =
-        typeof error.detail === "string"
-          ? error.detail
-          : error.detail?.message || "The submitted fields are invalid.";
-    } catch {
-      /* plain error */
+  const controller = new AbortController();
+  // Reads fail visibly instead of keeping a page spinner alive indefinitely.
+  // Uploads retain the server's intake budget; aborting a fetch does not cancel its job.
+  const timer =
+    body === undefined && !raw
+      ? setTimeout(() => controller.abort(), 15000)
+      : undefined;
+  try {
+    const response = await fetch("/api" + path, {
+      signal: controller.signal,
+      credentials: "include",
+      method: body !== undefined || raw ? "POST" : "GET",
+      headers: {
+        ...(raw
+          ? { "Content-Type": "application/zip" }
+          : body !== undefined
+            ? { "Content-Type": "application/json" }
+            : {}),
+        "X-CSRF-Token": csrf,
+      },
+      body: raw || (body !== undefined ? JSON.stringify(body) : undefined),
+    });
+    if (!response.ok) {
+      let message = await response.text();
+      try {
+        const error = JSON.parse(message);
+        message =
+          typeof error.detail === "string"
+            ? error.detail
+            : error.detail?.message
+              ? `${error.detail.message}${error.detail.budget ? ` ${error.detail.budget}: ${error.detail.actual} / ${error.detail.maximum}.` : ""}${error.detail.remediation ? ` ${error.detail.remediation}` : ""}`
+              : "The submitted fields are invalid.";
+      } catch {
+        /* plain error */
+      }
+      throw new APIError(message, response.status);
     }
-    throw new Error(message);
+    return await response.json();
+  } catch (error) {
+    if (controller.signal.aborted)
+      throw new Error(
+        "This request did not complete within 15 seconds. Retry or select a repository; existing analysis jobs continue.",
+      );
+    throw error;
+  } finally {
+    if (timer !== undefined) clearTimeout(timer);
   }
-  return response.json();
 }

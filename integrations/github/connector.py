@@ -11,7 +11,7 @@ import jwt
 
 from analyzers.engine import MAX_FILE_BYTES, MAX_FILES, MAX_TOTAL_BYTES, safe_path, validate_files
 from analyzers.source_input import SourceFiles
-from integrations.secure_http import PinnedTransport
+from integrations.secure_http import PinnedTransport, ProviderTransportError
 
 
 def verify_signature(body, signature, secret):
@@ -59,10 +59,19 @@ class GitHubApp:
             {"iat": now - 60, "exp": now + 540, "iss": self.app_id}, self.private_key, algorithm="RS256"
         )
         with self.client() as client:
-            response = client.post(
-                f"/app/installations/{self.installation_id}/access_tokens",
-                headers={"Authorization": f"Bearer {assertion}"},
-            )
+            # Minting a scoped token is safe to repeat after transient network
+            # failure. Never retry certificate/address-policy or HTTP refusal.
+            for attempt in range(3):
+                try:
+                    response = client.post(
+                        f"/app/installations/{self.installation_id}/access_tokens",
+                        headers={"Authorization": f"Bearer {assertion}"},
+                    )
+                    break
+                except ProviderTransportError as error:
+                    if not error.retryable or attempt == 2:
+                        raise
+                    time.sleep((0.25, 1)[attempt])
             response.raise_for_status()
             token = response.json()["token"]
             if not isinstance(token, str) or not token or len(token) > 4096:
@@ -164,6 +173,9 @@ class GitHubApp:
             recursive = tree(commit, True)
             if len(recursive["tree"]) > quota["files"] * 2:
                 raise ValueError("GitHub recursive tree metadata budget exceeded.")
+            if self.api_base_url == "https://api.github.com" and not recursive.get("truncated") and len(recursive["tree"]) > 1000:
+                yield from self._batched_snapshot(client, full_name, recursive["tree"], quota)
+                return
             pending = (
                 deque([(str(safe_path(e["path"])), e) for e in recursive["tree"]])
                 if not recursive.get("truncated")
@@ -191,40 +203,110 @@ class GitHubApp:
                 path, entry = pending.popleft() if pending else (None, None)
                 if entry is None:
                     continue
-                if entry.get("mode") in {"120000", "160000"}:
-                    raise ValueError("Symlinks and submodules require explicit separate intake and are not ingested.")
-                if entry.get("type") != "blob":
+                mode = entry.get("mode")
+                if entry.get("type") != "blob" and mode != "160000":
                     continue
                 count += 1
-                size = entry.get("size")
+                size = 0 if mode == "160000" else entry.get("size")
                 if type(size) is not int or size < 0 or path in paths or count > quota["files"]:
                     raise ValueError("GitHub inventory metadata exceeds its bounded scope.")
                 paths.add(path)
                 total += size
                 if total > quota["bytes"]:
                     raise ValueError("GitHub inventory exceeds its byte quota.")
+                if mode in {"120000", "160000"}:
+                    yield path, {"bytes": size, "state": "UNSUPPORTED", "source_kind": "SYMLINK" if mode == "120000" else "SUBMODULE"}
+                    continue
                 if size > quota["file_bytes"]:
                     yield path, {"bytes": size, "state": "SKIPPED_SIZE_LIMIT"}
                     continue
-                sha = entry["sha"]
-                if not re.fullmatch(r"[0-9a-f]{40}", sha):
-                    raise ValueError("GitHub blob identity is invalid.")
-                response = client.get(f"/repos/{full_name}/git/blobs/{sha}")
-                response.raise_for_status()
-                body = response.json()
-                if (
-                    body.get("encoding") != "base64"
-                    or not isinstance(body.get("content"), str)
-                    or len(body["content"]) > 710000
-                ):
-                    raise ValueError("GitHub blob encoding or response size is invalid.")
-                raw = base64.b64decode("".join(body["content"].split()), validate=True)
-                if len(raw) != size or len(raw) > quota["file_bytes"]:
-                    raise ValueError("GitHub blob does not match its declared bounded size.")
-                # Git blob identity binds the received bytes to the captured tree.
-                if hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest() != sha:
-                    raise ValueError("GitHub blob integrity check failed.")
-                yield path, raw
+                yield path, self._read_blob(client, full_name, entry, quota)
+
+    @staticmethod
+    def _verify_blob(raw, entry, quota):
+        if len(raw) != entry["size"] or len(raw) > quota["file_bytes"]:
+            raise ValueError("GitHub blob does not match its declared bounded size.")
+        if hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest() != entry["sha"]:
+            raise ValueError("GitHub blob integrity check failed.")
+        return raw
+
+    def _read_blob(self, client, full_name, entry, quota):
+        sha = entry.get("sha")
+        if not isinstance(sha, str) or not re.fullmatch(r"[0-9a-f]{40}", sha):
+            raise ValueError("GitHub blob identity is invalid.")
+        response = client.get(f"/repos/{full_name}/git/blobs/{sha}")
+        response.raise_for_status()
+        body = response.json()
+        if body.get("encoding") != "base64" or not isinstance(body.get("content"), str) or len(body["content"]) > 710000:
+            raise ValueError("GitHub blob encoding or response size is invalid.")
+        raw = base64.b64decode("".join(body["content"].split()), validate=True)
+        return self._verify_blob(raw, entry, quota)
+
+    def _batched_snapshot(self, client, full_name, entries, quota):
+        """Bound batches by 100 paths / 2 MB; keep binary reads and all Git integrity checks."""
+        paths, total, count, batch, size = set(), 0, 0, [], 0
+        for entry in entries:
+            mode = entry.get("mode")
+            if entry.get("type") != "blob" and mode != "160000":
+                continue
+            path = str(safe_path(entry["path"]))
+            declared = 0 if mode == "160000" else entry.get("size")
+            count += 1
+            if type(declared) is not int or declared < 0 or path in paths or count > quota["files"]:
+                raise ValueError("GitHub inventory metadata exceeds its bounded scope.")
+            paths.add(path)
+            total += declared
+            if total > quota["bytes"]:
+                raise ValueError("GitHub inventory exceeds its byte quota.")
+            if mode in {"120000", "160000"}:
+                yield path, {"bytes": declared, "state": "UNSUPPORTED", "source_kind": "SYMLINK" if mode == "120000" else "SUBMODULE"}
+                continue
+            if declared > quota["file_bytes"]:
+                yield path, {"bytes": declared, "state": "SKIPPED_SIZE_LIMIT"}
+                continue
+            sha = entry.get("sha")
+            if not isinstance(sha, str) or not re.fullmatch(r"[0-9a-f]{40}", sha):
+                raise ValueError("GitHub blob identity is invalid.")
+            if batch and (len(batch) >= 100 or size + declared > 2_000_000):
+                yield from self._read_batch(client, full_name, batch, quota)
+                batch, size = [], 0
+            batch.append((path, entry))
+            size += declared
+        if batch:
+            yield from self._read_batch(client, full_name, batch, quota)
+
+    def _read_batch(self, client, full_name, batch, quota):
+        # Object IDs come only from the validated, exact-commit tree. No expressions,
+        # mutations, transport URLs or repository-provided GraphQL are accepted.
+        unique = {entry["sha"]: entry for _, entry in batch}
+        aliases = {f"b{i}": sha for i, sha in enumerate(unique)}
+        objects = " ".join(f'{alias}:object(oid:"{sha}"){{... on Blob{{oid byteSize isBinary isTruncated text}}}}' for alias, sha in aliases.items())
+        owner, name = full_name.split("/")
+        response = client.post("/graphql", json={
+            "query": "query($owner:String!,$name:String!){repository(owner:$owner,name:$name){" + objects + "}}",
+            "variables": {"owner": owner, "name": name},
+        })
+        response.raise_for_status()
+        body = response.json()
+        repository = (body.get("data") or {}).get("repository")
+        if body.get("errors") or not isinstance(repository, dict):
+            raise ValueError("GitHub batch source response is incomplete.")
+        blobs = {}
+        for alias, sha in aliases.items():
+            node, entry = repository.get(alias), unique[sha]
+            if not isinstance(node, dict) or node.get("oid") != sha or type(node.get("byteSize")) is not int or node["byteSize"] != entry["size"]:
+                raise ValueError("GitHub batch blob identity or size is invalid.")
+            if node.get("isBinary") is False and node.get("isTruncated") is False and isinstance(node.get("text"), str):
+                try:
+                    blobs[sha] = self._verify_blob(node["text"].encode("utf-8"), entry, quota)
+                except (UnicodeEncodeError, ValueError):
+                    # Provider text can transcode UTF-16 or other source encodings.
+                    # Reject those text bytes and verify the original raw REST blob.
+                    blobs[sha] = self._read_blob(client, full_name, entry, quota)
+            else:
+                blobs[sha] = self._read_blob(client, full_name, entry, quota)
+        for path, entry in batch:
+            yield path, self._verify_blob(blobs[entry["sha"]], entry, quota)
 
     def publish_check(self, full_name, commit, gate):
         if not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", full_name) or not re.fullmatch(r"[0-9a-f]{40}", commit):

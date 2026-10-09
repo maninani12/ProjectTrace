@@ -136,10 +136,12 @@ export default function EnterpriseTrust({
   role,
   compact = false,
   repository = "all",
+  currentSnapshot,
 }: {
   role: string;
   compact?: boolean;
   repository?: string;
+  currentSnapshot?: string;
 }) {
   const admin = ["ORG_OWNER", "ADMIN"].includes(role);
   const queryClient = useQueryClient();
@@ -149,6 +151,7 @@ export default function EnterpriseTrust({
   const [coverageSearch, setCoverageSearch] = useState("");
   const [coverageOffset, setCoverageOffset] = useState(0);
   const [snapshot, setSnapshot] = useState("");
+  const effectiveSnapshot = snapshot || currentSnapshot;
   const [snapshotOffset, setSnapshotOffset] = useState(0);
   useEffect(() => {
     setSnapshot("");
@@ -178,7 +181,7 @@ export default function EnterpriseTrust({
   });
   useEffect(() => {
     setCoverageOffset(0);
-  }, [repository, snapshot, coverageState, coverageSearch]);
+  }, [repository, effectiveSnapshot, coverageState, coverageSearch]);
   const coverage = useQuery({
     queryKey: [
       "analysis-coverage",
@@ -186,7 +189,7 @@ export default function EnterpriseTrust({
       coverageState,
       coverageSearch,
       coverageOffset,
-      snapshot,
+      effectiveSnapshot,
     ],
     queryFn: () =>
       api<Coverage>(
@@ -195,7 +198,7 @@ export default function EnterpriseTrust({
             ...(repository.toUpperCase() !== "ALL"
               ? { repository_id: repository }
               : {}),
-            ...(snapshot ? { snapshot_id: snapshot } : {}),
+            ...(effectiveSnapshot ? { snapshot_id: effectiveSnapshot } : {}),
             state: coverageState,
             q: coverageSearch,
             offset: String(coverageOffset),

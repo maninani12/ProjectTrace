@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 from sqlalchemy import select
 
 from analyzers.code_quality.core import compare, gate, summary
+from backend.analysis_budget import checkpoint
 from backend.db import QualityAnalysis, QualityOccurrence, Record
 
 
@@ -14,6 +15,7 @@ def ancestors(db, snapshot, limit=200):
     rows, visited = [], set()
     current = snapshot
     while current and current.id not in visited and len(rows) < limit:
+        checkpoint(db)
         visited.add(current.id)
         rows.append(current)
         parent = comparison_snapshot(db, current.data["base_id"], snapshot.organization_id, snapshot.repository_id) if current.data.get("base_id") else None
@@ -53,6 +55,7 @@ def apply_comparison(db, quality, findings, base, changed_lines, model_changed, 
         for m in base_quality.get("metrics", [])
     }
     for metric in quality["metrics"]:
+        checkpoint(db)
         prior = previous_metrics.get((metric["path"], metric.get("qualified_name", metric["name"])))
         metric["new_code"] = (
             bool(base)
@@ -71,10 +74,13 @@ def apply_comparison(db, quality, findings, base, changed_lines, model_changed, 
     chain = ancestors(db, base) if base else []
     older = {}
     for parent in chain[1:]:
+        checkpoint(db)
         for item in parent.data.get("findings", []):
+            checkpoint(db)
             if item.get("category") == "QUALITY":
                 older.setdefault(item.get("fingerprint"), (item, parent))
     for item in findings:
+        checkpoint(db)
         if item.get("category") == "QUALITY" and item.get("delta") == "NEW" and item["fingerprint"] in older:
             prior, parent = older[item["fingerprint"]]
             item.update(
@@ -95,6 +101,7 @@ def apply_comparison(db, quality, findings, base, changed_lines, model_changed, 
 def persist(db, snapshot, quality, findings):
     items = [f for f in findings if f.get("category") == "QUALITY"]
     for item in items:
+        checkpoint(db)
         db.add(
             QualityOccurrence(
                 finding_id=item["id"],

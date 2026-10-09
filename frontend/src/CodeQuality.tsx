@@ -113,6 +113,10 @@ export default function CodeQuality({
       : selectedRepository,
   );
   const [snapshot, setSnapshot] = useState("");
+  const effectiveSnapshot =
+    snapshot ||
+    repositories.find((item) => item.id === repository)?.snapshot?.id ||
+    "";
   const [tab, setTab] = useState("Overview");
   const [search, setSearch] = useState("");
   const [severity, setSeverity] = useState("");
@@ -138,6 +142,7 @@ export default function CodeQuality({
     search,
     repository,
     snapshot,
+    effectiveSnapshot,
     severity,
     dimension,
     language,
@@ -149,9 +154,11 @@ export default function CodeQuality({
       api<{ items: Row[] }>(`/code-quality/${repository}/snapshots`),
     enabled: !!repository,
   });
-  const suffix = snapshot ? `?snapshot_id=${encodeURIComponent(snapshot)}` : "";
+  const suffix = effectiveSnapshot
+    ? `?snapshot_id=${encodeURIComponent(effectiveSnapshot)}`
+    : "";
   const overview = useQuery({
-    queryKey: ["quality-overview", repository, snapshot],
+    queryKey: ["quality-overview", repository, effectiveSnapshot],
     queryFn: () =>
       api<Overview>(`/code-quality/${repository}/overview${suffix}`),
     enabled: !!repository,
@@ -167,13 +174,13 @@ export default function CodeQuality({
     review,
     days: String(days),
   });
-  if (snapshot) params.set("snapshot_id", snapshot);
+  if (effectiveSnapshot) params.set("snapshot_id", effectiveSnapshot);
   if (tab === "New Code") params.set("new_code", "true");
   const rows = useQuery({
     queryKey: [
       "quality-rows",
       repository,
-      snapshot,
+      effectiveSnapshot,
       tab,
       search,
       offset,
@@ -479,7 +486,7 @@ export default function CodeQuality({
                 <CoverageImport
                   repository={repository}
                   data={data}
-                  snapshot={snapshot}
+                  snapshot={effectiveSnapshot}
                 />
               )}
               {tab === "Maintenance Hotspots" && (
@@ -616,7 +623,10 @@ export default function CodeQuality({
                 </div>
               )}
               {tab === "Metrics" && (
-                <FileScope repository={repository} snapshot={snapshot} />
+                <FileScope
+                  repository={repository}
+                  snapshot={effectiveSnapshot}
+                />
               )}
               {tab === "New Code" && !!data?.resolved.length && (
                 <details>

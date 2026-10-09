@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import path from "node:path";
+import { completedAnalysis } from "./analysis";
 
 const origin = new URL(
   process.env.PROJECTTRACE_BASE_URL || "http://127.0.0.1:5181",
@@ -34,8 +35,7 @@ test("native quality views, stable evidence review, profile and real coverage im
     headers: { Origin: origin, "X-CSRF-Token": identity.csrf },
     data: { name: "Quality browser fixture", files },
   });
-  expect(imported.status()).toBe(200);
-  const repository = await imported.json();
+  const repository = await completedAnalysis(page.request, imported);
   await page.goto("/quality");
   await expect(
     page.getByRole("heading", { name: /Native quality gate/ }),
@@ -110,8 +110,7 @@ test("native quality views, stable evidence review, profile and real coverage im
       },
     },
   );
-  expect(head.status()).toBe(200);
-  const snapshot = await head.json();
+  const snapshot = await completedAnalysis(page.request, head);
   await page.reload();
   await nav.getByRole("button", { name: "New Code", exact: true }).click();
   await expect(

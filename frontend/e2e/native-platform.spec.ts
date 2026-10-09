@@ -1,5 +1,7 @@
 import { test, expect } from "@playwright/test";
 import path from "node:path";
+import { mkdirSync, writeFileSync } from "node:fs";
+import { completedAnalysis } from "./analysis";
 
 const origin = new URL(
   process.env.PROJECTTRACE_BASE_URL || "http://127.0.0.1:5181",
@@ -35,7 +37,8 @@ test("native profiles, static cloud risk and credential-gated AWS inventory", as
     data: { name: "native-cloud-fixture", files: source },
   });
   expect(imported.ok()).toBeTruthy();
-  const repository = (await imported.json()).repository_id;
+  const repository = (await completedAnalysis(page.request, imported))
+    .repository_id;
   await page.goto("/settings");
   await page.getByLabel("Global repository").selectOption(repository);
   await expect(
@@ -66,6 +69,7 @@ test("native profiles, static cloud risk and credential-gated AWS inventory", as
     { headers, data: { files: source } },
   );
   expect(next.ok()).toBeTruthy();
+  await completedAnalysis(page.request, next);
   const workspace = await (
     await page.request.get(`/api/workspace?repository_id=${repository}`)
   ).json();
@@ -86,12 +90,36 @@ test("native profiles, static cloud risk and credential-gated AWS inventory", as
   await nav.getByRole("button", { name: "Cloud", exact: true }).click();
   await page.getByLabel("Cloud repository").selectOption(repository);
   await page.getByLabel("AWS account ID").fill("123456789012");
+  const credentialGateStarted = performance.now();
+  const credentialGate = page.waitForResponse(
+    (response) =>
+      response.url().endsWith("/api/cloud/aws/inventory") &&
+      response.request().method() === "POST",
+    { timeout: 15000 },
+  );
   await page
     .getByRole("button", { name: "Sync read-only AWS inventory", exact: true })
     .click();
+  const credentialResponse = await credentialGate;
+  expect(credentialResponse.status()).toBe(409);
+  expect((await credentialResponse.json()).detail).toMatch(/credential/i);
   await expect(
     page.getByRole("status").filter({ hasText: /credential/i }),
   ).toBeVisible();
+  mkdirSync(proof, { recursive: true });
+  writeFileSync(
+    path.join(proof, "credential-gate.json"),
+    JSON.stringify(
+      {
+        status: credentialResponse.status(),
+        wall_milliseconds: performance.now() - credentialGateStarted,
+        deadline_milliseconds: 15000,
+        provider_credentials_configured: false,
+      },
+      null,
+      2,
+    ),
+  );
   await page.screenshot({
     path: path.join(proof, "native-aws-credential-gate.png"),
     fullPage: true,

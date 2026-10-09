@@ -5,10 +5,13 @@ import json
 import os
 import subprocess
 import sys
+import time
 from bisect import bisect_right
 from importlib import import_module
 from importlib.metadata import version
 from pathlib import Path, PurePosixPath
+
+from analyzers.parser_protocol import completed_packets
 
 DEFINITIONS = {
     "function_declaration",
@@ -41,7 +44,7 @@ LANGUAGES = {
 }
 
 
-def analyze_languages(files):
+def analyze_languages(files, *, performance=None):
     """One isolated native-parser process per uncached language batch.
 
     Only ProjectTrace's installed helper executes. Imported source stays JSON
@@ -64,6 +67,7 @@ def analyze_languages(files):
         }
     }
     try:
+        started = time.perf_counter()
         reply = subprocess.run(
             [sys.executable, "-I", str(Path(__file__).with_name("native_parser_worker.py"))],
             input=json.dumps(files, ensure_ascii=False).encode(),
@@ -72,13 +76,18 @@ def analyze_languages(files):
             env=environment,
             cwd=Path(__file__).resolve().parents[1],
         )
-        if reply.returncode or len(reply.stdout) > 16_000_000:
-            raise ValueError("Native parser process failed or exceeded its result budget")
-        result = json.loads(reply.stdout)
-        if not isinstance(result, dict) or result.keys() != files.keys():
-            raise ValueError("Native parser returned an invalid result")
+        result = completed_packets(reply.stdout, files, 16_000_000, performance, "TREE_SITTER")
+        if performance:
+            performance.record("SYNTAX_HELPER", time.perf_counter() - started)
+        for path in files.keys() - result.keys():
+            result[path] = {"error": "Native parser process failed or exceeded its budget", "code": "HELPER_PROCESS_LIMIT"}
         return result
-    except (OSError, ValueError, subprocess.TimeoutExpired):
+    except subprocess.TimeoutExpired as error:
+        result = completed_packets(error.stdout or b"", files, 16_000_000, performance, "TREE_SITTER")
+        if performance:
+            performance.record("SYNTAX_HELPER", time.perf_counter() - started)
+        return {path: result.get(path, {"error": "Native parser time budget exceeded", "code": "HELPER_TIMEOUT", "budget": "SYNTAX_HELPER_SECONDS", "maximum": 30}) for path in files}
+    except (OSError, ValueError):
         return {path: {"error": "Native parser process failed or exceeded its budget"} for path in files}
 
 
@@ -153,7 +162,12 @@ def _analyze_language(path, source, make_finding):
             todo.extend((child, depth) for child in current.named_children if child.type not in DEFINITIONS)
         return highest
 
+    token_cache = {}
+
     def body_tokens(body):
+        key = (body.start_byte, body.end_byte, body.type)
+        if key in token_cache:
+            return token_cache[key]
         # Include operators and punctuation: named-child-only traversal can
         # mistake different arithmetic/control expressions for duplicates.
         tokens, todo, visited = [], [body], 0
@@ -169,6 +183,7 @@ def _analyze_language(path, source, make_finding):
                 todo.extend(reversed(children))
             else:
                 tokens.append(current.type + ":" + text(current))
+        token_cache[key] = tokens
         return tokens
 
     symbols = [

@@ -1,4 +1,6 @@
 import { expect, test } from "@playwright/test";
+import path from "node:path";
+import { completedAnalysis } from "./analysis";
 
 test("Phase 2 captured inventory, versions, filtering, paging and history", async ({
   page,
@@ -42,7 +44,7 @@ test("Phase 2 captured inventory, versions, filtering, paging and history", asyn
     data: { name: "Phase 2 owned fixture", files },
   });
   expect(imported.ok()).toBeTruthy();
-  const base = await imported.json();
+  const base = await completedAnalysis(page.request, imported);
   const response = await page.request.post(
     `/api/repositories/${base.repository_id}/analyze`,
     {
@@ -51,7 +53,7 @@ test("Phase 2 captured inventory, versions, filtering, paging and history", asyn
     },
   );
   expect(response.ok()).toBeTruthy();
-  const head = await response.json();
+  const head = await completedAnalysis(page.request, response);
   await page.goto("/trust/coverage");
   await page.getByLabel("Global repository").selectOption(base.repository_id);
   await page.getByLabel("Analysis snapshot").selectOption(base.snapshot_id);
@@ -157,7 +159,10 @@ test("Phase 2 captured inventory, versions, filtering, paging and history", asyn
   await expect(page.getByRole("alert")).toHaveCount(0);
   expect(errors).toEqual([]);
   await page.screenshot({
-    path: "test-results/phase2-coverage.png",
+    path: path.join(
+      process.env.PROJECTTRACE_PROOF || "test-results",
+      "phase2-coverage.png",
+    ),
     fullPage: true,
   });
 });

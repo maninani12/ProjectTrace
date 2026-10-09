@@ -3,6 +3,7 @@
 import json
 import os
 import sys
+import time
 from pathlib import Path
 
 
@@ -22,8 +23,27 @@ def main():
         from backend.process_limits import self_limits
         self_limits(384 * 1024 * 1024, 10)
     from analyzers.infrastructure import _structured_iac
+    from analyzers.parser_protocol import emit_packet
 
-    value = json.loads(sys.stdin.buffer.read(3_200_001))
+    payload = sys.stdin.buffer.read(13_000_001)
+    if len(payload) > 13_000_000:
+        raise ValueError("Input transport budget exceeded")
+    value = json.loads(payload)
+    if "files" in value:
+        files = value["files"]
+        if not isinstance(files, dict) or not 1 <= len(files) <= 100 or sum(len(s.encode()) for s in files.values()) > 2_000_000:
+            raise ValueError("Infrastructure partition budget exceeded")
+        output_bytes = 0
+        for path, source in files.items():
+            if not isinstance(source, str) or len(source.encode()) > 512_000:
+                raise ValueError("Per-file input budget exceeded")
+            started = time.perf_counter()
+            result = _structured_iac(path, source,
+                                         lambda rule, path, line, detail: {"rule": rule, "path": path, "line": line, "explanation": detail},
+                                         value.get("settings"))
+            output_bytes = emit_packet(path, result, time.perf_counter() - started,
+                                       "PARTIAL" if result[2] else "COMPLETED", maximum=8*1024*1024, total=output_bytes)
+        return
     if len(value["source"].encode()) > 512000:
         raise ValueError("Input budget exceeded")
     result = _structured_iac(

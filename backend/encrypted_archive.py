@@ -6,6 +6,7 @@ import os
 import tempfile
 from pathlib import Path
 
+from backend.intake_errors import IntakeError
 from backend.queue import cipher
 
 
@@ -23,10 +24,13 @@ class EncryptedArchive(io.RawIOBase):
             raise ValueError("Encrypted upload directory escaped its configured root.")
         self.encryption, self.maximum = cipher(), maximum
         self.starts, self.paths, self.length, self.position = [], [], 0, 0
+        self.cached_index, self.cached_chunk = None, b""
 
     def append(self, data):
         if self.length + len(data) > self.maximum:
-            raise ValueError("Archive exceeds its configured compressed byte quota.")
+            raise IntakeError("ARCHIVE_COMPRESSED_BYTES", "Archive exceeds its configured compressed byte quota.",
+                              budget="REPOSITORY_MAX_ARCHIVE_BYTES", actual=self.length + len(data), maximum=self.maximum,
+                              remediation="Upload a smaller source archive; omit build outputs and vendored dependencies.")
         for offset in range(0, len(data), self.chunk_bytes):
             block = data[offset : offset + self.chunk_bytes]
             target = self.root / (str(len(self.paths)) + ".enc")
@@ -64,11 +68,15 @@ class EncryptedArchive(io.RawIOBase):
         remaining = max(0, self.length - self.position)
         amount = remaining if size < 0 else min(size, remaining)
         if amount > self.max_read:
-            raise ValueError("Archive read exceeds its metadata budget.")
+            raise IntakeError("ARCHIVE_METADATA_BYTES", "Archive read exceeds its metadata budget.",
+                              budget="ARCHIVE_METADATA_BYTES", actual=amount, maximum=self.max_read)
         result = bytearray()
         while len(result) < amount:
             index = bisect.bisect_right(self.starts, self.position) - 1
-            raw = self.encryption.decrypt(self.paths[index].read_bytes())
+            if index != self.cached_index:
+                self.cached_chunk = self.encryption.decrypt(self.paths[index].read_bytes())
+                self.cached_index = index
+            raw = self.cached_chunk
             offset = self.position - self.starts[index]
             taken = min(len(raw) - offset, amount - len(result))
             if taken <= 0:
@@ -78,6 +86,7 @@ class EncryptedArchive(io.RawIOBase):
         return bytes(result)
 
     def close(self):
+        self.cached_index, self.cached_chunk = None, b""
         if not self.closed:
             # Every path was created here; validate containment before cleanup.
             for target in self.paths:

@@ -1,5 +1,7 @@
 # ProjectTrace
 
+Current complete product/pilot qualification: **BLOCKED**. The local application and measured workflows run, but global durable stage resumption, cold large-repository/resource qualification and production security/operational acceptance remain incomplete. See the [2026-10-09 product audit](PROJECTTRACE_PRODUCT_AUDIT_AND_READINESS.md) for actual tests, source-backed demonstrations and precise release blockers.
+
 ProjectTrace connects engineering claims to current software evidence, then shows what changed, what needs review, and who owns the next action.
 
 **Current working tree: ProjectTrace 1.6.0 enterprise hardening candidate.** Native quality has 13 rules, structural finding history, inherited profiles and explainable gates. Encrypted streaming inventories, incremental partitions, Engineering Changes, controlled OIDC/GHES, fair queue claims and private deployment adapters extend the existing platform. Python, JavaScript, TypeScript and Java retain PARTIAL semantic maturity. No SonarQube, Wiz or external AI is required. See [ENTERPRISE_TRUST_VALIDATION.md](ENTERPRISE_TRUST_VALIDATION.md) for measured scope and remaining production requirements.
@@ -24,6 +26,13 @@ Set-Location ..
 ```
 
 Open **http://127.0.0.1:5181**. Select **Analyze a Repository** to create your own empty local workspace and open the ZIP import dialog, **Sign in** for an existing account, or **Explore Demo** for the labeled Northstar investigation. The Guide is at **http://127.0.0.1:5181/guide** and the authorized workspace at `/app`. API: http://127.0.0.1:8011. Check `data/api-error.log` and `data/ui-error.log` if ports 8011/5181 are occupied.
+
+Existing installation: run `& .\scripts\start.ps1`. It defaults to a durable local runner for ZIP/public imports, checks API database and UI authentication-proxy readiness, and preserves existing accounts, source, keys and job history. Stop the managed API/UI with `& .\scripts\stop.ps1`; the current local analysis drains, queued inputs remain durable, and independent Celery/Redis services remain running. Healthy existing listeners are retained. It does not seed the database or install infrastructure.
+
+Optional operator configuration is loaded as data from `data/local-settings.json`, or an explicit `-Config 'C:\operator\projecttrace-local.json'`. Only approved settings and absolute operator-owned secret `*_FILE` references are accepted; shell commands and raw keys are rejected. ZIP/public imports require no App, webhook tunnel or Redis. Private GitHub jobs use the existing configured SCM Celery worker.
+
+For a separate full worker setup, use `& .\scripts\start.ps1 -FullDevelopment`; opt into installed Docker Redis only with `-DockerRedis`. This preserves the production Celery architecture and refuses duplicate workers. Missing private SCM/webhook references are reported separately and do not prevent ZIP/public snapshots. Configuration-only inspection: `.\.venv\Scripts\python.exe scripts/dev_workers.py --check-only`; add `--require-scm` to require every enabled SCM reference. See [import reliability validation](docs/IMPORT_RELIABILITY_VALIDATION.md) for exact results, limits and industry-repository outcomes.
+
 
 For foreground development, run the API and UI in separate terminals:
 
@@ -89,7 +98,7 @@ Native Python AST and maintained JavaScript/TypeScript/TSX/Java syntax parsers p
 
 The direct AWS adapter performs only allowlisted reads, verifies the credential account, and records control-plane authority separately from static declarations. Use **Cloud → Sync read-only AWS inventory** after a host administrator configures an authorized credential reference. No live cloud connection is claimed in this installation. Azure/GCP inventory, effective IAM permissions and deployment reachability remain deferred. See [Native coverage](docs/NATIVE_PLATFORM.md) and [Cloud permissions](docs/CLOUD_READ_ONLY.md).
 
-Historical version 1.1/1.2 repair reports remain in `docs/` as historical evidence. Their statements about unexecuted PostgreSQL/Redis are superseded by the current validation report. Local imports still default to bounded synchronous execution; `JOB_MODE=celery` queues encrypted source input and sends only job IDs through Redis.
+Historical version 1.1/1.2 repair reports remain in `docs/` as historical evidence. Their statements about unexecuted PostgreSQL/Redis are superseded by the current validation report. Managed local startup defaults to `JOB_MODE=local`, which runs retained encrypted inputs through the same fenced analysis workers without Redis. `JOB_MODE=celery` preserves production dispatch of job IDs through Redis. Explicit synchronous API mode remains available for bounded test/legacy clients.
 
 ### Queued imports and optional advisories
 

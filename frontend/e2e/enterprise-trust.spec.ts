@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import path from "node:path";
+import { completedAnalysis } from "./analysis";
 
 test("tenant trust controls, audit integrity and native infrastructure evidence", async ({
   page,
@@ -36,7 +37,7 @@ test("tenant trust controls, audit integrity and native infrastructure evidence"
       },
     },
   });
-  expect(imported.status()).toBe(200);
+  await completedAnalysis(page.request, imported);
   await page.goto("/trust/coverage");
   await expect(
     page.getByRole("heading", { name: "Language & parser coverage" }),

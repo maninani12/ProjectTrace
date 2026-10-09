@@ -54,7 +54,8 @@ def build(files, analyzed_files, quality, signals, warnings, version):
         iac_parse_failed = any(
             d["analyzer"] == "IAC"
             and d.get("code")
-            in {"ValueError", "ParserError", "ScannerError", "JSONDecodeError", "UnexpectedToken", "TimeoutExpired"}
+            in {"ValueError", "ParserError", "ScannerError", "JSONDecodeError", "UnexpectedToken", "TimeoutExpired",
+                "HELPER_TIMEOUT", "HELPER_PROCESS_LIMIT"}
             for d in diagnostics[path]
         )
         if iac:

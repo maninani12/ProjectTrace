@@ -6,7 +6,7 @@ import time
 from collections import defaultdict, deque
 
 windows = defaultdict(deque)
-LIMITS = {"login": 15, "imports": 10, "analysis": 10, "ask": 60, "webhook": 120, "provider": 20, "general": 240}
+LIMITS = {"login": 15, "auth_metadata": 240, "imports": 10, "analysis": 10, "ask": 60, "webhook": 120, "provider": 20, "general": 240}
 LUA = """
 local count = redis.call('INCR', KEYS[1])
 if count == 1 then redis.call('EXPIRE', KEYS[1], 60) end
@@ -15,11 +15,17 @@ return count
 
 
 def bucket(path, method):
+    # Read-only availability metadata is inexpensive. A busy workspace/NAT
+    # must not consume its budget and make signup falsely appear disabled.
+    # Preserve its existing 240/min ceiling independently of workspace reads.
+    # Credential-changing requests retain the stricter login policy.
+    if method == "GET" and path in {"/api/auth/options", "/api/auth/oidc/options"}:
+        return "auth_metadata"
     if method != "POST":
         return "general"
     if path in {"/api/auth/login", "/api/auth/demo", "/api/auth/register"}:
         return "login"
-    if path in {"/api/import", "/api/archive/import", "/api/archive/stream/import"} or path.endswith("/source-archive"):
+    if path in {"/api/import", "/api/archive/import", "/api/archive/stream/import", "/api/github/public/import"} or path.endswith("/source-archive"):
         return "imports"
     if path.endswith("/analyze") or "/jobs/" in path:
         return "analysis"

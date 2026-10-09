@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { completedAnalysis } from "./analysis";
 
 const origin = new URL(
   process.env.PROJECTTRACE_BASE_URL || "http://127.0.0.1:5181",
@@ -33,7 +34,7 @@ test("captured comparisons, component corrections, historical coverage and paged
     data: { name: "hardening-browser-fixture", files },
   });
   expect(initial.ok()).toBeTruthy();
-  const base = await initial.json();
+  const base = await completedAnalysis(page.request, initial);
   await page.goto("/settings");
   await page.getByLabel("Global repository").selectOption(base.repository_id);
   await page.getByRole("button", { name: "Add boundary", exact: true }).click();
@@ -71,7 +72,7 @@ test("captured comparisons, component corrections, historical coverage and paged
     },
   );
   expect(next.ok()).toBeTruthy();
-  const head = await next.json();
+  const head = await completedAnalysis(page.request, next);
   await page.goto("/engineering-changes");
   await page
     .getByRole("button", { name: "Inspect engineering change" })

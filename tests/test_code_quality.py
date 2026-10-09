@@ -301,7 +301,9 @@ def test_authorized_profiles_pagination_reports_gate_and_sarif(signed):
     assert signed.get(url + "/exports/json").json()["snapshot_id"] == snapshot
     assert "quality_gate" in signed.get("/api/gate/" + snapshot).json()
     light = signed.get("/api/workspace?summary=1").json()
-    assert not light["evidence"] and not light["finding"]
+    assert not light["evidence"] and len(light["finding"]) <= 5
+    assert light["counts"]["complete"] and light["counts"]["totals"]["finding"] >= len(light["finding"])
+    assert light["previews"]["complete"] is False
     assert all("analysis_cache" not in (r["snapshot"] or {}) for r in light["repositories"])
 
 

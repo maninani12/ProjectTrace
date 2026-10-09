@@ -7,7 +7,9 @@ import json
 import re
 import stat
 import sys
+import time
 import zipfile
+from concurrent.futures import ThreadPoolExecutor
 from importlib.metadata import version as package_version
 from pathlib import PurePosixPath
 from urllib.parse import quote
@@ -19,7 +21,7 @@ from analyzers.code_quality.core import build as quality_build
 from analyzers.code_quality.rules import RULES as QUALITY_RULES
 from analyzers.finding_identity import annotate as annotate_finding_identity
 from analyzers.flows import python_flows
-from analyzers.infrastructure import structured_iac
+from analyzers.infrastructure import structured_iac_batch
 from analyzers.infrastructure_deep import config as infrastructure_config
 from analyzers.infrastructure_deep import link_local_declarations
 from analyzers.languages import LANGUAGES, analyze_languages
@@ -828,7 +830,14 @@ def verify(claim, signals, deps):
     return result["status"], result["reason"], result["signals"]
 
 
-def native_observations(files, cached_analysis=None, infrastructure_settings=None):
+def native_observations(files, cached_analysis=None, infrastructure_settings=None, *, performance=None):
+    # Only independent owned syntax/IaC helpers run concurrently; source and DB
+    # work stay in the caller. Every submitted batch retains its existing caps.
+    with ThreadPoolExecutor(max_workers=2, thread_name_prefix="native-parser") as pool:
+        return _native_observations(files, cached_analysis, infrastructure_settings, performance, pool)
+
+
+def _native_observations(files, cached_analysis, infrastructure_settings, performance, pool):
     """File-local parser observations; callers may provide a bounded partition."""
     infrastructure_settings = infrastructure_settings or infrastructure_config(None)
     infrastructure_signature = hash_text(json.dumps(infrastructure_settings, sort_keys=True))
@@ -837,8 +846,28 @@ def native_observations(files, cached_analysis=None, infrastructure_settings=Non
     failures = set()
     cache = {}
     reused = 0
-    language_results = None
+    language_results, iac_results = None, None
+    language_pending, iac_pending = {}, {}
     for path in files:
+        prior = (cached_analysis or {}).get(path, {})
+        meta = files.metadata_for(path) if hasattr(files, "metadata_for") else None
+        content_hash = files.hash_for(path) if meta else hash_text(files[path])
+        iac = meta.get("iac_candidate", bool(meta.get("infrastructure_format")) or path.endswith((".yaml", ".yml", ".json"))) if meta else is_iac_source(path, files[path])
+        if (prior.get("hash") == content_hash and prior.get("version") == VERSION
+            and prior.get("parser_signature") == PARSER_SIGNATURE and not prior.get("warnings")
+            and not any(f.get("rule") == "PT-PARSE-001" for f in prior.get("findings", []))
+            and (not iac or prior.get("infrastructure_signature", infrastructure_signature) == infrastructure_signature)):
+            continue
+        if PurePosixPath(path).suffix in LANGUAGES:
+            language_pending[path] = files[path]
+        if iac:
+            source = files[path]
+            if is_iac_source(path, source):
+                iac_pending[path] = source
+    language_future = pool.submit(analyze_languages, language_pending, performance=performance) if language_pending else None
+    iac_future = pool.submit(structured_iac_batch, iac_pending, finding, infrastructure_settings, performance=performance) if iac_pending else None
+    for path in files:
+        file_started = time.perf_counter()
         metadata = files.metadata_for(path) if hasattr(files, "metadata_for") else None
         source = None if metadata else files[path]
         previous = (cached_analysis or {}).get(path)
@@ -870,12 +899,15 @@ def native_observations(files, cached_analysis=None, infrastructure_settings=Non
             quality_metrics.extend(cached.get("quality_metrics", []))
             cache[path] = cached
             reused += 1
+            if performance:
+                performance.record("CACHE_REUSE", time.perf_counter() - file_started, path, state="REUSED")
             continue
         if source is None:
             source = files[path]
         finding_start, signal_start = len(findings), len(signals)
         asset_start, metric_start = len(assets), len(quality_metrics)
         if path.endswith(".py"):
+            python_started = time.perf_counter()
             try:
                 parsed_tree = None
                 try:
@@ -925,27 +957,13 @@ def native_observations(files, cached_analysis=None, infrastructure_settings=Non
                         "state": "FAILED",
                     }
                 )
+            if performance:
+                performance.record("PYTHON_NATIVE", time.perf_counter() - python_started, path)
         elif path.endswith((".js", ".ts", ".jsx", ".tsx", ".java", ".mjs", ".cjs")):
+            parsed = None
             try:
                 if language_results is None:
-                    pending = {}
-                    for native_path in files:
-                        if PurePosixPath(native_path).suffix not in LANGUAGES:
-                            continue
-                        prior = (cached_analysis or {}).get(native_path, {})
-                        native_hash = (
-                            files.hash_for(native_path) if hasattr(files, "hash_for") else hash_text(files[native_path])
-                        )
-                        if (
-                            prior.get("hash") == native_hash
-                            and prior.get("version") == VERSION
-                            and prior.get("parser_signature") == PARSER_SIGNATURE
-                            and not prior.get("warnings")
-                            and not any(item.get("rule") == "PT-PARSE-001" for item in prior.get("findings", []))
-                        ):
-                            continue
-                        pending[native_path] = files[native_path]
-                    language_results = analyze_languages(pending)
+                    language_results = language_future.result()
                 parsed = language_results[path]
                 if isinstance(parsed, dict):
                     raise ValueError("Native syntax process failed or exceeded its budget")
@@ -958,11 +976,13 @@ def native_observations(files, cached_analysis=None, infrastructure_settings=Non
                     {
                         "analyzer": "PARSING",
                         "path": path,
-                        "code": type(error).__name__,
+                        "code": parsed.get("code", type(error).__name__) if isinstance(parsed, dict) else type(error).__name__,
+                        **({k: parsed[k] for k in ("budget", "actual", "maximum") if k in parsed} if isinstance(parsed, dict) else {}),
                         "state": "PARTIAL",
                         "message": "Native syntax parsing failed or exceeded its budget; this file has partial coverage.",
                     }
                 )
+        post_started = time.perf_counter()
         secret_lines = set()
         for match in (
             list(SECRET_RE.finditer(source)) + list(PRIVATE_RE.finditer(source)) + list(ENV_SECRET_RE.finditer(source))
@@ -987,17 +1007,22 @@ def native_observations(files, cached_analysis=None, infrastructure_settings=Non
                 result["severity"] = "MEDIUM"
             findings.append(result)
         if is_iac_source(path, source):
-            f, resource_assets, messages = structured_iac(path, source, finding, infrastructure_settings)
+            if iac_results is None:
+                iac_results = iac_future.result() if iac_future else {}
+            if path not in iac_results:
+                iac_results.update(structured_iac_batch({path: source}, finding, infrastructure_settings, performance=performance))
+            f, resource_assets, messages = iac_results[path]
             findings.extend(f)
             assets.extend(resource_assets)
             warnings.extend(messages)
         native_occurrences = {}
+        lines = source.splitlines()
+        security_context_hash = None
         for item in findings[finding_start:]:
             if item.get("category") != "QUALITY":
                 # Location is not identity. Hash a normalized statement and the
                 # bounded surrounding security context; ambiguous repeats remain
                 # separate occurrences and are not eligible for automatic carry.
-                lines = source.splitlines()
                 index = max(0, item["line"] - 1)
                 statement = re.sub(r"\s+", " ", lines[index].strip()) if index < len(lines) else ""
                 anchor = json.dumps(
@@ -1008,11 +1033,10 @@ def native_observations(files, cached_analysis=None, infrastructure_settings=Non
                 native_occurrences[anchor] = count + 1
                 item["fingerprint"] = hash_text(anchor + ":" + str(count))
                 item["fingerprint_version"] = "native-statement-v1"
-                item["security_context_hash"] = hash_text(
-                    "\n".join(
-                        line.strip() for line in lines if line.strip() and not line.lstrip().startswith(("#", "//"))
-                    )
-                )
+                if security_context_hash is None:
+                    security_context_hash = hash_text("\n".join(
+                        line.strip() for line in lines if line.strip() and not line.lstrip().startswith(("#", "//"))))
+                item["security_context_hash"] = security_context_hash
                 item["blocking_eligible"] = False
                 item["precision_status"] = "UNMEASURED"
             if "resource_identity" in item:
@@ -1047,7 +1071,12 @@ def native_observations(files, cached_analysis=None, infrastructure_settings=Non
             "warnings": [warning for warning in warnings if warning.get("path") == path],
             "infrastructure_signature": infrastructure_signature,
         }
+        if performance:
+            performance.record("FILE_POSTPROCESS", time.perf_counter() - post_started, path)
+    identity_started = time.perf_counter()
     annotate_finding_identity(files, findings, quality_metrics)
+    if performance:
+        performance.record("PARTITION_IDENTITY", time.perf_counter() - identity_started)
     return findings, signals, warnings, assets, quality_metrics, failures, cache, reused
 
 
@@ -1074,6 +1103,8 @@ def analyze(
         progress("ANALYZING")
     observations = observations or native_observations(files, cached_analysis, infrastructure_settings)
     findings, signals, warnings, assets, quality_metrics, failures, cache, reused = observations
+    performance = getattr(progress, "performance", None)
+    component_started = time.perf_counter()
     try:
         deps, manifest_warnings = inventory(files)
         warnings.extend(manifest_warnings)
@@ -1092,6 +1123,8 @@ def analyze(
         for field in ("name", "version", "license"):
             if isinstance(dependency.get(field), str):
                 dependency[field] = redact(dependency[field])
+    if performance:
+        performance.record("DEPENDENCIES", time.perf_counter() - component_started)
     warnings.extend(
         {
             "analyzer": "PARSING",
@@ -1104,6 +1137,7 @@ def analyze(
     claims = []
     if progress:
         progress("EXTRACTING_CLAIMS")
+    component_started = time.perf_counter()
     try:
         candidates = extract_claims(files, warnings)
     except Exception as error:
@@ -1165,7 +1199,10 @@ def analyze(
                     }
                 )
     if progress:
+        if performance:
+            performance.record("CLAIM_EXTRACTION", time.perf_counter() - component_started)
         progress("VERIFYING")
+    component_started = time.perf_counter()
     prior_verifications = (
         (verification_context or {}).get("claims", {}) if (verification_context or {}).get("version") == VERSION else {}
     )
@@ -1214,6 +1251,8 @@ def analyze(
                 "review_status": "OPEN",
             }
         )
+    if performance:
+        performance.record("CLAIM_VERIFICATION", time.perf_counter() - component_started)
     storage = [
         item
         for item in assets
@@ -1292,9 +1331,15 @@ def analyze(
             if infrastructure_settings["environment"] != "UNKNOWN"
             else resource.get("environment", "UNKNOWN")
         )
+    component_started = time.perf_counter()
     quality_findings, quality = quality_build(input_files, quality_metrics, signals, findings, warnings, profile)
+    if performance:
+        performance.record("QUALITY_AGGREGATION", time.perf_counter() - component_started)
     findings = [f for f in findings if f["category"] != "QUALITY"] + quality_findings
+    component_started = time.perf_counter()
     annotate_finding_identity(files, findings, quality_metrics)
+    if performance:
+        performance.record("FINAL_IDENTITY", time.perf_counter() - component_started)
     quality["parser_signature"] = PARSER_SIGNATURE
     quality["parsers"] = [
         {k: v for k, v in s.items() if k not in {"symbols", "observations", "file_metrics"}}

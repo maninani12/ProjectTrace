@@ -182,8 +182,8 @@ def test_security_headers_and_bad_zip(signed):
     signed.headers["x-csrf-token"] = registered.json()["csrf"]
     assert signed.post("/api/archive/import", content=b"badzip").status_code == 422
     data = signed.get("/api/workspace").json()
-    assert data["analysis"]["state"] == "FAILED"
-    assert data["job"][0]["errors"]
+    assert data["analysis"]["state"] == "NO_REPOSITORY"
+    assert data["job"] == []  # Unsafe archive metadata is rejected before admission.
 
 
 def test_claim_history_tracks_stale_transition(signed):

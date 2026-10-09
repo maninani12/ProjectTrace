@@ -3,24 +3,37 @@
 import uuid
 from collections import defaultdict
 
+from sqlalchemy import select
+
+from backend.analysis_budget import checkpoint
 from backend.db import FindingIdentity, FindingOccurrence, Record, now
 from backend.quality_domain import ancestors
 
 
 def reconcile(db, findings, base, base_records, files):
     prior = [r for r in base_records if r.kind == "finding"]
-    by_key, old_files, new_files = defaultdict(list), defaultdict(set), defaultdict(set)
+    by_key, by_fingerprint, old_files, new_files = (
+        defaultdict(list),
+        defaultdict(list),
+        defaultdict(set),
+        defaultdict(set),
+    )
+    prior_paths = {r.data["path"] for r in prior}
     for row in prior:
+        checkpoint(db)
         data = row.data
+        by_fingerprint[data.get("fingerprint")].append(row)
         if data.get("identity_confidence") == "HIGH":
             by_key[(data.get("path"), data.get("structural_key"))].append(row)
         if data.get("file_structure_hash"):
             old_files[data["file_structure_hash"]].add(data["path"])
     for item in findings:
+        checkpoint(db)
         if item.get("file_structure_hash"):
             new_files[item["file_structure_hash"]].add(item["path"])
     matches, used = {}, set()
     for item in findings:
+        checkpoint(db)
         candidates = []
         if item.get("identity_confidence") == "HIGH":
             candidates = by_key.get((item["path"], item.get("structural_key")), [])
@@ -30,20 +43,23 @@ def reconcile(db, findings, base, base_records, files):
             # Full-file structural equivalence, unique old/new pair, actual removal.
             if not candidates and structure and len(old) == len(new) == 1:
                 old_path = next(iter(old))
-                if old_path not in files and item["path"] not in {r.data["path"] for r in prior}:
+                if old_path not in files and item["path"] not in prior_paths:
                     candidates = by_key.get((old_path, item.get("structural_key")), [])
         if not candidates and item.get("identity_confidence") != "AMBIGUOUS":
-            candidates = [r for r in prior if r.data.get("fingerprint") == item.get("fingerprint")]
+            candidates = by_fingerprint.get(item.get("fingerprint"), [])
         if len(candidates) == 1 and candidates[0].id not in used:
             matches[item["id"]] = (candidates[0], "EXISTING")
             used.add(candidates[0].id)
     # Reopen only from explicit ancestors. No cross-branch/global identity search.
     for parent in ancestors(db, base)[1:] if base else []:
+        checkpoint(db)
         older = defaultdict(list)
         for item in parent.data.get("findings", []):
+            checkpoint(db)
             if item.get("identity_confidence") == "HIGH":
                 older[(item.get("path"), item.get("structural_key"))].append(item)
         for item in findings:
+            checkpoint(db)
             key = (item["path"], item.get("structural_key"))
             if item["id"] not in matches and item.get("identity_confidence") == "HIGH" and len(older[key]) == 1:
                 row = db.get(Record, older[key][0]["id"])
@@ -54,58 +70,86 @@ def reconcile(db, findings, base, base_records, files):
 
 
 def project(db, snapshot, findings, prior, matches, *, model_changed, warnings, files):
-    current = set()
+    current, batch = set(), []
 
-    def identity(data):
-        concept = db.get(FindingIdentity, data["identity_id"])
-        if not concept:
-            concept = FindingIdentity(
-                id=data["identity_id"],
-                organization_id=snapshot.organization_id,
-                repository_id=snapshot.repository_id,
-                introduced_snapshot_id=data.get("introduced_snapshot", snapshot.id),
-                rule=data["rule"],
-                created_at=data.get("first_seen", now()),
-            )
-            db.add(concept)
+    def flush_checked():
+        checkpoint(db, force=True)
+        if not db.info.get("analysis_output_checkpoint"):
             db.flush()
-        return concept
+
+    def publish_batch():
+        if not batch:
+            return
+        # Establish finding/snapshot parents before the independent projection
+        # mappers. Keep ordinary ORM tenant guards and immediate SQL FKs active.
+        flush_checked()
+        identities = {data["identity_id"] for data, _, _ in batch}
+        concepts = {
+            row.id: row for row in db.scalars(select(FindingIdentity).where(FindingIdentity.id.in_(identities)))
+        }
+        for data, _, _ in batch:
+            checkpoint(db)
+            concept = concepts.get(data["identity_id"])
+            if concept and (concept.organization_id, concept.repository_id) != (
+                snapshot.organization_id,
+                snapshot.repository_id,
+            ):
+                raise ValueError("Cross-tenant finding identity reference rejected.")
+            if not concept:
+                concept = FindingIdentity(
+                    id=data["identity_id"],
+                    organization_id=snapshot.organization_id,
+                    repository_id=snapshot.repository_id,
+                    introduced_snapshot_id=data.get("introduced_snapshot", snapshot.id),
+                    rule=data["rule"],
+                    created_at=data.get("first_seen", now()),
+                )
+                db.add(concept)
+                concepts[concept.id] = concept
+        flush_checked()
+        for data, status, finding_id in batch:
+            checkpoint(db)
+            db.add(
+                FindingOccurrence(
+                    id=str(uuid.uuid4()),
+                    organization_id=snapshot.organization_id,
+                    repository_id=snapshot.repository_id,
+                    identity_id=data["identity_id"],
+                    snapshot_id=snapshot.id,
+                    finding_id=finding_id,
+                    status=status,
+                    data={
+                        k: data.get(k)
+                        for k in (
+                            "path",
+                            "line",
+                            "end_line",
+                            "fingerprint",
+                            "identity_version",
+                            "identity_confidence",
+                            "previous_version_id",
+                            "review_identity_id",
+                            "reopened_count",
+                        )
+                    }
+                    | {
+                        "branch": snapshot.data["branch"],
+                        "commit": snapshot.data["commit"],
+                        "reason": status.replace("_", " ").capitalize(),
+                    },
+                    created_at=now(),
+                )
+            )
+        flush_checked()
+        batch.clear()
 
     def event(data, status, finding_id=None):
-        identity(data)
-        db.add(
-            FindingOccurrence(
-                id=str(uuid.uuid4()),
-                organization_id=snapshot.organization_id,
-                repository_id=snapshot.repository_id,
-                identity_id=data["identity_id"],
-                snapshot_id=snapshot.id,
-                finding_id=finding_id,
-                status=status,
-                data={
-                    k: data.get(k)
-                    for k in (
-                        "path",
-                        "line",
-                        "end_line",
-                        "fingerprint",
-                        "identity_version",
-                        "identity_confidence",
-                        "previous_version_id",
-                        "review_identity_id",
-                        "reopened_count",
-                    )
-                }
-                | {
-                    "branch": snapshot.data["branch"],
-                    "commit": snapshot.data["commit"],
-                    "reason": status.replace("_", " ").capitalize(),
-                },
-                created_at=now(),
-            )
-        )
+        batch.append((data, status, finding_id))
+        if len(batch) == 250:
+            publish_batch()
 
     for item in findings:
+        checkpoint(db)
         current.add(item["identity_id"])
         matched = matches.get(item["id"])
         status = "INTRODUCED"
@@ -123,6 +167,7 @@ def project(db, snapshot, findings, prior, matches, *, model_changed, warnings, 
         event(item, status, item["id"])
     failed_paths = {w.get("path") for w in warnings if w.get("analyzer") in {"PARSING", "IAC", "QUALITY"}}
     for row in prior:
+        checkpoint(db)
         data = row.data
         if not data.get("identity_id") or data["identity_id"] in current:
             continue
@@ -131,3 +176,4 @@ def project(db, snapshot, findings, prior, matches, *, model_changed, warnings, 
         if data.get("identity_confidence") != "HIGH" and data.get("path") in files:
             status = "NOT_OBSERVED"
         event(data, status)
+    publish_batch()

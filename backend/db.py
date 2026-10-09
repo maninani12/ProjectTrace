@@ -118,6 +118,35 @@ for _endpoint in ("source", "target"):
         Record.data[_endpoint].as_string(),
     )
 
+Index(
+    "ix_records_graph_class",
+    Record.organization_id, Record.repository_id, Record.kind,
+    Record.data["scope"]["snapshot_id"].as_string(), Record.data["class"].as_string(), Record.id,
+)
+Index(
+    "ix_records_snapshot_identity",
+    Record.organization_id, Record.repository_id, Record.created_at, Record.id, Record.version,
+    sqlite_where=Record.kind == "snapshot", postgresql_where=Record.kind == "snapshot",
+)
+for _kind, _fields in (("claim", ("status",)), ("finding", ("severity", "review_status"))):
+    Index(
+        "ix_records_" + _kind + "_summary",
+        Record.organization_id, Record.repository_id, Record.data["scope"]["snapshot_id"].as_string(),
+        *(Record.data[field].as_string() for field in _fields),
+        sqlite_where=Record.kind == _kind, postgresql_where=Record.kind == _kind,
+    )
+
+
+class SnapshotView(Base):
+    """Small version-checked read projection; published with its source snapshot."""
+
+    __tablename__ = "snapshot_views"
+    snapshot_id: Mapped[str] = mapped_column(ForeignKey("records.id", ondelete="CASCADE"), primary_key=True)
+    organization_id: Mapped[str] = mapped_column(ForeignKey("organizations.id"), index=True)
+    repository_id: Mapped[str] = mapped_column(ForeignKey("repositories.id"), index=True)
+    source_version: Mapped[int]
+    data: Mapped[dict] = mapped_column(JSON)
+
 
 class QueueCursor(Base):
     __tablename__ = "queue_cursor"
@@ -355,7 +384,10 @@ class SnapshotInventory(Base):
 
 class ParserArtifact(Base):
     __tablename__ = "parser_artifacts"
-    __table_args__ = (Index("ix_parser_artifact_scope", "organization_id", "content_hash", "parser_version"),)
+    __table_args__ = (
+        Index("ix_parser_artifact_scope", "organization_id", "content_hash", "parser_version"),
+        Index("ix_parser_artifact_lookup", "organization_id", "id"),
+    )
     id: Mapped[str] = mapped_column(String(64), primary_key=True)
     organization_id: Mapped[str] = mapped_column(ForeignKey("organizations.id"))
     content_hash: Mapped[str] = mapped_column(String(64))
@@ -396,7 +428,15 @@ def make_engine(url):
 
         @event.listens_for(engine, "connect")
         def enable_foreign_keys(connection, _):
+            # Local API and Celery share this file. Rollback journals let a large
+            # inventory writer block even account lookups; WAL keeps readers live.
+            # SQLite's bounded busy timeout still applies to competing writers.
+            connection.execute("PRAGMA journal_mode=WAL")
             connection.execute("PRAGMA foreign_keys=ON")
+            # Set a 32 MiB page-cache target for each local adapter connection.
+            # The default 2 MiB cache churns on large immutable graph indexes.
+            # This changes neither durability nor the repository/job limits.
+            connection.execute("PRAGMA cache_size=-32768")
 
     return engine
 
@@ -409,15 +449,20 @@ Session = sessionmaker(engine, expire_on_commit=False)
 def enforce_tenant_references(db, _context, _instances):
     """Reject cross-tenant ORM writes; direct SQL still requires DB-level controls."""
     pending = list(db.new)
+    dirty = set(db.dirty)
     pending_by_identity = {(type(row), getattr(row, "id", None)): row for row in pending}
+    references = dict(pending_by_identity)
 
     def lookup(model, identity):
-        return pending_by_identity.get((model, identity)) or db.get(model, identity)
+        key = (model, identity)
+        if key not in references:
+            references[key] = db.get(model, identity)
+        return references[key]
 
-    for row in pending + list(db.dirty):
+    for row in pending + list(dirty):
         org = getattr(row, "organization_id", None)
         repo_id = getattr(row, "repository_id", None)
-        if org and row in db.dirty and inspect(row).attrs.organization_id.history.has_changes():
+        if org and row in dirty and inspect(row).attrs.organization_id.history.has_changes():
             raise ValueError("Tenant scope is immutable; cross-tenant reassignment rejected.")
         if org and repo_id:
             repo = lookup(Repository, repo_id)

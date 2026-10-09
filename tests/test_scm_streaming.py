@@ -65,3 +65,16 @@ def test_streaming_provider_rejects_blob_content_not_bound_to_tree(monkeypatch):
     app, _ = adapter(monkeypatch, corrupt=True)
     with pytest.raises(ValueError, match="integrity"):
         list(app.iter_snapshot("owned/repo", "a" * 40))
+
+
+@pytest.mark.parametrize("mode,kind,size", [("120000", "SYMLINK", 8), ("160000", "SUBMODULE", 0)])
+def test_small_tree_links_are_inventoried_without_following_targets(monkeypatch, mode, kind, size):
+    app, calls = adapter(monkeypatch)
+    def handler(request):
+        calls.append(request.url.path)
+        assert "/trees/" in request.url.path
+        return httpx.Response(200, json={"tree": [{"path": "link.py", "sha": "c" * 40,
+            "type": "blob" if kind == "SYMLINK" else "commit", "mode": mode, "size": size}]})
+    monkeypatch.setattr(app, "client", lambda headers=None: httpx.Client(base_url=app.api_base_url, transport=httpx.MockTransport(handler)))
+    assert list(app.iter_snapshot("owned/repo", "a" * 40)) == [("link.py", {"bytes": size, "state": "UNSUPPORTED", "source_kind": kind})]
+    assert len(calls) == 1

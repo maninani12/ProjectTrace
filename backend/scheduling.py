@@ -178,8 +178,10 @@ def enqueue_scm(db, repository, details, *, event, delivery_id, connection_id=No
     return job
 
 
-def eligible(db):
+def eligible(db, *, execution=None):
     quota = limits()
+    if db.get_bind().dialect.name == "sqlite":
+        quota["global"] = 1  # One local writer; production PostgreSQL retains configured concurrency.
     running = list(
         db.execute(
             select(QueueEntry.organization_id, QueueEntry.repository_id).where(
@@ -190,8 +192,11 @@ def eligible(db):
     if len(running) >= quota["global"]:
         return []
     tenants, repos = Counter(r[0] for r in running), Counter((r[0], r[1]) for r in running)
+    query = select(QueueEntry)
+    if execution:
+        query = query.join(Record, Record.id == QueueEntry.job_id).where(Record.data["execution"].as_string() == execution)
     queued = db.scalars(
-        select(QueueEntry)
+        query
         .where(QueueEntry.state == "QUEUED", QueueEntry.cancel_requested.is_(False))
         .order_by(QueueEntry.created_at, QueueEntry.job_id)
         .limit(quota["pending_global"])
@@ -210,6 +215,11 @@ def eligible(db):
 
 def claim(db, job, seconds):
     cursor = lock(db)
+    # Dispatch can update metadata after publishing the broker message. Refresh
+    # the job version while holding its row lock before writing the claim, so a
+    # worker cannot commit an earlier version. All claimants take the scheduler
+    # singleton first, then the job row, matching admission's lock order.
+    db.refresh(job, with_for_update=True)
     row = db.get(QueueEntry, job.id)
     if not row:
         row = register(db, job)
@@ -223,7 +233,7 @@ def claim(db, job, seconds):
             return {"state": "ALREADY_RUNNING"}
         row.state = "QUEUED"
         db.flush()
-    candidates = eligible(db)
+    candidates = eligible(db, execution="LOCAL" if job.data.get("execution") == "LOCAL" else None)
     selected = next(
         (item for item in candidates if item.organization_id > cursor.last_tenant),
         candidates[0] if candidates else None,
@@ -237,6 +247,7 @@ def claim(db, job, seconds):
     cursor.last_tenant = row.organization_id
     job.data = {
         **job.data,
+        "dispatch": "SENT",
         "worker_token": token,
         "lease_expires_at": row.lease_expires_at,
         "queue_wait_ms": round(
@@ -287,15 +298,26 @@ def owns(db, job_id, token):
     return db.scalar(select(QueueEntry.worker_token).where(QueueEntry.job_id == job_id)) == token
 
 
-def recover_expired(db):
+def recover_expired(db, *, execution=None):
     from backend.db import AnalysisInput
 
+    expired = select(QueueEntry).where(QueueEntry.state == "RUNNING", QueueEntry.lease_expires_at <= now())
+    if execution is not None:
+        expired = expired.join(Record, Record.id == QueueEntry.job_id).where(
+            Record.data["execution"].as_string() == execution
+        )
+    # Idle recovery is a read, not a queue admission. Taking the singleton
+    # writer lock on every poll blocks behind publication even when no lease
+    # needs recovery. Recheck under the lock when actual work is present.
+    with db.no_autoflush:
+        if db.scalar(expired.with_only_columns(QueueEntry.job_id).limit(1)) is None:
+            return []
     lock(db)
     recovered = []
-    for entry in db.scalars(
-        select(QueueEntry).where(QueueEntry.state == "RUNNING", QueueEntry.lease_expires_at <= now()).limit(100)
-    ):
+    for entry in db.scalars(expired.limit(100)):
         job = db.get(Record, entry.job_id)
+        if execution is not None and job.data.get("execution") != execution:
+            continue
         attempts = job.data.get("recovery_attempts", 0)
         retained = db.get(AnalysisInput, job.id) if job.data.get("source") in {"FILES", "ZIP", "INVENTORY"} else None
         failed = attempts >= 2 or (
@@ -303,12 +325,18 @@ def recover_expired(db):
         )
         state = "CANCELLED" if entry.cancel_requested else "FAILED" if failed else "QUEUED"
         entry.state, entry.worker_token, entry.lease_expires_at = state, None, None
+        previous = {key: job.data.get(key) for key in (
+            "state", "stage", "started_at", "finished_at", "duration_ms", "snapshot_id",
+            "error_type", "error_code", "error_detail", "stages", "performance", "completed_analysis",
+            "retry_count", "recovery_attempts",
+        )}
         job.data = {
             **job.data,
             "state": state,
             "stage": state,
             "worker_token": None,
             "recovery_attempts": attempts + 1,
+            "attempt_history": [*job.data.get("attempt_history", []), previous],
             "finished_at": None if state == "QUEUED" else now(),
             "warnings": ["Expired worker lease recovered; stale workers cannot publish output."],
         }

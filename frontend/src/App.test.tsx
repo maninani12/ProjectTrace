@@ -10,6 +10,56 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 describe("ProjectTrace interface", () => {
+  it("distinguishes a rate-limited identity read from an unauthenticated session", async () => {
+    window.history.replaceState({}, "", "/repositories");
+    let status = 429;
+    vi.stubGlobal(
+      "fetch",
+      vi.fn((url) =>
+        Promise.resolve(
+          String(url).endsWith("/auth/me")
+            ? {
+                ok: false,
+                status,
+                text: async () =>
+                  JSON.stringify({
+                    detail:
+                      status === 429
+                        ? "Rate limit exceeded; retry later."
+                        : "Authentication required.",
+                  }),
+              }
+            : {
+                ok: true,
+                status: 200,
+                json: async () => ({
+                  authenticated: false,
+                  local_registration: true,
+                  demo_available: true,
+                }),
+              },
+        ),
+      ),
+    );
+    render(<App />);
+    expect(
+      await screen.findByRole("heading", {
+        name: "Workspace access unavailable",
+      }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("alert")).toHaveTextContent("Rate limit exceeded");
+    expect(
+      screen.queryByLabelText("Password", { exact: true }),
+    ).not.toBeInTheDocument();
+    status = 401;
+    fireEvent.click(screen.getByRole("button", { name: "Retry access" }));
+    expect(
+      await screen.findByLabelText("Password", { exact: true }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", { name: "Workspace access unavailable" }),
+    ).not.toBeInTheDocument();
+  });
   it("communicates status with text", () => {
     render(<Badge value="CONTRADICTED" />);
     expect(screen.getByText("CONTRADICTED")).toBeInTheDocument();
@@ -187,6 +237,13 @@ describe("ProjectTrace interface", () => {
       job: [],
       graph_node: [],
       edge: [],
+      counts: {
+        complete: true,
+        totals: { claim: 0, finding: 0 },
+        claim_status: {},
+        material_findings: 0,
+        repositories: {},
+      },
     };
     vi.stubGlobal(
       "fetch",

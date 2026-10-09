@@ -5,6 +5,19 @@ permissions:
 jobs:
   validate:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: projecttrace_test
+          POSTGRES_USER: projecttrace_test
+          POSTGRES_PASSWORD: disposable-ci-fixture-only
+        ports: ["15432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U projecttrace_test -d projecttrace_test"
+          --health-interval 5s --health-timeout 5s --health-retries 15
+    env:
+      PROJECTTRACE_TEST_POSTGRES_URL: postgresql+psycopg://projecttrace_test:disposable-ci-fixture-only@127.0.0.1:15432/projecttrace_test
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
@@ -22,7 +35,7 @@ jobs:
         working-directory: frontend
       - run: npx playwright install --with-deps chromium
         working-directory: frontend
-      - run: python -m uvicorn backend.main:app --host 127.0.0.1 --port 8011 > /tmp/projecttrace-api.log 2>&1 &
+      - run: JOB_MODE=local python -m uvicorn backend.main:app --host 127.0.0.1 --port 8011 > /tmp/projecttrace-api.log 2>&1 &
       - run: npm run dev > /tmp/projecttrace-ui.log 2>&1 &
         working-directory: frontend
       - run: npx playwright test

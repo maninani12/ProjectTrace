@@ -159,7 +159,14 @@ def classify(files, scope=None):
         )
         kind, reason = "SOURCE", "Recognized source extension."
         parts = set(p.parts)
-        if parts & VENDOR or matches(path, scope.get("vendor_patterns", [])):
+        if diagnostics.get(path, {}).get("state") == "UNSUPPORTED":
+            kind = "UNSUPPORTED"
+            source_kind = diagnostics[path].get("source_kind")
+            reason = {
+                "SYMLINK": "Git symbolic link is inventoried without fetching or following its target.",
+                "SUBMODULE": "Git submodule is inventoried without fetching the separate repository.",
+            }.get(source_kind, "Entry has no supported source representation; no source parser was run.")
+        elif parts & VENDOR or matches(path, scope.get("vendor_patterns", [])):
             kind, reason = "EXCLUDED_VENDOR", "Vendored dependency/environment path."
         elif (
             parts & GENERATED
@@ -224,10 +231,10 @@ def classify(files, scope=None):
     return rows
 
 
-def ownership(path, files, fallback):
-    """Last matching supported CODEOWNERS glob; owners are not inferred authors."""
-    selected = fallback
-    provenance = "ProjectTrace repository assignment"
+def ownership_rules(files):
+    cached_rules = getattr(files, "_ownership_rules", None)
+    if cached_rules is not None:
+        return cached_rules
     cached_lines = getattr(files, "_ownership_lines", None)
     if cached_lines is None:
         candidates = [
@@ -238,15 +245,29 @@ def ownership(path, files, fallback):
         cached_lines = files[sorted(candidates)[0]].splitlines()[:5000] if candidates else []
         if hasattr(files, "inventory_id"):
             files._ownership_lines = cached_lines
-    if cached_lines:
-        for line in cached_lines:
-            parts = line.split("#", 1)[0].split()
-            if not parts or parts[0].startswith("#") or len(parts) < 2 or parts[0].startswith("!"):
-                continue
-            pattern = parts[0].lstrip("/")
-            if pattern.endswith("/"):
-                pattern += "**"
-            if matches(path, [pattern, "**/" + pattern]):
-                selected = " ".join(part for part in parts[1:] if not part.startswith("#"))[:200]
-                provenance = "CODEOWNERS supported glob (last match)"
+    rules = []
+    for line in cached_lines:
+        parts = line.split("#", 1)[0].split()
+        if not parts or parts[0].startswith("#") or len(parts) < 2 or parts[0].startswith("!"):
+            continue
+        pattern = parts[0].lstrip("/")
+        if pattern.endswith("/"):
+            pattern += "**"
+        variants = [pattern, "**/" + pattern]
+        variants.extend(value[3:] for value in tuple(variants) if value.startswith("**/"))
+        checks = tuple(re.compile(fnmatch.translate(value)).match for value in dict.fromkeys(variants))
+        rules.append((checks, " ".join(part for part in parts[1:] if not part.startswith("#"))[:200]))
+    if hasattr(files, "inventory_id"):
+        files._ownership_rules = rules
+    return rules
+
+
+def ownership(path, files, fallback, *, rules=None):
+    """Last matching supported CODEOWNERS glob; owners are not inferred authors."""
+    selected = fallback
+    provenance = "ProjectTrace repository assignment"
+    for checks, owner in ownership_rules(files) if rules is None else rules:
+        if any(check(path) for check in checks):
+            selected = owner
+            provenance = "CODEOWNERS supported glob (last match)"
     return {"owner": selected, "owner_source": provenance}

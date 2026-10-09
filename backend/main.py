@@ -1,3 +1,4 @@
+import hashlib
 import json
 import logging
 import math
@@ -13,16 +14,18 @@ from fastapi import FastAPI, HTTPException, Query, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field
-from sqlalchemy import func, or_, select, text
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy import func, literal, or_, select, text
+from sqlalchemy.exc import IntegrityError, OperationalError
+from starlette.concurrency import run_in_threadpool
 
-from analyzers.engine import MAX_TOTAL_BYTES, read_zip, redact, sbom
+from analyzers.engine import MAX_TOTAL_BYTES, redact, sbom
 from backend import rate_limit
 from backend.db import Audit, Delivery, Grant, Organization, Record, Repository, Session, User, now
 from backend.domain import add, audit, policy_gate, uid
 from backend.engineering_changes import router as engineering_router
 from backend.finding_api import router as finding_router
 from backend.graph_api import router as graph_router
+from backend.intake_errors import IntakeError
 from backend.jobs import execute_analysis
 from backend.oidc import router as oidc_router
 from backend.quality_api import router as quality_router
@@ -53,7 +56,16 @@ async def lifespan(app):
     with Session() as db:
         db.execute(text("SELECT 1"))
         db.execute(select(Organization.id).limit(1))
-    yield
+    runner = None
+    if os.getenv("JOB_MODE") == "local":
+        from backend.local_jobs import LocalJobs
+        runner = LocalJobs(Session)
+        runner.start()
+    try:
+        yield
+    finally:
+        if runner:
+            await run_in_threadpool(runner.stop)
 
 
 app = FastAPI(
@@ -79,8 +91,8 @@ async def security_boundary(request, call_next):
     request_id = uid()
     request.state.request_id = request_id
     streaming_archive = request.method == "POST" and (
-        request.url.path == "/api/archive/stream/import"
-        or re.fullmatch(r"/api/repositories/[^/]+/source-archive", request.url.path) is not None
+        request.url.path in {"/api/archive/stream/import", "/api/archive/import"}
+        or re.fullmatch(r"/api/repositories/[^/]+/(?:source-archive|archive/analyze)", request.url.path) is not None
     )
     if streaming_archive:
         from backend.repository_store import limits
@@ -90,7 +102,10 @@ async def security_boundary(request, call_next):
         body_limit = MAX_TOTAL_BYTES + 100_000
     content_length = request.headers.get("content-length", "")
     if content_length and (not content_length.isdigit() or int(content_length) > body_limit):
-        return Response("Request exceeds the configured body limit.", status_code=413)
+        failure = IntakeError("REQUEST_BODY_BYTES", "Request exceeds the configured body limit.",
+                              budget="REPOSITORY_MAX_ARCHIVE_BYTES" if streaming_archive else "REQUEST_BODY_BYTES",
+                              actual=int(content_length) if content_length.isdigit() else "invalid", maximum=body_limit)
+        return JSONResponse({"detail": failure.detail()}, status_code=413)
     # Bound streamed bodies too, before JSON/multipart parsing.
     if request.method == "POST" and not streaming_archive:
         body = bytearray()
@@ -114,7 +129,16 @@ async def security_boundary(request, call_next):
         return Response("Rate limit service unavailable.", status_code=503, headers={"Retry-After": "10"})
     if not permitted:
         return Response("Rate limit reached. Try again in one minute.", status_code=429, headers={"Retry-After": "60"})
-    response = await call_next(request)
+    try:
+        response = await call_next(request)
+    except OperationalError as error:
+        code = getattr(error.orig, "sqlite_errorcode", 0)
+        if not isinstance(code, int) or code & 255 not in {5, 6}:
+            raise
+        response = JSONResponse({"detail": IntakeError("LOCAL_DATABASE_BUSY",
+            "Local database is publishing another bounded transaction.",
+            remediation="Wait briefly and retry the same request; use PostgreSQL for concurrent production analysis.").detail()},
+            status_code=503, headers={"Retry-After": "2"})
     response.headers.update(
         {
             "X-Request-ID": request_id,
@@ -190,6 +214,7 @@ class Review(StrictModel):
 class Question(StrictModel):
     question: str = Field(min_length=3, max_length=1000)
     repository_id: str | None = None
+    snapshot_ids: list[str] = Field(default_factory=list, max_length=500)
 
 
 class AWSInventoryBody(StrictModel):
@@ -215,8 +240,70 @@ class ConnectGitHub(StrictModel):
     connection_id: str | None = Field(default=None, max_length=80)
 
 
+class PublicGitHubImport(StrictModel):
+    url: str = Field(min_length=10, max_length=500)
+    ref: str | None = Field(default=None, max_length=256)
+    request_key: str | None = Field(default=None, min_length=8, max_length=100, pattern=r"^[A-Za-z0-9_-]+$")
+
+
+@app.post("/api/github/public/import")
+async def import_public_github(body: PublicGitHubImport, request: Request):
+    from backend.queue import check_capacity, dispatch
+    from backend.scheduling import register
+    from integrations.github.public import PublicGitHub
+
+    try:
+        adapter = PublicGitHub(body.url, body.ref)
+    except ValueError:
+        raise HTTPException(422, IntakeError("PUBLIC_GITHUB_URL", "Use a valid HTTPS github.com repository URL and Git ref.").detail()) from None
+    with Session() as db:
+        user, _ = authenticate(db, request, True)
+        if user.organization_id == "northstar":
+            raise HTTPException(409, "Import public source in your own organization workspace.")
+        if os.getenv("JOB_MODE") not in {"local", "celery"}:
+            raise HTTPException(503, "Public imports require JOB_MODE=local or a configured Celery worker; use scripts/start.ps1.")
+        # Serialize duplicate admission before creating any repository record.
+        from backend.scheduling import lock
+        db.commit()
+        lock(db)
+        request_key = body.request_key or uid()
+        fingerprint = hashlib.sha256(json.dumps([adapter.repository, adapter.ref]).encode()).hexdigest()
+        natural_key = "public-request:" + request_key
+        existing = db.scalar(select(Record).where(Record.organization_id == user.organization_id,
+                                                  Record.kind == "source_import", Record.natural_key == natural_key))
+        if existing:
+            require_repo(db, user, existing.repository_id)
+            if existing.data["request_fingerprint"] != fingerprint:
+                raise HTTPException(409, "This request key already identifies different public source.")
+            job = db.get(Record, existing.data["job_id"])
+            return JSONResponse({"repository_id": job.repository_id, "job_id": job.id,
+                                 "snapshot_id": job.data.get("snapshot_id"), "state": job.data["state"], "duplicate": True}, status_code=202)
+        if len(allowed_repositories(db, user)) >= 20:
+            raise HTTPException(429, "Workspace repository quota (20) reached.")
+        repo = Repository(id=uid(), organization_id=user.organization_id, name=adapter.repository,
+                          system="Imported System", component=adapter.repository, owner="Engineering Team", provider="GITHUB_PUBLIC")
+        db.add(repo)
+        db.flush()
+        db.add(Grant(user_id=user.id, repository_id=repo.id))
+        db.flush()
+        check_capacity(db, user, repo)
+        job = add(db, user.organization_id, repo.id, "job", {
+            "state": "QUEUED", "stage": "QUEUED", "source": "PUBLIC_GITHUB", "user_id": user.id,
+            "public_url": "https://github.com/" + adapter.repository, "ref": adapter.ref, "queued_at": now(),
+            "execution": "CELERY" if os.getenv("JOB_MODE") == "celery" else "LOCAL",
+            "request_id": request.state.request_id, "errors": [], "warnings": [], "stages": [], "dispatch": "PENDING",
+        })
+        add(db, user.organization_id, repo.id, "source_import", {"request_fingerprint": fingerprint, "job_id": job.id}, natural_key)
+        register(db, job)
+        audit(db, user, "PUBLIC_SOURCE_IMPORT_REQUESTED", job.id, {"source": "PUBLIC_GITHUB"}, repo.id)
+        db.commit()
+        dispatch(db, job)
+        return JSONResponse({"repository_id": repo.id, "job_id": job.id, "snapshot_id": None,
+                             "state": "QUEUED", "dispatch": job.data["dispatch"]}, status_code=202)
+
+
 def packed(record):
-    return {
+    result = {
         "id": record.id,
         "kind": record.kind,
         "repository_id": record.repository_id,
@@ -224,6 +311,10 @@ def packed(record):
         "created_at": record.created_at,
         **record.data,
     }
+    if record.kind == "claim":
+        from backend.claim_read import inventory_basis
+        result = inventory_basis(result)
+    return result
 
 
 def snapshot_preview(snapshot):
@@ -290,20 +381,26 @@ def current_snapshots(db, user):
     }
 
 
-def workspace_snapshots(db, user):
+def workspace_snapshots(db, user, repositories=None):
     from types import SimpleNamespace
 
+    repositories = repositories if repositories is not None else allowed_repositories(db, user)
     ranked = (
-        scope_query(db, user)
-        .where(Record.kind == "snapshot")
-        .with_only_columns(
+        select(
             Record.id,
+            Record.organization_id,
+            Record.repository_id,
+            Record.version,
+            Record.created_at,
             func.row_number()
             .over(partition_by=Record.repository_id, order_by=(Record.created_at.desc(), Record.id.desc()))
             .label("position"),
-        )
+        ).where(Record.organization_id == user.organization_id, Record.repository_id.in_([repo.id for repo in repositories]), Record.kind == literal("snapshot", literal_execute=True))
         .subquery()
     )
+    from backend.workspace_read import preview, projected_snapshots
+
+    projected = projected_snapshots(db, ranked)
     fields = [
         "branch",
         "commit",
@@ -324,6 +421,8 @@ def workspace_snapshots(db, user):
         "parser_signature",
         "analysis_at",
         "source_storage",
+        "source_provenance",
+          "analysis_coverage",
     ]
     query = (
         select(
@@ -335,22 +434,26 @@ def workspace_snapshots(db, user):
         )
         .join(ranked, ranked.c.id == Record.id)
         .where(ranked.c.position == 1)
+        .where(Record.id.not_in([snapshot.id for snapshot in projected.values()]))
     )
     return {
+        **projected,
+        **{
         row.repository_id: SimpleNamespace(
             id=row.id,
             kind="snapshot",
             repository_id=row.repository_id,
             version=row.version,
             created_at=row.created_at,
-            data={key: row._mapping[key] for key in fields if row._mapping[key] is not None},
+            data=preview({key: row._mapping[key] for key in fields if row._mapping[key] is not None}),
         )
         for row in db.execute(query)
+        },
     }
 
 
 def queued_input(db, user, repo, content, request, *, source="FILES", **options):
-    if os.getenv("JOB_MODE") != "celery":
+    if os.getenv("JOB_MODE") not in {"celery", "local"}:
         return None
     from backend.queue import enqueue_analysis
 
@@ -389,9 +492,13 @@ def ready():
                 client.ping()
             finally:
                 client.close()
-        return {"status": "ready", "database": "reachable", "worker": "not_checked"}
+        if os.getenv("JOB_MODE") == "local":
+            from backend.local_jobs import ready as local_ready
+            if not local_ready():
+                raise ValueError("Local runner is not ready")
+        return {"status": "ready", "database": "reachable", "worker": "local_ready" if os.getenv("JOB_MODE") == "local" else "not_checked"}
     except Exception:
-        raise HTTPException(503, "Database or migrations are not ready.")
+        raise HTTPException(503, "Database, migrations or configured local runner are not ready.")
 
 
 @app.post("/api/auth/demo")
@@ -498,6 +605,45 @@ def logout(request: Request, response: Response):
     return {"status": "signed_out"}
 
 
+@app.get("/api/repositories")
+def repository_listing(request: Request, repository_id: str | None = None,
+    offset: int = Query(0, ge=0, le=1_000_000), limit: int = Query(25, ge=1, le=100),
+    search: str = Query("", max_length=120), include_analysis: bool = True):
+    from backend.repository_read import listing, repository_page
+    with Session() as db:
+        user, _ = authenticate(db, request)
+        if repository_id:
+            require_repo(db, user, repository_id)
+        repos, page = repository_page(db, user, repository_id, search, offset, limit)
+        snapshots = workspace_snapshots(db, user, repos) if include_analysis and repos else {}
+        return {"organization": db.get(Organization, user.organization_id).name,
+            "demo": APP_ENV == "demo" and user.organization_id == "northstar",
+            "capabilities": {"job_mode": os.getenv("JOB_MODE", "sync"), "private_scm_available": bool(os.getenv("REDIS_URL")),
+                "advisories_enabled": os.getenv("JOB_MODE") == "celery" and os.getenv("OSV_ENABLED") == "1"},
+            **listing(db, user, repos, snapshots, page, include_analysis)}
+
+
+@app.get("/api/repositories/{repo_id}/analysis")
+def repository_diagnostics(repo_id: str, request: Request, snapshot_id: str | None = None):
+    from backend.repository_read import diagnostics
+    with Session() as db:
+        user, _ = authenticate(db, request)
+        require_repo(db, user, repo_id)
+        # Extract diagnostic fields only, never the repository-sized graph or cache.
+        fields = ("status", "claim_extraction", "engines", "warnings")
+        query = select(Record.id, Record.data["analysis_coverage"]["summary"].label("coverage_summary"),
+            *(Record.data[key].label(key) for key in fields)).where(Record.organization_id == user.organization_id,
+            Record.repository_id == repo_id, Record.kind == "snapshot")
+        if snapshot_id:
+            query = query.where(Record.id == snapshot_id)
+        row = db.execute(query.order_by(Record.created_at.desc(), Record.id.desc()).limit(1)).first()
+        if not row:
+            raise HTTPException(404, "Published snapshot is not available in your authorized repository scope.")
+        data = {key: row._mapping[key] for key in fields if row._mapping[key] is not None}
+        return {"repository_id": repo_id, "snapshot_id": row.id, "coverage_summary": row.coverage_summary,
+            **diagnostics(data)}
+
+
 @app.get("/api/workspace")
 def workspace(request: Request, repository_id: str | None = None, summary: bool = False):
     with Session() as db:
@@ -506,55 +652,21 @@ def workspace(request: Request, repository_id: str | None = None, summary: bool 
         if repository_id:
             require_repo(db, user, repository_id)
             repos = [repo for repo in repos if repo.id == repository_id]
-        snapshots = workspace_snapshots(db, user)
+        snapshots = workspace_snapshots(db, user, repos)
         snapshots = {rid: snapshot for rid, snapshot in snapshots.items() if rid in {repo.id for repo in repos}}
         if summary:
+            from backend.workspace_read import workspace_summary
+
             return {
                 "organization": db.get(Organization, user.organization_id).name,
                 "demo": APP_ENV == "demo" and user.organization_id == "northstar",
-                "analysis": {
-                    "state": "COMPLETED" if snapshots else "NO_REPOSITORY",
-                    "truncated": False,
-                    "warnings": [],
+                "capabilities": {
+                    "job_mode": os.getenv("JOB_MODE", "sync"),
+                    "private_scm_available": bool(os.getenv("REDIS_URL")),
+                    "advisories_enabled": os.getenv("JOB_MODE") == "celery" and os.getenv("OSV_ENABLED") == "1",
                 },
-                "repositories": [
-                    {
-                        "id": r.id,
-                        "name": r.name,
-                        "system": r.system,
-                        "component": r.component,
-                        "owner": r.owner,
-                        "provider": r.provider,
-                        "snapshot": {
-                            "id": snapshots[r.id].id,
-                            **{
-                                k: snapshots[r.id].data.get(k)
-                                for k in ["branch", "commit", "scope", "status", "file_count", "gate", "changed_files"]
-                            },
-                        }
-                        if r.id in snapshots
-                        else None,
-                    }
-                    for r in repos
-                ],
-                **{
-                    k: []
-                    for k in [
-                        "claim",
-                        "finding",
-                        "evidence",
-                        "edge",
-                        "dependency",
-                        "drift",
-                        "pr",
-                        "review",
-                        "exception",
-                        "job",
-                        "graph_node",
-                        "risk_path",
-                    ]
-                },
-                "limitations": ["Quality uses authorized paginated projections and lazy source inspection."],
+                **workspace_summary(db, user, repos, snapshots),
+                "limitations": ["Static analysis scope only.", "Summary counts cover complete current snapshots; record previews are bounded. Use paginated views for all records."],
             }
         snapshot_ids = {s.id for s in snapshots.values()}
         query = scope_query(db, user).where(
@@ -651,6 +763,7 @@ def workspace(request: Request, repository_id: str | None = None, summary: bool 
             "organization": db.get(Organization, user.organization_id).name,
             "capabilities": {
                 "job_mode": os.getenv("JOB_MODE", "sync"),
+                "private_scm_available": bool(os.getenv("REDIS_URL")),
                 "advisories_enabled": os.getenv("JOB_MODE") == "celery" and os.getenv("OSV_ENABLED") == "1",
             },
             "demo": APP_ENV == "demo" and user.organization_id == "northstar",
@@ -677,6 +790,54 @@ def workspace(request: Request, repository_id: str | None = None, summary: bool 
             **grouped,
             "limitations": ["Static analysis scope only.", "External AI and live cloud inventory are not configured."],
         }
+
+
+@app.get("/api/workspace/records")
+def workspace_records(
+    request: Request, view: str, repository_id: str | None = None,
+    offset: int = Query(0, ge=0, le=1_000_000), limit: int = Query(50, ge=1, le=200),
+    search: str = Query("", max_length=120), state: str = Query("ALL", max_length=60),
+    snapshot_id: str | None = None,
+    snapshot_ids: list[str] = Query(default=[]),
+):
+    from backend.workspace_read import VIEWS, page_query
+    from backend.workspace_read import packed as read_packed
+
+    if view not in VIEWS:
+        raise HTTPException(422, "Unknown paginated workspace view.")
+    with Session() as db:
+        user, _ = authenticate(db, request)
+        repos = allowed_repositories(db, user)
+        if repository_id:
+            require_repo(db, user, repository_id)
+            repos = [repo for repo in repos if repo.id == repository_id]
+        if len(snapshot_ids) > 500 or any(len(value) > 80 for value in snapshot_ids) or (snapshot_id and snapshot_ids):
+            raise HTTPException(422, "Select at most 500 snapshots using a single snapshot selection form.")
+        if snapshot_id or snapshot_ids:
+            # Select only identity, never repository-sized immutable snapshot JSON.
+            requested = set(snapshot_ids or [snapshot_id])
+            selected = db.execute(select(Record.id, Record.repository_id).where(
+                Record.id.in_(requested), Record.kind == "snapshot", Record.organization_id == user.organization_id,
+                Record.repository_id.in_([repo.id for repo in repos]))).all()
+            if {row.id for row in selected} != requested:
+                raise HTTPException(404, "Snapshot is not available in your authorized repository scope.")
+            if len({row.repository_id for row in selected}) != len(selected):
+                raise HTTPException(422, "Select only one published snapshot per repository.")
+            from types import SimpleNamespace
+            snapshots = {row.repository_id: SimpleNamespace(id=row.id) for row in selected}
+            repos = [repo for repo in repos if repo.id in snapshots]
+        else:
+            snapshots = workspace_snapshots(db, user, repos)
+        query = page_query(user, repos, snapshots, view, search, state)
+        total = db.scalar(query.with_only_columns(func.count()).order_by(None))
+        from backend.json_query import indexed_text
+        severity_expr = indexed_text(Record.data, "severity")
+        severity = dict(db.execute(query.with_only_columns(severity_expr, func.count()).group_by(severity_expr)).all()) if "finding" in VIEWS[view] else {}
+        rows = list(db.scalars(query.order_by(Record.created_at.desc(), Record.id.desc()).offset(offset).limit(limit)))
+        return {"items": [read_packed(row) for row in rows], "total": total, "offset": offset, "limit": limit,
+                "has_more": offset + len(rows) < total, "severity_counts": severity,
+                "snapshot_ids": {repo.id: snapshots[repo.id].id for repo in repos if repo.id in snapshots},
+                  "scope": "SELECTED_PUBLISHED_SNAPSHOT" if snapshot_id or snapshot_ids else "LATEST_PUBLISHED_SNAPSHOT_PER_AUTHORIZED_REPOSITORY"}
 
 
 @app.get("/api/records/{kind}")
@@ -864,43 +1025,115 @@ def assign_components(repo_id: str, body: ComponentAssignment, request: Request)
         return packed(row)
 
 
-async def streamed_archive(request, db, user, repo, base_id=None):
+async def streamed_archive(request, db, user, repo, base_id=None, *, new_repository=False, request_key=None):
     from backend.encrypted_archive import EncryptedArchive
     from backend.queue import check_capacity
     from backend.repository_store import RepositoryFiles, archive_items, capture, limits
 
-    check_capacity(db, user, repo)
-    db.commit()  # Release the short admission lock before reading the upload stream.
+    db.commit()  # No write transaction is held while reading the upload stream.
+    receipt = None
     try:
         policy = limits()
         with EncryptedArchive(policy["archive_bytes"]) as spool:
+            archive_digest = hashlib.sha256()
             async for chunk in request.stream():
                 spool.append(chunk)
-            inventory = capture(
-                db, user.organization_id, repo, archive_items(spool, policy), source="ZIP_STREAM", quota=policy
-            )
-        files = RepositoryFiles(db, user.organization_id, repo.id, inventory.id)
-        queued = queued_input(db, user, repo, files, request, source="INVENTORY", base_id=base_id)
-        if queued:
-            return queued
-        snapshot, job = execute_analysis(
-            db,
-            user,
-            repo,
-            files,
-            base_id=base_id,
-            request_id=request.state.request_id,
-            advisory_cache=local_advisories(),
-        )
-        return {"repository_id": repo.id, "snapshot_id": snapshot.id, "job_id": job.id, "state": job.data["state"]}
-    except (ValueError, zipfile.BadZipFile, UnicodeError):
-        raise HTTPException(422, "Archive is invalid or exceeds its configured intake budgets.")
+                archive_digest.update(chunk)
+
+            def process():
+                nonlocal receipt
+                list(archive_items(spool, policy, validate_only=True))
+                from backend.db import QueueEntry
+                from backend.scheduling import lock
+
+                fingerprint = hashlib.sha256(json.dumps([archive_digest.hexdigest(), repo.name if new_repository else repo.id, base_id]).encode()).hexdigest()
+
+                def duplicate_request():
+                    if not request_key:
+                        return None
+                    existing = db.scalar(select(Record).where(Record.organization_id == user.organization_id,
+                        Record.kind == "source_import", Record.natural_key == "zip-request:" + request_key))
+                    if existing:
+                        require_repo(db, user, existing.repository_id)
+                        if existing.data.get("request_fingerprint") != fingerprint:
+                            raise HTTPException(409, "This request key already identifies different ZIP source.")
+                        if existing.data.get("job_id"):
+                            job = db.get(Record, existing.data["job_id"])
+                            return JSONResponse({"repository_id": job.repository_id, "job_id": job.id,
+                                "snapshot_id": job.data.get("snapshot_id"), "state": job.data["state"], "duplicate": True}, status_code=202)
+                        raise HTTPException(409, IntakeError("SOURCE_CAPTURE_IN_PROGRESS", "This ZIP request is already capturing or was interrupted.",
+                            remediation="Refresh repository status. If intake was interrupted before a job was created, submit a fresh upload request.").detail())
+                    return None
+
+                def check_local_writer():
+                    if db.get_bind().dialect.name == "sqlite" and db.scalar(select(QueueEntry.job_id).where(QueueEntry.state == "RUNNING").limit(1)):
+                        raise HTTPException(503, IntakeError("LOCAL_CAPTURE_BUSY", "Another analysis is using the local database.",
+                            remediation="Wait for its terminal status, then retry this upload. PostgreSQL supports concurrent source jobs.").detail(), headers={"Retry-After": "2"})
+
+                # Reads remain available in WAL mode during a long publication.
+                # Return an existing receipt or backpressure before waiting for
+                # the writer. Repeat both checks under serialization for races.
+                duplicate = duplicate_request()
+                if duplicate:
+                    return duplicate
+                check_local_writer()
+                lock(db)
+                duplicate = duplicate_request()
+                if duplicate:
+                    return duplicate
+                check_local_writer()
+                db.refresh(user)
+                if not user.enabled:
+                    raise HTTPException(401, "Source-import member is disabled.")
+                if new_repository:
+                    db.add(repo)
+                    db.flush()
+                    db.add(Grant(user_id=user.id, repository_id=repo.id))
+                    db.flush()
+                if request_key:
+                    receipt = add(db, user.organization_id, repo.id, "source_import", {
+                        "state": "CAPTURING", "request_fingerprint": fingerprint,
+                    }, "zip-request:" + request_key)
+                check_capacity(db, user, repo)
+                db.commit()
+                def authorized():
+                    db.refresh(user)
+                    if not user.enabled:
+                        raise HTTPException(401, "Source-import member is disabled.")
+                    require_repo(db, user, repo.id)
+
+                inventory = capture(db, user.organization_id, repo, archive_items(spool, policy),
+                                    source="ZIP_STREAM", quota=policy, checkpoint=authorized)
+                inventory.data = {**inventory.data, "provenance": {
+                    "source": "ZIP", "archive_sha256": archive_digest.hexdigest(), "archive_bytes": spool.length,
+                }}
+                db.commit()
+                files = RepositoryFiles(db, user.organization_id, repo.id, inventory.id)
+                queued = queued_input(db, user, repo, files, request, source="INVENTORY", base_id=base_id, import_receipt=receipt)
+                if queued:
+                    return queued
+                snapshot, job = execute_analysis(db, user, repo, files, base_id=base_id,
+                                                request_id=request.state.request_id, advisory_cache=local_advisories())
+                if receipt:
+                    receipt.data = {**receipt.data, "job_id": job.id, "state": job.data["state"]}
+                    db.commit()
+                return {"repository_id": repo.id, "snapshot_id": snapshot.id, "job_id": job.id, "state": job.data["state"]}
+
+            return await run_in_threadpool(process)
+    except IntakeError as error:
+        db.rollback()
+        raise HTTPException(422, error.detail()) from None
+    except (ValueError, zipfile.BadZipFile, UnicodeError, EOFError, RuntimeError):
+        db.rollback()
+        raise HTTPException(422, IntakeError("ARCHIVE_INVALID", "Archive is corrupt or contains invalid source metadata.").detail()) from None
 
 
 @app.post("/api/archive/stream/import")
+@app.post("/api/archive/import")
 async def archive_stream_import(
     request: Request,
     name: str = Query(default="Imported repository", min_length=1, max_length=120, pattern=r"^[\w .-]+$"),
+    request_key: str | None = Query(default=None, min_length=8, max_length=100, pattern=r"^[A-Za-z0-9_-]+$"),
 ):
     with Session() as db:
         user, _ = authenticate(db, request, True)
@@ -915,19 +1148,20 @@ async def archive_stream_import(
             system="Imported System",
             component=name,
             owner="Engineering Team",
-            provider="LOCAL",
+            provider="ZIP",
         )
-        db.add(repo)
-        db.flush()
-        db.add(Grant(user_id=user.id, repository_id=repo.id))
-        return await streamed_archive(request, db, user, repo)
+        return await streamed_archive(request, db, user, repo, new_repository=True, request_key=request_key)
 
 
 @app.post("/api/repositories/{repo_id}/source-archive")
-async def archive_stream_analyze(repo_id: str, request: Request, base_id: str | None = None):
+@app.post("/api/repositories/{repo_id}/archive/analyze")
+async def archive_stream_analyze(repo_id: str, request: Request, base_id: str | None = None,
+    request_key: str | None = Query(default=None, min_length=8, max_length=100, pattern=r"^[A-Za-z0-9_-]+$")):
     with Session() as db:
         user, _ = authenticate(db, request, True)
         repo = require_repo(db, user, repo_id)
+        if repo.provider in {"GITHUB", "GHES", "GITHUB_PUBLIC"}:
+            raise HTTPException(409, "Create a separate ZIP-sourced repository instead of mixing GitHub source history.")
         if base_id:
             base = authorized_record(db, user, base_id)
             if base.kind != "snapshot" or base.repository_id != repo.id:
@@ -937,89 +1171,7 @@ async def archive_stream_analyze(repo_id: str, request: Request, base_id: str | 
         if not base_id:
             previous = current_snapshots(db, user).get(repo.id)
             base_id = previous.id if previous else None
-        return await streamed_archive(request, db, user, repo, base_id)
-
-
-@app.post("/api/archive/import")
-async def archive_import(
-    request: Request,
-    name: str = Query(default="Imported repository", min_length=1, max_length=120, pattern=r"^[\w .-]+$"),
-):
-    with Session() as db:
-        user, _ = authenticate(db, request, True)
-        if user.organization_id == "northstar":
-            raise HTTPException(
-                409, "Sign in to your real organization workspace to import source; demo data remains separate."
-            )
-        if len(allowed_repositories(db, user)) >= 20:
-            raise HTTPException(429, "Local workspace repository quota (20) reached.")
-        repo = Repository(
-            id=uid(),
-            organization_id=user.organization_id,
-            name=name,
-            system="Imported System",
-            component=name,
-            owner="Engineering Team",
-            provider="LOCAL",
-        )
-        db.add(repo)
-        db.flush()
-        blob = await request.body()
-        db.add(Grant(user_id=user.id, repository_id=repo.id))
-        try:
-            queued = queued_input(db, user, repo, blob, request, source="ZIP")
-            if queued:
-                return queued
-            snapshot, job = execute_analysis(
-                db,
-                user,
-                repo,
-                lambda: read_zip(blob, keep_excluded=True),
-                request_id=request.state.request_id,
-                advisory_cache=local_advisories(),
-            )
-        except Exception as error:
-            raise HTTPException(
-                422 if isinstance(error, (ValueError, OSError, RuntimeError, zipfile.BadZipFile)) else 500,
-                "Archive analysis failed; inspect the persisted repository job for details.",
-            )
-        return {"repository_id": repo.id, "snapshot_id": snapshot.id, "job_id": job.id, "state": job.data["state"]}
-
-
-@app.post("/api/repositories/{repo_id}/archive/analyze")
-async def archive_analyze(repo_id: str, request: Request, base_id: str | None = None):
-    with Session() as db:
-        user, _ = authenticate(db, request, True)
-        repo = require_repo(db, user, repo_id)
-        if user.organization_id == "northstar":
-            raise HTTPException(409, "Upload snapshots in your real workspace.")
-        if base_id:
-            base = authorized_record(db, user, base_id)
-            if base.kind != "snapshot" or base.repository_id != repo.id:
-                raise HTTPException(422, "Base must belong to this repository.")
-        else:
-            base = current_snapshots(db, user).get(repo.id)
-            base_id = base.id if base else None
-        blob = await request.body()
-        try:
-            queued = queued_input(db, user, repo, blob, request, source="ZIP", base_id=base_id)
-            if queued:
-                return queued
-            snapshot, job = execute_analysis(
-                db,
-                user,
-                repo,
-                lambda: read_zip(blob, keep_excluded=True),
-                base_id=base_id,
-                request_id=request.state.request_id,
-                advisory_cache=local_advisories(),
-            )
-        except Exception as error:
-            raise HTTPException(
-                422 if isinstance(error, (ValueError, OSError, RuntimeError, zipfile.BadZipFile)) else 500,
-                "Archive analysis failed; inspect the persisted repository job for details.",
-            )
-        return {"repository_id": repo.id, "snapshot_id": snapshot.id, "job_id": job.id, "state": job.data["state"]}
+        return await streamed_archive(request, db, user, repo, base_id, request_key=request_key)
 
 
 def local_advisories():
@@ -1164,7 +1316,29 @@ def ask(body: Question, request: Request):
         user, _ = authenticate(db, request, True, edit=False)
         if body.repository_id:
             require_repo(db, user, body.repository_id)
-        snapshots = current_snapshots(db, user)
+        repos = allowed_repositories(db, user)
+        if body.repository_id:
+            repos = [repo for repo in repos if repo.id == body.repository_id]
+        if any(len(value) > 80 for value in body.snapshot_ids):
+            raise HTTPException(422, "Snapshot identifiers must be at most 80 characters.")
+        if body.snapshot_ids:
+            requested = set(body.snapshot_ids)
+            selected = list(db.scalars(select(Record).where(
+                Record.id.in_(requested), Record.kind == "snapshot", Record.organization_id == user.organization_id,
+                Record.repository_id.in_([repo.id for repo in repos]))))
+            if {row.id for row in selected} != requested:
+                raise HTTPException(404, "Snapshot is not available in your authorized repository scope.")
+            if len({row.repository_id for row in selected}) != len(selected):
+                raise HTTPException(422, "Select only one published snapshot per repository.")
+            snapshots = {row.repository_id: row for row in selected}
+        else:
+            identities = workspace_snapshots(db, user, repos)
+            snapshots = {row.repository_id: row for row in db.scalars(select(Record).where(
+                Record.id.in_([snapshot.id for snapshot in identities.values()]),
+                Record.organization_id == user.organization_id, Record.kind == "snapshot"))}
+        from backend.claim_read import inventory_basis
+        snapshot_claims = {rid: [inventory_basis(claim) for claim in snap.data.get("claims", [])]
+                           for rid, snap in snapshots.items()}
         # Deterministic retrieval: token overlap + claim category + evidence authority.
         stopwords = {
             "the",
@@ -1191,9 +1365,9 @@ def ask(body: Question, request: Request):
 
             ids = [
                 claim["id"]
-                for rid, snap in snapshots.items()
+                for rid, snapshot_items in snapshot_claims.items()
                 if not body.repository_id or rid == body.repository_id
-                for claim in snap.data.get("claims", [])
+                for claim in snapshot_items
             ]
             if ids:
                 query = text(
@@ -1204,10 +1378,10 @@ def ask(body: Question, request: Request):
                     for row in db.execute(query, {"question": body.question, "org": user.organization_id, "ids": ids})
                 }
         candidates = []
-        for repo_id, snap in snapshots.items():
+        for repo_id, snapshot_items in snapshot_claims.items():
             if body.repository_id and repo_id != body.repository_id:
                 continue
-            for claim in snap.data.get("claims", []):
+            for claim in snapshot_items:
                 words = set(re.findall(r"[a-z0-9_/]+", (claim["text"] + " " + claim["category"]).lower())) - stopwords
                 score = len(tokens & words) + (
                     3 if any(t.startswith("auth") for t in tokens) and claim["category"] == "AUTHENTICATION" else 0
@@ -1220,6 +1394,18 @@ def ask(body: Question, request: Request):
         claims = [c for _, c in candidates[:5]]
         evidence_ids = list(dict.fromkeys(eid for c in claims for eid in c["evidence_ids"]))
         evidence = [packed(authorized_record(db, user, eid)) for eid in evidence_ids]
+        # Filter relationship endpoints in SQL before loading payloads. Python
+        # filtering followed by [:50] fetched every edge in large snapshots.
+        from backend.json_query import indexed_text
+        claim_ids = [claim["id"] for claim in claims]
+        neighborhood = []
+        if claim_ids:
+            neighborhood = list(db.scalars(scope_query(db, user).where(
+                Record.kind == "edge", Record.repository_id.in_(list(snapshots)),
+                indexed_text(Record.data, "snapshot_id").in_([snap.id for snap in snapshots.values()]),
+                or_(indexed_text(Record.data, "source").in_(claim_ids),
+                    indexed_text(Record.data, "target").in_(claim_ids)),
+            ).order_by(Record.id).limit(50)))
         auth = next((c for c in claims if c["category"] == "AUTHENTICATION"), None)
         answer = (
             "The current static evidence configures server-side session authentication."
@@ -1239,28 +1425,12 @@ def ask(body: Question, request: Request):
             "claims": claims,
             "evidence": evidence,
             "provider": "Deterministic evidence retrieval",
+            "snapshot_ids": {rid: snapshot.id for rid, snapshot in snapshots.items()},
+            "scope": "SELECTED_PUBLISHED_SNAPSHOT" if body.snapshot_ids else "LATEST_PUBLISHED_SNAPSHOT_PER_AUTHORIZED_REPOSITORY",
             "retrieval": {
                 "full_text": "POSTGRESQL" if fulltext else "LOCAL_TOKEN",
                 "metadata": ["authorized_repository", "current_snapshot", "claim_category", "verification_status"],
-                "graph_neighborhood": [
-                    packed(item)
-                    for item in db.scalars(
-                        scope_query(db, user).where(
-                            Record.kind == "edge",
-                            Record.data["snapshot_id"]
-                            .as_string()
-                            .in_(
-                                [
-                                    snap.id
-                                    for rid, snap in snapshots.items()
-                                    if not body.repository_id or rid == body.repository_id
-                                ]
-                            ),
-                        )
-                    )
-                    if item.data.get("source") in {claim["id"] for claim in claims}
-                    or item.data.get("target") in {claim["id"] for claim in claims}
-                ][:50],
+                "graph_neighborhood": [packed(item) for item in neighborhood],
                 "semantic_vectors": "NOT_CONFIGURED",
             },
             "limitations": [
@@ -1712,8 +1882,10 @@ def control_job(job_id: str, action: Literal["retry", "cancel"], request: Reques
             if result == "CANCELLATION_REQUESTED":
                 return {**packed(job), "cancellation_requested": True}
         else:
-            if os.getenv("JOB_MODE") != "celery":
-                raise HTTPException(503, "The Redis/Celery worker must be configured before retrying provider jobs.")
+            if os.getenv("JOB_MODE") not in {"celery", "local"}:
+                raise HTTPException(503, "Start the local development runner or a configured Celery worker before retrying.")
+            if job.data.get("source") == "GITHUB" and not os.getenv("REDIS_URL"):
+                raise HTTPException(503, "Private GitHub jobs require the configured SCM Celery worker.")
             lease = job.data.get("lease_expires_at")
             stale = (
                 job.data.get("state") not in {"COMPLETED", "COMPLETED_NO_FINDINGS", "CANCELLED"}
@@ -1728,16 +1900,33 @@ def control_job(job_id: str, action: Literal["retry", "cancel"], request: Reques
             if job.data.get("source") in {"ZIP", "FILES", "INVENTORY"} and not db.get(AnalysisInput, job.id):
                 raise HTTPException(409, "Retained input is unavailable; upload a fresh snapshot.")
 
-            if job.data.get("retry_count", 0) >= 2:
-                raise HTTPException(409, "Retry limit reached; upload a fresh snapshot or advisory job.")
+            repair_revision = "safe-intake-2026-10-08"
+            repair_retry = (job.data.get("source") == "GITHUB" and job.data.get("retry_count", 0) == 2
+                and job.data.get("error_type") in {"TransportError", "TimeoutError"}
+                and not job.data.get("repair_retry_revision"))
+            # One further attempt is tied to the verified writer-collision and
+            # transport fixes. This finite migration never resets prior counts.
+            if (job.data.get("source") == "GITHUB" and job.data.get("retry_count") == 3
+                and job.data.get("repair_retry_revision") == repair_revision
+                and job.data.get("error_code") == "SCM_TRANSPORT"):
+                repair_revision, repair_retry = "serialized-transport-2026-10-08", True
+            if job.data.get("retry_count", 0) >= 2 and not repair_retry:
+                raise HTTPException(409, "Retry limit reached. Review the precise failure before importing a fresh snapshot.")
+            previous_attempt = {key: job.data.get(key) for key in ("state", "stage", "error_type", "error_code", "error_detail", "started_at", "finished_at", "duration_ms", "snapshot_id", "stages", "performance", "completed_analysis", "retry_count", "repair_retry_revision")}
             job.data = {
                 **job.data,
                 "state": "QUEUED",
                 "stage": "QUEUED",
                 "finished_at": None,
                 "retry_count": job.data.get("retry_count", 0) + 1,
+                "attempt_history": [*job.data.get("attempt_history", []), previous_attempt],
+                "repair_retry_revision": repair_revision if repair_retry else job.data.get("repair_retry_revision"),
+                "errors": [], "error_detail": None, "error_code": None,
+                "duration_ms": None, "performance": {}, "completed_analysis": None,
             }
             audit(db, user, "JOB_RETRIED", job.id, {"retry_count": job.data["retry_count"]}, job.repository_id)
+            from backend.scheduling import register
+            register(db, job)
             db.commit()
             dispatch(db, job)
         return packed(job)

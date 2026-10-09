@@ -96,6 +96,15 @@ test("landing creates a real empty workspace and imports a fresh ZIP", async ({
     .setInputFiles(path.join(process.cwd(), "e2e/fixtures/native-fixture.zip"));
   await dialog.getByRole("button", { name: "Analyze source snapshot" }).click();
   await expect(dialog).not.toBeVisible({ timeout: 30000 });
+  await expect
+    .poll(
+      async () => {
+        const current = await (await page.request.get("/api/workspace")).json();
+        return Boolean(current.repositories[0]?.snapshot);
+      },
+      { timeout: 45000 },
+    )
+    .toBe(true);
   const workspace = await (await page.request.get("/api/workspace")).json();
   expect(workspace.repositories).toHaveLength(1);
   expect(workspace.repositories[0].name).toBe("public-import-fixture");

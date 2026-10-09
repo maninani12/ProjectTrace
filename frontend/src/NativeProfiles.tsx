@@ -107,11 +107,21 @@ export default function NativeProfiles({
         {repository === "ALL"
           ? "Organization defaults"
           : "Repository overrides"}{" "}
-        · version {profile.data?.version ?? 0}. Every snapshot records the
-        profile used.
+        · version {profile.data?.version ?? "unavailable"}. Every snapshot
+        records the profile used.
       </p>
       {rules.isError || profile.isError ? (
-        <p className="error">Could not load native profiles.</p>
+        <p className="error" role="alert">
+          Could not load native profiles.{" "}
+          <button
+            onClick={() => {
+              rules.refetch();
+              profile.refetch();
+            }}
+          >
+            Retry native profiles
+          </button>
+        </p>
       ) : (
         <>
           <label>

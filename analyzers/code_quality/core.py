@@ -3,7 +3,7 @@
 import hashlib
 import json
 import time
-from collections import Counter
+from collections import Counter, defaultdict
 
 from analyzers.code_quality import FINGERPRINT_VERSION, VERSION
 from analyzers.code_quality.classification import LANGUAGES, classify, coverage_source
@@ -54,6 +54,14 @@ def build(files, metrics, signals, raw_findings, warnings, profile=None):
         if row["path"] in selected:
             row.update(file_metrics.get(row["path"], {}))
     measured = [{k: v for k, v in m.items() if k not in {"duplicate_tokens"}} for m in metrics if m["path"] in selected]
+    # The owning symbol is the narrowest enclosing range, with stable input
+    # order breaking ties. Sort each file once instead of sorting every metric
+    # in the repository for each reliability/duplication observation.
+    measured_by_path = defaultdict(list)
+    for metric in measured:
+        measured_by_path[metric["path"]].append(metric)
+    for path, rows in measured_by_path.items():
+        measured_by_path[path] = sorted(rows, key=lambda m: m["end_line"] - m["line"])
     production = [m for m in metrics if m["path"] in selected and paths[m["path"]]["kind"] == "SOURCE"]
     dup = detect(production, settings["rules"].get("PT-QUALITY-007", {}).get("threshold", 50))
     symbols = [
@@ -96,8 +104,8 @@ def build(files, metrics, signals, raw_findings, warnings, profile=None):
         containing = metric or next(
             (
                 m
-                for m in sorted(measured, key=lambda m: m["end_line"] - m["line"])
-                if m["path"] == path and m["line"] <= line <= m["end_line"]
+                for m in measured_by_path.get(path, ())
+                if m["line"] <= line <= m["end_line"]
             ),
             None,
         )

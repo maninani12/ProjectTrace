@@ -74,14 +74,17 @@ export function SiteRoutes() {
       .then((value) => {
         if (current) setOptions({ ...value, ready: true });
       })
-      .catch(() => {
+      .catch((error: unknown) => {
         if (current)
           setOptions({
             authenticated: false,
             local_registration: false,
             demo_available: false,
             ready: true,
-            error: "Could not load account options.",
+            error:
+              error instanceof Error
+                ? error.message
+                : "Could not load account options.",
           });
       });
     return () => {

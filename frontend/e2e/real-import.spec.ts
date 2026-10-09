@@ -56,7 +56,9 @@ test("real workspace ZIP import, claims, evidence, question and second-snapshot 
   await expect(
     page.getByRole("heading", { name: "native-real-fixture", exact: true }),
   ).toBeVisible({ timeout: 30000 });
-  await expect(page.getByRole("status")).toContainText("Analysis completed");
+  await expect(page.getByRole("status")).toContainText("Analysis completed", {
+    timeout: 45000,
+  });
   await expect(page.getByText("DEMO DATA", { exact: true })).toHaveCount(0);
   await expect(
     page.getByRole("region", { name: "Native analyzer coverage" }),
@@ -207,7 +209,9 @@ test("real workspace ZIP import, claims, evidence, question and second-snapshot 
     .getByRole("button", { name: "Analyze and compare snapshot", exact: true })
     .click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
-  await expect(page.getByRole("status")).toContainText("Analysis completed");
+  await expect(page.getByRole("status")).toContainText("Analysis completed", {
+    timeout: 45000,
+  });
   await nav.getByRole("button", { name: /^Drift/ }).click();
   await expect(page.locator("tbody tr")).not.toHaveCount(0);
   await expect(

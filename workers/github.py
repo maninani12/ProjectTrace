@@ -4,7 +4,7 @@ import os
 
 from sqlalchemy import select
 
-from backend.db import Record, Repository, Session, User, now
+from backend.db import Record, Repository, Session, SourceInventory, User, now
 from backend.domain import persist_analysis
 from backend.jobs import TERMINAL, execute_analysis, inventory_time_budget
 from backend.security import require_repo
@@ -118,14 +118,28 @@ def github_delivery(self, job_id):
 
             def fetch(commit):
                 authorized()
+                db.commit()  # Do not retain a lease write across provider I/O.
+                retained_id = job.data.get("inventories_by_commit", {}).get(commit)
+                if retained_id:
+                    inventory = db.get(SourceInventory, retained_id)
+                    if not inventory or inventory.data.get("provenance", {}).get("commit") != commit:
+                        raise ValueError("Retained provider inventory has no matching commit provenance.")
+                    return RepositoryFiles(db, job.organization_id, repo.id, inventory.id)
                 if hasattr(adapter, "iter_snapshot"):
 
                     def entries():
                         for entry in adapter.iter_snapshot(repo.name, commit):
-                            ensure_current(db, job, renew_seconds=inventory_time_budget())
+                            ensure_current(db, job)
                             yield entry
 
-                    inventory = capture(db, job.organization_id, repo, entries(), source="SCM_INSTALLED_REPOSITORY")
+                    inventory = capture(
+                        db, job.organization_id, repo, entries(), source="SCM_INSTALLED_REPOSITORY",
+                        checkpoint=authorized,
+                    )
+                    inventory.data = {**inventory.data, "provenance": {"source": "GITHUB_APP",
+                        "repository": repo.name, "commit": commit, "ref": job.data.get("branch"),
+                        "connection_id": connection.id if connection else None, "commit_verification": "PROVIDER_GIT_OBJECT_IDS"}}
+                    job.data = {**job.data, "inventories_by_commit": {**job.data.get("inventories_by_commit", {}), commit: inventory.id}}
                     db.commit()
                     authorized()
                     return RepositoryFiles(db, job.organization_id, repo.id, inventory.id)
@@ -202,17 +216,29 @@ def github_delivery(self, job_id):
             if not owns(db, job_id, claimed["token"]):
                 return {"state": "STALE_WORKER"}
             job = db.get(Record, job_id)
+            import httpx
+
+            from backend.intake_errors import IntakeError
+            detail = (error.detail() if isinstance(error, IntakeError) else job.data.get("error_detail")) or (
+                {"code": "SCM_TRANSPORT", "message": "GitHub App transport failed validation or connectivity.",
+                 "remediation": "Verify the configured worker credential references and provider connectivity, then retry this exact job. TLS and host guards remain enabled."}
+                if isinstance(error, httpx.TransportError) else
+                {"code": "SCM_SOURCE_FAILED", "message": "GitHub source acquisition or native analysis failed.",
+                 "remediation": "Review the failure stage and connection authorization before retrying."})
             job.data = {
                 **job.data,
                 "state": "CANCELLED" if isinstance(error, JobCancelled) else "FAILED",
                 "reason": "Provider scope changed, analysis stopped, or provider request failed.",
                 "error_type": type(error).__name__,
+                "transport_failure": getattr(error, "failure_code", None),
+                "error_code": detail["code"], "error_detail": detail, "errors": [detail["message"]],
                 "finished_at": now(),
             }
             db.commit()
             if not isinstance(error, JobCancelled):
                 raise
         finally:
+            db.rollback()  # Failed error-state flushes must not mask their cause during cleanup.
             current = db.get(Record, job_id)
             if current:
                 release(db, current, token=claimed["token"])

@@ -3,6 +3,8 @@
 from fastapi import APIRouter, HTTPException, Query, Request
 from sqlalchemy import func, or_, select
 
+from backend.json_query import indexed_text
+
 router = APIRouter(prefix="/api/graph")
 NODE_KINDS = {"claim", "finding", "graph_node", "dependency", "evidence"}
 
@@ -60,10 +62,10 @@ def nodes(
             Record.organization_id == user.organization_id,
             Record.repository_id == repository_id,
             Record.kind.in_(NODE_KINDS),
-            Record.data["scope"]["snapshot_id"].as_string() == selected.id,
+            indexed_text(Record.data, "scope", "snapshot_id") == selected.id,
         )
         if node_class:
-            query = query.where(Record.data["class"].as_string() == node_class)
+            query = query.where(indexed_text(Record.data, "class") == node_class)
         if component:
             query = query.where(Record.data["scope"]["component"].as_string() == component)
         if search:
@@ -106,16 +108,21 @@ def neighborhood(
         selected = center.data.get("scope", {}).get("snapshot_id")
         if center.kind not in NODE_KINDS or not selected or not center.repository_id:
             raise HTTPException(422, "Select a node from a captured repository graph.")
-        query = select(Record).where(
+        endpoints = select(Record.id).where(
             Record.organization_id == user.organization_id,
             Record.repository_id == center.repository_id,
             Record.kind == "edge",
-            Record.data["snapshot_id"].as_string() == selected,
-            or_(Record.data["source"].as_string() == node_id, Record.data["target"].as_string() == node_id),
+            indexed_text(Record.data, "snapshot_id") == selected,
         )
         if relationship:
-            query = query.where(Record.data["relationship"].as_string() == relationship)
-        total = db.scalar(select(func.count()).select_from(query.subquery()))
+            endpoints = endpoints.where(Record.data["relationship"].as_string() == relationship)
+        # Two indexed point lookups avoid an OR plan that scans every edge in
+        # the snapshot. UNION keeps self-edges and duplicate endpoints unique.
+        identifiers_query = endpoints.where(indexed_text(Record.data, "source") == node_id).union(
+            endpoints.where(indexed_text(Record.data, "target") == node_id)
+        ).subquery()
+        query = select(Record).join(identifiers_query, identifiers_query.c.id == Record.id)
+        total = db.scalar(select(func.count()).select_from(identifiers_query))
         edges = list(db.scalars(query.order_by(Record.id).offset(offset).limit(limit)))
         identifiers = {node_id} | {edge.data.get(key) for edge in edges for key in ("source", "target")}
         linked = list(
@@ -125,7 +132,7 @@ def neighborhood(
                     Record.repository_id == center.repository_id,
                     Record.kind.in_(NODE_KINDS),
                     Record.id.in_(identifiers),
-                    Record.data["scope"]["snapshot_id"].as_string() == selected,
+                    indexed_text(Record.data, "scope", "snapshot_id") == selected,
                 )
             )
         )

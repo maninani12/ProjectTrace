@@ -142,4 +142,30 @@ describe("truthful analysis and scoped empty states", () => {
       } as never),
     ).toBe("PARTIAL");
   });
+  it("uses published engine diagnostics only when a compact successful job matches that snapshot", () => {
+    const repository = {
+      id: "one",
+      snapshot: {
+        id: "published",
+        status: "PARTIAL",
+        engines: { PARSING: { state: "PARTIAL" } },
+      },
+      latest_job: { id: "job", state: "PARTIAL", snapshot_id: "published" },
+    } as unknown as Repository;
+    expect(repositoryEngines(repository)?.PARSING.state).toBe("PARTIAL");
+    for (const state of ["ANALYZING", "FAILED", "CANCELLED"]) {
+      expect(
+        repositoryEngines({
+          ...repository,
+          latest_job: { ...repository.latest_job, state },
+        } as Repository),
+      ).toBeUndefined();
+    }
+    expect(
+      repositoryEngines({
+        ...repository,
+        latest_job: { ...repository.latest_job, snapshot_id: "other" },
+      } as Repository),
+    ).toBeUndefined();
+  });
 });

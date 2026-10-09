@@ -2,7 +2,7 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 
 import pytest
-from sqlalchemy import select
+from sqlalchemy import event, select, text
 from sqlalchemy.orm import sessionmaker
 
 from backend.db import Base, Organization, PRHead, QueueEntry, Record, Repository, make_engine
@@ -62,9 +62,15 @@ def test_round_robin_and_repository_running_limit(factory):
         assert claim(db, a1, 120)["state"] == "CLAIMED"
         assert claim(db, a2, 120)["state"] == "DEFERRED"
         assert claim(db, a3, 120)["state"] == "DEFERRED"  # tenant b has its turn
-        assert claim(db, b, 120)["state"] == "CLAIMED"
-        assert claim(db, a3, 120)["state"] == "CLAIMED"
+        assert claim(db, b, 120)["state"] == "DEFERRED"  # SQLite serializes its single writer.
         assert claim(db, a1, 120)["state"] == "ALREADY_RUNNING"
+        token = a1.data["worker_token"]
+        a1.data = {**a1.data, "state": "COMPLETED"}
+        release(db, a1, token=token)
+        db.commit()
+        assert claim(db, a3, 120)["state"] == "DEFERRED"  # b still gets the next tenant turn.
+        assert claim(db, b, 120)["state"] == "CLAIMED"
+        assert claim(db, a3, 120)["state"] == "DEFERRED"
 
 
 def test_100_pending_is_separate_from_one_running_and_bounded(factory, monkeypatch):
@@ -111,10 +117,15 @@ def test_expired_lease_is_recovered_and_stale_worker_is_fenced(factory):
     with factory() as db:
         job = queued(db, "a", "a1")
         first = claim(db, job, 120)
+        job.data = {**job.data, "stage": "BUILDING_EVIDENCE", "performance": {"cache_hits": 14},
+                    "completed_analysis": {"publication_state": "UNPUBLISHED"}}
         db.get(QueueEntry, job.id).lease_expires_at = (datetime.now(timezone.utc) - timedelta(seconds=1)).isoformat()
         db.commit()
         assert recover_expired(db) == [job.id]
         db.refresh(job)
+        assert job.data["attempt_history"][-1]["stage"] == "BUILDING_EVIDENCE"
+        assert job.data["attempt_history"][-1]["performance"] == {"cache_hits": 14}
+        assert job.data["attempt_history"][-1]["completed_analysis"]["publication_state"] == "UNPUBLISHED"
         second = claim(db, job, 120)
         assert second["state"] == "CLAIMED" and second["token"] != first["token"]
         assert not owns(db, job.id, first["token"])
@@ -122,6 +133,43 @@ def test_expired_lease_is_recovered_and_stale_worker_is_fenced(factory):
         db.commit()
         assert db.get(QueueEntry, job.id).state == "RUNNING"
         assert owns(db, job.id, second["token"])
+
+
+def test_idle_recovery_is_read_only_while_another_connection_holds_writer(factory):
+    engine = factory.kw["bind"]
+    writes = []
+
+    def capture(_connection, _cursor, statement, _parameters, _context, _many):
+        if statement.lstrip().upper().startswith(("INSERT", "UPDATE", "DELETE")):
+            writes.append(statement)
+
+    with engine.connect() as writer:
+        writer.execute(text("INSERT INTO queue_cursor VALUES ('native', '', 0)"))
+        event.listen(engine, "before_cursor_execute", capture)
+        try:
+            with factory() as db:
+                db.execute(text("PRAGMA busy_timeout=50"))
+                assert recover_expired(db, execution="LOCAL") == []
+            assert writes == []
+        finally:
+            event.remove(engine, "before_cursor_execute", capture)
+            writer.rollback()
+
+
+def test_local_recovery_does_not_lock_for_expired_celery_work(factory):
+    with factory() as db:
+        job = queued(db, "a", "a1")
+        claim(db, job, 120)
+        db.get(QueueEntry, job.id).lease_expires_at = (datetime.now(timezone.utc) - timedelta(seconds=1)).isoformat()
+        db.commit()
+    with factory.kw["bind"].connect() as writer:
+        writer.execute(text("UPDATE queue_cursor SET revision=revision+1 WHERE id='native'"))
+        with factory() as db:
+            db.execute(text("PRAGMA busy_timeout=50"))
+            assert recover_expired(db, execution="LOCAL") == []
+        writer.rollback()
+    with factory() as db:
+        assert recover_expired(db) == [job.id]
 
 
 def test_concurrent_duplicate_deliveries_claim_one_attempt(factory):

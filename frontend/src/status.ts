@@ -28,8 +28,20 @@ export function repositoryState(repository: Repository) {
 }
 export function repositoryEngines(repository: Repository) {
   const job = repository.latest_job;
-  if (job?.type !== "ADVISORIES")
-    return job ? job.engines : repository.snapshot?.engines;
+  if (job?.type !== "ADVISORIES") {
+    if (!job || job.engines)
+      return job?.engines || repository.snapshot?.engines;
+    // A bounded job preview omits duplicate engine payloads. The same published
+    // snapshot is authoritative, but an active/different/failed job is not.
+    if (
+      job.snapshot_id === repository.snapshot?.id &&
+      ["PARTIAL", "COMPLETED", "COMPLETED_NO_FINDINGS"].includes(
+        job.state || "",
+      )
+    )
+      return repository.snapshot?.engines;
+    return undefined;
+  }
   const engines = { ...repository.snapshot?.engines, ...job.engines };
   if (
     isAnalysisActive(job.state || "UNKNOWN") ||
@@ -50,7 +62,9 @@ export function repositoryEngines(repository: Repository) {
 export function overviewState(data: Workspace) {
   const state = data.analysis?.state || "UNKNOWN";
   if (!["COMPLETED", "COMPLETED_NO_FINDINGS"].includes(state)) return state;
-  return data.claim.some((claim) => claim.status === "CONTRADICTED") ||
+  return !!data.counts?.claim_status.CONTRADICTED ||
+    !!data.counts?.material_findings ||
+    data.claim.some((claim) => claim.status === "CONTRADICTED") ||
     data.finding.some(
       (finding) =>
         ["HIGH", "CRITICAL"].includes(finding.severity || "") &&

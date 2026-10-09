@@ -20,11 +20,12 @@ def python_index(source):
     parents = {child: node for node in nodes for child in ast.iter_child_nodes(node)}
     bindings = {}
     for node in tree.body:
-        names = {n.id for n in ast.walk(node) if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Store)}
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
             names = {node.name}
-        if isinstance(node, (ast.Import, ast.ImportFrom)):
+        elif isinstance(node, (ast.Import, ast.ImportFrom)):
             names = {a.asname or a.name.split(".")[0] for a in node.names}
+        else:
+            names = {n.id for n in ast.walk(node) if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Store)}
         for name in names:
             bindings.setdefault(name, []).append(ast.dump(node, include_attributes=False))
     return tree, nodes, parents, bindings
@@ -32,6 +33,8 @@ def python_index(source):
 
 def annotate(files, findings, metrics):
     indexes = {}
+    file_hashes, contexts = {}, {}
+    metric_index = {(m["path"], m.get("qualified_name", m.get("name"))): m for m in reversed(metrics)}
     for path in {
         f["path"]
         for f in findings
@@ -80,14 +83,17 @@ def annotate(files, findings, metrics):
                         [ast.dump(d, include_attributes=False) for d in target.decorator_list],
                     ]
                 key = digest([item["rule"], symbol, symptom])
-                referenced = {n.id for n in ast.walk(owner) if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Load)}
-                context = digest(
-                    [
+                owner_key = (path, owner)
+                if owner_key not in contexts:
+                    referenced = {n.id for n in ast.walk(owner) if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Load)}
+                    contexts[owner_key] = digest([
                         ast.dump(owner, include_attributes=False),
                         {n: bindings[n] for n in sorted(referenced) if n in bindings},
-                    ]
-                )
-                file_hash = digest(ast.dump(tree, include_attributes=False))
+                    ])
+                context = contexts[owner_key]
+                if path not in file_hashes:
+                    file_hashes[path] = digest(ast.dump(tree, include_attributes=False))
+                file_hash = file_hashes[path]
                 confidence, method = "HIGH", "PYTHON_AST"
                 item["structural_symbol"] = symbol
         elif item.get("resource_context_hash") and item.get("infrastructure_format") != "DOCKERFILE":
@@ -98,14 +104,7 @@ def annotate(files, findings, metrics):
             confidence, method = "HIGH", "RESOURCE_STRUCTURE"
         elif item.get("category") == "QUALITY":
             # Maintained parser metrics support symbol identity; statement matching remains conservative.
-            metric = next(
-                (
-                    m
-                    for m in metrics
-                    if m["path"] == path and m.get("qualified_name", m.get("name")) == item.get("symbol")
-                ),
-                None,
-            )
+            metric = metric_index.get((path, item.get("symbol")))
             if metric and item.get("measured") is not None:
                 key = digest([item["rule"], item["symbol"], item.get("metric")])
                 context = digest([metric.get("syntax_context_hash", metric["body_hash"]), item.get("observation_hash")])

@@ -34,18 +34,26 @@ async def webhook(connection_id: str, request: Request):
             raise HTTPException(401, "SCM webhook signature is invalid.")
         try:
             payload = json.loads(raw)
-            installation = str(payload.get("installation", {}).get("id", ""))
-            if installation != connection.data["installation_id"]:
+            if not isinstance(payload, dict):
                 raise ValueError()
-        except (ValueError, AttributeError, TypeError):
-            raise HTTPException(422, "SCM webhook installation scope is invalid.") from None
+        except (ValueError, TypeError):
+            raise HTTPException(422, "SCM webhook payload is invalid.") from None
+        event = request.headers.get("x-github-event", "")
         identifier = request.headers.get("x-github-delivery", "")
         if not identifier or len(identifier) > 100:
             raise HTTPException(422, "A bounded delivery identifier is required.")
+        # GitHub ping payloads can omit installation; every other event stays scoped,
+        # including replays and unsupported events.
+        if event != "ping":
+            try:
+                installation = str(payload.get("installation", {}).get("id", ""))
+                if installation != connection.data["installation_id"]:
+                    raise ValueError()
+            except (ValueError, AttributeError, TypeError):
+                raise HTTPException(422, "SCM webhook installation scope is invalid.") from None
         scoped_id = hash_text(connection.id + ":" + identifier)
         if db.get(Delivery, scoped_id):
             return {"status": "DUPLICATE"}
-        event = request.headers.get("x-github-event", "")
         if event not in {"pull_request", "push", "ping", "installation", "installation_repositories"}:
             return {"status": "IGNORED"}
         db.add(Delivery(id=scoped_id, organization_id=connection.organization_id, event=event))

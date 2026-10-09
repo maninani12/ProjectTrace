@@ -13,6 +13,7 @@ from analyzers.engine import VERSION, redact, redact_metadata
 from backend.accuracy import report as accuracy_report
 from backend.db import CloudAsset, QualityAnalysis, Record, TenantPolicy
 from backend.domain import audit
+from backend.json_query import indexed_text
 from backend.security import allowed_repositories, authenticate, require_repo
 from backend.trust import integrity, policy
 
@@ -487,14 +488,16 @@ def infrastructure(
         scope_truncated = len(snapshots) > 200
         snapshots = snapshots[:200]
         ids = [s.id for s in snapshots]
-        scoped = query.where(Record.data["scope"]["snapshot_id"].as_string().in_(ids))
+        # Constant JSON paths match the existing snapshot/class expression indexes.
+        # Bound path parameters otherwise force scans through historical graph rows.
+        scoped = query.where(indexed_text(Record.data, "scope", "snapshot_id").in_(ids))
         resource_scope = (
-            scoped.where(Record.data["format"].as_string() == infrastructure_format)
+            scoped.where(indexed_text(Record.data, "format") == infrastructure_format)
             if infrastructure_format
             else scoped
         )
         finding_scope = (
-            scoped.where(Record.data["infrastructure_format"].as_string() == infrastructure_format)
+            scoped.where(indexed_text(Record.data, "infrastructure_format") == infrastructure_format)
             if infrastructure_format
             else scoped
         )
@@ -502,15 +505,13 @@ def infrastructure(
             db.scalars(
                 resource_scope.where(
                     Record.kind == "graph_node",
-                    Record.data["authority"].as_string() == "STATIC",
+                    indexed_text(Record.data, "authority") == "STATIC",
                     Record.id.in_(
                         select(CloudAsset.id).where(
                             CloudAsset.organization_id == user.organization_id, CloudAsset.snapshot_id.in_(ids)
                         )
                     ),
-                    Record.data["class"]
-                    .as_string()
-                    .in_(["CLOUD_RESOURCE", "CLOUD_IDENTITY", "CONTAINER_WORKLOAD", "CONTAINER_IMAGE"]),
+                    indexed_text(Record.data, "class").in_(["CLOUD_RESOURCE", "CLOUD_IDENTITY", "CONTAINER_WORKLOAD", "CONTAINER_IMAGE"]),
                 )
                 .order_by(Record.id)
                 .offset(offset)
@@ -519,7 +520,7 @@ def infrastructure(
         )
         findings = list(
             db.scalars(
-                finding_scope.where(Record.kind == "finding", Record.data["category"].as_string() == "IAC")
+                finding_scope.where(Record.kind == "finding", indexed_text(Record.data, "category") == "IAC")
                 .order_by(Record.id)
                 .offset(offset)
                 .limit(limit + 1)

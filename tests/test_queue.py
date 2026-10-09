@@ -43,7 +43,7 @@ def test_queued_import_encrypts_input_and_worker_persists_stages(client, monkeyp
     assert response.status_code == 202
     result = response.json()
     assert result["snapshot_id"] is None and result["state"] == "QUEUED"
-    assert sent[0][0] == "projecttrace.analyze" and sent[0][1]["args"] == [result["job_id"]]
+    assert sent[0][0] == "projecttrace.analyze_inventory" and sent[0][1]["args"] == [result["job_id"]]
     with main.Session() as db:
         retained = db.get(AnalysisInput, result["job_id"])
         assert secret not in retained.ciphertext
@@ -133,11 +133,10 @@ def test_scheduler_purges_expired_inputs_and_marks_stopped_jobs(client, monkeypa
     assert client.get("/api/record/" + result["job_id"]).json()["state"] == "FAILED"
 
 
-def test_queued_invalid_zip_survives_and_retry_uses_native_task(client, monkeypatch):
-    tasks, sent = queued(client, monkeypatch)
-    result = client.post("/api/archive/import?name=Invalid", content=b"invalid zip").json()
-    with pytest.raises(zipfile.BadZipFile):
-        tasks.analyze_job.run(result["job_id"])
-    assert client.get("/api/record/" + result["job_id"]).json()["state"] == "FAILED"
-    retried = client.post(f"/api/jobs/{result['job_id']}/retry")
-    assert retried.status_code == 200 and sent[-1][0] == "projecttrace.analyze"
+def test_queued_invalid_zip_is_rejected_before_admission(client, monkeypatch):
+    _, sent = queued(client, monkeypatch)
+    response = client.post("/api/archive/import?name=Invalid", content=b"invalid zip")
+    assert response.status_code == 422
+    assert response.json()["detail"]["code"] == "ARCHIVE_INVALID"
+    assert not sent
+    assert client.get("/api/workspace").json()["repositories"] == []

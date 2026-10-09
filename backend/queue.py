@@ -45,25 +45,45 @@ def dispatch(db, job):
         register(db, job)
         db.commit()
 
+    if job.data.get("execution") == "LOCAL":
+        from backend.local_jobs import notify
+        try:
+            notify()
+        except RuntimeError:
+            db.refresh(job)
+            job.data = {**job.data, "dispatch": "PENDING_RETRY", "warnings": ["Local runner unavailable; restart ProjectTrace."]}
+            db.commit()
+        # The fenced claim records SENT. Never race the awakened worker with an
+        # API-side write of a stale version of its stage/token/input metadata.
+        return
+
     if job.data.get("type") == "ADVISORIES":
         task = "projecttrace.advisories"
     elif job.data.get("source") == "INVENTORY":
         task = "projecttrace.analyze_inventory"
     elif job.data.get("source") in {"ZIP", "FILES"}:
         task = "projecttrace.analyze"
+    elif job.data.get("source") == "PUBLIC_GITHUB":
+        task = "projecttrace.public_github"
     else:
         task = "projecttrace.github_delivery"
     try:
         celery.send_task(task, args=[job.id], task_id=job.id, retry=False)
-        job.data = {**job.data, "dispatch": "SENT", "last_dispatched_at": now()}
+        status, warning = "SENT", None
     except Exception:
-        job.data = {
-            **job.data,
-            "dispatch": "PENDING_RETRY",
-            "last_dispatched_at": now(),
-            "warnings": ["Queue dispatch unavailable; retry this retained job."],
-        }
-    db.commit()
+        status, warning = "PENDING_RETRY", "Queue dispatch unavailable; retry this retained job."
+    from sqlalchemy.orm.exc import StaleDataError
+    for _ in range(3):
+        db.refresh(job)
+        job.data = {**job.data, "dispatch": status, "last_dispatched_at": now(),
+                    **({"warnings": [warning]} if warning else {})}
+        try:
+            db.commit()
+            return
+        except StaleDataError:
+            db.rollback()
+    # Delivery already happened; do not resend or overwrite a newer worker.
+    db.refresh(job)
 
 
 def check_capacity(db, user, repo):
@@ -71,7 +91,7 @@ def check_capacity(db, user, repo):
     admit(db, user.organization_id, repo.id)
 
 
-def enqueue_analysis(db, user, repo, content, *, source="FILES", request_id=None, **options):
+def enqueue_analysis(db, user, repo, content, *, source="FILES", request_id=None, import_receipt=None, **options):
     check_capacity(db, user, repo)
     if source == "INVENTORY":
         from backend.repository_store import RepositoryFiles
@@ -105,7 +125,7 @@ def enqueue_analysis(db, user, repo, content, *, source="FILES", request_id=None
             "user_id": user.id,
             "request_id": request_id,
             "source": source,
-            "execution": "CELERY",
+            "execution": "LOCAL" if os.getenv("JOB_MODE") == "local" else "CELERY",
             "options": options,
             "warnings": [],
             "errors": [],
@@ -125,6 +145,8 @@ def enqueue_analysis(db, user, repo, content, *, source="FILES", request_id=None
     audit(db, user, "ANALYSIS_QUEUED", job.id, {"source": source}, repo.id)
     from backend.scheduling import register
     register(db, job)
+    if import_receipt:
+        import_receipt.data = {**import_receipt.data, "state": "QUEUED", "job_id": job.id}
     db.commit()
     dispatch(db, job)
     return job

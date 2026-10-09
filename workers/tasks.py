@@ -9,7 +9,7 @@ from backend.jobs import TERMINAL, execute_analysis, inventory_time_budget, job_
 
 celery = Celery("projecttrace", broker=os.getenv("REDIS_URL", "redis://127.0.0.1:6379/0"))
 celery.conf.update(
-    imports=["workers.github", "workers.advisories"],
+    imports=["workers.github", "workers.public_github", "workers.advisories"],
     task_serializer="json",
     accept_content=["json"],
     result_serializer="json",
@@ -26,6 +26,7 @@ celery.conf.update(
         "projecttrace.analyze": {"queue": "native"},
         "projecttrace.analyze_inventory": {"queue": "large"},
         "projecttrace.github_delivery": {"queue": "scm"},
+        "projecttrace.public_github": {"queue": "native"},
         "projecttrace.advisories": {"queue": "advisory"},
     },
     broker_transport_options={"visibility_timeout": inventory_time_budget() + 120},
@@ -50,11 +51,11 @@ def analyze_job(self, job_id):
     return run_analysis(self, job_id)
 
 
-def run_analysis(self, job_id):
+def run_analysis(self, job_id, *, session_factory=None):
     from backend.scheduling import JobCancelled, claim, owns, release
 
-    with Session() as db:
-        job = db.scalar(select(Record).where(Record.id == job_id).with_for_update())
+    with (session_factory or Session)() as db:
+        job = db.get(Record, job_id)
         if not job or job.kind != "job" or job.data.get("state") in TERMINAL:
             return
         claimed = claim(db, job, job_time_budget(job))
@@ -92,8 +93,8 @@ def run_analysis(self, job_id):
                     (datetime.now(timezone.utc) - datetime.fromisoformat(queued_at)).total_seconds() * 1000, 2
                 ),
             }
-            # Claim under the PostgreSQL row lock before publishing any stages.
-            # The committed lease prevents duplicate deliveries during later commits.
+            # claim() locks scheduler then job and commits the fenced lease.
+            # Duplicate deliveries cannot own a later publication attempt.
             db.commit()
             # Legacy operator-created fixtures are supported; API never puts raw input in records.
             loader = (lambda: job.data["files"]) if "files" in job.data else (lambda: load_input(db, job))
@@ -108,7 +109,7 @@ def run_analysis(self, job_id):
                 **job.data.get("options", {}),
             )
             retained = db.get(AnalysisInput, job.id)
-            if retained:
+            if retained and job.data.get("state") in {"COMPLETED", "COMPLETED_NO_FINDINGS"}:
                 db.delete(retained)
             job.data = {k: v for k, v in job.data.items() if k != "files"}
             db.commit()
@@ -121,7 +122,7 @@ def run_analysis(self, job_id):
                 "state": "CANCELLED" if isinstance(error, JobCancelled) else "FAILED",
                 "error_type": type(error).__name__,
                 "finished_at": now(),
-                "errors": ["Static analysis failed; retry retained input or upload a fresh snapshot."],
+                "errors": job.data.get("errors") or ["Static analysis failed; retry retained input or upload a fresh snapshot."],
             }
             db.commit()
             if not isinstance(error, JobCancelled):

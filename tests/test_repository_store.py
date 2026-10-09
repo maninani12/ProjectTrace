@@ -16,6 +16,7 @@ from backend.db import (
     Repository,
     SnapshotInventory,
     SourceBlob,
+    SourceInventory,
     User,
     make_engine,
 )
@@ -93,6 +94,23 @@ def test_tenant_encryption_dedup_metadata_and_filtered_access(storage):
         files["src/app.py"]
 
 
+def test_scm_links_have_explicit_unsupported_coverage_without_source_storage(storage):
+    files = captured(storage, {
+        "app.py": "VALUE = 1\n",
+        "link.py": {"bytes": 8, "state": "UNSUPPORTED", "source_kind": "SYMLINK"},
+        "module": {"bytes": 0, "state": "UNSUPPORTED", "source_kind": "SUBMODULE"},
+    })
+    assert "link.py" not in files and "module" not in files
+    assert files.hash_for("link.py") is None
+    result = analyze_inventory(storage[0], files)
+    rows = {row["path"]: row for row in result["analysis_coverage"]["inventory"]}
+    for path in ("link.py", "module"):
+        assert rows[path]["analysis_state"] == "UNSUPPORTED"
+        assert rows[path]["source_parser_completed"] is False
+        assert rows[path]["native_scan_performed"] is False
+    assert "symbolic link" in rows["link.py"]["reason"]
+
+
 def test_encrypted_seekable_upload_roundtrip_and_cleanup(storage):
     archive = io.BytesIO()
     with zipfile.ZipFile(archive, "w") as writer:
@@ -120,6 +138,37 @@ def test_capture_refuses_traversal_duplicates_and_quotas(storage):
         db.rollback()
     with pytest.raises(ValueError, match="file inventory quota"):
         capture(db, user.organization_id, repo, [("a.py", b"pass"), ("b.py", b"pass")], quota={**limits(), "files": 1})
+
+
+def test_checkpointed_failed_capture_cannot_be_consumed(storage):
+    db, user, repo = storage
+    items = [(f"file{i}.py", b"VALUE = 1\n") for i in range(101)]
+    with pytest.raises(ValueError, match="file inventory quota"):
+        capture(db, user.organization_id, repo, items, quota={**limits(), "files": 100}, checkpoint=lambda: None)
+    db.rollback()
+    inventory = db.scalar(select(SourceInventory))
+    assert inventory.data["state"] == "CAPTURING"
+    with pytest.raises(ValueError, match="capture is incomplete"):
+        RepositoryFiles(db, user.organization_id, repo.id, inventory.id)
+
+
+def test_checkpoint_authorization_revocation_stops_capture(storage):
+    db, user, repo = storage
+    calls = 0
+
+    def revoked():
+        nonlocal calls
+        calls += 1
+        if calls == 2:
+            raise ValueError("SCM repository permission is revoked.")
+
+    with pytest.raises(ValueError, match="revoked"):
+        capture(db, user.organization_id, repo, [(f"f{i}.py", b"pass\n") for i in range(101)], checkpoint=revoked)
+    db.rollback()
+    inventory = db.scalar(select(SourceInventory))
+    assert inventory.data["state"] == "CAPTURING"
+    with pytest.raises(ValueError, match="capture is incomplete"):
+        RepositoryFiles(db, user.organization_id, repo.id, inventory.id)
 
 
 def test_partitioned_global_claims_and_network_policy_match_legacy(storage):
@@ -311,7 +360,9 @@ def test_job_link_is_captured_before_snapshot_insert_without_late_metadata_rewri
         original_id = snapshot.id
         repeated, repeated_job = execute_analysis(db, user, repo, files)
         assert repeated.id == original_id
-        assert repeated.data["job_id"] == repeated_job.id
+        assert repeated.data["job_id"] == job.id  # Original capture provenance is immutable.
+        assert repeated_job.data["snapshot_id"] == original_id
+        assert updated == [snapshot.id]  # Reuse does not rewrite repository-sized metadata.
         assert db.scalar(select(func.count()).select_from(Record).where(Record.kind == "snapshot")) == 1
     finally:
         event.remove(Record, "after_insert", inserted_snapshot)
