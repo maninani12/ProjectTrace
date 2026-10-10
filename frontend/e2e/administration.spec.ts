@@ -1,0 +1,165 @@
+import { test, expect, type Page } from "@playwright/test";
+import AxeBuilder from "@axe-core/playwright";
+import { readFileSync, mkdirSync, writeFileSync } from "node:fs";
+import path from "node:path";
+import { completedAnalysis } from "./analysis";
+
+const qa = process.env.PROJECTTRACE_ADMIN_QA;
+const origin = new URL(process.env.PROJECTTRACE_BASE_URL || "http://127.0.0.1:5184").origin;
+const fixturePassword = "Controlled-browser-fixture-password-123!";
+const account = () => JSON.parse(readFileSync(path.join(qa!, "qa-account.secret"), "utf8"));
+const command = (values = {}) => ({ command_id: crypto.randomUUID().replaceAll("-", ""), reason: "Private browser acceptance qualification", ...values });
+async function owner(page: Page) {
+  const fixture = account();
+  const result = await page.request.post("/api/auth/login", { headers: { Origin: origin }, data: { email: fixture.email, password: fixture.password } });
+  expect(result.status()).toBe(200);
+  return { fixture, headers: { Origin: origin, "X-CSRF-Token": (await result.json()).csrf } };
+}
+async function confirm(page: Page) {
+  const dialog = page.getByRole("dialog");
+  await dialog.getByLabel("Reason", { exact: true }).fill("Private browser acceptance qualification");
+  await dialog.getByRole("checkbox", { name: /reviewed the target/ }).check();
+  await dialog.getByRole("button", { name: "Confirm operation", exact: true }).click();
+  await expect(dialog.getByText("Audit confirmation:", { exact: false })).toBeVisible();
+}
+test.beforeEach(() => { test.skip(!qa, "Requires explicit private administration QA instance."); });
+
+test("administration loads bounded data at volume, paginates and exports sanitized activity", async ({ page }, info) => {
+  const errors: string[] = []; page.on("pageerror", error => errors.push(error.message));
+  const { fixture, headers } = await owner(page);
+  const timings: { screen: string; milliseconds: number }[] = [];
+  let began = Date.now();
+  await page.goto("/administration");
+  await expect(page.getByRole("heading", { name: "Dashboard", exact: true })).toBeVisible();
+  await expect(page.locator(".admin-summary dd").filter({ hasText: /total: 10\d+/ })).toBeVisible({ timeout: 15000 });
+  timings.push({ screen: "dashboard", milliseconds: Date.now() - began });
+  began = Date.now();
+  await page.getByRole("button", { name: "Users", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Next page", exact: true })).toBeEnabled();
+  await page.getByRole("button", { name: "Next page", exact: true }).click();
+  await expect(page.locator(".admin-pagination")).toContainText("26");
+  timings.push({ screen: "user second page", milliseconds: Date.now() - began });
+  await page.getByRole("button", { name: "Activity Explorer", exact: true }).click();
+  await expect(page.getByLabel("action", { exact: true })).toBeVisible();
+  await page.getByLabel("action", { exact: true }).fill("BENCHMARK_DENIED");
+  await page.getByRole("button", { name: "Apply activity filters", exact: true }).click();
+  await expect(page.locator("tbody tr")).toHaveCount(25);
+  expect(await page.locator("tbody").innerText()).not.toContain("BENCHMARK_ACCEPTED");
+  const exported = await page.request.get("/api/admin/activity?export=true&action=BENCHMARK_DENIED&limit=1", { headers });
+  expect(exported.status()).toBe(200);
+  expect((await exported.json()).items).toHaveLength(1);
+  expect(JSON.stringify(await exported.json())).not.toContain(fixture.password);
+  const violations = (await new AxeBuilder({ page }).include("main").withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze()).violations;
+  expect(violations).toEqual([]);
+  await page.screenshot({ path: info.outputPath("administration-activity.png"), fullPage: true });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(page.getByRole("button", { name: "ProjectTrace", exact: true })).not.toBeInViewport();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
+  await page.screenshot({ path: info.outputPath("administration-mobile.png"), fullPage: true, animations: "disabled" });
+  expect(errors).toEqual([]);
+  mkdirSync(path.join(qa!, "browser-evidence"), { recursive: true });
+  writeFileSync(path.join(qa!, `browser-timings-${Date.now()}.json`), JSON.stringify({ timings, errors, accessibility_violations: violations.length }, null, 2));
+});
+
+test("invitation, team delegation, direct feature denial, cache revocation and membership reactivation work", async ({ page, browser }, info) => {
+  const errors: string[] = []; page.on("pageerror", error => errors.push(error.message));
+  const { headers } = await owner(page);
+  const email = `admin-browser-member-${Date.now()}@example.test`;
+  await page.goto("/administration?section=Invitations");
+  await page.getByRole("button", { name: "Invite member", exact: true }).click();
+  let dialog = page.getByRole("dialog");
+  await dialog.getByLabel("Member email", { exact: true }).fill(email);
+  await dialog.getByLabel("Organization role", { exact: true }).selectOption("ENGINEER");
+  await confirm(page);
+  const invitationUrl = await dialog.getByLabel("One-time invitation link").inputValue();
+  await dialog.getByRole("button", { name: "Done", exact: true }).click();
+  const context = await browser.newContext({ baseURL: origin });
+  const member = await context.newPage();
+  await member.goto(invitationUrl);
+  await expect(member.getByRole("heading", { name: "Join your ProjectTrace organization" })).toBeVisible();
+  await member.getByLabel("Display name (optional)").fill("Private Acceptance Member");
+  await member.getByLabel("New account password or existing local account password").fill(fixturePassword);
+  await member.getByRole("checkbox", { name: /accept membership/ }).check();
+  await member.getByRole("button", { name: "Accept invitation", exact: true }).click();
+  await expect(member).toHaveURL(/repositories/);
+  const identity = await (await member.request.get("/api/auth/me")).json();
+  const userId = identity.access.user_id;
+  expect((await member.request.get("/api/admin/users")).status()).toBe(403);
+  await page.goto("/administration?section=Teams");
+  await page.getByRole("button", { name: "Create team", exact: true }).click();
+  const teamName = `Browser Team ${Date.now()}`;
+  await page.getByRole("dialog").getByLabel("Team name").fill(teamName);
+  const created = page.waitForResponse(r => r.url().endsWith("/api/admin/teams") && r.request().method() === "POST");
+  await confirm(page);
+  const team = (await (await created).json()).id;
+  await page.getByRole("dialog").getByRole("button", { name: "Done", exact: true }).click();
+  const row = page.locator("tbody tr").filter({ hasText: teamName });
+  // Search moves the new team into the first bounded server page.
+  await page.getByLabel("Filter search").fill(teamName);
+  await page.getByRole("button", { name: "Search", exact: true }).click();
+  await row.getByRole("button", { name: "Manage member", exact: true }).click();
+  dialog = page.getByRole("dialog");
+  await dialog.getByLabel("Search Organization member identifier", { exact: true }).fill(userId);
+  await dialog.getByRole("button", { name: "Search records", exact: true }).click();
+  await expect(dialog.getByLabel("Organization member identifier", { exact: true }).locator(`option[value="${userId}"]`)).toHaveCount(1);
+  await dialog.getByLabel("Organization member identifier", { exact: true }).selectOption(userId);
+  await dialog.getByLabel("Action", { exact: true }).selectOption("ADD");
+  await dialog.getByLabel("Team role", { exact: true }).selectOption("ADMIN");
+  await confirm(page);
+  await dialog.getByRole("button", { name: "Done", exact: true }).click();
+  await member.goto("/administration?section=Team%20Operations");
+  await member.getByLabel("Permitted team", { exact: true }).selectOption(team);
+  await expect(member.getByRole("heading", { name: "Team analysis jobs", exact: true })).toBeVisible();
+  expect((await member.request.get("/api/admin/usage")).status()).toBe(403);
+  expect((await member.request.get(`/api/admin/usage?team_id=${team}`)).status()).toBe(200);
+  await page.goto(`/administration?section=Feature%20Access&scope=USER&target=${userId}`);
+  const feature = page.locator("tbody tr").filter({ hasText: "Ask Engineering" });
+  await feature.getByRole("button", { name: "Review change", exact: true }).click();
+  dialog = page.getByRole("dialog");
+  await dialog.getByLabel("Decision", { exact: true }).selectOption("DENY");
+  await dialog.getByLabel("Reason", { exact: true }).fill("Private browser feature restriction qualification");
+  await dialog.getByRole("button", { name: "Preview effective access", exact: true }).click();
+  await dialog.getByRole("checkbox", { name: /reviewed the preview/ }).check();
+  await dialog.getByRole("button", { name: "Confirm reviewed policy", exact: true }).click();
+  await expect(dialog.getByText(/Policy confirmed/)).toBeVisible();
+  await dialog.getByRole("button", { name: "Done", exact: true }).click();
+  expect((await member.request.post("/api/ask", { headers: { Origin: origin, "X-CSRF-Token": identity.csrf }, data: { question: "Fixture restriction test" } })).status()).toBe(403);
+  const suspension = await page.request.post(`/api/admin/users/${userId}`, { headers, data: command({ action: "SUSPEND", expected_version: identity.access.membership_version }) });
+  expect(suspension.status()).toBe(200);
+  await expect(member.getByRole("heading", { name: "Welcome to ProjectTrace", exact: true })).toBeVisible({ timeout: 20000 });
+  expect(await member.locator("tbody tr").count()).toBe(0);
+  const resumed = await page.request.post(`/api/admin/users/${userId}`, { headers, data: command({ action: "REACTIVATE", expected_version: (await suspension.json()).member.version }) });
+  expect(resumed.status()).toBe(200);
+  await member.getByLabel("Email", { exact: true }).fill(email);
+  await member.getByLabel("Password", { exact: true }).fill(fixturePassword);
+  await member.getByRole("button", { name: "Sign in", exact: true }).click();
+  await expect(member.getByRole("heading", { name: "Team Operations", exact: true })).toBeVisible({ timeout: 15000 });
+  await member.screenshot({ path: info.outputPath("team-delegation-restored.png"), fullPage: true });
+  await context.close();
+  expect(errors).toEqual([]);
+});
+
+test("new source fixture analysis preserves claims, evidence and scoped admin job metadata", async ({ page }, info) => {
+  const errors: string[] = []; page.on("pageerror", error => errors.push(error.message));
+  const { headers } = await owner(page);
+  const imported = await page.request.post("/api/import", { headers, data: { name: `Admin evidence acceptance ${Date.now()}`, files: {
+    "README.md": "This service uses authentication and validates input.",
+    "app.py": "def process(value):\n    return eval(value)\n", "tests/test_fixture.py": "def test_fixture():\n    assert True\n",
+  } } });
+  const snapshot = await completedAnalysis(page.request, imported);
+  const claims = await page.request.get(`/api/workspace/records?view=Claim%20Ledger&repository_id=${snapshot.repository_id}&limit=25`);
+  expect(claims.status()).toBe(200);
+  const workspace = await page.request.get(`/api/workspace?summary=1&repository_id=${snapshot.repository_id}`);
+  expect(workspace.status()).toBe(200);
+  await page.goto("/administration?section=Analysis%20Jobs");
+  await expect(page.getByRole("heading", { name: "Analysis Jobs", exact: true })).toBeVisible();
+  await expect(page.locator("tbody tr").filter({ hasText: snapshot.repository_id })).toHaveCount(1);
+  const allJobs = await page.request.get(`/api/admin/jobs?repository_id=${snapshot.repository_id}`);
+  expect(allJobs.status()).toBe(200);
+  expect((await allJobs.json()).items[0].snapshot_id).toBe(snapshot.id);
+  expect(await allJobs.text()).not.toContain("return eval(value)");
+  const inspected = await page.request.get(`/api/admin/repositories/${snapshot.repository_id}/access`);
+  expect(inspected.status()).toBe(200);
+  await page.screenshot({ path: info.outputPath("admin-jobs-real-analysis.png"), fullPage: true });
+  expect(errors).toEqual([]);
+});

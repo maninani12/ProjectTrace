@@ -40,6 +40,19 @@ function topic(
 }
 export const guideTopics: GuideTopic[] = [
   topic(
+    "administration",
+    "Administration & Control Center",
+    "Manage permitted members, teams, repository access and operational controls in your selected organization.",
+    "Every administrative decision needs a clear scope, current authority and an audit record.",
+    "Your current organization membership, delegated teams, versioned feature policies and recorded job/activity metadata.",
+    "Paginated directories, explainable feature decisions, scoped usage, job diagnostics and confirmed governance changes.",
+    "An organization owner invites an engineer, grants a team's repository access and temporarily restricts Ask Engineering. The server checks each action; source access still needs a repository grant.",
+    ["repositories", "claims", "security-trust", "audit"],
+    "Select the intended workspace, open Administration, inspect the target, review the reason and version, and confirm. Team administrators use Team Operations for their delegated teams.",
+    "Only eight implemented workflow capabilities are configurable. CPU, memory, live worker heartbeat and old activity can be unavailable. Invitations are manually delivered; notices are in-app. Platform metadata authority never grants customer source access. Full-product production readiness remains separately gated.",
+    "Backend authorization applies to direct APIs, admission, dispatch and worker starts. Mandatory platform/organization restrictions override ordinary exceptions. Changes use version checks, durable command receipts and transactional audit. Active jobs retain their declared scope unless explicitly cancelled. Access polling clears protected browser caches; session revocation requires sign-in.",
+  ),
+  topic(
     "engineering-changes",
     "Engineering Changes",
     "See which engineering realities changed in an explicit BASE-to-HEAD comparison.",
@@ -491,6 +504,7 @@ export const guideTopics: GuideTopic[] = [
 ];
 
 export const guideForPage: Record<string, string> = {
+  Administration: "administration",
   Overview: "start",
   Systems: "product-map",
   Components: "product-map",

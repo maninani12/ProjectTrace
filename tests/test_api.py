@@ -43,7 +43,9 @@ def test_cross_tenant_idor(signed):
     assert signed.get("/api/record/" + claim["id"]).status_code == 404
     assert signed.get("/api/sbom/" + claim["scope"]["snapshot_id"]).status_code == 404
     assert signed.get("/api/workspace").json()["repositories"] == []
-    assert signed.get("/api/audit").json() == []
+    audit = signed.get("/api/audit").json()
+    assert all(event["actor"] == "outside@example.com" for event in audit)
+    assert all(event["action"] == "LOGIN_SUCCEEDED" and event["target"] == "outsider" for event in audit)
 
 
 def test_viewer_grants_and_mutation_authorization(signed):

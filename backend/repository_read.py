@@ -1,7 +1,8 @@
 """Repository catalogue reads never depend on finding or graph aggregation."""
 from sqlalchemy import func, select
 
-from backend.db import Grant, Record, Repository
+from backend.db import Record, Repository
+from backend.governance import repository_condition
 from backend.workspace_read import KINDS, analysis_state, preview
 
 JOB_FIELDS = ("state", "stage", "type", "branch", "snapshot_id", "execution", "started_at", "finished_at",
@@ -9,8 +10,7 @@ JOB_FIELDS = ("state", "stage", "type", "branch", "snapshot_id", "execution", "s
 
 
 def repository_page(db, user, repository_id, search, offset, limit):
-    query = select(Repository).join(Grant, Grant.repository_id == Repository.id).where(
-        Repository.organization_id == user.organization_id, Grant.user_id == user.id)
+    query = select(Repository).where(repository_condition(user))
     if repository_id:
         query = query.where(Repository.id == repository_id)
     if search:

@@ -10,6 +10,7 @@ from sqlalchemy.orm import sessionmaker
 from analyzers.engine import analyze
 from backend.db import (
     Base,
+    Grant,
     Organization,
     ParserArtifact,
     Record,
@@ -49,6 +50,8 @@ def storage(tmp_path, monkeypatch):
             provider="LOCAL",
         )
         db.add_all([user, repo])
+        db.flush()
+        db.add(Grant(user_id=user.id,repository_id=repo.id))
         db.commit()
         yield db, user, repo
     engine.dispose()
@@ -430,6 +433,8 @@ def test_owned_head_recovery_checks_every_hash_before_evicting_only_changed_arti
         repo = Repository(id="benchmark-repo", organization_id="benchmark", name="Owned", system="Owned",
                           component="Owned", owner="Owned", provider="LOCAL")
         db.add_all([user, repo])
+        db.flush()
+        db.add(Grant(user_id=user.id,repository_id=repo.id))
         db.commit()
         initial = capture(db, user.organization_id, repo, (fixture(i, args) for i in range(16)), source="OWNED_BENCHMARK")
         base, _job = execute_analysis(db, user, repo, RepositoryFiles(db, user.organization_id, repo.id, initial.id))

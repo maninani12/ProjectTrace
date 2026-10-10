@@ -76,6 +76,12 @@ import type {
 } from "./api";
 
 import NativeProfiles from "./NativeProfiles";
+import Administration, {
+  OwnershipNotices,
+  OwnNotifications,
+  WorkspaceSelector,
+} from "./Administration";
+import type { AccessContext } from "./api";
 
 const CodeQuality = lazy(() => import("./CodeQuality"));
 const EnterpriseTrust = lazy(() => import("./EnterpriseTrust"));
@@ -140,6 +146,8 @@ const navigation = [
   },
 ] as const;
 const descriptions: Record<string, string> = {
+  Administration:
+    "Observe organization operations, review scoped access, and verify every administrative change.",
   Overview:
     "See what your engineering organization claims, what the evidence supports, and what needs attention.",
   Systems:
@@ -454,6 +462,7 @@ function WorkspaceApp() {
   const [identityError, setIdentityError] = useState("");
   const [identityAttempt, setIdentityAttempt] = useState(0);
   const page = pageForRoute(location.pathname);
+  const administration = page === "Administration";
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("ALL");
   const [repoFilter, setRepoFilter] = useState("ALL");
@@ -469,14 +478,31 @@ function WorkspaceApp() {
   const [repositorySearch, setRepositorySearch] = useState("");
   const [catalogOffset, setCatalogOffset] = useState(0);
   const listView = ["Systems", "Components", "Repositories"].includes(page);
-  const tenantKey = identity?.email;
+  const tenantKey = `${identity?.email || ""}:${identity?.organization_id || "primary"}`;
+  const accessVersion = useRef<string | undefined>(undefined);
+  const featureAllowed = (feature: string) =>
+    identity?.access?.features?.[feature]?.allowed !== false;
+  const pageFeature = [
+    "Cloud",
+    "Cloud Assets",
+    "Cloud Identities",
+    "Exposure",
+    "Risk Paths",
+  ].includes(page)
+    ? "cloud"
+    : page === "Ask Engineering"
+      ? "ask_engineering"
+      : null;
+  const engineeringAllowed =
+    featureAllowed("api_access") &&
+    (!pageFeature || featureAllowed(pageFeature));
   const catalog = useQuery({
     queryKey: ["workspace", "catalog", tenantKey, catalogOffset],
     queryFn: () =>
       api<Workspace>(
         `/repositories?include_analysis=false&limit=100&offset=${catalogOffset}`,
       ),
-    enabled: !!identity,
+    enabled: !!identity && !administration && engineeringAllowed,
     retry: false,
     staleTime: 10000,
   });
@@ -499,7 +525,7 @@ function WorkspaceApp() {
             ...(repoFilter !== "ALL" ? { repository_id: repoFilter } : {}),
           }),
       ),
-    enabled: !!identity && listView,
+    enabled: !!identity && !administration && engineeringAllowed && listView,
     retry: false,
     staleTime: 10000,
     refetchInterval: (query) =>
@@ -513,7 +539,12 @@ function WorkspaceApp() {
   const workspace = useQuery({
     queryKey: ["workspace", "summary", tenantKey, "ALL"],
     queryFn: () => loadWorkspaceSummary("/workspace?summary=1"),
-    enabled: !!identity && !listView && repoFilter === "ALL",
+    enabled:
+      !!identity &&
+      !administration &&
+      engineeringAllowed &&
+      !listView &&
+      repoFilter === "ALL",
     retry: false,
     staleTime: 10000,
     refetchInterval: (query) =>
@@ -529,7 +560,12 @@ function WorkspaceApp() {
       loadWorkspaceSummary(
         "/workspace?summary=1&repository_id=" + encodeURIComponent(repoFilter),
       ),
-    enabled: !!identity && !listView && repoFilter !== "ALL",
+    enabled:
+      !!identity &&
+      !administration &&
+      engineeringAllowed &&
+      !listView &&
+      repoFilter !== "ALL",
     retry: false,
     staleTime: 10000,
     refetchInterval: (query) =>
@@ -595,7 +631,12 @@ function WorkspaceApp() {
       }
       return api<RecordPage>("/workspace/records?" + params);
     },
-    enabled: !!identity && !!summary.data && recordView,
+    enabled:
+      !!identity &&
+      !administration &&
+      engineeringAllowed &&
+      !!summary.data &&
+      recordView,
   });
   useEffect(() => setRecordOffset(0), [page, repoFilter, query, filter]);
   useEffect(() => {
@@ -628,6 +669,7 @@ function WorkspaceApp() {
       .then((i) => {
         if (!current) return;
         setCSRF(i.csrf);
+        accessVersion.current = i.access?.decision_version;
         setIdentity(i);
       })
       .catch((error: unknown) => {
@@ -645,6 +687,97 @@ function WorkspaceApp() {
       current = false;
     };
   }, [identityAttempt]);
+  function acceptAccess(next: AccessContext) {
+    if (
+      !next.features ||
+      !Array.isArray(next.permissions) ||
+      typeof next.organization_id !== "string" ||
+      typeof next.decision_version !== "string"
+    )
+      return;
+    if (
+      accessVersion.current &&
+      accessVersion.current !== next.decision_version
+    ) {
+      const protectedQuery = (query: { queryKey: readonly unknown[] }) =>
+        !["administration", "organizations"].includes(
+          String(query.queryKey[0]),
+        );
+      client.cancelQueries({ predicate: protectedQuery });
+      client.removeQueries({ predicate: protectedQuery });
+      client.invalidateQueries({ queryKey: ["administration"] });
+      setSelected(null);
+      setRepoFilter("ALL");
+      setImporting(false);
+    }
+    accessVersion.current = next.decision_version;
+    setIdentity((current) =>
+      current
+        ? {
+            ...current,
+            role: next.role,
+            organization_id: next.organization_id,
+            access: next,
+          }
+        : current,
+    );
+  }
+  async function refreshAccess() {
+    try {
+      acceptAccess(await api<AccessContext>("/auth/access"));
+    } catch (failure) {
+      if (failure instanceof APIError && [401, 403].includes(failure.status)) {
+        client.cancelQueries();
+        client.clear();
+        setSelected(null);
+        setImporting(false);
+        setIdentity(null);
+        if (failure.status === 403) setIdentityError(failure.message);
+      }
+    }
+  }
+  useEffect(() => {
+    if (!identity?.access) return;
+    let current = true;
+    const update = async () => {
+      try {
+        const next = await api<AccessContext>("/auth/access");
+        if (current) acceptAccess(next);
+      } catch (failure) {
+        if (
+          current &&
+          failure instanceof APIError &&
+          [401, 403].includes(failure.status)
+        ) {
+          client.cancelQueries();
+          client.clear();
+          setSelected(null);
+          setImporting(false);
+          setIdentity(null);
+          if (failure.status === 403) setIdentityError(failure.message);
+        }
+      }
+    };
+    update();
+    const timer = setInterval(update, 10000);
+    return () => {
+      current = false;
+      clearInterval(timer);
+    };
+  }, [identity?.email, identity?.organization_id, client]);
+  function selectWorkspace(next: Identity) {
+    client.cancelQueries();
+    client.clear();
+    setSelected(null);
+    setRepoFilter("ALL");
+    setCatalogOffset(0);
+    setImporting(false);
+    setCSRF(next.csrf);
+    accessVersion.current = next.access?.decision_version;
+    setIdentityError("");
+    setIdentity(next);
+    routerNavigate("/repositories");
+  }
   useEffect(() => {
     const fn = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === "k") {
@@ -718,6 +851,7 @@ function WorkspaceApp() {
       <main className="loading">
         <h1>Workspace access unavailable</h1>
         <p role="alert">{identityError}</p>
+        <WorkspaceSelector selected={selectWorkspace} />
         <button onClick={() => setIdentityAttempt((attempt) => attempt + 1)}>
           Retry access
         </button>
@@ -731,6 +865,7 @@ function WorkspaceApp() {
           setRepoFilter("ALL");
           setSelected(null);
           setIdentity(result);
+          setIdentityAttempt((attempt) => attempt + 1);
           if (demo) setTour(true);
         }}
       />
@@ -752,39 +887,66 @@ function WorkspaceApp() {
           <Waypoints size={25} />
           <span>ProjectTrace</span>
         </button>
-        <div className="workspace-switch">
-          <div className="org-avatar">
-            {data?.organization?.charAt(0) || "P"}
+        {identity.organization_id ? (
+          <WorkspaceSelector identity={identity} selected={selectWorkspace} />
+        ) : (
+          <div className="workspace-switch">
+            {identity.organization || "ProjectTrace workspace"}
           </div>
-          <div>
-            <strong>{data?.organization || "ProjectTrace"}</strong>
-            <small>Engineering workspace</small>
-          </div>
-          <ChevronDown size={14} />
-        </div>
+        )}
         <nav aria-label="Main navigation">
           {navigation.map((group) => (
             <div className="nav-group" key={group.label}>
               <span className="nav-label">{group.label}</span>
-              {group.items.map(([name, Icon]) => (
-                <button
-                  key={name}
-                  className={"nav-item " + (page === name ? "active" : "")}
-                  aria-current={page === name ? "page" : undefined}
-                  onClick={() => navigate(name)}
-                >
-                  <Icon size={16} />
-                  <span>{name}</span>
-                  {name === "Drift" &&
-                    !!(data?.counts?.totals.drift ?? data?.drift.length) && (
-                      <span className="nav-count">
-                        {data?.counts?.totals.drift ?? data?.drift.length}
-                      </span>
-                    )}
-                </button>
-              ))}
+              {group.items
+                .filter(
+                  ([name]) =>
+                    !(
+                      [
+                        "Cloud",
+                        "Cloud Assets",
+                        "Cloud Identities",
+                        "Exposure",
+                        "Risk Paths",
+                      ].includes(name) && !featureAllowed("cloud")
+                    ) &&
+                    !(
+                      name === "Ask Engineering" &&
+                      !featureAllowed("ask_engineering")
+                    ),
+                )
+                .map(([name, Icon]) => (
+                  <button
+                    key={name}
+                    className={"nav-item " + (page === name ? "active" : "")}
+                    aria-current={page === name ? "page" : undefined}
+                    onClick={() => navigate(name)}
+                  >
+                    <Icon size={16} />
+                    <span>{name}</span>
+                    {name === "Drift" &&
+                      !!(data?.counts?.totals.drift ?? data?.drift.length) && (
+                        <span className="nav-count">
+                          {data?.counts?.totals.drift ?? data?.drift.length}
+                        </span>
+                      )}
+                  </button>
+                ))}
             </div>
           ))}
+          {identity.access?.admin_available && (
+            <div className="nav-group">
+              <span className="nav-label">Administration</span>
+              <button
+                className={"nav-item " + (administration ? "active" : "")}
+                aria-current={administration ? "page" : undefined}
+                onClick={() => navigate("Administration")}
+              >
+                <Shield size={16} />
+                <span>Control Center</span>
+              </button>
+            </div>
+          )}
           <div className="nav-group">
             <span className="nav-label">Learn</span>
             <button
@@ -844,6 +1006,7 @@ function WorkspaceApp() {
             </button>
             <select
               aria-label="Global repository"
+              hidden={administration}
               value={repoFilter}
               onChange={(e) => {
                 setRepoFilter(e.target.value);
@@ -881,6 +1044,7 @@ function WorkspaceApp() {
               </button>
             )}
             <span
+              hidden={administration}
               className={
                 "analysis-state " +
                 (data?.analysis?.state || "UNKNOWN").toLowerCase()
@@ -901,7 +1065,13 @@ function WorkspaceApp() {
             <button
               className="icon-button"
               aria-label="View activity"
-              onClick={() => navigate("Audit Trail")}
+              onClick={() =>
+                routerNavigate(
+                  identity.access?.admin_available
+                    ? "/administration?section=Notifications"
+                    : "/settings",
+                )
+              }
             >
               <Bell size={18} />
             </button>
@@ -951,7 +1121,12 @@ function WorkspaceApp() {
                 <CircleHelp size={13} />
               </a>
             </div>
-            {!data?.demo &&
+            {!administration &&
+              engineeringAllowed &&
+              featureAllowed("analyses") &&
+              (featureAllowed("zip_import") ||
+                featureAllowed("public_github")) &&
+              !data?.demo &&
               (page === "Repositories" || !data?.repositories.length) && (
                 <button
                   className="secondary"
@@ -964,7 +1139,22 @@ function WorkspaceApp() {
                 </button>
               )}
           </div>
-          {summary.isLoading ? (
+          {!administration && identity.access && (
+            <OwnershipNotices
+              changed={refreshAccess}
+              userId={identity.access.user_id}
+            />
+          )}
+          {page === "Settings" && identity.access && <OwnNotifications />}
+          {administration ? (
+            <Administration identity={identity} changed={refreshAccess} />
+          ) : !engineeringAllowed ? (
+            <div className="error" role="alert">
+              This feature is unavailable by your access policy. Contact your
+              organization administrator. Existing published evidence remains
+              retained.
+            </div>
+          ) : summary.isLoading ? (
             <div className="loading">
               <LoaderCircle className="spin" />{" "}
               {listView
@@ -1439,6 +1629,7 @@ function WorkspaceApp() {
       )}
       {importing && (
         <ImportDialog
+          access={identity.access}
           repositories={data?.repositories || []}
           initialTarget={importTarget}
           onRefresh={() =>
@@ -3945,6 +4136,7 @@ function Inspector({
 }
 
 export function ImportDialog({
+  access,
   repositories,
   initialTarget,
   onRefresh,
@@ -3952,6 +4144,7 @@ export function ImportDialog({
   onDone,
   onConnect,
 }: {
+  access?: AccessContext;
   onClose: () => void;
   onDone: (repository: string) => void;
   repositories: Repository[];
@@ -3965,7 +4158,9 @@ export function ImportDialog({
   const [target, setTarget] = useState(
     destinations.some((r) => r.id === initialTarget) ? initialTarget : "NEW",
   );
-  const [mode, setMode] = useState<"ZIP" | "PUBLIC">("ZIP");
+  const [mode, setMode] = useState<"ZIP" | "PUBLIC">(
+    access?.features.zip_import.allowed === false ? "PUBLIC" : "ZIP",
+  );
   const [url, setUrl] = useState("");
   const [ref, setRef] = useState("");
   const requestKey = useRef(crypto.randomUUID());
@@ -3975,6 +4170,14 @@ export function ImportDialog({
   const [busy, setBusy] = useState(false);
   async function submit(e: FormEvent) {
     e.preventDefault();
+    if (
+      access?.features.analyses.allowed === false ||
+      access?.features[mode === "ZIP" ? "zip_import" : "public_github"]
+        .allowed === false
+    ) {
+      setError("This import is restricted by access policy.");
+      return;
+    }
     if (mode === "ZIP" && !file) return;
     setBusy(true);
     setError("");
@@ -4012,7 +4215,7 @@ export function ImportDialog({
       <div className="section-head" aria-label="Import source">
         <button
           className={mode === "ZIP" ? "primary" : "secondary"}
-          disabled={busy}
+          disabled={busy || access?.features.zip_import.allowed === false}
           onClick={() => {
             setMode("ZIP");
             setError("");
@@ -4022,7 +4225,7 @@ export function ImportDialog({
         </button>
         <button
           className={mode === "PUBLIC" ? "primary" : "secondary"}
-          disabled={busy}
+          disabled={busy || access?.features.public_github.allowed === false}
           onClick={() => {
             setMode("PUBLIC");
             setError("");
@@ -4030,7 +4233,11 @@ export function ImportDialog({
         >
           Public GitHub URL
         </button>
-        <button className="secondary" disabled={busy} onClick={onConnect}>
+        <button
+          className="secondary"
+          disabled={busy || access?.features.private_scm.allowed === false}
+          onClick={onConnect}
+        >
           Connect private GitHub
         </button>
       </div>

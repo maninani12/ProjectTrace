@@ -70,15 +70,13 @@ def run_analysis(self, job_id, *, session_factory=None):
                 not user
                 or not user.enabled
                 or not repo
-                or user.organization_id != job.organization_id
                 or repo.organization_id != job.organization_id
             ):
                 raise ValueError("Worker tenant scope is invalid.")
+            from backend.governance import job_principal
             from backend.main import local_advisories
             from backend.queue import load_input
-            from backend.security import require_repo
-
-            require_repo(db, user, repo.id)
+            user=job_principal(db,job)
             queued_at = job.data.get("queued_at", now())
             from datetime import timedelta
 

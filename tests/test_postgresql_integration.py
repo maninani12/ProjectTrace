@@ -128,7 +128,7 @@ def test_postgresql_migrations_preserve_prior_records(postgres):
                 )
             assert db.scalar(text("SELECT data->>'text' FROM records WHERE id='preserved'")) == "Preserved claim"
     with engine.connect() as db:
-        assert db.scalar(text("SELECT version_num FROM alembic_version")) == "0018"
+        assert db.scalar(text("SELECT version_num FROM alembic_version")) == "0020"
 
 
 def test_postgresql_concurrent_duplicate_claims_and_tenant_fairness(postgres):

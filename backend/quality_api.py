@@ -1,5 +1,4 @@
 """Authorized, paged quality reads and audited profile/report mutations."""
-
 import csv
 import io
 import json
@@ -17,6 +16,7 @@ from analyzers.code_quality.coverage import absent, import_report
 from analyzers.code_quality.rules import config, registry
 from backend.db import NativeProfile, QualityAnalysis, QualityOccurrence, Record, now
 from backend.domain import add, audit, uid
+from backend.governance import require_permission
 from backend.quality_domain import current_findings, eligible_findings
 from backend.quality_profiles import effective, merge, scope_key
 from backend.security import authenticate, require_repo
@@ -389,8 +389,7 @@ def profile(request: Request, repository_id: str | None = None, team_id: str | N
 def save_profile(body: ProfileBody, request: Request):
     with session() as db:
         user, _ = authenticate(db, request, True)
-        if user.role not in {"ORG_OWNER", "ADMIN"}:
-            raise HTTPException(403, "Administrators configure quality profiles.")
+        require_permission(db,user,"organization.settings.manage")
         if body.repository_id:
             require_repo(db, user, body.repository_id)
         try:
@@ -483,8 +482,7 @@ class TeamAssignment(BaseModel):
 def assign_team(body: TeamAssignment, request: Request):
     with session() as db:
         user, _ = authenticate(db, request, True)
-        if user.role not in {"ORG_OWNER", "ADMIN"}:
-            raise HTTPException(403, "Administrators assign team quality profiles.")
+        require_permission(db,user,"organization.settings.manage")
         require_repo(db, user, body.repository_id)
         if body.team_id:
             try:

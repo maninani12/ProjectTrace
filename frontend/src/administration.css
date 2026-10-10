@@ -1,0 +1,213 @@
+.administration {
+  min-width: 0;
+}
+.admin-scope,
+.admin-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 20px;
+  margin-bottom: 18px;
+}
+.admin-scope {
+  border-left: 3px solid var(--accent, #4a9e8e);
+}
+.admin-scope > span {
+  margin-left: 14px;
+  font-size: 12px;
+}
+.admin-scope p,
+.admin-panel p {
+  font-size: 12px;
+  line-height: 1.6;
+}
+.admin-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 16px 0;
+}
+.admin-tabs button {
+  font-size: 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 9px 12px;
+  background: var(--surface);
+  color: var(--text);
+}
+.admin-tabs button.active {
+  font-weight: 700;
+  box-shadow: inset 0 -2px var(--accent, #4a9e8e);
+}
+.admin-section-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin: 20px 0;
+}
+.admin-section-heading h2 {
+  flex: 1;
+  font-size: 18px;
+}
+.admin-table-scroll {
+  overflow: auto;
+  max-width: 100%;
+}
+.administration table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  text-align: left;
+}
+.administration th {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+.administration td,
+.administration th {
+  border-bottom: 1px solid var(--border);
+  padding: 12px 9px;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+  min-width: 85px;
+  max-width: 350px;
+}
+.administration td small {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+}
+.admin-row-actions {
+  min-width: 160px !important;
+}
+.admin-row-actions button {
+  display: inline-block;
+  margin: 0 5px 5px 0;
+}
+.admin-pagination {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  padding-top: 15px;
+  font-size: 12px;
+}
+.admin-pagination span {
+  margin-right: auto;
+}
+.admin-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(235px, 1fr));
+  gap: 0 24px;
+  font-size: 12px;
+}
+.admin-summary > div {
+  padding: 13px 0;
+  border-bottom: 1px solid var(--border);
+  min-width: 0;
+}
+.admin-summary dt {
+  color: var(--muted);
+  text-transform: capitalize;
+  margin-bottom: 7px;
+}
+.admin-summary dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  line-height: 1.5;
+}
+.admin-dialog {
+  max-width: 760px;
+  max-height: 88vh;
+  overflow: auto;
+}
+.admin-form {
+  display: grid;
+  gap: 16px;
+}
+.admin-form > label,
+.admin-step-up form > label {
+  display: grid;
+  gap: 7px;
+  font-size: 12px;
+}
+.admin-form input,
+.admin-form select,
+.admin-form textarea,
+.admin-command-result input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--text);
+}
+.admin-form textarea {
+  min-height: 85px;
+}
+.admin-form input[type="checkbox"] {
+  width: auto;
+}
+.admin-confirm {
+  display: flex !important;
+  align-items: center;
+}
+.admin-preview {
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-left: 3px solid #dca946;
+  border-radius: 4px;
+  margin: 12px 0;
+  font-size: 12px;
+}
+.admin-step-up {
+  margin-top: 16px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  font-size: 12px;
+}
+.admin-step-up summary {
+  cursor: pointer;
+}
+.admin-step-up form {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.admin-workspace-selector {
+  padding: 12px;
+  font-size: 11px;
+}
+.admin-workspace-selector label {
+  display: grid;
+  gap: 7px;
+  color: var(--muted);
+}
+.admin-workspace-selector select {
+  width: 100%;
+  min-width: 0;
+  font-size: 12px;
+}
+.administration meter {
+  display: block;
+  width: min(100%, 400px);
+  margin-top: 4px;
+}
+@media (max-width: 700px) {
+  .admin-panel {
+    padding: 12px;
+  }
+  .admin-summary {
+    grid-template-columns: 1fr;
+  }
+  .admin-pagination {
+    flex-wrap: wrap;
+  }
+  .admin-dialog {
+    margin: 8px;
+  }
+}

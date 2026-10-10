@@ -24,6 +24,7 @@ from backend.db import Audit, Delivery, Grant, Organization, Record, Repository,
 from backend.domain import add, audit, policy_gate, uid
 from backend.engineering_changes import router as engineering_router
 from backend.finding_api import router as finding_router
+from backend.governance import permitted, require_permission
 from backend.graph_api import router as graph_router
 from backend.intake_errors import IntakeError
 from backend.jobs import execute_analysis
@@ -133,12 +134,16 @@ async def security_boundary(request, call_next):
         response = await call_next(request)
     except OperationalError as error:
         code = getattr(error.orig, "sqlite_errorcode", 0)
-        if not isinstance(code, int) or code & 255 not in {5, 6}:
+        pgcode=getattr(error.orig,"pgcode",None) or getattr(error.orig,"sqlstate",None)
+        if pgcode in {"55P03","57014","40001"} or isinstance(code,int) and code & 255 == 9:
+            response=JSONResponse({"detail":{"code":"DATABASE_BUDGET","message":"The bounded database operation is busy or timed out. Refresh the current state, then retry the same command ID."}},status_code=503,headers={"Retry-After":"2"})
+        elif not isinstance(code, int) or code & 255 not in {5, 6}:
             raise
-        response = JSONResponse({"detail": IntakeError("LOCAL_DATABASE_BUSY",
-            "Local database is publishing another bounded transaction.",
-            remediation="Wait briefly and retry the same request; use PostgreSQL for concurrent production analysis.").detail()},
-            status_code=503, headers={"Retry-After": "2"})
+        else:
+            response = JSONResponse({"detail": IntakeError("LOCAL_DATABASE_BUSY",
+                "Local database is publishing another bounded transaction.",
+                remediation="Wait briefly and retry the same request; use PostgreSQL for concurrent production analysis.").detail()},
+                status_code=503, headers={"Retry-After": "2"})
     response.headers.update(
         {
             "X-Request-ID": request_id,
@@ -151,6 +156,11 @@ async def security_boundary(request, call_next):
     )
     if PRODUCTION:
         response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    if response.status_code==403 and getattr(request.state,"organization_id",None):
+        from backend.activity import emit
+        emit(Session,organization_id=request.state.organization_id,actor_id=getattr(request.state,"principal_id",None),
+            action="PERMISSION_DENIED",category="AUTHORIZATION",outcome="DENIED",correlation_id=request_id,
+            data={"method":request.method,"area":"administration" if request.url.path.startswith("/api/admin/") else "engineering"})
     log.info(
         json.dumps(
             {
@@ -344,7 +354,7 @@ def scope_query(db, user, model=Record):
     query = select(model).where(
         model.organization_id == user.organization_id, or_(model.repository_id.is_(None), model.repository_id.in_(ids))
     )
-    if model is Record and user.role not in {"ORG_OWNER", "ADMIN"}:
+    if model is Record and not permitted(db,user,"organization.settings.manage"):
         query = query.where(Record.kind.not_in(["scm_connection", "oidc_provider", "oidc_provider_version"]))
     return query
 
@@ -353,10 +363,7 @@ def authorized_record(db, user, record_id):
     record = db.get(Record, record_id)
     if not record or record.organization_id != user.organization_id:
         raise HTTPException(404, "Record not available in your authorized scope.")
-    if record.kind in {"scm_connection", "oidc_provider", "oidc_provider_version"} and user.role not in {
-        "ORG_OWNER",
-        "ADMIN",
-    }:
+    if record.kind in {"scm_connection", "oidc_provider", "oidc_provider_version"} and not permitted(db,user,"organization.settings.manage"):
         raise HTTPException(404, "Record not available in your authorized scope.")
     if record.repository_id:
         require_repo(db, user, record.repository_id)
@@ -546,13 +553,25 @@ def login(body: Login, request: Request, response: Response):
             ):
                 raise ValueError()
         except Exception:
+            if user:
+                from backend.activity import emit
+                emit(Session,organization_id=user.organization_id,action="LOGIN_FAILED",category="AUTHENTICATION",outcome="FAILED",
+                    target_id=user.id,correlation_id=request.state.request_id,data={"method":"PASSWORD","authenticated_actor":False})
             raise HTTPException(401, "Email or password is incorrect.")
         csrf = create_session(db, user, response, PRODUCTION, previous_token=request.cookies.get("pt_session"))
+        from backend.admin_models import SessionContext
+        from backend.db import SessionToken
+        from backend.governance import resolve_principal
+        # Use the newly selected session tenant, including secondary membership.
+        selected=db.scalar(select(SessionContext).join(SessionToken,SessionToken.digest==SessionContext.digest).where(
+            SessionToken.user_id==user.id,SessionToken.csrf==csrf))
+        principal=resolve_principal(db,user,selected.organization_id)
+        audit(db,principal,"LOGIN_SUCCEEDED",user.id,{"actor_id":user.id,"request_id":request.state.request_id,"method":"PASSWORD"})
         db.commit()
         return {
             "csrf": csrf,
             "email": user.email,
-            "role": user.role,
+            "role": principal.role,
             "demo": APP_ENV == "demo" and user.organization_id == "northstar",
         }
 
@@ -576,6 +595,9 @@ def register(body: Register, request: Request, response: Response):
         )
         db.add(user)
         db.flush()
+        from backend.admin_models import OrganizationMembership
+        db.add(OrganizationMembership(organization_id=organization.id,user_id=user.id,role="ORG_OWNER"))
+        db.flush()
         audit(db, user, "WORKSPACE_CREATED", organization.id, {})
         csrf = create_session(db, user, response)
         db.commit()
@@ -586,11 +608,14 @@ def register(body: Register, request: Request, response: Response):
 def me(request: Request):
     with Session() as db:
         user, session = authenticate(db, request)
+        from backend.admin_api import access_context
         return {
             "email": user.email,
             "role": user.role,
             "csrf": session.csrf,
             "organization": db.get(Organization, user.organization_id).name,
+            "organization_id": user.organization_id,
+            "access": access_context(db,user),
             "demo": APP_ENV == "demo" and user.organization_id == "northstar",
         }
 
@@ -598,7 +623,8 @@ def me(request: Request):
 @app.post("/api/auth/logout")
 def logout(request: Request, response: Response):
     with Session() as db:
-        _, session = authenticate(db, request, True, edit=False)
+        user, session = authenticate(db, request, True, edit=False)
+        audit(db,user,"LOGOUT",user.id,{"actor_id":user.id,"request_id":request.state.request_id})
         db.delete(session)
         db.commit()
         response.delete_cookie("pt_session", path="/")
@@ -992,8 +1018,7 @@ def assign_components(repo_id: str, body: ComponentAssignment, request: Request)
     with Session() as db:
         user, _ = authenticate(db, request, True)
         require_repo(db, user, repo_id)
-        if user.role not in {"ADMIN", "ORG_OWNER"}:
-            raise HTTPException(403, "An organization administrator must assign component boundaries.")
+        require_permission(db,user,"organization.settings.manage")
         try:
             component_boundaries(body.configuration, basis="HUMAN_ASSIGNMENT")
         except ValueError as error:
@@ -1206,12 +1231,8 @@ def review(record_id: str, body: Review, request: Request):
             raise HTTPException(422, "This record does not support review.")
         if record.version != body.expected_version:
             raise HTTPException(409, "Record changed since it was opened. Refresh before reviewing.")
-        if body.action in {"ACCEPT_RISK", "CREATE_EXCEPTION"} and user.role not in {
-            "ADMIN",
-            "ORG_OWNER",
-            "SECURITY_REVIEWER",
-        }:
-            raise HTTPException(403, "Accepting risk requires an administrator or security reviewer.")
+        if body.action in {"ACCEPT_RISK", "CREATE_EXCEPTION"}:
+            require_permission(db,user,"engineering.exceptions.manage")
         old = record.data.get("review_status", "OPEN")
         status = {
             "CONFIRM": "CONFIRMED",
@@ -1449,7 +1470,7 @@ def sync_aws_inventory(body: AWSInventoryBody, request: Request):
 
     with Session() as db:
         user, _ = authenticate(db, request, True)
-        if user.role not in {"ORG_OWNER", "ADMIN"}:
+        if not permitted(db,user,"organization.settings.manage"):
             raise HTTPException(403, "Only administrators can authorize cloud inventory.")
         repo = require_repo(db, user, body.repository_id)
         snapshot = current_snapshots(db, user).get(repo.id)
@@ -1703,7 +1724,7 @@ def connect_github(body: ConnectGitHub, request: Request):
 
     with Session() as db:
         user, _ = authenticate(db, request, True)
-        if user.role not in {"ORG_OWNER", "ADMIN"}:
+        if not permitted(db,user,"organization.settings.manage"):
             raise HTTPException(403, "Connecting an SCM installation requires an organization administrator.")
         from backend.scm_connections import authorized_connection
 
@@ -1867,69 +1888,13 @@ def control_job(job_id: str, action: Literal["retry", "cancel"], request: Reques
         job = authorized_record(db, user, job_id)
         if job.kind != "job":
             raise HTTPException(422, "An analysis job is required.")
-        if action == "cancel":
-            if job.data.get("state") in {"COMPLETED", "COMPLETED_NO_FINDINGS", "CANCELLED"}:
-                raise HTTPException(409, "This job has already finished.")
-            from backend.db import AnalysisInput
-
-            retained = db.get(AnalysisInput, job.id)
-            from backend.scheduling import cancel
-            result = cancel(db, job)
-            if retained and result == "CANCELLED":
-                db.delete(retained)
-            audit(db, user, "JOB_CANCELLED", job.id, {}, job.repository_id)
-            db.commit()
-            if result == "CANCELLATION_REQUESTED":
-                return {**packed(job), "cancellation_requested": True}
-        else:
-            if os.getenv("JOB_MODE") not in {"celery", "local"}:
-                raise HTTPException(503, "Start the local development runner or a configured Celery worker before retrying.")
-            if job.data.get("source") == "GITHUB" and not os.getenv("REDIS_URL"):
-                raise HTTPException(503, "Private GitHub jobs require the configured SCM Celery worker.")
-            lease = job.data.get("lease_expires_at")
-            stale = (
-                job.data.get("state") not in {"COMPLETED", "COMPLETED_NO_FINDINGS", "CANCELLED"}
-                and lease
-                and datetime.fromisoformat(lease) <= datetime.now(timezone.utc)
-            )
-            if job.data.get("state") not in {"FAILED", "PARTIAL", "QUEUED"} and not stale:
-                raise HTTPException(409, "This job cannot be retried in its current state.")
-            from backend.db import AnalysisInput
+        from backend.job_control import transition_job
+        result=transition_job(db,user,job,action)
+        db.commit()
+        if action=="retry":
             from backend.queue import dispatch
-
-            if job.data.get("source") in {"ZIP", "FILES", "INVENTORY"} and not db.get(AnalysisInput, job.id):
-                raise HTTPException(409, "Retained input is unavailable; upload a fresh snapshot.")
-
-            repair_revision = "safe-intake-2026-10-08"
-            repair_retry = (job.data.get("source") == "GITHUB" and job.data.get("retry_count", 0) == 2
-                and job.data.get("error_type") in {"TransportError", "TimeoutError"}
-                and not job.data.get("repair_retry_revision"))
-            # One further attempt is tied to the verified writer-collision and
-            # transport fixes. This finite migration never resets prior counts.
-            if (job.data.get("source") == "GITHUB" and job.data.get("retry_count") == 3
-                and job.data.get("repair_retry_revision") == repair_revision
-                and job.data.get("error_code") == "SCM_TRANSPORT"):
-                repair_revision, repair_retry = "serialized-transport-2026-10-08", True
-            if job.data.get("retry_count", 0) >= 2 and not repair_retry:
-                raise HTTPException(409, "Retry limit reached. Review the precise failure before importing a fresh snapshot.")
-            previous_attempt = {key: job.data.get(key) for key in ("state", "stage", "error_type", "error_code", "error_detail", "started_at", "finished_at", "duration_ms", "snapshot_id", "stages", "performance", "completed_analysis", "retry_count", "repair_retry_revision")}
-            job.data = {
-                **job.data,
-                "state": "QUEUED",
-                "stage": "QUEUED",
-                "finished_at": None,
-                "retry_count": job.data.get("retry_count", 0) + 1,
-                "attempt_history": [*job.data.get("attempt_history", []), previous_attempt],
-                "repair_retry_revision": repair_revision if repair_retry else job.data.get("repair_retry_revision"),
-                "errors": [], "error_detail": None, "error_code": None,
-                "duration_ms": None, "performance": {}, "completed_analysis": None,
-            }
-            audit(db, user, "JOB_RETRIED", job.id, {"retry_count": job.data["retry_count"]}, job.repository_id)
-            from backend.scheduling import register
-            register(db, job)
-            db.commit()
-            dispatch(db, job)
-        return packed(job)
+            dispatch(db,job)
+        return {**packed(job),**result}
 
 
 @app.get("/api/analysis/metrics")
@@ -1989,3 +1954,10 @@ app.include_router(trust_router)
 app.include_router(oidc_router)
 app.include_router(scm_router)
 app.include_router(scm_webhook_router)
+
+from backend.admin_api import (  # noqa: E402 - shared session factory is initialized above
+    routers as administration_routers,
+)
+
+for administration_router in administration_routers:
+    app.include_router(administration_router)

@@ -38,10 +38,26 @@ def cipher():
 
 
 def dispatch(db, job):
+    from fastapi import HTTPException
+
+    from backend.governance import job_principal
     from backend.scheduling import register
     from workers.tasks import celery
 
     if job.data.get("state") == "QUEUED":
+        try:
+            job_principal(db,job)
+        except HTTPException:
+            # Retain encrypted source, inventory and every completed checkpoint.
+            # A blocked dispatch is never reported as completed analysis.
+            from backend.db import QueueEntry
+            job.data={**job.data,"state":"FAILED","dispatch":"POLICY_BLOCKED","finished_at":now(),
+                "error_code":"JOB_AUTHORIZATION_REVOKED","errors":["Job access policy changed or its authorized identity is unavailable. An administrator must review access before retry."]}
+            entry=db.get(QueueEntry,job.id)
+            if entry:
+                entry.state="FAILED"
+            db.commit()
+            return
         register(db, job)
         db.commit()
 
@@ -86,13 +102,23 @@ def dispatch(db, job):
     db.refresh(job)
 
 
-def check_capacity(db, user, repo):
+def check_capacity(db, user, repo, *, source=None, existing_job=None):
+    from backend.admin_quotas import enforce_quotas
+    from backend.governance import authorize_job
     from backend.scheduling import check_capacity as admit
-    admit(db, user.organization_id, repo.id)
+    user=authorize_job(db,user,repo,source)
+    from backend.db import QueueEntry
+    entry=db.get(QueueEntry,existing_job.id) if existing_job else None
+    if entry and entry.state in {"QUEUED","RUNNING"}:
+        from backend.scheduling import lock
+        lock(db)
+    else:
+        admit(db, user.organization_id, repo.id)
+    enforce_quotas(db,user,repo,existing_job=existing_job)
 
 
 def enqueue_analysis(db, user, repo, content, *, source="FILES", request_id=None, import_receipt=None, **options):
-    check_capacity(db, user, repo)
+    check_capacity(db, user, repo, source=source)
     if source == "INVENTORY":
         from backend.repository_store import RepositoryFiles
 

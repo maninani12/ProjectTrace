@@ -29,6 +29,7 @@ export const routes = {
   "Trust & Coverage": "/trust/coverage",
   Connections: "/settings/connections",
   Settings: "/settings",
+  Administration: "/administration",
 } as const;
 
 export function routeForPage(page: string): string {

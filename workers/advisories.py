@@ -1,5 +1,4 @@
 from backend.db import Record, Repository, Session, User, now
-from backend.security import require_repo
 from workers.tasks import celery
 
 
@@ -25,14 +24,14 @@ def advisory_job(self, job_id):
                 or not user.enabled
                 or not repo
                 or not snapshot
-                or user.organization_id != job.organization_id
                 or repo.organization_id != job.organization_id
                 or snapshot.organization_id != job.organization_id
                 or snapshot.repository_id != repo.id
                 or snapshot.kind != "snapshot"
             ):
                 raise ValueError("Advisory worker tenant scope is invalid.")
-            require_repo(db, user, repo.id)
+            from backend.governance import job_principal
+            user=job_principal(db,job)
             from backend.trust import require_egress
 
             require_egress(db, user.organization_id, "OSV")

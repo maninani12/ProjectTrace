@@ -1,14 +1,15 @@
 """Organization controls for explicit OIDC membership and bounded group provisioning."""
-
 import re
 import secrets
 
 from fastapi import HTTPException, Query, Request
 from pydantic import BaseModel, ConfigDict, Field, StrictBool
-from sqlalchemy import delete, select
+from sqlalchemy import delete, func, select
 
+from backend.admin_models import OrganizationMembership
 from backend.db import Grant, OIDCSubject, Record, SessionToken, User
 from backend.domain import add, audit, uid
+from backend.governance import require_permission, resolve_principal
 from backend.security import authenticate, passwords, require_repo
 
 
@@ -69,7 +70,7 @@ def membership_for_claims(db, cfg, claims, organization_id=None):
     if role == "ADMIN" and not settings.get("allow_admin_roles"):
         raise HTTPException(403, "OIDC administrator mapping is not authorized.")
     user = db.get(User, binding.user_id) if binding else None
-    if binding and (not user or not user.enabled or user.organization_id != binding.organization_id):
+    if binding and (not user or not resolve_principal(db,user,binding.organization_id).enabled):
         raise HTTPException(403, "OIDC member is disabled or unavailable.")
     if not user:
         if not configured or not settings.get("jit_enabled") or not mapped:
@@ -95,6 +96,8 @@ def membership_for_claims(db, cfg, claims, organization_id=None):
         )
         db.add(user)
         db.flush()
+        db.add(OrganizationMembership(organization_id=selected_org,user_id=user.id,role=role))
+        db.flush()
         binding = OIDCSubject(
             id=uid(),
             issuer=claims["iss"],
@@ -117,23 +120,32 @@ def membership_for_claims(db, cfg, claims, organization_id=None):
                 "local_login_allowed": False,
             },
         )
-    if role and user.role != "ORG_OWNER" and user.role != role:
-        previous_role = user.role
-        user.role = role
+    principal=resolve_principal(db,user,selected_org)
+    member=db.get(OrganizationMembership,(selected_org,user.id))
+    if member is None:
+        member=OrganizationMembership(organization_id=selected_org,user_id=user.id,role=principal.role)
+        db.add(member)
+    if role and principal.role != "ORG_OWNER" and principal.role != role:
+        previous_role = principal.role
+        member.role=role
+        if user.organization_id==selected_org:
+            user.role = role
         db.execute(delete(SessionToken).where(SessionToken.user_id == user.id))
-        audit(db, user, "OIDC_GROUP_ROLE_CHANGED", user.id, {"before": previous_role, "after": role})
+        from backend.admin_common import bump_revision
+        bump_revision(db,selected_org)
+        audit(db, resolve_principal(db,user,selected_org), "OIDC_GROUP_ROLE_CHANGED", user.id, {"before": previous_role, "after": role})
     # Group-managed access is explicit. Previously granted repositories remain explicit grants;
     # administrators revoke them independently rather than guessing their original provenance.
     for repository_id in {rid for m in mapped for rid in m.get("repositories", [])}:
         from backend.db import Repository
 
         repository = db.get(Repository, repository_id)
-        if not repository or repository.organization_id != user.organization_id:
+        if not repository or repository.organization_id != selected_org:
             raise HTTPException(403, "OIDC repository mapping is outside the organization.")
         if not db.get(Grant, (user.id, repository_id)):
             db.add(Grant(user_id=user.id, repository_id=repository_id))
             audit(
-                db, user, "OIDC_GROUP_REPOSITORY_GRANTED", repository_id, {"provider_id": configured.id}, repository_id
+                db, resolve_principal(db,user,selected_org), "OIDC_GROUP_REPOSITORY_GRANTED", repository_id, {"provider_id": configured.id}, repository_id
             )
     return binding, user
 
@@ -145,8 +157,7 @@ def register(router):
     def inspect_provider(request: Request):
         with session() as db:
             user, _ = authenticate(db, request)
-            if user.role not in {"ORG_OWNER", "ADMIN"}:
-                raise HTTPException(403, "Only administrators inspect organization OIDC configuration.")
+            require_permission(db,user,"organization.settings.manage")
             rows = list(
                 db.scalars(
                     select(Record)
@@ -169,8 +180,7 @@ def register(router):
         cfg = config()  # Endpoints and client secrets remain operator-owned.
         with session() as db:
             user, _ = authenticate(db, request, True)
-            if user.role not in {"ORG_OWNER", "ADMIN"}:
-                raise HTTPException(403, "Only organization administrators configure OIDC.")
+            require_permission(db,user,"organization.settings.manage")
             if body.allow_admin_roles and user.role != "ORG_OWNER":
                 raise HTTPException(403, "Only the organization owner authorizes group administrator mappings.")
             if any(not group.strip() or len(group) > 250 for group in body.role_mappings):
@@ -198,58 +208,69 @@ def register(router):
     def members(request: Request, offset: int = Query(0, ge=0), limit: int = Query(50, ge=1, le=100)):
         with session() as db:
             user, _ = authenticate(db, request)
-            if user.role not in {"ORG_OWNER", "ADMIN"}:
-                raise HTTPException(403, "Only administrators inspect organization membership.")
-            rows = db.scalars(
-                select(User)
-                .where(User.organization_id == user.organization_id)
+            require_permission(db,user,"organization.settings.manage")
+            rows = db.execute(
+                select(User,OrganizationMembership)
+                .join(OrganizationMembership,OrganizationMembership.user_id==User.id)
+                .where(OrganizationMembership.organization_id == user.organization_id)
                 .order_by(User.id)
                 .offset(offset)
                 .limit(limit + 1)
             ).all()
+            identities=[identity.id for identity,_ in rows[:limit]]
+            ranked=select(OIDCSubject.user_id,OIDCSubject.subject,OIDCSubject.issuer,OIDCSubject.enabled,
+                func.row_number().over(partition_by=OIDCSubject.user_id,order_by=OIDCSubject.id).label("position")).where(
+                    OIDCSubject.organization_id==user.organization_id,OIDCSubject.user_id.in_(identities)).subquery()
+            bindings={}
+            for item in db.execute(select(ranked).where(ranked.c.position<=10)):
+                bindings.setdefault(item.user_id,[]).append({"subject":item.subject,"issuer":item.issuer,"enabled":item.enabled})
             return {
                 "has_more": len(rows) > limit,
                 "items": [
                     {
                         "id": r.id,
                         "email": r.email,
-                        "role": r.role,
-                        "enabled": r.enabled,
+                        "role": member.role,
+                        "enabled": resolve_principal(db,r,user.organization_id).enabled,
                         "local_login_allowed": r.local_login_allowed,
-                        "bindings": [
-                            {"subject": b.subject, "issuer": b.issuer, "enabled": b.enabled}
-                            for b in db.scalars(
-                                select(OIDCSubject).where(
-                                    OIDCSubject.user_id == r.id, OIDCSubject.organization_id == user.organization_id
-                                )
-                            )
-                        ],
+                        "bindings": bindings.get(r.id,[]),
+                        "bindings_preview_limit":10,
                     }
-                    for r in rows[:limit]
+                    for r,member in rows[:limit]
                 ],
             }
 
     class MemberControl(BaseModel):
         model_config = ConfigDict(extra="forbid")
         enabled: StrictBool
+        expected_version: int | None = Field(default=None,ge=1)
+        reason: str = Field(default="Legacy identity administration request",min_length=10,max_length=500)
 
     @router.post("/members/{user_id}")
     def member_control(user_id: str, body: MemberControl, request: Request):
         with session() as db:
             actor, _ = authenticate(db, request, True)
-            if actor.role not in {"ORG_OWNER", "ADMIN"}:
-                raise HTTPException(403, "Only administrators manage account availability.")
-            target = db.scalar(
-                select(User).where(User.id == user_id, User.organization_id == actor.organization_id).with_for_update()
+            from backend.admin_common import (
+                bump_revision,
+                check_version,
+                guard_member_change,
+                lock_scope,
+                scoped_member,
             )
-            if not target:
-                raise HTTPException(404, "Member unavailable in this organization.")
-            if target.id == actor.id and not body.enabled:
-                raise HTTPException(409, "Use another authorized administrator to disable this account.")
-            if target.role == "ORG_OWNER" and actor.role != "ORG_OWNER":
-                raise HTTPException(403, "Owner availability requires an organization owner.")
-            target.enabled = body.enabled
-            db.execute(delete(SessionToken).where(SessionToken.user_id == target.id))
-            audit(db, actor, "MEMBER_AVAILABILITY_CHANGED", target.id, {"enabled": body.enabled})
+            from backend.admin_people import revoke_sessions
+            from backend.governance import require_permission
+            permission="users.reactivate" if body.enabled else "users.suspend"
+            require_permission(db,actor,permission)
+            lock_scope(db,actor.organization_id)
+            member,target=scoped_member(db,actor,user_id)
+            guard_member_change(actor,member)
+            if body.expected_version is not None:
+                check_version(member,body.expected_version)
+            if member.state=="REMOVED":
+                raise HTTPException(409,"Removed memberships require a new invitation.")
+            member.state,member.expires_at,member.reason="ACTIVE" if body.enabled else "SUSPENDED",None,body.reason
+            revoke_sessions(db,actor.organization_id,target)
+            bump_revision(db,actor.organization_id)
+            audit(db, actor, "MEMBER_AVAILABILITY_CHANGED", target.id, {"enabled": body.enabled,"scope":"ORGANIZATION","permission":permission,"reason":body.reason})
             db.commit()
-            return {"id": target.id, "enabled": target.enabled}
+            return {"id": target.id, "enabled": resolve_principal(db,target,actor.organization_id).enabled,"version":member.version,"scope":"ORGANIZATION"}

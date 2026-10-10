@@ -4,7 +4,7 @@ import os
 
 from sqlalchemy import select
 
-from backend.db import Record, Repository, Session, SourceInventory, User, now
+from backend.db import Record, Repository, Session, SourceInventory, now
 from backend.domain import persist_analysis
 from backend.jobs import TERMINAL, execute_analysis, inventory_time_budget
 from backend.security import require_repo
@@ -73,7 +73,8 @@ def github_delivery(self, job_id):
                 }
                 db.commit()
                 return
-            actor = db.get(User, integration.data["owner_id"])
+            from backend.governance import job_principal, resolve_principal
+            actor = job_principal(db,job)
             connection = db.get(Record, job.data["connection_id"]) if job.data.get("connection_id") else None
             if job.data.get("connection_id") and (
                 not connection
@@ -92,10 +93,11 @@ def github_delivery(self, job_id):
 
             def authorized():
                 ensure_current(db, job, renew_seconds=inventory_time_budget())
-                db.refresh(actor)
-                if not actor.enabled or actor.organization_id != job.organization_id:
+                db.refresh(actor.identity)
+                principal=resolve_principal(db,actor,job.organization_id)
+                if not principal.enabled:
                     raise ValueError("SCM actor is disabled or outside the job organization.")
-                require_repo(db, actor, repo.id)
+                require_repo(db, principal, repo.id)
                 if connection:
                     db.refresh(connection)
                     if not connection.data.get("enabled") or connection.version != connection_version:

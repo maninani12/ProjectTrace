@@ -57,13 +57,24 @@ def add(db, org, repo, kind, data, natural_key=None, *, defer_flush=False):
     # bound other publication batches to 250 rows in the same atomic transaction.
     if not defer_flush and (not checkpoint or kind == "snapshot" or count >= 250):
         db.flush()
+    if kind == "job":
+        from backend.admin_quotas import attribute_job
+        attribute_job(db,record)
     return record
 
 
 def audit(db, user, action, target, data, repo=None):
+    from backend.admin_models import ActivityEvent
     from backend.trust import append_audit
-
-    append_audit(db, user, action, target, data, repo)
+    event=append_audit(db, user, action, target, data, repo)
+    category="ADMINISTRATION" if data.get("permission") else "ANALYSIS" if action.startswith(("ANALYSIS_","JOB_","SNAPSHOT_")) else "AUTHENTICATION" if action.startswith(("LOGIN_","LOGOUT","OIDC_","SESSION_")) else "APPLICATION"
+    # Offline maintenance actors retain their existing audit identity but have
+    # no authenticated user ID. Do not attribute their activity to a customer.
+    db.add(ActivityEvent(id=uid(),organization_id=user.organization_id,actor_id=getattr(user,"id",None),repository_id=repo,
+        action=action,category=category,outcome="FAILED" if "FAILED" in action else "DENIED" if "DENIED" in action else "SUCCEEDED",
+        target_id=str(target)[:100],correlation_id=str(data.get("request_id") or data.get("command_id") or target)[:100],
+        data={"audit_event_id":event.id,**{key:data[key] for key in ("permission","source","snapshot_id","retry_count","error_type") if key in data}}))
+    return event
 
 
 def policy_gate(claims, findings, exceptions=(), *, new_findings_only=False):

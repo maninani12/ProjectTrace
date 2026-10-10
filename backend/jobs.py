@@ -48,6 +48,9 @@ def execute_analysis(db, user, repo, files, *, request_id=None, job=None, _elaps
     from backend.repository_store import RepositoryFiles
 
     inventory_input = isinstance(files, RepositoryFiles)
+    if job is None:
+        from backend.queue import check_capacity
+        check_capacity(db,user,repo,source="INVENTORY" if inventory_input else "FILES")
     job = job or add(
         db,
         user.organization_id,

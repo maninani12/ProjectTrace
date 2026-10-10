@@ -1,5 +1,4 @@
 """Repository-scoped trust projections and audited organization controls."""
-
 from collections import Counter, defaultdict
 from datetime import datetime, timedelta, timezone
 from typing import Literal
@@ -13,6 +12,7 @@ from analyzers.engine import VERSION, redact, redact_metadata
 from backend.accuracy import report as accuracy_report
 from backend.db import CloudAsset, QualityAnalysis, Record, TenantPolicy
 from backend.domain import audit
+from backend.governance import require_permission
 from backend.json_query import indexed_text
 from backend.security import allowed_repositories, authenticate, require_repo
 from backend.trust import integrity, policy
@@ -77,8 +77,7 @@ class ExceptionChange(BaseModel):
 def change_exception(exception_id: str, body: ExceptionChange, request: Request):
     with session() as db:
         user, _ = authenticate(db, request, True)
-        if user.role not in {"ORG_OWNER", "ADMIN", "SECURITY_REVIEWER"}:
-            raise HTTPException(403, "Exception administration requires a privileged reviewer.")
+        require_permission(db,user,"security.policy.manage")
         row = db.get(Record, exception_id)
         if not row or row.kind != "exception" or row.organization_id != user.organization_id or not row.repository_id:
             raise HTTPException(404, "Exception unavailable in authorized scope.")
@@ -141,8 +140,7 @@ def get_policy(request: Request):
 def update_policy(body: PolicyUpdate, request: Request):
     with session() as db:
         user, _ = authenticate(db, request, True)
-        if user.role not in {"ORG_OWNER", "ADMIN"}:
-            raise HTTPException(403, "Only organization administrators can change egress policy.")
+        require_permission(db,user,"organization.settings.manage")
         row = db.scalar(
             select(TenantPolicy).where(TenantPolicy.organization_id == user.organization_id).with_for_update()
         )
@@ -164,8 +162,7 @@ def update_policy(body: PolicyUpdate, request: Request):
 def audit_integrity(request: Request):
     with session() as db:
         user, _ = authenticate(db, request)
-        if user.role not in {"ORG_OWNER", "ADMIN"}:
-            raise HTTPException(403, "Organization administrators verify the organization audit chain.")
+        require_permission(db,user,"organization.settings.manage")
         return integrity(db, user.organization_id)
 
 
@@ -183,8 +180,7 @@ def audit_checkpoint(body: CheckpointBody, request: Request):
 
     with session() as db:
         user, _ = authenticate(db, request, True)
-        if user.role not in {"ORG_OWNER", "ADMIN"}:
-            raise HTTPException(403, "Only administrators verify retained organization checkpoints.")
+        require_permission(db,user,"organization.settings.manage")
         try:
             return verify_checkpoint(db, user.organization_id, body.model_dump())
         except ValueError:

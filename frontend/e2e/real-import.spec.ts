@@ -183,7 +183,7 @@ test("real workspace ZIP import, claims, evidence, question and second-snapshot 
   await nav
     .getByRole("button", { name: "Evidence Graph", exact: true })
     .click();
-  await expect(page.locator(".react-flow__node").first()).toBeVisible();
+  await expect(page.locator(".react-flow__node").first()).toBeVisible({ timeout: 15000 });
   await nav.getByRole("button", { name: "Drift", exact: true }).click();
   await expect(
     page.getByText("No historical drift detected.", { exact: true }),

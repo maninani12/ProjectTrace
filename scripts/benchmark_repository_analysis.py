@@ -241,7 +241,7 @@ def main():
     from sqlalchemy import event, func, select
 
     from analyzers.engine import MAX_FILE_BYTES, safe_path
-    from backend.db import Base, Organization, Record, Repository, Session, User, engine
+    from backend.db import Base, Grant, Organization, Record, Repository, Session, User, engine
     from backend.jobs import execute_analysis
     from backend.repository_store import RepositoryFiles, capture
 
@@ -309,6 +309,8 @@ def main():
             provider="LOCAL",
         )
         db.add_all([user, repo])
+        db.flush()
+        db.add(Grant(user_id=user.id,repository_id=repo.id))
         db.commit()
         inventory = capture(db, user.organization_id, repo, ((p, t.encode()) for p, t in sources.items()))
         db.commit()

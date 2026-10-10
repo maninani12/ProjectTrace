@@ -143,8 +143,7 @@ def test_operator_retry_preserves_original_inventory_history_and_authorization(s
     from backend.queue import enqueue_analysis
     from scripts.retry_retained_analysis import retry
     db, user, repo = storage
-    db.add(Grant(user_id=user.id, repository_id=repo.id))
-    db.commit()
+    assert db.get(Grant, (user.id, repo.id)) is not None
     files = captured(storage, {"app.py": "VALUE = 1\n"})
     monkeypatch.setenv("JOB_MODE", "local")
     job = enqueue_analysis(db, user, repo, files, source="INVENTORY")

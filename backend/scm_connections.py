@@ -1,5 +1,4 @@
 """Admin-owned SCM metadata. Secret values remain in operator-owned references."""
-
 import os
 import re
 from urllib.parse import urlsplit
@@ -10,6 +9,7 @@ from sqlalchemy import select
 
 from backend.db import Record
 from backend.domain import add, audit
+from backend.governance import require_permission
 from backend.security import authenticate
 from integrations.secure_http import destination
 
@@ -80,8 +80,7 @@ def connections(request: Request):
 
     with Session() as db:
         user, _ = authenticate(db, request)
-        if user.role not in {"ORG_OWNER", "ADMIN"}:
-            raise HTTPException(403, "Only administrators inspect SCM connections.")
+        require_permission(db,user,"organization.settings.manage")
         rows = db.scalars(
             select(Record)
             .where(Record.organization_id == user.organization_id, Record.kind == "scm_connection")
@@ -99,8 +98,7 @@ def configure(body: ConnectionBody, request: Request):
 
     with Session() as db:
         user, _ = authenticate(db, request, True)
-        if user.role not in {"ORG_OWNER", "ADMIN"}:
-            raise HTTPException(403, "Only administrators configure SCM connections.")
+        require_permission(db,user,"organization.settings.manage")
         row = authorized_connection(db, user, body.connection_id) if body.connection_id else None
         if body.expected_version != (row.version if row else 0):
             raise HTTPException(409, "SCM connection changed; refresh its version.")
@@ -146,8 +144,7 @@ def repositories(connection_id: str, request: Request):
 
     with Session() as db:
         user, _ = authenticate(db, request)
-        if user.role not in {"ORG_OWNER", "ADMIN"}:
-            raise HTTPException(403, "Only administrators discover installation repositories.")
+        require_permission(db,user,"organization.settings.manage")
         connection = authorized_connection(db, user, connection_id)
         try:
             rows = configured_app(connection).repositories()

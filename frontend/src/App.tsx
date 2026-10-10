@@ -20,6 +20,7 @@ import { AppBoundary, NotFound } from "./public/Errors";
 const Workspace = lazy(() => import("./WorkspaceApp"));
 const Guide = lazy(() => import("./public/Guide"));
 const Documents = lazy(() => import("./public/Documents"));
+const Invitation = lazy(() => import("./Invitation"));
 
 function RouteEffects() {
   const location = useLocation();
@@ -140,6 +141,7 @@ export function SiteRoutes() {
           <Route path="/login" element={<AuthPage />} />
           <Route path="/signup" element={<AuthPage register />} />
           <Route path="/demo" element={<AuthPage autoDemo />} />
+          <Route path="/invite" element={<Invitation />} />
           <Route path="/app" element={<Workspace />} />
           {Object.values(routes).map((path) => (
             <Route key={path} path={path} element={<Workspace />} />

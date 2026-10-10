@@ -1,6 +1,6 @@
 """Tenant-scoped public source acquisition; repository code is never executed."""
 
-from backend.db import Record, Repository, Session, SourceInventory, User, now
+from backend.db import Record, Repository, Session, SourceInventory, now
 from backend.jobs import TERMINAL, execute_analysis, inventory_time_budget
 from workers.tasks import celery
 
@@ -13,6 +13,7 @@ def public_github_job(self, job_id):
 
 def run_public_import(self, job_id, *, session_factory=None):
     from backend.encrypted_archive import EncryptedArchive
+    from backend.governance import job_principal, resolve_principal
     from backend.intake_errors import IntakeError
     from backend.repository_store import RepositoryFiles, archive_items, capture, limits
     from backend.scheduling import JobCancelled, claim, ensure_current, owns, release
@@ -29,15 +30,16 @@ def run_public_import(self, job_id, *, session_factory=None):
         if claimed["state"] != "CLAIMED":
             return claimed
         try:
-            user = db.get(User, job.data["user_id"])
+            user = job_principal(db,job)
             repo = db.get(Repository, job.repository_id)
 
             def authorized():
                 ensure_current(db, job, renew_seconds=inventory_time_budget())
-                db.refresh(user)
-                if not user.enabled or user.organization_id != job.organization_id:
+                db.refresh(user.identity)
+                principal=resolve_principal(db,user,job.organization_id)
+                if not principal.enabled:
                     raise ValueError("Public import actor is disabled or outside the tenant.")
-                require_repo(db, user, repo.id)
+                require_repo(db, principal, repo.id)
 
             authorized()
             job.data = {**job.data, "state": "FETCHING", "stage": "FETCHING", "started_at": now()}

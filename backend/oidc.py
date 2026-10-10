@@ -300,6 +300,8 @@ def callback(request: Request, state: str = "", code: str = ""):
         except Exception:
             raise HTTPException(400, "OIDC token validation failed.") from None
         subject, user = membership_for_claims(db, cfg, claims, organization_id)
+        from backend.governance import resolve_principal
+        user=resolve_principal(db,user,subject.organization_id)
         from backend.main import PRODUCTION
 
         response = RedirectResponse(cfg["frontend_url"].rstrip("/") + "/overview", status_code=303)
@@ -322,10 +324,10 @@ def membership(body: Membership, request: Request):
     cfg = config()
     with session() as db:
         actor, _ = authenticate(db, request, True)
-        if actor.role not in {"ORG_OWNER", "ADMIN"}:
-            raise HTTPException(403, "Only administrators manage explicit OIDC membership.")
+        from backend.governance import require_permission, resolve_principal
+        require_permission(db,actor,"organization.settings.manage")
         user = db.get(User, body.user_id)
-        if not user or user.organization_id != actor.organization_id:
+        if not user or not resolve_principal(db,user,actor.organization_id).enabled:
             raise HTTPException(404, "Member unavailable in this organization.")
         row = db.scalar(
             select(OIDCSubject)
@@ -346,7 +348,7 @@ def membership(body: Membership, request: Request):
             db.add(row)
         row.enabled = body.enabled
         if not body.enabled:
-            db.execute(delete(SessionToken).where(SessionToken.user_id == user.id))
+            db.execute(delete(SessionToken).where(SessionToken.oidc_subject_id == row.id))
         audit(db, actor, "OIDC_MEMBERSHIP_UPDATED", user.id, {"enabled": body.enabled, "membership_id": row.id})
         db.commit()
         return {"id": row.id, "enabled": row.enabled}

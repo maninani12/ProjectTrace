@@ -7,6 +7,7 @@ from sqlalchemy.exc import IntegrityError
 from analyzers.engine import RULES
 from backend.db import NativeProfile
 from backend.domain import audit, uid
+from backend.governance import require_permission
 from backend.security import require_repo
 
 
@@ -19,8 +20,7 @@ def profile_scope(db, user, repo_id):
 
 
 def save_profile(db, user, body):
-    if user.role not in {"ORG_OWNER", "ADMIN"}:
-        raise HTTPException(403, "Only organization administrators can change native profiles.")
+    require_permission(db,user,"organization.settings.manage")
     row = db.scalar(profile_scope(db, user, body.repository_id).with_for_update())
     if (row and body.version != row.version) or (not row and body.version not in {None, 0}):
         raise HTTPException(409, "Profile changed; refresh its version before updating.")

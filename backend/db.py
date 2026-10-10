@@ -185,6 +185,7 @@ class PRHead(Base):
 
 class Audit(Base):
     __tablename__ = "audit_events"
+    __table_args__ = (Index("ix_audit_tenant_timeline","organization_id","created_at","id"),)
     id: Mapped[str] = mapped_column(String(80), primary_key=True)
     organization_id: Mapped[str] = mapped_column(ForeignKey("organizations.id"), index=True)
     repository_id: Mapped[str | None] = mapped_column(ForeignKey("repositories.id"), nullable=True, index=True)
@@ -438,6 +439,13 @@ def make_engine(url):
             # This changes neither durability nor the repository/job limits.
             connection.execute("PRAGMA cache_size=-32768")
 
+        @event.listens_for(engine, "checkin")
+        def clear_request_query_budget(connection, _):
+            # A governance request must never leave its deadline attached to a
+            # pooled connection later used by a repository analysis worker.
+            if connection is not None:
+                connection.set_progress_handler(None, 0)
+
     return engine
 
 
@@ -463,18 +471,38 @@ def enforce_tenant_references(db, _context, _instances):
         org = getattr(row, "organization_id", None)
         repo_id = getattr(row, "repository_id", None)
         if org and row in dirty and inspect(row).attrs.organization_id.history.has_changes():
-            raise ValueError("Tenant scope is immutable; cross-tenant reassignment rejected.")
+            # Session selection changes context, never identity/evidence scope.
+            # Permit only an enabled user's explicitly available membership.
+            from backend.admin_models import SessionContext
+            if isinstance(row, SessionContext):
+                from backend.governance import resolve_principal
+                token = db.get(SessionToken, row.digest)
+                identity = db.get(User, token.user_id) if token else None
+                subject = db.get(OIDCSubject, token.oidc_subject_id) if token and token.oidc_subject_id else None
+                if not identity or not resolve_principal(db, identity, org).enabled or subject and subject.organization_id != org:
+                    raise ValueError("Session organization requires an authorized membership.")
+            else:
+                raise ValueError("Tenant scope is immutable; cross-tenant reassignment rejected.")
         if org and repo_id:
             repo = lookup(Repository, repo_id)
             if not repo or repo.organization_id != org:
                 raise ValueError("Cross-tenant repository reference rejected.")
         if isinstance(row, Grant):
             user, repo = lookup(User, row.user_id), lookup(Repository, row.repository_id)
-            if not user or not repo or user.organization_id != repo.organization_id:
+            from backend.admin_models import OrganizationMembership
+            member = next((item for item in pending if isinstance(item, OrganizationMembership)
+                and repo and (item.organization_id, item.user_id) == (repo.organization_id, row.user_id)), None)
+            if repo and not member:
+                member = db.get(OrganizationMembership, (repo.organization_id, row.user_id))
+            if not user or not repo or (user.organization_id != repo.organization_id and not member):
                 raise ValueError("Cross-tenant repository grant rejected.")
         if isinstance(row, OIDCSubject):
             user = lookup(User, row.user_id)
-            if not user or user.organization_id != row.organization_id:
+            from backend.admin_models import OrganizationMembership
+            member = next((item for item in pending if isinstance(item,OrganizationMembership) and
+                (item.organization_id,item.user_id)==(row.organization_id,row.user_id)),None)
+            member=member or db.get(OrganizationMembership,(row.organization_id,row.user_id))
+            if not user or user.organization_id != row.organization_id and not member:
                 raise ValueError("Cross-tenant identity membership rejected.")
         if isinstance(row, FindingOccurrence):
             target = lookup(FindingIdentity, row.identity_id)
@@ -486,3 +514,8 @@ def enforce_tenant_references(db, _context, _instances):
                 target = lookup(Record, identity)
                 if not target or target.organization_id != org or (repo_id and target.repository_id != repo_id):
                     raise ValueError("Cross-tenant analysis reference rejected.")
+
+
+# Register additive models for migration/test metadata. This explicit re-export
+# also keeps the original identity/evidence models in this module authoritative.
+from backend import admin_models as admin_models  # noqa: E402 - register after the shared Base and models exist

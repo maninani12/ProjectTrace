@@ -94,6 +94,7 @@ def append_audit(db, user, action, target, data, repo=None):
     )
     head.sequence, head.digest = sequence, digest
     db.flush()
+    return event
 
 
 def integrity(db, organization_id):

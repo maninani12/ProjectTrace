@@ -29,5 +29,11 @@ if __name__ == "__main__":
                 role="ORG_OWNER",
             )
         )
+        db.flush()
+        from backend.admin_models import OrganizationMembership
+        user=db.scalar(select(User).where(User.email==email))
+        db.add(OrganizationMembership(organization_id=organization.id,user_id=user.id,role="ORG_OWNER"))
+        from backend.domain import audit
+        audit(db,user,"WORKSPACE_CREATED",organization.id,{"actor_id":user.id,"method":"LOCAL_OWNER_CLI"})
         db.commit()
     print("Operator created. Repository grants are required for source access.")

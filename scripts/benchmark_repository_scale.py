@@ -22,6 +22,7 @@ from sqlalchemy.orm import sessionmaker
 from analyzers.engine import PARSER_SIGNATURE, VERSION
 from backend.db import (
     Base,
+    Grant,
     Organization,
     ParserArtifact,
     Record,
@@ -407,6 +408,8 @@ def measure(args):
                 provider="LOCAL",
             )
             db.add_all([user, repo])
+            db.flush()
+            db.add(Grant(user_id=user.id,repository_id=repo.id))
             db.commit()
         if isinstance(base, Record):
             db.expunge(base)

@@ -304,11 +304,35 @@ export type RecordPage = {
   severity_counts: Record<string, number>;
   snapshot_ids: Record<string, string>;
 };
+export type FeatureDecision = {
+  feature: string;
+  allowed: boolean;
+  reason: string;
+  scope?: string;
+  expires_at?: string | null;
+  decision_version: string;
+};
+export type AccessContext = {
+  user_id: string;
+  organization_id: string;
+  role: string;
+  permissions: string[];
+  membership_version?: number;
+  admin_available: boolean;
+  organization_access_available?: boolean;
+  platform_role?: string | null;
+  platform_permissions: string[];
+  administered_team_ids: string[];
+  decision_version: string;
+  features: Record<string, FeatureDecision>;
+};
 export type Identity = {
   email: string;
   role: string;
   csrf: string;
   organization?: string;
+  organization_id?: string;
+  access?: AccessContext;
   demo: boolean;
 };
 export type Answer = {
@@ -343,7 +367,13 @@ export async function api<T>(
   // Reads fail visibly instead of keeping a page spinner alive indefinitely.
   // Uploads retain the server's intake budget; aborting a fetch does not cancel its job.
   const timer =
-    body === undefined && !raw
+    (body === undefined && !raw) ||
+    path.startsWith("/admin/") ||
+    path.startsWith("/auth/ownership") ||
+    path.startsWith("/auth/invitations") ||
+    path.startsWith("/notifications/") ||
+    path === "/auth/reauthenticate" ||
+    path === "/auth/organization"
       ? setTimeout(() => controller.abort(), 15000)
       : undefined;
   try {
@@ -380,7 +410,11 @@ export async function api<T>(
   } catch (error) {
     if (controller.signal.aborted)
       throw new Error(
-        "This request did not complete within 15 seconds. Retry or select a repository; existing analysis jobs continue.",
+        path.startsWith("/admin/") && body !== undefined
+          ? "Confirmation did not arrive within 15 seconds. The operation may have committed. Keep this dialog open and retry the same unchanged command to retrieve its recorded result."
+          : path.startsWith("/admin/")
+            ? "Administration data did not arrive within 15 seconds. Retry this bounded page."
+            : "This request did not complete within 15 seconds. Retry or select a repository; existing analysis jobs continue.",
       );
     throw error;
   } finally {
