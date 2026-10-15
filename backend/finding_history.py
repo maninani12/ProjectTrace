@@ -109,9 +109,14 @@ def project(db, snapshot, findings, prior, matches, *, model_changed, warnings, 
         flush_checked()
         for data, status, finding_id in batch:
             checkpoint(db)
+            generation = db.info.get("analysis_generation")
+            identity = (str(uuid.uuid5(uuid.UUID(snapshot.id), f"history:{data['identity_id']}:{status}:{finding_id}"))
+                        if generation else str(uuid.uuid4()))
+            if generation and db.get(FindingOccurrence, identity):
+                continue
             db.add(
                 FindingOccurrence(
-                    id=str(uuid.uuid4()),
+                    id=identity,
                     organization_id=snapshot.organization_id,
                     repository_id=snapshot.repository_id,
                     identity_id=data["identity_id"],

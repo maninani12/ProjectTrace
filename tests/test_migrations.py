@@ -13,7 +13,7 @@ def test_migrations_upgrade_rollback_and_constraints(tmp_path):
         command = "downgrade" if revision == "base" else "upgrade"
         subprocess.run([sys.executable, "-m", "alembic", command, revision], env=env, check=True, capture_output=True)
     with sqlite3.connect(database) as db:
-        assert db.execute("SELECT version_num FROM alembic_version").fetchone()[0] == "0020"
+        assert db.execute("SELECT version_num FROM alembic_version").fetchone()[0] == "0025"
         assert "ix_activity_outcome" in {r[1] for r in db.execute("PRAGMA index_list(application_activity)")}
         assert "ix_records_graph_class" in {r[1] for r in db.execute("PRAGMA index_list(records)")}
         assert db.execute("SELECT count(*) FROM snapshot_views").fetchone()[0] == 0
@@ -54,3 +54,4 @@ def test_quality_upgrade_preserves_previous_snapshot_profile_and_rollback(tmp_pa
         assert db.execute("SELECT * FROM records").fetchall() == original
         assert not db.execute("SELECT name FROM sqlite_master WHERE name='quality_analyses'").fetchall()
     migrate("upgrade", "head")
+

@@ -271,6 +271,8 @@ def ensure_current(db, job, *, renew_seconds=None):
         )
     ).first()
     if not row:
+        if job.data.get("worker_token"):
+            raise JobCancelled("Claimed worker queue entry is unavailable in this tenant and repository scope.")
         return  # Legacy synchronous jobs have no scheduler claim.
     if row.state != "RUNNING" or row.cancel_requested or row.worker_token != job.data.get("worker_token"):
         raise JobCancelled("Analysis was cancelled, superseded, or its worker lease was replaced.")
@@ -285,11 +287,23 @@ def ensure_current(db, job, *, renew_seconds=None):
         if latest != job.id:
             raise JobCancelled("A newer PR head superseded this analysis.")
     if renew_seconds:
-        db.execute(
+        renewed = db.execute(
             update(QueueEntry)
-            .where(QueueEntry.job_id == job.id, QueueEntry.worker_token == row.worker_token)
+            .where(
+                QueueEntry.job_id == job.id,
+                QueueEntry.organization_id == job.organization_id,
+                QueueEntry.repository_id == job.repository_id,
+                QueueEntry.worker_token == row.worker_token,
+                QueueEntry.state == "RUNNING",
+                QueueEntry.cancel_requested.is_(False),
+            )
             .values(lease_expires_at=(datetime.now(timezone.utc) + timedelta(seconds=renew_seconds + 30)).isoformat())
         )
+        # Recovery/cancellation can win after the read above. A zero-row renewal
+        # must fence this attempt before the caller continues toward publication.
+        # The successful update holds the queue-row lock until transaction end.
+        if renewed.rowcount != 1:
+            raise JobCancelled("Worker lease changed before renewal; this attempt cannot publish.")
 
 
 def owns(db, job_id, token):

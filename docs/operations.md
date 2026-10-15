@@ -1,5 +1,7 @@
 # Operations
 
+15 October 2026: the current additive schema head is 0025. Inventory jobs use private generation batches and atomic promotion; direct synchronous analysis retains its atomic compatibility path. Back up DB/objects/keys, migrate with Alembic, preserve unfinished generations and retry through existing job controls. See [generation/learning operations](GENERATION_AND_LEARNING.md). The older single-output-transaction descriptions below are historical for the compatibility path.
+
 Native startup uses ports 8011/5181 and the local data/projecttrace.db adapter. /health is process liveness; /ready checks database access and local-runner liveness when configured; production Celery readiness is separate. Provider state is separate from database readiness.
 
 Review API errors by request ID without logging source or credentials. Signed webhook receipts are retained even when dispatch fails. Inspect job records through authorized record endpoints. Retry/cancel operations are scoped and do not silently delete source evidence. Celery has late acknowledgement, single-task prefetch and time limits. A real private Linux child-crash/expired-lease recovery drill and PostgreSQL duplicate-claim/dispatch-race tests passed on 2026-10-09; sustained recovery, dead-letter automation and tenant-fairness throughput remain unqualified. See the [current product audit](../PROJECTTRACE_PRODUCT_AUDIT_AND_READINESS.md) for exact scope.

@@ -1,5 +1,7 @@
 # Security boundaries
 
+15 October 2026 update: generation ownership hides unpublished Records and projections; learning responses/notes are encrypted and require assigned-role plus project access. See [security boundaries and remaining gates](docs/GENERATION_AND_LEARNING.md). Parser filesystem/network sandboxing and complete production RLS/DR remain unqualified.
+
 This release has automated checks for tenant isolation, repository ACLs, CSRF, role checks, archive traversal, symlinks, oversized data, secret masking, webhook signatures/replay, fake citation rejection and repository nonexecution. These checks do not establish complete security coverage.
 
 - Every tenant resource is selected through organization scope; repository grants are checked on detail reads, search/investigation, graph data, reviews and exports. Owner roles do not bypass source grants.

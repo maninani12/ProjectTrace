@@ -1,6 +1,6 @@
 # ProjectTrace
 
-Current complete product/pilot qualification: **BLOCKED**. The local application and measured workflows run, but global durable stage resumption, cold large-repository/resource qualification and production security/operational acceptance remain incomplete. See the [2026-10-09 product audit](PROJECTTRACE_PRODUCT_AUDIT_AND_READINESS.md) for actual tests, source-backed demonstrations and precise release blockers.
+Current complete product/pilot qualification: **BLOCKED**. Private resumable generation publication and new-hire/internal-transfer learning are implemented; full global-memory, unchanged OpenMetadata, real broker and production isolation/operations acceptance remain open. Read the [current implementation](docs/GENERATION_AND_LEARNING.md) and [requirements/evidence register](docs/SDLC_ACCEPTANCE_2026_10_15.md); historical reports remain preserved.
 
 ProjectTrace connects engineering claims to current software evidence, then shows what changed, what needs review, and who owns the next action.
 

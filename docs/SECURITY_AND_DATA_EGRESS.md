@@ -1,5 +1,7 @@
 # Security boundaries and data transfers
 
+Current generation/learning extension (15 October 2026): public reads exclude unfinished generations; scope-qualified database keys protect private ownership and learning relationships. Assignment access never bypasses source grants. Responses/review notes are encrypted, and expired private text is withheld. See [implementation and limits](GENERATION_AND_LEARNING.md); this is not physical erasure, formal compliance or complete parser isolation.
+
 Customer code and IaC remain inert text. ProjectTrace never runs imported commands, scripts, tests, builds, package installation, Terraform providers, CloudFormation transforms, Helm rendering or container images. Native Python AST runs in the worker; maintained grammar and IaC parsers use owned bounded helpers. POSIX/Windows resource ceilings, bounded input/output, timeouts and parser-state reporting limit work. A complete helper filesystem/network sandbox is **PARTIAL**, not certified.
 
 | Transfer | Default / enforcement | Boundary |

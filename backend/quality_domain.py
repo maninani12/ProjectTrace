@@ -100,9 +100,10 @@ def apply_comparison(db, quality, findings, base, changed_lines, model_changed, 
 
 def persist(db, snapshot, quality, findings):
     items = [f for f in findings if f.get("category") == "QUALITY"]
+    store = db.merge if db.info.get("analysis_generation") else db.add
     for item in items:
         checkpoint(db)
-        db.add(
+        store(
             QualityOccurrence(
                 finding_id=item["id"],
                 snapshot_id=snapshot.id,
@@ -120,7 +121,7 @@ def persist(db, snapshot, quality, findings):
         )
     quality["summary"] = summary(quality, items)
     quality["gate"] = gate(quality, eligible_findings(db, snapshot.organization_id, snapshot.repository_id, items))
-    db.add(
+    store(
         QualityAnalysis(
             snapshot_id=snapshot.id,
             organization_id=snapshot.organization_id,

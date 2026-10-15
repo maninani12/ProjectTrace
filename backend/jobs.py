@@ -158,8 +158,39 @@ def execute_analysis(db, user, repo, files, *, request_id=None, job=None, _elaps
         )
 
     stage.performance = performance
+    check_current.performance = performance
     stage.job_id = job_id
     stage.retain_completed_analysis = retain_completed_analysis
+    def load_checkpoint(signature):
+        from backend.analysis_checkpoints import load
+        check_current()
+        result = load(db, job_id, organization_id, repository_id, signature)
+        if result is not None:
+            performance.count("global_analysis_checkpoint_hits")
+        return result
+
+    def save_checkpoint(signature, result):
+        from backend.analysis_checkpoints import save
+        saved = save(db, job_id, organization_id, repository_id, signature, result, check_current)
+        performance.count("global_analysis_checkpoints_saved" if saved else "global_analysis_checkpoints_oversize")
+        if not saved and inventory_input and os.getenv("PROJECTTRACE_GENERATION_PUBLICATION", "1") == "1":
+            raise IntakeError("GLOBAL_CHECKPOINT_BUDGET", "Completed analysis exceeds the durable checkpoint byte budget.",
+                              budget="ANALYSIS_CHECKPOINT_MAX_BYTES", maximum=int(os.getenv("ANALYSIS_CHECKPOINT_MAX_BYTES", "64000000")),
+                              remediation="Inspect analysis volume and stage storage; retained source inventory remains available.")
+
+    stage.load_analysis_checkpoint = load_checkpoint
+    stage.save_analysis_checkpoint = save_checkpoint
+    def prepare_publication(files, signature, result):
+        from backend.publication_units import prepare
+        return prepare(db, job_id, files, signature, result, check_current)
+
+    stage.prepare_publication = prepare_publication
+    def begin_generation(signature, *, branch="main", inventory_id, content_key):
+        from backend.generations import Generation
+        return Generation(db, job_id, organization_id, repository_id, signature, check_current,
+                          branch=branch, inventory_id=inventory_id, content_key=content_key)
+
+    stage.begin_generation = begin_generation
     try:
         stage("VALIDATING")
         content = files() if callable(files) else files
@@ -167,6 +198,9 @@ def execute_analysis(db, user, repo, files, *, request_id=None, job=None, _elaps
         state = snapshot.data["status"]
         output_started = True
         stage("FINALIZING")
+        generation = db.info.get("analysis_generation")
+        if generation:
+            generation.validate(snapshot)
         stage(state)
         job.data = {
             **job.data,
@@ -184,13 +218,42 @@ def execute_analysis(db, user, repo, files, *, request_id=None, job=None, _elaps
             **({"completed_analysis": {**completed_analysis, "publication_state": "PUBLISHED", "snapshot_id": snapshot.id}}
                if completed_analysis else {}),
         }
+        from backend.db import AnalysisCheckpoint
+        retained_checkpoint = db.get(AnalysisCheckpoint, job_id)
+        if retained_checkpoint:
+            db.delete(retained_checkpoint)
+        from sqlalchemy import delete
+
+        from backend.db import PublicationUnit
+        db.execute(delete(PublicationUnit).where(PublicationUnit.job_id == job_id,
+                   PublicationUnit.organization_id == organization_id, PublicationUnit.repository_id == repository_id))
+        if generation:
+            generation.promote(snapshot)
+            job.data = {**job.data, "generation_id": generation.row.id,
+                        "generation_receipts_reused": generation.reused,
+                        "generation_batches": generation.batches,
+                        "generation_maximum_batch_rows": generation.maximum_batch_rows}
         db.commit()
+        if generation:
+            generation.published = True
         return snapshot, job
     except Exception as error:
+        interrupted_generation = db.info.get("analysis_generation")
+        interrupted_generation_id = interrupted_generation.generation_id if interrupted_generation else None
+        from backend.generations import clear as clear_generation
+        clear_generation(db)
         from backend.analysis_budget import clear
         clear(db)
         from backend.scheduling import JobCancelled, owns
         db.rollback()
+        if interrupted_generation_id:
+            from backend.generation_models import AnalysisGeneration
+            published = db.get(AnalysisGeneration, interrupted_generation_id)
+            terminal_job = db.get(Record, job_id)
+            if published and published.state == "PUBLISHED" and terminal_job.data.get("snapshot_id") == published.snapshot_id and terminal_job.data.get("state") in {"COMPLETED", "COMPLETED_NO_FINDINGS", "PARTIAL"}:
+                # A lost commit acknowledgement cannot turn a committed,
+                # consistent generation into a fabricated FAILED job.
+                return db.get(Record, published.snapshot_id), terminal_job
         if not owns(db, job_id, owned_token):
             raise JobCancelled("Worker lease was replaced; this attempt cannot modify the job.") from None
         job = db.get(Record, job_id)
@@ -233,5 +296,7 @@ def execute_analysis(db, user, repo, files, *, request_id=None, job=None, _elaps
         )
         raise
     finally:
+        from backend.generations import clear as clear_generation
+        clear_generation(db)
         from backend.analysis_budget import clear
         clear(db)

@@ -87,6 +87,9 @@ class Record(Base):
     __tablename__ = "records"
     __table_args__ = (
         UniqueConstraint("organization_id", "kind", "natural_key"),
+        ForeignKeyConstraint(["repository_id", "organization_id"],
+                             ["repositories.id", "repositories.organization_id"],
+                             name="fk_records_repository_scope"),
         Index("ix_records_scoped_current", "organization_id", "repository_id", "kind", "created_at"),
     )
     id: Mapped[str] = mapped_column(String(80), primary_key=True)
@@ -98,6 +101,9 @@ class Record(Base):
     created_at: Mapped[str] = mapped_column(String(50), default=now)
     version: Mapped[int] = mapped_column(default=1)
     __mapper_args__ = {"version_id_col": version}
+
+
+Index("uq_repositories_tenant_scope", Repository.id, Repository.organization_id, unique=True)
 
 
 # Match the API's portable JSON expressions; payloads remain authoritative Records.
@@ -135,6 +141,54 @@ for _kind, _fields in (("claim", ("status",)), ("finding", ("severity", "review_
         *(Record.data[field].as_string() for field in _fields),
         sqlite_where=Record.kind == _kind, postgresql_where=Record.kind == _kind,
     )
+
+
+Index("uq_records_checkpoint_scope", Record.id, Record.organization_id, Record.repository_id, unique=True)
+
+
+class AnalysisCheckpoint(Base):
+    """Private encrypted global analysis result; never a published domain record."""
+
+    __tablename__ = "analysis_checkpoints"
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ["job_id", "organization_id", "repository_id"],
+            ["records.id", "records.organization_id", "records.repository_id"],
+            ondelete="CASCADE", name="fk_checkpoint_job_scope",
+        ),
+    )
+    job_id: Mapped[str] = mapped_column(String(80), primary_key=True)
+    organization_id: Mapped[str] = mapped_column(ForeignKey("organizations.id"), index=True)
+    repository_id: Mapped[str] = mapped_column(ForeignKey("repositories.id"), index=True)
+    signature: Mapped[str] = mapped_column(String(64))
+    result_digest: Mapped[str] = mapped_column(String(64))
+    expires_at: Mapped[str] = mapped_column(String(50), index=True)
+    ciphertext: Mapped[str] = mapped_column(Text)
+    created_at: Mapped[str] = mapped_column(String(50), default=now)
+
+
+class PublicationUnit(Base):
+    """Private, independently committed evidence/graph preparation receipt."""
+
+    __tablename__ = "publication_units"
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ["job_id", "organization_id", "repository_id"],
+            ["records.id", "records.organization_id", "records.repository_id"],
+            ondelete="CASCADE", name="fk_publication_unit_job_scope",
+        ),
+        Index("ix_publication_units_expiry", "expires_at"),
+    )
+    job_id: Mapped[str] = mapped_column(String(80), primary_key=True)
+    unit_key: Mapped[str] = mapped_column(String(64), primary_key=True)
+    organization_id: Mapped[str] = mapped_column(ForeignKey("organizations.id"))
+    repository_id: Mapped[str] = mapped_column(ForeignKey("repositories.id"))
+    signature: Mapped[str] = mapped_column(String(64))
+    stage: Mapped[str] = mapped_column(String(40))
+    dependency_key: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    ciphertext: Mapped[str] = mapped_column(Text)
+    result_digest: Mapped[str] = mapped_column(String(64))
+    expires_at: Mapped[str] = mapped_column(String(50))
 
 
 class SnapshotView(Base):
@@ -464,6 +518,21 @@ def enforce_tenant_references(db, _context, _instances):
     def lookup(model, identity):
         key = (model, identity)
         if key not in references:
+            generation = db.info.get("analysis_generation")
+            if model is Record and generation:
+                from types import SimpleNamespace
+
+                from sqlalchemy import select
+
+                from backend.generation_models import GenerationRecord
+                pending_owner = any(item[0] == identity for item in generation.pending)
+                owner_id = None if pending_owner else db.connection().execute(
+                    select(GenerationRecord.__table__.c.generation_id).where(
+                        GenerationRecord.__table__.c.record_id == identity)).scalar_one_or_none()
+                if pending_owner or owner_id == generation.generation_id:
+                    references[key] = SimpleNamespace(id=identity, organization_id=generation.row.organization_id,
+                                                     repository_id=generation.row.repository_id)
+                    return references[key]
             references[key] = db.get(model, identity)
         return references[key]
 
@@ -519,3 +588,5 @@ def enforce_tenant_references(db, _context, _instances):
 # Register additive models for migration/test metadata. This explicit re-export
 # also keeps the original identity/evidence models in this module authoritative.
 from backend import admin_models as admin_models  # noqa: E402 - register after the shared Base and models exist
+from backend import generation_models as generation_models  # noqa: E402
+from backend import onboarding_models as onboarding_models  # noqa: E402

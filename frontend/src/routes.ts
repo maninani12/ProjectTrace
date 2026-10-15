@@ -5,6 +5,7 @@ export const routes = {
   Repositories: "/repositories",
   "Pull Requests": "/pull-requests",
   "Engineering Changes": "/engineering-changes",
+  "Learning & Transfer": "/learning",
   Findings: "/findings",
   "Code Quality": "/quality",
   Security: "/security",

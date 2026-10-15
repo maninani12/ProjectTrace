@@ -56,7 +56,7 @@ def canonical(event, sequence, previous):
     )
 
 
-def append_audit(db, user, action, target, data, repo=None):
+def append_audit(db, user, action, target, data, repo=None, *, event_id=None):
     import uuid
 
     # A write before reading the head serializes SQLite and PostgreSQL appenders.
@@ -70,7 +70,7 @@ def append_audit(db, user, action, target, data, repo=None):
         head = AuditHead(organization_id=user.organization_id, sequence=0, digest="0" * 64)
         db.add(head)
     event = Audit(
-        id=str(uuid.uuid4()),
+        id=event_id or str(uuid.uuid4()),
         organization_id=user.organization_id,
         repository_id=repo,
         actor=user.email,
@@ -106,7 +106,7 @@ def integrity(db, organization_id):
         select(AuditLink, Audit)
         .outerjoin(Audit, Audit.id == AuditLink.event_id)
         .where(AuditLink.organization_id == organization_id)
-        .order_by(AuditLink.sequence)
+        .order_by(AuditLink.sequence).execution_options(generation_audit_integrity=True)
     ).yield_per(500)
     previous, sequence, failures = "0" * 64, 0, []
     for link, event in links:
@@ -125,7 +125,8 @@ def integrity(db, organization_id):
     )
     if head and (head.sequence != sequence or head.digest != previous):
         failures.append("HEAD")
-    total = db.scalar(select(func.count()).select_from(Audit).where(Audit.organization_id == organization_id))
+    total = db.scalar(select(func.count()).select_from(Audit).where(Audit.organization_id == organization_id)
+                      .execution_options(generation_audit_integrity=True))
     result = {
         "schema": "projecttrace-audit-chain-v1",
         "organization_id": organization_id,

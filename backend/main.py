@@ -1392,7 +1392,7 @@ def ask(body: Question, request: Request):
             ]
             if ids:
                 query = text(
-                    "SELECT id, ts_rank_cd(to_tsvector('english', coalesce(data->>'text', '') || ' ' || coalesce(data->>'category', '')), plainto_tsquery('english', :question)) AS rank FROM records WHERE organization_id = :org AND kind = 'claim' AND id IN :ids"
+                    "SELECT id, ts_rank_cd(to_tsvector('english', coalesce(data->>'text', '') || ' ' || coalesce(data->>'category', '')), plainto_tsquery('english', :question)) AS rank FROM records WHERE organization_id = :org AND kind = 'claim' AND id IN :ids AND NOT EXISTS (SELECT 1 FROM generation_records gr JOIN analysis_generations ag ON ag.id=gr.generation_id WHERE gr.record_id=records.id AND ag.state<>'PUBLISHED')"
                 ).bindparams(bindparam("ids", expanding=True))
                 fulltext = {
                     row.id: float(row.rank)
@@ -1949,6 +1949,9 @@ def check_advisories(snapshot_id: str, request: Request):
 app.include_router(quality_router)
 app.include_router(finding_router)
 app.include_router(graph_router)
+from backend.onboarding import router as onboarding_router  # noqa: E402
+
+app.include_router(onboarding_router)
 app.include_router(engineering_router)
 app.include_router(trust_router)
 app.include_router(oidc_router)

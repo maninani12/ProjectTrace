@@ -201,8 +201,19 @@ def load_input(db, job):
 
 
 def purge_expired_inputs(db):
-    expired = list(db.scalars(select(AnalysisInput).where(AnalysisInput.expires_at <= now())))
+    from backend.generations import purge_expired_chunks
+    purge_expired_chunks(db)
+    from backend.publication_units import purge_expired
+    purge_expired(db)
+    from backend.db import AnalysisCheckpoint
+    for checkpoint in db.scalars(select(AnalysisCheckpoint).where(AnalysisCheckpoint.expires_at <= now()).limit(1000)):
+        db.delete(checkpoint)
+    expired = list(db.scalars(select(AnalysisInput).where(AnalysisInput.expires_at <= now()).limit(1000)))
     for retained in expired:
+        from backend.db import AnalysisCheckpoint
+        checkpoint = db.get(AnalysisCheckpoint, retained.job_id)
+        if checkpoint:
+            db.delete(checkpoint)
         job = db.get(Record, retained.job_id)
         if job and job.data.get("state") not in TERMINAL:
             job.data = {

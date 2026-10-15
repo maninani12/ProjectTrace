@@ -102,6 +102,128 @@ def initialize(postgres):
     return factory
 
 
+def test_postgresql_generation_recovery_scope_and_atomic_promotion(postgres, monkeypatch):
+    from backend.generation_models import AnalysisGeneration, GenerationRecord, PublishedGeneration
+    from backend.generations import Generation
+    factory = initialize(postgres)
+    monkeypatch.setenv("PROJECTTRACE_GENERATION_PUBLICATION", "1")
+    save = Generation.save
+
+    def stop(self, stage, state):
+        save(self, stage, state)
+        if stage == "HISTORY":
+            raise RuntimeError("PostgreSQL committed-stage interruption")
+
+    monkeypatch.setattr(Generation, "save", stop)
+    with factory() as db:
+        user, repo = db.get(User, "a"), db.get(Repository, "a1")
+        inventory = capture(db, user.organization_id, repo, [("app.py", b"def value():\n return 1\n"),
+                            ("README.md", b"# Architecture\nBackend uses Python.\n")])
+        db.commit()
+        inventory_id = inventory.id
+        with pytest.raises(RuntimeError):
+            execute_analysis(db, user, repo, RepositoryFiles(db, "a", "a1", inventory_id))
+        generation = db.scalar(select(AnalysisGeneration))
+        job_id, generation_id = generation.job_id, generation.id
+        assert db.scalar(select(func.count()).select_from(Record).where(Record.kind == "snapshot")) == 0
+        private_id = db.scalar(select(GenerationRecord.record_id))
+        with pytest.raises(IntegrityError):
+            db.execute(GenerationRecord.__table__.update().where(GenerationRecord.record_id == private_id)
+                       .values(organization_id="b", repository_id="b1"))
+        db.rollback()
+    monkeypatch.setattr(Generation, "save", save)
+    with factory() as db:
+        snapshot, job = execute_analysis(db, db.get(User, "a"), db.get(Repository, "a1"),
+            RepositoryFiles(db, "a", "a1", inventory_id), job=db.get(Record, job_id))
+        assert job.data["generation_receipts_reused"] == 7
+        assert db.get(AnalysisGeneration, generation_id).state == "PUBLISHED"
+        assert db.get(PublishedGeneration, ("a", "a1", "main")).generation_id == generation_id
+        assert db.get(Record, snapshot.id)
+        assert db.scalar(select(func.count()).select_from(Record).where(Record.kind == "snapshot")) == 1
+
+
+def test_postgresql_connection_loss_before_promotion_leaves_private_recoverable_output(postgres, monkeypatch):
+    from sqlalchemy.exc import DBAPIError
+
+    from backend.generation_models import AnalysisGeneration
+    from backend.generations import Generation
+    factory = initialize(postgres)
+    monkeypatch.setenv("PROJECTTRACE_GENERATION_PUBLICATION", "1")
+    promote = Generation.promote
+    engine, _ = postgres
+
+    def interrupt(self, snapshot):
+        target_pid = self.db.scalar(text("SELECT pg_backend_pid()"))
+        with engine.begin() as controller:
+            assert controller.scalar(text("SELECT pg_terminate_backend(:pid)"), {"pid": target_pid})
+        promote(self, snapshot)
+
+    monkeypatch.setattr(Generation, "promote", interrupt)
+    with factory() as db:
+        user, repo = db.get(User, "a"), db.get(Repository, "a1")
+        inventory = capture(db, "a", repo, [("app.py", b"def identity(value):\n return value\n")])
+        inventory_id = inventory.id
+        db.commit()
+        with pytest.raises(DBAPIError):
+            execute_analysis(db, user, repo, RepositoryFiles(db, "a", "a1", inventory_id))
+    monkeypatch.setattr(Generation, "promote", promote)
+    with factory() as db:
+        generation = db.scalar(select(AnalysisGeneration))
+        assert generation.state == "VALIDATED"
+        assert db.scalar(select(func.count()).select_from(Record).where(Record.kind == "snapshot")) == 0
+        snapshot, job = execute_analysis(db, db.get(User, "a"), db.get(Repository, "a1"),
+            RepositoryFiles(db, "a", "a1", inventory_id), job=db.get(Record, generation.job_id))
+        assert job.data["generation_receipts_reused"] == 14
+        assert snapshot.id == generation.snapshot_id
+        assert db.get(AnalysisGeneration, generation.id).state == "PUBLISHED"
+
+
+def test_postgresql_competing_generations_promote_one_branch_pointer(postgres, monkeypatch):
+    from threading import Barrier
+
+    from backend.generation_models import AnalysisGeneration, PublishedGeneration
+    from backend.generations import Generation
+    from backend.scheduling import JobCancelled
+
+    factory = initialize(postgres)
+    monkeypatch.setenv("PROJECTTRACE_GENERATION_PUBLICATION", "1")
+    inventories = []
+    with factory() as db:
+        for number in range(2):
+            inventory = capture(db, "a", db.get(Repository, "a1"), [
+                ("app.py", f"def value():\n return {number}\n".encode())])
+            inventories.append(inventory.id)
+        db.commit()
+    barrier = Barrier(2)
+    promote = Generation.promote
+
+    def compete(self, snapshot):
+        barrier.wait(timeout=60)
+        promote(self, snapshot)
+
+    monkeypatch.setattr(Generation, "promote", compete)
+
+    def run(inventory_id):
+        with factory() as db:
+            try:
+                snapshot, _ = execute_analysis(db, db.get(User, "a"), db.get(Repository, "a1"),
+                    RepositoryFiles(db, "a", "a1", inventory_id))
+                return snapshot.id
+            except JobCancelled:
+                return None
+
+    with ThreadPoolExecutor(max_workers=2) as workers:
+        results = list(workers.map(run, inventories))
+    assert sum(result is not None for result in results) == 1
+    with factory() as db:
+        pointer = db.get(PublishedGeneration, ("a", "a1", "main"))
+        winner = db.get(AnalysisGeneration, pointer.generation_id)
+        assert pointer.revision == 1 and winner.state == "PUBLISHED"
+        assert winner.snapshot_id == next(result for result in results if result)
+        assert sorted(db.scalars(select(AnalysisGeneration.state))) == ["PUBLISHED", "VALIDATED"]
+        assert db.scalar(select(func.count()).select_from(Record).where(Record.kind == "snapshot")) == 1
+
+
 def queued(db, org, repo):
     job = add(db, org, repo, "job", {"state": "QUEUED", "source": "GITHUB", "execution": "CELERY"})
     register(db, job)
@@ -128,7 +250,7 @@ def test_postgresql_migrations_preserve_prior_records(postgres):
                 )
             assert db.scalar(text("SELECT data->>'text' FROM records WHERE id='preserved'")) == "Preserved claim"
     with engine.connect() as db:
-        assert db.scalar(text("SELECT version_num FROM alembic_version")) == "0020"
+        assert db.scalar(text("SELECT version_num FROM alembic_version")) == "0025"
 
 
 def test_postgresql_concurrent_duplicate_claims_and_tenant_fairness(postgres):
@@ -295,3 +417,42 @@ def test_postgresql_failure_rolls_back_output_and_keeps_input(postgres, monkeypa
         audit(db, user, "RECOVERY_TEST_VERIFIED", job.id, {"partial_output_visible": False}, repo.id)
         db.commit()
         assert integrity(db, "a")["state"] == "VERIFIED"
+
+
+def test_postgresql_private_publication_receipts_scope_and_fencing(postgres):
+    from backend.db import PublicationUnit
+    from backend.publication_units import Drafts, key
+    from backend.scheduling import JobCancelled
+    factory = initialize(postgres)
+    with factory() as db:
+        job = queued(db, "a", "a1")
+        assert claim(db, job, 120)["state"] == "CLAIMED"
+
+        def fenced():
+            ensure_current(db, job, renew_seconds=120)
+
+        drafts = Drafts(db, job.id, "a", "a1", "a" * 64, fenced)
+        drafts.save("MANIFEST", "", {"file_count": 0})
+        assert drafts.require("MANIFEST") == {"file_count": 0}
+        with pytest.raises(IntegrityError, match="fk_publication_unit_job_scope"):
+            db.execute(PublicationUnit.__table__.insert().values(job_id=job.id,unit_key="b"*64,
+                organization_id="b",repository_id="b1",signature="a"*64,stage="MANIFEST",
+                ciphertext="inert",result_digest="c"*64,expires_at="2099-01-01"))
+        db.rollback()
+        row = db.get(QueueEntry, job.id)
+        row.worker_token = "replacement-token"
+        db.commit()
+        with pytest.raises(JobCancelled):
+            drafts.save("EVIDENCE", "app.py", {}, ("MANIFEST", ""))
+        db.rollback()
+        assert db.get(PublicationUnit, (job.id, key("a" * 64, "EVIDENCE", "app.py"))) is None
+
+
+def test_postgresql_record_tenant_scope_rejects_direct_sql(postgres):
+    factory = initialize(postgres)
+    with factory() as db:
+        with pytest.raises(IntegrityError, match="fk_records_repository_scope"):
+            db.execute(Record.__table__.insert().values(id="invalid-record-scope",organization_id="b",
+                repository_id="a1",kind="claim",natural_key="invalid-record-scope",data={}))
+        db.rollback()
+        assert db.get(Record,"invalid-record-scope") is None

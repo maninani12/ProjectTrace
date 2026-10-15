@@ -23,6 +23,7 @@ from backend.admin_models import (
 from backend.db import Grant, Repository
 
 PERMISSIONS = {
+    "learning.manage": "Assign scoped project learning with explicit source access and independent reviews.",
     "engineering.write": "Modify authorized engineering records; repository grants still apply.",
     "engineering.exceptions.manage": "Approve permitted risk exceptions on explicitly authorized repository records.",
     "security.policy.manage": "Manage permitted tenant trust controls without changing deployment safety caps.",
@@ -74,6 +75,7 @@ for _role,_permissions in list(ROLE_PERMISSIONS.items()):
     ROLE_PERMISSIONS[_role]=frozenset(_permissions)|{"organization.ownership.accept"}
 SELF_SERVICE_PERMISSIONS={"engineering.write","organization.ownership.accept"}
 FEATURES = {
+    "onboarding": ("Onboarding and knowledge transfer", "Learn from authorized published evidence and review scoped assessments."),
     "zip_import": ("ZIP import", "Submit new ZIP imports and source archives."),
     "public_github": ("Public GitHub import", "Fetch authorized public repositories without executing them."),
     "private_scm": ("Private SCM connections", "Configure and use existing private SCM integrations."),
@@ -83,7 +85,7 @@ FEATURES = {
     "exports": ("Exports", "Download authorized source-evidence and governance exports."),
     "api_access": ("Application API access", "Use engineering APIs; identity, notices and administration remain reachable."),
 }
-CATALOG_VERSION = "projecttrace-governance-v1"
+CATALOG_VERSION = "projecttrace-governance-v2"
 
 
 def timestamp():
@@ -167,7 +169,7 @@ def permitted(db, user, permission, *, team_id=None):
         return permission in PLATFORM_PERMISSIONS.get(getattr(user, "platform_role", None), set())
     if permission in ROLE_PERMISSIONS.get(user.role, set()):
         return True
-    if team_id and permission in {"teams.manage", "teams.read", "features.manage", "repositories.access.grant", "usage.read", "activity.read", "analyses.read"}:
+    if team_id and permission in {"teams.manage", "teams.read", "features.manage", "repositories.access.grant", "usage.read", "activity.read", "analyses.read", "learning.manage"}:
         return team_id in team_ids(db, user, administered=True)
     if permission == "teams.read":
         return bool(team_ids(db, user, administered=True))
@@ -253,6 +255,8 @@ def require_feature(db, user, feature):
 
 
 def request_feature(path, method, params):
+    if path.startswith("/api/learning/"):
+        return "onboarding"
     if path == "/api/ask":
         return "ask_engineering"
     if path.startswith(("/api/archive/",)) and method == "POST" or path.endswith("/source-archive"):

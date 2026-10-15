@@ -1,5 +1,7 @@
 # Development conventions
 
+For generation/private-state changes, preserve all public-reader isolation paths and bounded batch assertions. For learning changes, test both new-hire and internal-transfer modes, independent reviewers, source refresh, retention, entitlements and both project grants. See [current implementation](docs/GENERATION_AND_LEARNING.md) and [acceptance register](docs/SDLC_ACCEPTANCE_2026_10_15.md).
+
 Run backend tests, Ruff, TypeScript build, frontend tests and browser workflows before submitting changes. No commit or push was made automatically.
 
 Every analyzer rule needs a stable ID/version, rationale, severity/confidence distinction, location and remediation. Add a positive fixture and a false-positive trap. Document unsupported coverage. Never treat absence as direct contradiction without conclusive scoped evidence.

@@ -9,7 +9,7 @@ import zipfile
 import zlib
 from collections import OrderedDict
 from collections.abc import Mapping
-from pathlib import Path, PurePosixPath
+from pathlib import PurePosixPath
 
 from cryptography.fernet import InvalidToken
 from sqlalchemy import select
@@ -20,6 +20,7 @@ from backend.db import Record, SourceBlob, SourceInventory, SourceInventoryFile
 from backend.domain import uid
 from backend.intake_errors import IntakeError
 from backend.queue import cipher
+from backend.storage_paths import storage_path
 
 
 def limits():
@@ -41,7 +42,7 @@ def limits():
 
 class BlobStore:
     def __init__(self):
-        self.root = Path(os.getenv("SOURCE_BLOB_DIR", "data/source-blobs")).resolve()
+        self.root = storage_path(os.getenv("SOURCE_BLOB_DIR", "data/source-blobs"))
         self.root.mkdir(parents=True, exist_ok=True)
         self.encryption = cipher()
         mode = os.getenv("SOURCE_BLOB_BACKEND", "local")

@@ -1,5 +1,7 @@
 # Product constitution and execution status
 
+Current continuation note (15 October 2026): generation-based publication and both employee-onboarding/internal-transfer workflows are implemented and have local acceptance evidence. See `GENERATION_AND_LEARNING.md` and `SDLC_ACCEPTANCE_2026_10_15.md` for current architecture, status and limits. The broad constitution phases below retain historical scope; they are not a current release certificate. Overall release remains **BLOCKED** pending the explicitly open scale, broker, isolation and production qualification gates.
+
 The permanent product constitution is retained in `PRODUCT_CONSTITUTION.txt`; `PUBLIC_LANDING_SPECIFICATION.txt` records the public-experience request implemented in 1.4.0. They define the direction, not a claim that every future capability is complete. The core remains **claim → current evidence → explainable decision → human ownership → auditable action**. ProjectTrace owns its native analysis and does not require SonarQube or Wiz.
 
 | Constitution phase | Current evidence and remaining scope |

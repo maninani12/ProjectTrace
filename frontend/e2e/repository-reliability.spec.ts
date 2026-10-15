@@ -7,7 +7,7 @@ test("a rate-limited identity read preserves the session and offers access retry
 }) => {
   test.skip(
     !process.env.PROJECTTRACE_LARGE_ACCOUNT,
-    "Needs the authorized current-record mirror.",
+    "Needs reproducible pinned-source QA fixtures.",
   );
   const account = JSON.parse(
     readFileSync(process.env.PROJECTTRACE_LARGE_ACCOUNT!, "utf8"),
@@ -33,7 +33,10 @@ test("a rate-limited identity read preserves the session and offers access retry
   await page.unroute("**/api/auth/me");
   await page.getByRole("button", { name: "Retry access", exact: true }).click();
   await expect(
-    page.getByRole("heading", { name: "spring petclinic", exact: true }),
+    page.getByRole("heading", {
+      name: account.repositories[0].name,
+      exact: true,
+    }),
   ).toBeVisible();
 });
 
@@ -42,7 +45,7 @@ test("two current ZIPs load independently, show honest diagnostics and pin Explo
 }) => {
   test.skip(
     !process.env.PROJECTTRACE_LARGE_ACCOUNT,
-    "Needs the authorized current-record mirror.",
+    "Needs reproducible pinned-source QA fixtures.",
   );
   const account = JSON.parse(
     readFileSync(process.env.PROJECTTRACE_LARGE_ACCOUNT!, "utf8"),
@@ -87,10 +90,21 @@ test("two current ZIPs load independently, show honest diagnostics and pin Explo
       ),
     ).toBe(true);
     await expect(
-      page.getByRole("heading", { name: "spring petclinic", exact: true }),
+      page.getByRole("heading", {
+        name: account.repositories[0].name,
+        exact: true,
+      }),
     ).toBeVisible();
-    await expect(page.getByText("21269", { exact: true })).toBeVisible();
-    await expect(page.getByText("183", { exact: true })).toBeVisible();
+    await expect(
+      page.getByText(String(account.repositories[0].file_count), {
+        exact: true,
+      }),
+    ).toBeVisible();
+    await expect(
+      page.getByText(String(account.repositories[1].file_count), {
+        exact: true,
+      }),
+    ).toBeVisible();
     await expect(
       page.getByText("Loading repositories…", { exact: false }),
     ).toHaveCount(0);
@@ -99,13 +113,26 @@ test("two current ZIPs load independently, show honest diagnostics and pin Explo
   expect(summaries).toBe(0);
   expect(Math.max(...times)).toBeLessThan(15000);
   const spring = page.locator("article.repo-card").filter({
-    has: page.getByRole("heading", { name: "spring petclinic", exact: true }),
+    has: page.getByRole("heading", {
+      name: account.repositories[0].name,
+      exact: true,
+    }),
   });
   await spring
     .getByText("Analysis diagnostics · PARTIAL", { exact: true })
     .click();
-  await expect(spring.getByText(/3 recorded diagnostics/)).toBeVisible();
-  await expect(spring.getByText(/84 \/ 119 source files parsed/)).toBeVisible();
+  await expect(
+    spring.getByText(
+      `${account.repositories[0].warning_count} recorded diagnostics.`,
+    ),
+  ).toBeVisible();
+  await expect(
+    spring.getByText(
+      new RegExp(
+        `${account.repositories[0].parsed_files} / ${account.repositories[0].source_files} source files parsed`,
+      ),
+    ),
+  ).toBeVisible();
   await page.screenshot({
     path: path.join(proof, "two-current-repositories.png"),
     fullPage: true,
@@ -119,21 +146,23 @@ test("two current ZIPs load independently, show honest diagnostics and pin Explo
   await spring.getByRole("button", { name: "Explore" }).click();
   const records = await (await response).json();
   expect(records.snapshot_ids).toEqual({
-    "684f260f-d5bb-461c-b024-2da4d883eeea":
-      "01a120f6-3ebe-7f6d-9854-53e62443f253",
+    [account.repositories[0].id]: account.repositories[0].snapshot_id,
   });
-  expect(records.total).toBe(140);
+  expect(records.total).toBe(account.repositories[0].evidence_count);
   expect(
     records.items.every(
       (item: { repository_id: string }) =>
-        item.repository_id === "684f260f-d5bb-461c-b024-2da4d883eeea",
+        item.repository_id === account.repositories[0].id,
     ),
   ).toBe(true);
   await expect(page.getByLabel("Global repository")).toHaveValue(
-    "684f260f-d5bb-461c-b024-2da4d883eeea",
+    account.repositories[0].id,
   );
   await expect(
-    page.getByText("1–50 of 140 matching records", { exact: true }),
+    page.getByText(
+      `1–${Math.min(50, account.repositories[0].evidence_count)} of ${account.repositories[0].evidence_count} matching records`,
+      { exact: true },
+    ),
   ).toBeVisible();
   expect(errors).toEqual([]);
   writeFileSync(
@@ -157,7 +186,7 @@ test("repository read failure is recoverable without retrying analysis or invent
 }) => {
   test.skip(
     !process.env.PROJECTTRACE_LARGE_ACCOUNT,
-    "Needs the authorized current-record mirror.",
+    "Needs reproducible pinned-source QA fixtures.",
   );
   const account = JSON.parse(
     readFileSync(process.env.PROJECTTRACE_LARGE_ACCOUNT!, "utf8"),
@@ -195,7 +224,10 @@ test("repository read failure is recoverable without retrying analysis or invent
   await page.unroute("**/api/repositories?offset=**");
   await page.getByRole("button", { name: "Retry", exact: true }).click();
   await expect(
-    page.getByRole("heading", { name: "spring petclinic", exact: true }),
+    page.getByRole("heading", {
+      name: account.repositories[0].name,
+      exact: true,
+    }),
   ).toBeVisible();
   expect(mutations).toBe(0);
 });

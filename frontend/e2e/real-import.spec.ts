@@ -205,9 +205,13 @@ test("real workspace ZIP import, claims, evidence, question and second-snapshot 
   await page
     .getByLabel("Source archive", { exact: true })
     .setInputFiles(path.resolve("e2e/fixtures/native-fixture-updated.zip"));
+  const updatedSnapshot = page.waitForResponse(response =>
+    new URL(response.url()).pathname === `/api/repositories/${firstRepository}/source-archive`
+      && response.request().method() === "POST");
   await page
     .getByRole("button", { name: "Analyze and compare snapshot", exact: true })
     .click();
+  expect([200, 202]).toContain((await updatedSnapshot).status());
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await expect(page.getByRole("status")).toContainText("Analysis completed", {
     timeout: 45000,

@@ -17,7 +17,10 @@ def checkpoint(db, *, force=False, flush=True):
         # Explicit bounded graph writers schedule their own flushes. A lease
         # check counts computation steps, not output rows; flushing on those
         # checks fragments graph batches without improving their row bound.
-        if flush and (db.new or db.dirty):
+        generation = db.info.get("analysis_generation")
+        if generation and flush:
+            generation.batch()
+        elif not generation and flush and (db.new or db.dirty):
             db.flush()
         db.info["analysis_output_steps"] = 0
         db.info["analysis_output_checked_at"] = current

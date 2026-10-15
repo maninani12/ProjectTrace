@@ -88,6 +88,7 @@ const EnterpriseTrust = lazy(() => import("./EnterpriseTrust"));
 const Infrastructure = lazy(() => import("./Infrastructure"));
 const EngineeringChanges = lazy(() => import("./EngineeringChanges"));
 const Graph = lazy(() => import("./Graph"));
+const Learning = lazy(() => import("./Learning"));
 const navigation = [
   {
     label: "Engineering",
@@ -98,6 +99,7 @@ const navigation = [
       ["Repositories", GitBranch],
       ["Pull Requests", GitPullRequest],
       ["Engineering Changes", Activity],
+      ["Learning & Transfer", ListChecks],
     ],
   },
   {
@@ -146,6 +148,7 @@ const navigation = [
   },
 ] as const;
 const descriptions: Record<string, string> = {
+  "Learning & Transfer": "Build learning paths from captured project evidence, demonstrate understanding, and review knowledge transfer.",
   Administration:
     "Observe organization operations, review scoped access, and verify every administrative change.",
   Overview:
@@ -492,7 +495,9 @@ function WorkspaceApp() {
     ? "cloud"
     : page === "Ask Engineering"
       ? "ask_engineering"
-      : null;
+      : page === "Learning & Transfer"
+        ? "onboarding"
+        : null;
   const engineeringAllowed =
     featureAllowed("api_access") &&
     (!pageFeature || featureAllowed(pageFeature));
@@ -1320,6 +1325,10 @@ function WorkspaceApp() {
                       role={identity.role}
                       onOpen={open}
                     />
+                  </Suspense>
+                ) : page === "Learning & Transfer" ? (
+                  <Suspense fallback={<p>Loading Learning &amp; Transfer…</p>}>
+                    <Learning repository={repoFilter} repositories={data.repositories} identity={identity} onOpen={open} />
                   </Suspense>
                 ) : page === "Engineering Changes" ? (
                   <Suspense fallback={<p>Loading Engineering Changes…</p>}>

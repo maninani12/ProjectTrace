@@ -2298,3 +2298,17 @@ tbody tr:hover {
 .quality-table-wrap:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
 .trust-capability-table { min-width:70rem; }
 .trust-capability-table td:nth-child(3), .trust-capability-table td:last-child { white-space:nowrap; }
+.learning-knowledge-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 16px; margin-top: 20px; }
+.learning-knowledge-grid .settings-panel { margin: 0; overflow-wrap: anywhere; }
+.learning-path-list { display: flex; flex-wrap: wrap; gap: 10px; }
+.learning-assignment { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.learning-assignment > p, .learning-assignment > button { grid-column: 1 / -1; }
+.learning-module label { display: flex; flex-direction: column; gap: 6px; margin: 12px 0; }
+.learning-module textarea { min-height: 120px; width: 100%; resize: vertical; }
+.learning-module code { overflow-wrap: anywhere; }
+.learning-module progress { width: 100%; max-width: 480px; }
+.learning-objectives { padding-left: 24px; }
+.learning-objectives .settings-panel { margin-top: 16px; }
+.learning-objectives button { margin: 6px 8px 6px 0; }
+.learning-message { padding: 12px; border-left: 3px solid currentColor; }
+@media (max-width: 700px) { .learning-assignment { grid-template-columns: 1fr; } }

@@ -287,3 +287,10 @@ class PolicyPreview(Base):
     decision_version: Mapped[str] = mapped_column(String(100))
     affected_count: Mapped[int]
     expires_at: Mapped[str] = mapped_column(String(50))
+
+
+Index("uq_activity_generation_scope", ActivityEvent.id, ActivityEvent.organization_id, ActivityEvent.repository_id, unique=True)
+
+# Register visibility only after activity models exist. Administration tools
+# may legitimately import this module before the shared database module.
+from backend import generation_visibility as generation_visibility  # noqa: E402
