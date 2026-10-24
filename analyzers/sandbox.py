@@ -270,7 +270,7 @@ def install(read_paths):
         raise SandboxFailure("SECCOMP_CREATE_FAILED")
     try:
         for name in ("read", "write", "writev", "readv", "close", "exit", "exit_group", "brk", "mmap", "mprotect",
-                     "munmap", "mremap", "madvise", "fstat", "lseek", "pread64", "fcntl", "openat", "open",
+                     "munmap", "mremap", "madvise", "fstat", "lseek", "pread64",
                      "getdents64", "getpid", "gettid", "futex", "clock_gettime", "getrusage", "getrandom",
                      "rt_sigaction", "rt_sigprocmask", "rt_sigreturn", "sigaltstack", "sched_yield", "restart_syscall"):
             number = library.seccomp_syscall_resolve_name(name.encode())
@@ -278,6 +278,21 @@ def install(read_paths):
                 raise SandboxFailure("SECCOMP_RULE_FAILED")
         class Compare(ctypes.Structure):
             _fields_ = [("arg", ctypes.c_uint), ("op", ctypes.c_int), ("a", ctypes.c_uint64), ("b", ctypes.c_uint64)]
+        # Landlock intentionally does not mediate O_PATH. Deny it and all
+        # write/create/truncate/append opens before VFS to close metadata and
+        # mutation bypasses; allow only readonly runtime opens under Landlock.
+        forbidden = os.O_ACCMODE | os.O_CREAT | os.O_TRUNC | os.O_APPEND | os.O_PATH | 0x400000
+        for name, argument in (("open", 1), ("openat", 2)):
+            number = library.seccomp_syscall_resolve_name(name.encode())
+            compare = Compare(argument, 7, forbidden, 0)  # SCMP_CMP_MASKED_EQ
+            if number >= 0 and library.seccomp_rule_add_array(context, 0x7fff0000, number, 1, ctypes.byref(compare)) != 0:
+                raise SandboxFailure("SECCOMP_RULE_FAILED")
+        # F_SETOWN/F_SETFL could deliver asynchronous signals to another process.
+        for command in (1, 2, 3):  # F_GETFD, F_SETFD, F_GETFL
+            compare = Compare(1, 4, command, 0)
+            if library.seccomp_rule_add_array(context, 0x7fff0000,
+                    library.seccomp_syscall_resolve_name(b"fcntl"), 1, ctypes.byref(compare)) != 0:
+                raise SandboxFailure("SECCOMP_RULE_FAILED")
         for query in (3, 21, 39):  # GET_DUMPABLE, GET_SECCOMP, GET_NO_NEW_PRIVS only.
             compare = Compare(0, 4, query, 0)
             if library.seccomp_rule_add_array(context, 0x7fff0000,

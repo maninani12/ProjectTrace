@@ -30,9 +30,15 @@ def prepare(operation):
     import yaml
 
     import analyzers.performance  # noqa: F401 -- preload before the syscall boundary
-    from analyzers import engine, sandbox
+    from analyzers import engine, languages, sandbox
     from analyzers.code_quality import coverage
     from backend.process_limits import self_limits
+
+    # Distribution discovery stats site-packages and reads dist-info. Resolve
+    # these immutable installed versions before filesystem metadata is denied.
+    versions = {name: languages.version(name) for name in
+                ("tree-sitter", "tree-sitter-java", "tree-sitter-javascript", "tree-sitter-typescript")}
+    languages.version = versions.__getitem__
 
     if operation == "iac":
         # hcl2's default Lark cache uses pickle and writes in site-packages.
@@ -90,6 +96,7 @@ def main():
         denied(lambda: socket.socket(socket.AF_INET, socket.SOCK_STREAM), expected=(errno.EPERM,)),
         denied(lambda: os.execve("/SEC002-NOT-PRESENT", ["probe"], {}), expected=(errno.EPERM,)),
         denied(lambda: os.stat("/etc/passwd"), expected=(errno.EPERM,)),
+        denied(lambda: os.open("/etc/passwd", os.O_PATH), expected=(errno.EPERM,)),
     ]
     if not all(checks):
         raise RuntimeError("Parser isolation denial probe failed")
@@ -134,6 +141,7 @@ def dispatch(operation, value, engine, sandbox):
                 "write": denied(lambda: open(value["write_path"], "wb")),
                 "proc": denied(lambda: open("/proc/self/environ", "rb")),
                 "metadata": denied(lambda: os.stat(value["sentinel"])), "network": network,
+                "opath": denied(lambda: os.open(value["sentinel"], os.O_PATH), expected=(errno.EPERM,)),
                 "exec": denied(lambda: os.execve("/bin/echo", ["echo", "SEC002"], {}), expected=(errno.EPERM,)),
                 "fork": denied(os.fork, expected=(errno.EPERM,)),
                 "environment": sorted(os.environ), "nnp": libc.prctl(39, 0, 0, 0, 0),
@@ -187,7 +195,7 @@ def dispatch(operation, value, engine, sandbox):
     if operation == "flows":
         from analyzers.flows import python_flows
         return python_flows(value["path"], value["source"], engine.finding)
-    if operation == "languages":
+    if operation in {"languages", "probe_language_prefix_crash"}:
         from analyzers.languages import _analyze_language
         files = value["files"]
         if len(files) > 1000 or sum(len(s.encode()) for s in files.values()) > 10_000_000:
@@ -208,6 +216,9 @@ def dispatch(operation, value, engine, sandbox):
                     result.update(code="SYNTAX_NODE_BUDGET", budget="SYNTAX_NODES_OR_TOKENS", actual=40001, maximum=40000)
             total = emit_packet(path, result, time.perf_counter() - started,
                                 "PARTIAL" if isinstance(result, dict) else "COMPLETED", maximum=16_000_000, total=total)
+            if operation == "probe_language_prefix_crash":
+                sys.stdout.buffer.flush()
+                os._exit(73)
         return STREAMED
     if operation == "iac":
         from analyzers.infrastructure import _structured_iac

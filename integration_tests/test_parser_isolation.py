@@ -26,7 +26,7 @@ def test_actual_filesystem_network_exec_environment_and_process_denial(tmp_path,
     monkeypatch.setenv("DATABASE_URL", "private-fixture-value-must-not-be-inherited")
     monkeypatch.setenv("ANALYSIS_INPUT_KEY", "private-fixture-key-must-not-be-inherited")
     result = sandbox.call("probe_denials", {"sentinel": str(sentinel), "write_path": str(tmp_path / "escaped"), "nonce": "owned"})
-    assert all(result[key] is True for key in ("read", "write", "proc", "metadata", "exec", "fork")), result
+    assert all(result[key] is True for key in ("read", "write", "proc", "metadata", "opath", "exec", "fork")), result
     assert all(result["network"].values()), result
     assert result["nnp"] == 1 and result["seccomp"] == 2
     assert not {"DATABASE_URL", "ANALYSIS_INPUT_KEY", "HOME", "PATH", "PYTHONPATH"} & set(result["environment"])
@@ -92,6 +92,9 @@ print(json.dumps({'seconds':time.perf_counter()-start,'result':result}))
                                    env={**os.environ, "PROJECTTRACE_PARSER_ISOLATION": mode})
         assert completed.returncode == 0, completed.stderr[-2000:]
         captured[mode] = json.loads(completed.stdout)
+    output = Path(os.environ["PROJECTTRACE_SANDBOX_EVIDENCE"])
+    output.mkdir(parents=True, exist_ok=True)
+    (output / "compatibility.json").write_text(json.dumps(captured))
     # Parser policy/signature deliberately invalidates old observation caches.
     def meaningful(result):
         return {"claims": [(c["text"], c["status"], c.get("reason")) for c in result["claims"]],
@@ -102,8 +105,6 @@ print(json.dumps({'seconds':time.perf_counter()-start,'result':result}))
         k: v["state"] for k, v in captured["development"]["result"]["engines"].items()}
     assert any(c["status"] == "CONTRADICTED" for c in captured["required"]["result"]["claims"])
     assert captured["required"]["result"]["findings"]
-    output = Path(os.environ["PROJECTTRACE_SANDBOX_EVIDENCE"])
-    output.mkdir(parents=True, exist_ok=True)
     (output / "overhead.json").write_text(json.dumps({mode: {"wall_seconds": row["seconds"]} for mode, row in captured.items()}))
 
 
@@ -126,3 +127,58 @@ def test_production_refuses_explicit_development_downgrade(monkeypatch):
     monkeypatch.setenv("PROJECTTRACE_PARSER_ISOLATION", "development")
     with pytest.raises(sandbox.SandboxFailure, match="ISOLATION_REQUIRED"):
         sandbox.required()
+
+
+def test_actual_kernel_api_unavailable_fails_closed_in_production():
+    # An owned outer process installs a real inherited filter denying the
+    # Landlock create syscall. No configuration mock simulates kernel absence.
+    script = """
+import ctypes,errno
+from analyzers import sandbox
+lib=ctypes.CDLL('libseccomp.so.2')
+lib.seccomp_init.argtypes=[ctypes.c_uint32]
+lib.seccomp_init.restype=ctypes.c_void_p
+lib.seccomp_rule_add.argtypes=[ctypes.c_void_p,ctypes.c_uint32,ctypes.c_int,ctypes.c_uint]
+lib.seccomp_load.argtypes=[ctypes.c_void_p]
+libc=ctypes.CDLL(None)
+assert libc.prctl(38,1,0,0,0)==0
+context=lib.seccomp_init(0x7fff0000)
+assert context
+assert lib.seccomp_rule_add(context,0x00050000|errno.ENOSYS,444,0)==0
+assert lib.seccomp_load(context)==0
+try:
+ sandbox.require_runtime()
+except sandbox.SandboxFailure as error:
+ print(error.code)
+else:
+ raise AssertionError('Unsafe production fallback')
+"""
+    completed = subprocess.run([sys.executable, "-c", script], text=True, capture_output=True, timeout=30,
+                               env={**os.environ, "APP_ENV": "production"})
+    assert completed.returncode == 0, completed.stderr[-1000:]
+    assert completed.stdout.strip() == "LANDLOCK_ABI_3_REQUIRED"
+
+
+def test_real_parser_interruption_preserves_only_completed_file_prefix(monkeypatch):
+    from analyzers.languages import analyze_languages
+    invoke = sandbox.invoke
+    def interrupted(operation, value, **limits):
+        return invoke("probe_language_prefix_crash" if operation == "languages" else operation, value, **limits)
+    monkeypatch.setattr(sandbox, "invoke", interrupted)
+    result = analyze_languages({"completed.ts": "eval(input);", "interrupted.ts": "eval(input);"})
+    assert isinstance(result["completed.ts"], list)
+    assert any(row["rule"] == "PT-SAST-005" for row in result["completed.ts"][0])
+    assert result["interrupted.ts"]["code"] == "HELPER_PROCESS_LIMIT"
+
+
+def test_real_native_crash_publishes_no_successful_observation_cache(monkeypatch):
+    from analyzers.engine import native_observations
+    invoke = sandbox.invoke
+    def crashed(operation, value, **limits):
+        return invoke("probe_crash" if operation == "native" else operation, value, **limits)
+    monkeypatch.setattr(sandbox, "invoke", crashed)
+    result = native_observations({"app.py": "import subprocess\nsubprocess.run(command,shell=True)\n"})
+    assert not result[0] and not result[1] and not result[6]
+    assert {"PARSING", "QUALITY", "SAST"} <= result[5]
+    assert result[2] and all(row["state"] == "PARTIAL" for row in result[2])
+    assert result[2][0]["code"] == "HELPER_PROCESS_LIMIT"
