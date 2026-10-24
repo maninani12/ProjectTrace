@@ -48,7 +48,8 @@ export const test = base.extend<{ ownedBackend: void }>({
       const env = {
         ...process.env,
         JOB_MODE: "local",
-        APP_ENV: "development",
+        // Match the original acceptance server: seeded demo and real signup.
+        APP_ENV: "demo",
         DATABASE_URL: `sqlite:///${path.join(runtime, "application.db")}`,
         ANALYSIS_KEY_FILE: path.join(runtime, "analysis-input.key"),
         SOURCE_BLOB_DIR: path.join(runtime, "blobs"),
@@ -102,6 +103,12 @@ export const test = base.extend<{ ownedBackend: void }>({
             { timeout: 15000, intervals: [100, 250, 500] },
           )
           .toBe(true);
+        const options = await fetch("http://127.0.0.1:8011/api/auth/options");
+        expect(options.status, "Owned acceptance auth metadata").toBe(200);
+        expect(
+          (await options.json()).demo_available,
+          "Owned acceptance must preserve the seeded demo workflows",
+        ).toBe(true);
         await use();
       } finally {
         if (server && server.exitCode === null) server.kill("SIGTERM");
