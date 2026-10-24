@@ -20,6 +20,7 @@ jobs:
           --health-cmd "pg_isready -U projecttrace_test -d projecttrace_test"
           --health-interval 5s --health-timeout 5s --health-retries 15
     env:
+      PROJECTTRACE_PARSER_ISOLATION: development
       PROJECTTRACE_TEST_POSTGRES_URL: postgresql+psycopg://projecttrace_test:disposable-ci-fixture-only@127.0.0.1:15432/projecttrace_test
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -56,6 +57,7 @@ jobs:
         ports: ["16379:6379"]
         options: --health-cmd "redis-cli ping" --health-interval 5s --health-timeout 3s --health-retries 15
     env:
+      PROJECTTRACE_PARSER_ISOLATION: required
       PROJECTTRACE_BROKER_TESTS: owned-ci
       PROJECTTRACE_BROKER_POSTGRES_URL: postgresql+psycopg://projecttrace_test:disposable-ci-fixture-only@127.0.0.1:15432/projecttrace_broker_test
       REDIS_URL: redis://127.0.0.1:16379/15
@@ -79,6 +81,8 @@ jobs:
           retention-days: 7
   browser:
     runs-on: ubuntu-latest
+    env:
+      PROJECTTRACE_PARSER_ISOLATION: required
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
@@ -123,4 +127,32 @@ jobs:
         with:
           name: browser-evidence-${{ github.run_id }}
           path: frontend/test-results
+          retention-days: 7
+  parser-isolation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      PROJECTTRACE_PARSER_ISOLATION: required
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with: {python-version: '3.14'}
+      - run: pip install -r requirements.lock
+      - name: Required real Linux security acceptance
+        env:
+          PROJECTTRACE_SANDBOX_EVIDENCE: ${{ runner.temp }}/sandbox-evidence
+        run: |
+          mkdir -p "$PROJECTTRACE_SANDBOX_EVIDENCE"
+          pytest -q integration_tests/test_parser_isolation.py --tb=short --junitxml="$PROJECTTRACE_SANDBOX_EVIDENCE/results.xml"
+      - name: Built non-root image must enforce the same boundary
+        run: |
+          docker build -t projecttrace-sec002 -f infrastructure/Dockerfile .
+          mkdir -p "${RUNNER_TEMP}/sandbox-evidence"
+          printf '%s' 'OWNED-HOST-SENTINEL' > "${RUNNER_TEMP}/sec002-sentinel"
+          docker run --rm --read-only --network none --cap-drop ALL --pids-limit 64 --security-opt no-new-privileges --mount "type=bind,src=${RUNNER_TEMP}/sec002-sentinel,dst=/run/sec002-sentinel,readonly" -e APP_ENV=production -e PROJECTTRACE_PARSER_ISOLATION=required -e PROJECTTRACE_PROBE_SENTINEL=/run/sec002-sentinel -e DATABASE_URL=OWNED-SECRET-NOT-FOR-PARSER projecttrace-sec002 python -m scripts.parser_isolation_probe > "${RUNNER_TEMP}/sandbox-evidence/container-probe.json"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: sandbox-evidence-${{ github.run_id }}
+          path: ${{ runner.temp }}/sandbox-evidence
           retention-days: 7

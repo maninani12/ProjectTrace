@@ -19,6 +19,9 @@ def main():
         ):
             resource.setrlimit(kind, (limit, limit))
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    from analyzers import sandbox
+    if sandbox.required():
+        raise sandbox.SandboxFailure("USE_ATTESTED_PARSER_LAUNCHER")
     if os.name == "nt":
         from backend.process_limits import self_limits
         self_limits(384 * 1024 * 1024, 10)

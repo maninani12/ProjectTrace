@@ -6,6 +6,8 @@ Repository functions are inspected as syntax; they are never executed.
 
 import ast
 
+from analyzers import sandbox
+
 SOURCE_PREFIXES = (
     "request.args",
     "request.query_params",
@@ -29,6 +31,9 @@ def name(node):
 
 
 def python_flows(path, source, make_finding):
+    if sandbox.required():
+        result = sandbox.call("flows", {"path": path, "source": source})
+        return [{**make_finding(item["rule"], path, item["line"], item["explanation"]), **item} for item in result]
     tree = ast.parse(source)
     helpers = {node.name: node for node in tree.body if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))}
     results = {}

@@ -12,6 +12,7 @@ from pathlib import Path, PurePosixPath
 import hcl2
 import yaml
 
+from analyzers import sandbox
 from analyzers.infrastructure_deep import checks as deep_checks
 from analyzers.infrastructure_deep import config as infrastructure_config
 from analyzers.infrastructure_extra import KUBERNETES_KINDS, dockerfile, enrich_document, terraform
@@ -74,7 +75,10 @@ def bounded_yaml(source):
 
 def structured_iac(path, source, make_finding, settings=None):
     """Dedicated process and bounded I/O; complete OS sandbox remains unverified."""
+    if sandbox.required():
+        return structured_iac_batch({path: source}, make_finding, settings)[path]
     environment = {key: os.environ[key] for key in ("SystemRoot", "WINDIR", "TEMP", "TMP") if key in os.environ}
+    environment["PROJECTTRACE_PARSER_ISOLATION"] = "development"
     try:
         if len(source.encode()) > 512000:
             raise ValueError("Input budget exceeded")
@@ -118,7 +122,21 @@ def structured_iac_batch(files, make_finding, settings=None, *, performance=None
     def parse_batch():
         if not batch:
             return
+        if sandbox.required():
+            output, failure = sandbox.invoke("iac", {"files": batch, "settings": settings or {}},
+                                              seconds=15, maximum=8 * 1024 * 1024, input_maximum=13_000_000)
+            parsed = completed_packets(output, batch, 8 * 1024 * 1024, performance, "IAC")
+            if failure and set(parsed) == set(batch):
+                parsed.pop(next(reversed(parsed)))
+            for path in batch:
+                findings, assets, warnings = parsed.get(path, ([], [], [{"analyzer": "IAC", "path": path,
+                    "state": "PARTIAL", "code": failure or "HELPER_PROTOCOL", "message": "Isolated infrastructure helper stopped."}]))
+                if any(item.get("path") != path for item in findings + assets):
+                    raise sandbox.SandboxFailure("HELPER_SCOPE")
+                result[path] = ([{**make_finding(item["rule"], path, item["line"], item["explanation"]), **item} for item in findings], assets, warnings)
+            return
         environment = {key: os.environ[key] for key in ("SystemRoot", "WINDIR", "TEMP", "TMP") if key in os.environ}
+        environment["PROJECTTRACE_PARSER_ISOLATION"] = "development"
         try:
             started = time.perf_counter()
             with tempfile.TemporaryDirectory(prefix="projecttrace-iac-") as directory:

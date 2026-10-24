@@ -1,0 +1,257 @@
+"""Trusted bootstrap; no untrusted packet is read before Linux controls/probes.
+
+Only installed ProjectTrace operations are selected; repository text is never
+imported, evaluated, or used as a command/module/filesystem allowlist.
+"""
+
+import ast
+import ctypes
+import errno
+import json
+import os
+import socket
+import sys
+import time
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+STREAMED = object()
+SOURCE_INVALID = object()
+
+
+def prepare(operation):
+    # Preload trusted code and lazy parser resources before the deny-by-default
+    # syscall filter. Installed runtime code must be immutable and contain no secrets.
+    import hcl2
+    import tree_sitter
+    import tree_sitter_java
+    import tree_sitter_javascript
+    import tree_sitter_typescript
+    import yaml
+
+    import analyzers.performance  # noqa: F401 -- preload before the syscall boundary
+    from analyzers import engine, sandbox
+    from analyzers.code_quality import coverage
+    from backend.process_limits import self_limits
+
+    if operation == "iac":
+        # hcl2's default Lark cache uses pickle and writes in site-packages.
+        # Build the identical trusted grammar without a filesystem cache.
+        import hcl2.api
+        import hcl2.parser
+        from hcl2.postlexer import PostLexer
+        from lark import Lark
+        grammar = Lark.open("hcl2.lark", parser="lalr", cache=False, rel_to=hcl2.parser.__file__,
+                            propagate_positions=True, postlex=PostLexer())
+        hcl2.api.parser = lambda: grammar
+        hcl2.loads('variable "sec002_probe" { default = 1 }')
+    yaml.safe_load("{}")
+    ast.parse("")
+    coverage.ET.fromstring("<probe/>")
+    # Hold the handle: dlopen cannot load a new library after Landlock.
+    seccomp = ctypes.CDLL("libseccomp.so.2")
+    read_paths = {str(Path(__file__).resolve().parent)}
+    for module in list(sys.modules.values()):
+        path = getattr(module, "__file__", None)
+        if path and os.path.isfile(path):
+            read_paths.add(os.path.realpath(path))
+    for package in (hcl2, yaml, tree_sitter, tree_sitter_java, tree_sitter_javascript, tree_sitter_typescript):
+        read_paths.add(str(Path(package.__file__).resolve().parent))
+    import lark
+    read_paths.add(str(Path(lark.__file__).resolve().parent))
+    with open("/proc/self/maps") as stream:
+        for line in stream:
+            path = line.split()[-1]
+            if path.startswith("/") and os.path.isfile(path):
+                read_paths.add(os.path.realpath(path))
+    if any(name in sys.modules for name in ("backend.db", "backend.main", "workers.tasks")):
+        raise RuntimeError("Parser bootstrap unexpectedly imported application services")
+    return engine, sandbox, self_limits, read_paths, seccomp
+
+
+def denied(operation, *, expected=(errno.EPERM, errno.EACCES)):
+    try:
+        operation()
+    except OSError as error:
+        return error.errno in expected
+    return False
+
+
+def main():
+    operation = sys.argv[1]
+    engine, sandbox, self_limits, read_paths, _library = prepare(operation)
+    memory, cpu = (384 * 1024 * 1024, 10) if operation.startswith("iac") else (512 * 1024 * 1024, 25)
+    if operation == "probe_cpu":
+        cpu = int(time.process_time()) + 2
+    self_limits(memory, cpu)
+    abi = sandbox.install(read_paths)
+    checks = [
+        denied(lambda: open("/etc/passwd", "rb")),
+        denied(lambda: socket.socket(socket.AF_INET, socket.SOCK_STREAM), expected=(errno.EPERM,)),
+        denied(lambda: os.execve("/SEC002-NOT-PRESENT", ["probe"], {}), expected=(errno.EPERM,)),
+        denied(lambda: os.stat("/etc/passwd"), expected=(errno.EPERM,)),
+    ]
+    if not all(checks):
+        raise RuntimeError("Parser isolation denial probe failed")
+    sandbox.ACTIVE = True
+    proof = {"policy": sandbox.POLICY, "enforced": True, "landlock_abi": abi,
+             "denials": ["filesystem", "network", "exec", "metadata"]}
+    sys.stdout.buffer.write(json.dumps(proof).encode() + b"\n")
+    sys.stdout.buffer.flush()
+    raw = sys.stdin.buffer.read(32_000_001)
+    if len(raw) > 32_000_000:
+        raise ValueError("Owned parser input budget exceeded")
+    packet = json.loads(raw)
+    if packet["operation"] != operation:
+        raise ValueError("Owned parser operation mismatch")
+    value = packet["value"]
+    result = dispatch(operation, value, engine, sandbox)
+    if result is STREAMED:
+        return
+    if result is SOURCE_INVALID:
+        sys.stdout.buffer.write(b'{"ok": false, "code": "SOURCE_SYNTAX_FAILED"}')
+        return
+    output = json.dumps({"ok": True, "result": result}, ensure_ascii=True).encode()
+    if len(output) > 16_000_000:
+        raise ValueError("Owned parser output budget exceeded")
+    sys.stdout.buffer.write(output)
+
+
+def dispatch(operation, value, engine, sandbox):
+    from analyzers.parser_protocol import emit_packet
+
+    if operation == "probe":
+        return {"enforced": True, "policy": sandbox.POLICY}
+    if operation == "probe_denials":
+        libc = ctypes.CDLL(None, use_errno=True)
+        network = {}
+        for address in ("8.8.8.8", "127.0.0.1", "169.254.169.254"):
+            def attempt(address=address):
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as connection:
+                    connection.connect((address, 80))
+            network[address] = denied(attempt, expected=(errno.EPERM,))
+        return {"read": denied(lambda: open(value["sentinel"], "rb")),
+                "write": denied(lambda: open(value["write_path"], "wb")),
+                "proc": denied(lambda: open("/proc/self/environ", "rb")),
+                "metadata": denied(lambda: os.stat(value["sentinel"])), "network": network,
+                "exec": denied(lambda: os.execve("/bin/echo", ["echo", "SEC002"], {}), expected=(errno.EPERM,)),
+                "fork": denied(os.fork, expected=(errno.EPERM,)),
+                "environment": sorted(os.environ), "nnp": libc.prctl(39, 0, 0, 0, 0),
+                "seccomp": libc.prctl(21, 0, 0, 0, 0), "nonce": value.get("nonce")}
+    if operation in {"probe_timeout", "probe_cpu"}:
+        while True:
+            pass
+    if operation == "probe_memory":
+        try:
+            bytearray(640 * 1024 * 1024)
+        except MemoryError:
+            return {"contained": True}
+        return {"contained": False}
+    if operation == "probe_crash":
+        os._exit(73)
+    if operation == "probe_malformed":
+        sys.stdout.buffer.write(b"not a valid packet")
+        sys.stdout.buffer.flush()
+        os._exit(0)
+    if operation == "probe_output":
+        while True:
+            os.write(1, b"x" * 65536)
+    if operation == "json":
+        try:
+            return json.loads(value["source"])
+        except ValueError:
+            return SOURCE_INVALID
+    if operation == "python":
+        return engine.python_analysis(value["path"], value["source"])
+    if operation == "identity":
+        from analyzers.finding_identity import annotate
+        return annotate(value["files"], value["findings"], value["metrics"])
+    if operation == "inventory":
+        from analyzers.baseline import inventory
+        return inventory(value["files"])
+    if operation == "documentation":
+        from analyzers.verifiers import extract_documentation
+        messages = []
+        result = extract_documentation(value["files"], diagnostics=messages, limit=value["limit"])
+        return result, messages
+    if operation == "coverage":
+        from analyzers.code_quality.coverage import import_report
+        return import_report(value["text"], dict.fromkeys(value["line_counts"]),
+                             _line_counts=value["line_counts"], **value["options"])
+    if operation == "metrics":
+        from analyzers.quality import metrics
+        return metrics(value["path"], value["source"])
+    if operation == "structure":
+        from analyzers.quality import structure
+        return structure(value["path"], value["source"], ast.parse(value["source"]))
+    if operation == "flows":
+        from analyzers.flows import python_flows
+        return python_flows(value["path"], value["source"], engine.finding)
+    if operation == "languages":
+        from analyzers.languages import _analyze_language
+        files = value["files"]
+        if len(files) > 1000 or sum(len(s.encode()) for s in files.values()) > 10_000_000:
+            raise ValueError("Language batch budget")
+        total, metric_count = 0, 0
+        for path, source in files.items():
+            if len(source.encode()) > 512_000:
+                raise ValueError("Per-file source budget")
+            started = time.perf_counter()
+            try:
+                result = _analyze_language(path, source, engine.finding)
+                metric_count += len(result[2])
+                if metric_count > 10_000:
+                    raise ValueError("Native syntax metric budget exceeded")
+            except Exception as error:
+                result = {"error": "Native syntax parsing failed", "code": "PARSER_FAILED"}
+                if isinstance(error, ValueError) and str(error) in {"Syntax node budget exceeded", "Syntax token budget exceeded"}:
+                    result.update(code="SYNTAX_NODE_BUDGET", budget="SYNTAX_NODES_OR_TOKENS", actual=40001, maximum=40000)
+            total = emit_packet(path, result, time.perf_counter() - started,
+                                "PARTIAL" if isinstance(result, dict) else "COMPLETED", maximum=16_000_000, total=total)
+        return STREAMED
+    if operation == "iac":
+        from analyzers.infrastructure import _structured_iac
+        files = value["files"]
+        if len(files) > 100 or sum(len(s.encode()) for s in files.values()) > 2_000_000:
+            raise ValueError("Infrastructure batch budget")
+        total = 0
+        for path, source in files.items():
+            if len(source.encode()) > 512_000:
+                raise ValueError("Per-file source budget")
+            started = time.perf_counter()
+            result = _structured_iac(path, source,
+                lambda rule, path, line, detail: {"rule": rule, "path": path, "line": line, "explanation": detail}, value["settings"])
+            total = emit_packet(path, result, time.perf_counter() - started,
+                                "PARTIAL" if result[2] else "COMPLETED", maximum=8*1024*1024, total=total)
+        return STREAMED
+    if operation == "native":
+        files = value["files"]
+        if len(files) > 100 or sum(len(s.encode()) for s in files.values()) > 2_000_000:
+            raise ValueError("Native batch budget")
+        total = 0
+        for path, source in files.items():
+            started = time.perf_counter()
+            from analyzers.performance import Performance
+            performance = Performance()
+            result = list(engine._native_observations({path: source}, value["cache"], value["settings"], performance, None,
+                                                       parsed_inputs=value["parsed"]))
+            result[5] = sorted(result[5])
+            result.append(performance.snapshot())
+            total = emit_packet(path, result, time.perf_counter() - started,
+                                "PARTIAL" if result[2] else "COMPLETED", maximum=16_000_000, total=total)
+        return STREAMED
+    raise ValueError("Unknown installed parser operation")
+
+
+if __name__ == "__main__":
+    try:
+        main()
+        sys.stdout.buffer.flush()
+        os._exit(0)
+    except __import__("analyzers.sandbox", fromlist=["SandboxFailure"]).SandboxFailure as error:
+        sys.stdout.buffer.write(json.dumps({"failure": error.code}).encode() + b"\n")
+        sys.stdout.buffer.flush()
+        os._exit(70)
+    except Exception:
+        # Parent reports a sanitized code. Never print input, environment or raw errors.
+        os._exit(70)

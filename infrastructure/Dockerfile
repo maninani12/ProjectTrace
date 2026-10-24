@@ -2,6 +2,7 @@ ARG PYTHON_IMAGE=python:3.14-slim
 FROM ${PYTHON_IMAGE}
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 WORKDIR /app
+RUN apt-get update && apt-get install -y --no-install-recommends libseccomp2 && rm -rf /var/lib/apt/lists/*
 COPY requirements.lock .
 RUN pip install --no-cache-dir -r requirements.lock && useradd --create-home --uid 10001 projecttrace && mkdir -p /app/data && chown projecttrace:projecttrace /app/data
 COPY backend backend

@@ -1,7 +1,6 @@
 """Lazy source access backed by tenant-scoped encrypted, immutable content blobs."""
 
 import hashlib
-import json
 import os
 import re
 import time
@@ -347,12 +346,14 @@ def capture(db, organization_id, repository, items, *, source="OWNED_STREAM", qu
                 ),
             }
             if canonical == ".projecttrace/components.json":
-                configured = component_boundaries(json.loads(text))
+                from analyzers import sandbox
+                configured = component_boundaries(sandbox.parse_json(text))
                 for info in configured.values():
                     info["path"] = canonical
             if PurePosixPath(canonical).name == "package.json":
                 try:
-                    name = json.loads(text).get("name")
+                    from analyzers import sandbox
+                    name = sandbox.parse_json(text).get("name")
                     if isinstance(name, str) and re.fullmatch(r"[A-Za-z0-9@/_.-]{1,150}", name):
                         roots[str(PurePosixPath(canonical).parent)] = {
                             "name": name,
@@ -360,6 +361,8 @@ def capture(db, organization_id, repository, items, *, source="OWNED_STREAM", qu
                             "basis": "PACKAGE_MANIFEST",
                             "path": canonical,
                         }
+                except sandbox.SandboxFailure:
+                    raise
                 except (ValueError, AttributeError):
                     pass
         else:

@@ -14,6 +14,7 @@ from importlib.metadata import version as package_version
 from pathlib import PurePosixPath
 from urllib.parse import quote
 
+from analyzers import sandbox
 from analyzers.analysis_coverage import build as build_analysis_coverage
 from analyzers.baseline import context_signals, implementation_claims, inventory
 from analyzers.code_quality.classification import binary_input
@@ -37,6 +38,7 @@ PARSER_SIGNATURE = hashlib.sha256(
         [
             sys.version,
             "native-observations-v10-partitioned-context",
+            sandbox.cache_policy(),
             *[
                 package_version(p)
                 for p in [
@@ -513,6 +515,8 @@ def secret_context(path, material):
 
 
 def python_analysis(path, source, tree=None):
+    if sandbox.required():
+        return sandbox.call("python", {"path": path, "source": source})
     findings, signals = [], []
     try:
         tree = tree or ast.parse(source)
@@ -831,13 +835,16 @@ def verify(claim, signals, deps):
 
 
 def native_observations(files, cached_analysis=None, infrastructure_settings=None, *, performance=None):
+    if sandbox.required():
+        from analyzers.isolated_analysis import native
+        return native(files, cached_analysis, infrastructure_settings, performance=performance)
     # Only independent owned syntax/IaC helpers run concurrently; source and DB
     # work stay in the caller. Every submitted batch retains its existing caps.
     with ThreadPoolExecutor(max_workers=2, thread_name_prefix="native-parser") as pool:
         return _native_observations(files, cached_analysis, infrastructure_settings, performance, pool)
 
 
-def _native_observations(files, cached_analysis, infrastructure_settings, performance, pool):
+def _native_observations(files, cached_analysis, infrastructure_settings, performance, pool, parsed_inputs=None):
     """File-local parser observations; callers may provide a bounded partition."""
     infrastructure_settings = infrastructure_settings or infrastructure_config(None)
     infrastructure_signature = hash_text(json.dumps(infrastructure_settings, sort_keys=True))
@@ -846,7 +853,8 @@ def _native_observations(files, cached_analysis, infrastructure_settings, perfor
     failures = set()
     cache = {}
     reused = 0
-    language_results, iac_results = None, None
+    language_results = parsed_inputs.get("languages", {}) if parsed_inputs is not None else None
+    iac_results = parsed_inputs.get("iac", {}) if parsed_inputs is not None else None
     language_pending, iac_pending = {}, {}
     for path in files:
         prior = (cached_analysis or {}).get(path, {})
@@ -864,8 +872,8 @@ def _native_observations(files, cached_analysis, infrastructure_settings, perfor
             source = files[path]
             if is_iac_source(path, source):
                 iac_pending[path] = source
-    language_future = pool.submit(analyze_languages, language_pending, performance=performance) if language_pending else None
-    iac_future = pool.submit(structured_iac_batch, iac_pending, finding, infrastructure_settings, performance=performance) if iac_pending else None
+    language_future = pool.submit(analyze_languages, language_pending, performance=performance) if language_pending and pool else None
+    iac_future = pool.submit(structured_iac_batch, iac_pending, finding, infrastructure_settings, performance=performance) if iac_pending and pool else None
     for path in files:
         file_started = time.perf_counter()
         metadata = files.metadata_for(path) if hasattr(files, "metadata_for") else None
@@ -1090,6 +1098,8 @@ def analyze(
     observations=None,
     input_files=None,
 ):
+    if sandbox.required():
+        sandbox.require_runtime()
     input_files = input_files if input_files is not None else validate_files(files, keep_excluded=True)
     infrastructure_settings = infrastructure_config((profile or {}).get("infrastructure"))
     try:
@@ -1166,7 +1176,7 @@ def analyze(
             continue
         source = files[path]
         try:
-            contract = json.loads(source)
+            contract = sandbox.parse_json(source)
             if not isinstance(contract, dict) or "openapi" not in contract:
                 continue
             for route, methods in contract.get("paths", {}).items():
@@ -1189,6 +1199,8 @@ def analyze(
                             "assertion_family": "api_contract",
                         }
                     )
+        except sandbox.SandboxFailure:
+            raise
         except (ValueError, TypeError, AttributeError):
             if "openapi" in source.lower():
                 warnings.append(
@@ -1519,7 +1531,8 @@ def analyze(
         "cloud_assets": assets,
         "quality_metrics": quality["metrics"],
         "code_quality": quality,
-        "analysis_coverage": build_analysis_coverage(input_files, files, quality, signals, warnings, VERSION),
+        "analysis_coverage": {**build_analysis_coverage(input_files, files, quality, signals, warnings, VERSION),
+                              "parser_isolation": sandbox.status()},
         "signals": signals,
         "dependencies": deps,
         "claims": claims,

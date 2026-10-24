@@ -2,6 +2,8 @@
 
 import json
 
+from analyzers.sandbox import decode_packet
+
 
 def completed_packets(output, files, maximum, performance=None, component=None):
     if len(output) > maximum:
@@ -10,7 +12,7 @@ def completed_packets(output, files, maximum, performance=None, component=None):
     lines = output.splitlines()
     for index, line in enumerate(lines):
         try:
-            packet = json.loads(line)
+            packet = decode_packet(line)
         except ValueError:
             # A killed helper may leave only its final packet incomplete.
             if index == len(lines) - 1 and not output.endswith(b"\n"):

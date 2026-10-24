@@ -11,6 +11,7 @@ from importlib import import_module
 from importlib.metadata import version
 from pathlib import Path, PurePosixPath
 
+from analyzers import sandbox
 from analyzers.parser_protocol import completed_packets
 
 DEFINITIONS = {
@@ -52,6 +53,13 @@ def analyze_languages(files, *, performance=None):
     """
     if not files:
         return {}
+    if sandbox.required():
+        raw, failure = sandbox.invoke("languages", {"files": files}, seconds=30, input_maximum=21_000_000)
+        parsed = completed_packets(raw, files, 16_000_000, performance, "TREE_SITTER")
+        if failure and set(parsed) == set(files):
+            parsed.pop(next(reversed(parsed)))
+        return {path: parsed.get(path, {"error": "Isolated syntax helper stopped", "code": failure or "HELPER_PROTOCOL"})
+                for path in files}
     environment = {
         key: value
         for key, value in os.environ.items()
@@ -66,6 +74,7 @@ def analyze_languages(files, *, performance=None):
             "LC_ALL",
         }
     }
+    environment["PROJECTTRACE_PARSER_ISOLATION"] = "development"
     try:
         started = time.perf_counter()
         reply = subprocess.run(

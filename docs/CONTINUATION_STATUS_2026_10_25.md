@@ -1,5 +1,11 @@
 # ProjectTrace continuation register
 
+## SEC-002 continuation (PR #3)
+
+Work on `codex/linux-parser-isolation` starts from the exact verified PR #2 commit `6d937e3c25384aecc508d17943f530f8c22dc6fc`, whose [run 40126311475](https://github.com/maninani12/ProjectTrace/actions/runs/40126311475) passed 619 backend / 2 Windows skips, 49 frontend, 18 browser / 10 preserved fixture skips, 4 real broker cases, 33 benchmarks, migration/audits/builds. PRs #1/#2 remain draft and unmerged.
+
+[ADR 0005](adr/0005-linux-parser-containment.md) and the [SEC-002 scope/acceptance guide](SEC002_PARSER_ISOLATION.md) inventory previously in-process Python, manifests, JSON/XML coverage and source paths, define the new Linux Landlock/seccomp boundary and require actual denial evidence. Current PR #3 checks record its results; the PR #2 totals do not qualify new code. The local coding kernel cannot enforce this boundary. ZIP/zlib intake remains a named coordinator exposure, so overall SEC-002 remains open/partial; no blanket all-parsing isolation or production certificate is claimed. Earlier inventory/decisions below remain historical baseline evidence.
+
 This is a source-based continuation reference, not a production certificate. Historical reports remain intact. Verification applies to a named commit/environment; a feature label never implies commercial-platform parity.
 
 ## Recovered baseline and integration decision
