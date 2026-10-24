@@ -74,7 +74,7 @@ def bounded_yaml(source):
 
 
 def structured_iac(path, source, make_finding, settings=None):
-    """Dedicated process and bounded I/O; complete OS sandbox remains unverified."""
+    """Required Linux containment, or explicitly uncontained development helper."""
     if sandbox.required():
         return structured_iac_batch({path: source}, make_finding, settings)[path]
     environment = {key: os.environ[key] for key in ("SystemRoot", "WINDIR", "TEMP", "TMP") if key in os.environ}

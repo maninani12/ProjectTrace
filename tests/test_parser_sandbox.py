@@ -64,6 +64,14 @@ def test_completed_prefix_survives_a_truncated_next_packet():
     assert completed_packets(raw, {"a.py": "pass", "b.py": "pass"}, 10000) == {"a.py": ["owned"]}
 
 
+@pytest.mark.parametrize("header", [b"[]", b"null", b'"unexpected"'])
+def test_non_object_attestation_is_rejected_with_safe_diagnostic(monkeypatch, header):
+    monkeypatch.setattr(sys, "platform", "linux")
+    monkeypatch.setattr(sandbox, "bounded_process", lambda *_args, **_kwargs: (header + b"\n{}", None))
+    with pytest.raises(sandbox.SandboxFailure, match="ISOLATION_NOT_ATTESTED"):
+        sandbox.invoke("probe", {})
+
+
 @pytest.mark.skipif(os.name != "posix", reason="Linux-only pipe transport; Windows remains uncontained development")
 def test_parent_pipe_transport_bounds_real_stdout_flood():
     with pytest.raises(sandbox.SandboxFailure, match="HELPER_OUTPUT_BUDGET"):

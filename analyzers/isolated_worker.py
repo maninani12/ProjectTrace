@@ -15,8 +15,11 @@ import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from analyzers.sandbox import SandboxFailure  # noqa: E402 -- owned absolute import root
+
 STREAMED = object()
 SOURCE_INVALID = object()
+DENIAL_RESULTS = []
 
 
 def prepare(operation):
@@ -79,7 +82,9 @@ def denied(operation, *, expected=(errno.EPERM, errno.EACCES)):
     try:
         operation()
     except OSError as error:
+        DENIAL_RESULTS.append(error.errno)
         return error.errno in expected
+    DENIAL_RESULTS.append(0)
     return False
 
 
@@ -145,7 +150,8 @@ def dispatch(operation, value, engine, sandbox):
                 "exec": denied(lambda: os.execve("/bin/echo", ["echo", "SEC002"], {}), expected=(errno.EPERM,)),
                 "fork": denied(os.fork, expected=(errno.EPERM,)),
                 "environment": sorted(os.environ), "nnp": libc.prctl(39, 0, 0, 0, 0),
-                "seccomp": libc.prctl(21, 0, 0, 0, 0), "nonce": value.get("nonce")}
+                "seccomp": libc.prctl(21, 0, 0, 0, 0), "nonce": value.get("nonce"),
+                "denial_errno": list(DENIAL_RESULTS)}
     if operation in {"probe_timeout", "probe_cpu"}:
         while True:
             pass
@@ -259,7 +265,7 @@ if __name__ == "__main__":
         main()
         sys.stdout.buffer.flush()
         os._exit(0)
-    except __import__("analyzers.sandbox", fromlist=["SandboxFailure"]).SandboxFailure as error:
+    except SandboxFailure as error:
         sys.stdout.buffer.write(json.dumps({"failure": error.code}).encode() + b"\n")
         sys.stdout.buffer.flush()
         os._exit(70)

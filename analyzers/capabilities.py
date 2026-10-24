@@ -2,6 +2,8 @@
 
 import importlib.metadata
 
+from analyzers import sandbox
+
 
 def installed(name):
     try:
@@ -82,10 +84,10 @@ def registry(version):
         "unsupported": "Inventoried as a coverage gap; absence of findings does not prove safety.",
         "parser_isolation": (
             "PARTIAL SYSTEM SCOPE: source/manifest/report parsers require Linux Landlock/seccomp with per-worker denial probes; ZIP intake remains in-process."
-            if __import__("analyzers.sandbox", fromlist=["status"]).status()["mode"] == "required"
+            if sandbox.status()["mode"] == "required"
             else "DEVELOPMENT UNCONTAINED: no filesystem/network isolation is claimed; production refuses this mode."
         ),
-        "parser_isolation_policy": __import__("analyzers.sandbox", fromlist=["status"]).status(),
+        "parser_isolation_policy": sandbox.status(),
         "rule_blocking": "Disabled by default: representative rule precision is unmeasured.",
         "scale": {"three_million_lines": "UNMEASURED_PARTITIONED_INTAKE", "hundred_concurrent_prs": "UNMEASURED"},
     }

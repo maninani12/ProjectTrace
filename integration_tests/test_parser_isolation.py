@@ -31,6 +31,10 @@ def test_actual_filesystem_network_exec_environment_and_process_denial(tmp_path,
     assert result["nnp"] == 1 and result["seccomp"] == 2
     assert not {"DATABASE_URL", "ANALYSIS_INPUT_KEY", "HOME", "PATH", "PYTHONPATH"} & set(result["environment"])
     assert not (tmp_path / "escaped").exists()
+    assert result["denial_errno"] and set(result["denial_errno"]) <= {1, 13}
+    evidence = Path(os.environ["PROJECTTRACE_SANDBOX_EVIDENCE"])
+    evidence.mkdir(parents=True, exist_ok=True)
+    (evidence / "host-denials.json").write_text(json.dumps(result))
 
 
 def test_concurrent_owned_tenants_cannot_read_each_others_host_files(tmp_path):
@@ -182,3 +186,27 @@ def test_real_native_crash_publishes_no_successful_observation_cache(monkeypatch
     assert {"PARSING", "QUALITY", "SAST"} <= result[5]
     assert result[2] and all(row["state"] == "PARTIAL" for row in result[2])
     assert result[2][0]["code"] == "HELPER_PROCESS_LIMIT"
+
+
+@pytest.mark.parametrize("format,text", [
+    ("lcov", "SF:app.py\nDA:1,1\nDA:2,0\nend_of_record\n"),
+    ("cobertura", '<coverage><packages><package><classes><class filename="app.py"><lines>'
+     '<line number="1" hits="1"/><line number="2" hits="0"/>'
+     '</lines></class></classes></package></packages></coverage>'),
+])
+def test_contained_coverage_reports_retain_meaningful_counts_and_safe_failure(format, text, monkeypatch):
+    from analyzers.code_quality.coverage import import_report
+    files = {"app.py": "first=1\nsecond=2\n"}
+    options = {"format": format, "declared_commit": "a" * 40, "snapshot_commit": "a" * 40}
+    result = import_report(text, files, **options)
+    monkeypatch.setenv("PROJECTTRACE_PARSER_ISOLATION", "development")
+    baseline = import_report(text, files, **options)
+    assert result == baseline
+    assert result["state"] == "VALID" and result["line_total"] == 2 and result["line_covered"] == 1
+    monkeypatch.setenv("PROJECTTRACE_PARSER_ISOLATION", "required")
+    invoke = sandbox.invoke
+    def crashed(operation, value, **limits):
+        return invoke("probe_crash" if operation == "coverage" else operation, value, **limits)
+    monkeypatch.setattr(sandbox, "invoke", crashed)
+    failed = import_report(text, files, **options)
+    assert failed["state"] == "REPORT_INVALID" and failed["error_code"] == "HELPER_PROCESS_LIMIT"

@@ -155,6 +155,8 @@ def invoke(operation, value, *, seconds=30, maximum=16_000_000, input_maximum=32
         proof = decode_packet(header) if separator and len(header) <= 4096 else {}
     except ValueError:
         proof = {}
+    if not isinstance(proof, dict):
+        proof = {}
     if proof.get("policy") != POLICY or proof.get("enforced") is not True or proof.get("denials") != ["filesystem", "network", "exec", "metadata"]:
         code = proof.get("failure", "")
         if not isinstance(code, str) or not code.isupper() or len(code) > 60:
