@@ -1,5 +1,6 @@
 import {
   expect,
+  test,
   type APIRequestContext,
   type APIResponse,
 } from "@playwright/test";
@@ -18,7 +19,19 @@ export async function completedAnalysis(
       .poll(
         async () => {
           const current = await request.get(`/api/record/${receipt.job_id}`);
-          expect(current.ok()).toBeTruthy();
+          if (!current.ok()) {
+            const detail = {
+              status: current.status(),
+              job_id: receipt.job_id,
+              retry_after: current.headers()["retry-after"],
+              body: (await current.text()).slice(0, 1000),
+            };
+            await test.info().attach("analysis-job-http-error", {
+              body: JSON.stringify(detail),
+              contentType: "application/json",
+            });
+            expect(current.ok(), JSON.stringify(detail)).toBeTruthy();
+          }
           job = await current.json();
           return [
             "COMPLETED",
