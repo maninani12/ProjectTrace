@@ -208,12 +208,20 @@ test("real workspace ZIP import, claims, evidence, question and second-snapshot 
   await page
     .getByLabel("Source archive", { exact: true })
     .setInputFiles(path.resolve("e2e/fixtures/native-fixture-updated.zip"));
-  const updatedSnapshot = page.waitForResponse(
-    (response) =>
-      new URL(response.url()).pathname ===
-        `/api/repositories/${firstRepository}/source-archive` &&
-      response.request().method() === "POST",
-  );
+  // Read the receipt at response time, before the application's automatic
+  // navigation can evict Chromium's response-body cache.
+  const updatedSnapshot = page
+    .waitForResponse(
+      (response) =>
+        new URL(response.url()).pathname ===
+          `/api/repositories/${firstRepository}/source-archive` &&
+        response.request().method() === "POST",
+    )
+    .then(async (response) => {
+      const status = response.status();
+      const receipt = await response.json();
+      return { status: () => status, json: async () => receipt };
+    });
   await page
     .getByRole("button", { name: "Analyze and compare snapshot", exact: true })
     .click();

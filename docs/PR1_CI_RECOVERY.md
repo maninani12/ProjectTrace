@@ -15,6 +15,8 @@ Original run: [40116254951](https://github.com/maninani12/ProjectTrace/actions/r
 
 An earlier diagnostic push run was superseded by its PR event and canceled. Its 502 proxy failures coincide with the API shutdown and are excluded as product/root-cause evidence. Expected PostgreSQL tenant-FK rejection messages belong to passing isolation-negative tests; no database boundary was relaxed.
 
+The first isolated focused run (`40119778641`) passed Native, Phase 2 and public ZIP import. Real-import then exposed Chromium response-body cache eviction while reading the receipt after automatic navigation. The receipt is now decoded at response time, before navigation, and its exact job/snapshot checks remain mandatory. This intermediate failure is retained in Actions rather than counted as a pass.
+
 ## Implementation boundaries
 
 `frontend/e2e/fixtures.ts` starts the real migrated/seeded application in a unique OS-temp database with separate encrypted source/key/upload paths. Only CI sets `PROJECTTRACE_E2E_ISOLATED_API=1`. The fixture refuses external/private QA targets and an already occupied API port. It stops only its own child, retains temporary databases for recovery, and uploads logs rather than databases, keys or session data. Browser contexts remain Playwright's normal fresh contexts. Existing test bodies only switch their `test` import to this fixture.
