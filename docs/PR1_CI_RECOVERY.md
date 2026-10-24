@@ -15,7 +15,7 @@ Original run: [40116254951](https://github.com/maninani12/ProjectTrace/actions/r
 
 An earlier diagnostic push run was superseded by its PR event and canceled. Its 502 proxy failures coincide with the API shutdown and are excluded as product/root-cause evidence. Expected PostgreSQL tenant-FK rejection messages belong to passing isolation-negative tests; no database boundary was relaxed.
 
-The first isolated focused run (`40119778641`) passed Native, Phase 2 and public ZIP import. Real-import then exposed Chromium response-body cache eviction while reading the receipt after automatic navigation. The receipt is now decoded at response time, before navigation, and its exact job/snapshot checks remain mandatory. This intermediate failure is retained in Actions rather than counted as a pass.
+The first isolated focused run (`40119778641`) passed Native, Phase 2 and public ZIP import. Real-import then exposed Chromium response-body cache eviction while reading the streamed-upload receipt. Reading immediately at response time also failed in `40120169267`. The test now forwards the unchanged browser upload through `route.fetch()` to the real API, retains that API response, and fulfills the browser with the same real response. No receipt, status or finding is mocked. Exact job/snapshot and visible Drift assertions remain mandatory. Both intermediate failures remain in Actions rather than being counted as passes.
 
 ## Implementation boundaries
 

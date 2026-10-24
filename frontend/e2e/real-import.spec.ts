@@ -1,4 +1,4 @@
-import { test, expect } from "./fixtures";
+import { test, expect, type APIResponse } from "./fixtures";
 import path from "node:path";
 import { completedAnalysis } from "./analysis";
 const origin = new URL(
@@ -208,24 +208,36 @@ test("real workspace ZIP import, claims, evidence, question and second-snapshot 
   await page
     .getByLabel("Source archive", { exact: true })
     .setInputFiles(path.resolve("e2e/fixtures/native-fixture-updated.zip"));
-  // Read the receipt at response time, before the application's automatic
-  // navigation can evict Chromium's response-body cache.
-  const updatedSnapshot = page
-    .waitForResponse(
-      (response) =>
-        new URL(response.url()).pathname ===
-          `/api/repositories/${firstRepository}/source-archive` &&
-        response.request().method() === "POST",
-    )
-    .then(async (response) => {
+  // Forward the actual browser upload to the real API and retain its response
+  // in the API transport. Chromium evicts this streamed-upload response body
+  // even when read immediately. No response, status or finding is fabricated.
+  const uploadPath = new RegExp(
+    `/api/repositories/${firstRepository}/source-archive(?:\\?|$)`,
+  );
+  type ReceiptResponse = Pick<APIResponse, "status" | "json">;
+  let resolveReceipt!: (receipt: ReceiptResponse) => void;
+  let rejectReceipt!: (error: unknown) => void;
+  const updatedSnapshot = new Promise<ReceiptResponse>((resolve, reject) => {
+    resolveReceipt = resolve;
+    rejectReceipt = reject;
+  });
+  await page.route(uploadPath, async (route) => {
+    try {
+      const response = await route.fetch();
       const status = response.status();
       const receipt = await response.json();
-      return { status: () => status, json: async () => receipt };
-    });
+      await route.fulfill({ response });
+      resolveReceipt({ status: () => status, json: async () => receipt });
+    } catch (error) {
+      rejectReceipt(error);
+      throw error;
+    }
+  });
   await page
     .getByRole("button", { name: "Analyze and compare snapshot", exact: true })
     .click();
   const head = await completedAnalysis(page.request, await updatedSnapshot);
+  await page.unroute(uploadPath);
   expect(head.id).not.toBe(firstSnapshot);
   expect(head.base_id).toBe(firstSnapshot);
   await expect(page.getByRole("dialog")).toHaveCount(0);
@@ -243,8 +255,12 @@ test("real workspace ZIP import, claims, evidence, question and second-snapshot 
   await nav.getByRole("button", { name: /^Drift/ }).click();
   const capturedDrift = await driftResponse;
   expect(capturedDrift.status()).toBe(200);
+  // Independently read the exact observed, HEAD-pinned URL through the API
+  // transport, which is not subject to Chromium's inspector-body eviction.
+  const verifiedDrift = await page.request.get(capturedDrift.url());
+  expect(verifiedDrift.status()).toBe(200);
   expect(
-    (await capturedDrift.json()).items.some(
+    (await verifiedDrift.json()).items.some(
       (item: { kind: string }) => item.kind === "drift",
     ),
   ).toBe(true);
