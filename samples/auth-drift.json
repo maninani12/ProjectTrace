@@ -1,0 +1,13 @@
+{
+  "description": "Static analysis inputs only. Never import, install, build or execute these sources. Settings are intentionally unresolved; runtime is unobserved.",
+  "base": {
+    "README.md": "# Authentication contract\nAuthentication uses JWT.\n",
+    "app.py": "import jwt\nfrom fastapi import FastAPI\napp = FastAPI()\n\ndef issue_token(user, signing_key):\n    return jwt.encode({'sub': user.id}, signing_key, algorithm='HS256')\n",
+    "requirements.txt": "fastapi==0.115.0\nPyJWT==2.10.1\n"
+  },
+  "head": {
+    "README.md": "# Authentication contract\nAuthentication uses JWT.\n",
+    "app.py": "from fastapi import FastAPI\nfrom starlette.middleware.sessions import SessionMiddleware\napp = FastAPI()\napp.add_middleware(SessionMiddleware, secret_key=settings.session_key, https_only=True, same_site='strict')\n",
+    "requirements.txt": "fastapi==0.115.0\nitsdangerous==2.2.0\n"
+  }
+}

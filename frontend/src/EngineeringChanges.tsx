@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "./api";
 import type { Item } from "./api";
+import ClaimComparisons from "./ClaimComparisons";
+import type { ClaimComparison } from "./ClaimComparisons";
 
 type Change = {
   id: string;
@@ -20,6 +22,8 @@ type Change = {
   total_changes: number;
 };
 type Detail = Change & {
+  claim_comparisons?: ClaimComparison[];
+  claim_comparisons_truncated?: boolean;
   actor: string;
   actor_basis: string;
   files: string[];
@@ -209,6 +213,16 @@ export default function EngineeringChanges({
                   BASE {detail.data.base_snapshot_id} → HEAD{" "}
                   {detail.data.head_snapshot_id}
                 </p>
+                <ClaimComparisons
+                  items={detail.data.claim_comparisons || []}
+                  onInspect={(id) => void inspect(id)}
+                />
+                {detail.data.claim_comparisons_truncated && (
+                  <p>
+                    First 50 claim comparisons shown; the full change counts and
+                    Claim Ledger remain available.
+                  </p>
+                )}
                 <p>
                   Captured gate:{" "}
                   {detail.data.captured_gate?.overall || "Not available"} ·{" "}

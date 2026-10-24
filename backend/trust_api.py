@@ -502,11 +502,16 @@ def infrastructure(
                 resource_scope.where(
                     Record.kind == "graph_node",
                     indexed_text(Record.data, "authority") == "STATIC",
-                    Record.id.in_(
-                        select(CloudAsset.id).where(
-                            CloudAsset.organization_id == user.organization_id, CloudAsset.snapshot_id.in_(ids)
-                        )
-                    ),
+                    # Correlate membership instead of materializing asset IDs.
+                    # An IN list lets SQLite probe records by primary key and
+                    # bypass the snapshot/class seek after visibility filters
+                    # are added to CloudAsset by the generation boundary.
+                    # EXISTS preserves both ORM visibility predicates.
+                    select(CloudAsset.id).where(
+                        CloudAsset.id == Record.id,
+                        CloudAsset.organization_id == user.organization_id,
+                        CloudAsset.snapshot_id.in_(ids),
+                    ).exists(),
                     indexed_text(Record.data, "class").in_(["CLOUD_RESOURCE", "CLOUD_IDENTITY", "CONTAINER_WORKLOAD", "CONTAINER_IMAGE"]),
                 )
                 .order_by(Record.id)
