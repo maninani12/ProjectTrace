@@ -166,7 +166,7 @@ def recover_jobs():
     from backend.scheduling import recover_expired
 
     with Session() as db:
-        recovered_ids = recover_expired(db)
+        recovered_ids = recover_expired(db, execution="CELERY")
         for job_id in recovered_ids:
             dispatch(db, db.get(Record, job_id))
     recovered = len(recovered_ids)
@@ -198,6 +198,8 @@ def recover_jobs():
             dispatch(db, queued)
     for _ in range(100):
         with Session() as db:
+            from backend.db import QueueEntry
+
             job = db.scalar(
                 select(Record)
                 .where(
@@ -206,6 +208,9 @@ def recover_jobs():
                     Record.data["source"].as_string().in_(["ZIP", "FILES", "INVENTORY"]),
                     Record.data["state"].as_string().not_in(list(TERMINAL | {"QUEUED"})),
                     Record.data["lease_expires_at"].as_string() <= now(),
+                    # Scheduler entries own current leases. The JSON timestamp
+                    # is a historical stage projection, not a second lease.
+                    ~select(QueueEntry.job_id).where(QueueEntry.job_id == Record.id).exists(),
                 )
                 .with_for_update(skip_locked=True)
                 .limit(1)

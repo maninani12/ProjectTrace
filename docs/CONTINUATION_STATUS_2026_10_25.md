@@ -1,0 +1,74 @@
+# ProjectTrace continuation register
+
+This is a source-based continuation reference, not a production certificate. Historical reports remain intact. Verification applies to a named commit/environment; a feature label never implies commercial-platform parity.
+
+## Recovered baseline and integration decision
+
+Remote inspection found main `1518e918dfe7360c833c7414724026260422bc71`, one open draft PR (#1), and PR head `15f38216aaeb1de14d152928b2c9fa4a5f3807c2`. [Run 40122127341](https://github.com/maninani12/ProjectTrace/actions/runs/40122127341) completed successfully: backend 608 passed / 2 Windows skips, frontend 49 passed, Chromium 18 passed / 10 explicit-fixture skips, focused browser 4 passed, analyzer benchmark 33 passed, compilation/Ruff/types/build/migrations/audits/both Docker builds passed. These are baseline measurements, not automatic results for this milestone.
+
+New work uses `codex/broker-recovery-hardening`, based on the exact PR #1 head. Its draft PR targets `codex/auth-drift-verification` so reviewers see only this milestone; PR #1 remains draft and unmerged. Retargeting after an approved integration is a later decision. Do not rewrite the successful branch or merge it as part of continuation.
+
+## Actual stack and boundaries
+
+The repository is a modular monolith: Python/FastAPI 0.142.2, SQLAlchemy 2.1.3, Alembic 1.20.0 and schema head 0025; PostgreSQL deployment adapter and explicit SQLite local adapter. Celery 5.6.3 and Redis client 7.4.1 dispatch job IDs. CI uses Python 3.14, PostgreSQL 17 and Node 24. React 19, TypeScript, Vite 8, React Router 8, TanStack Query/Table and React Flow implement the workspace; Vitest and Playwright provide UI tests. Lockfiles are authoritative for resolved versions.
+
+`backend/main.py` enforces API sessions, origins, CSRF, admission and scoped repository reads. Governance modules own membership/features/grants, separate from platform administration. `backend/queue.py` retains encrypted expiring input; `scheduling.py` serializes admission, tenant fairness and fenced claims; `workers/` and the local runner invoke the same static-analysis lifecycle. Inventories lazily load tenant-encrypted objects. Native parsers/analysis produce captured Records, observations and graph relationships. Generation receipts/chunks keep incomplete output private; a final transaction publishes generation visibility, pointer and terminal job. Learning reads published evidence and retains independent participant/mentor/manager history. UI requests use existing authorized APIs; graph/source bundles remain lazy.
+
+Imported source is data. Imports do not execute repository applications, install their dependencies or run their builds. The owned parsers have resource limits; that does not establish full filesystem/network isolation.
+
+## Implementation inventory
+
+“Implemented and verified” means the cited controlled regressions/baseline CI, with the stated scope. It does not imply comprehensive real-world accuracy, sustained scale or production qualification.
+
+| Capability | Classification | Source/evidence and limits |
+|---|---|---|
+| Claim Ledger, deterministic verification, claim history | Implemented and verified | `analyzers/verifiers.py`, `backend/claim_read.py`, `test_auth_drift.py`, API/browser tests; supported syntax/static scope only |
+| Evidence Graph, source inspector, bounded graph pages | Implemented and verified | `backend/graph_api.py`, `generation_visibility.py`, graph/impact/pagination tests and browser flows; full semantic dependency modeling is partial |
+| BASE/HEAD drift and Engineering Changes | Implemented and verified | `engineering_changes.py`, `ClaimComparisons.tsx`, `test_engineering_changes.py`, auth browser case; immutable source hashes/verdicts, no deployed-runtime proof |
+| Safe ZIP/text/streaming imports and retained inventories | Implemented and verified | `repository_store.py`, `encrypted_archive.py`, import/archive safety tests and real-import browser case |
+| Private generation staging and atomic publication | Implemented and verified | `generations.py`, `test_generations.py`, PostgreSQL connection-loss/pointer/tenant tests; bounded persistence is not bounded total memory |
+| Native code quality and profiles/gates | Implemented and verified | `analyzers/code_quality`, `quality_profiles.py`, quality tests and synthetic benchmarks; richer type/symbol/CFG and representative precision remain partial |
+| Security flows, hotspots and secret masking | Partially implemented | `analyzers/flows.py`, native rules and accuracy/security tests cover modeled Python flows; broad interprocedural recall and secret recall are unproved |
+| Infrastructure/static cloud findings | Implemented and verified | IaC workers, infrastructure tests, native browser cases; supported declarations only, no deployment reachability proof |
+| AWS read-only inventory | Implemented but insufficiently validated | `integrations/cloud.py` allowlisted reads; no current live-account acceptance |
+| Azure/GCP live inventory, effective IAM/runtime fleet graph | Planned but not implemented | Native/cloud support matrices explicitly defer these capabilities |
+| Dependency observations, SBOM and optional OSV | Implemented but insufficiently validated | Supported npm/Python declarations, `integrations/osv.py`, SBOM/advisory tests; no complete resolver/license coverage or current live-provider proof |
+| Local sessions, CSRF, scoped tenant/repository authorization | Implemented and verified | `security.py`, `governance.py`, tenant/IDOR/revocation and compound-FK tests; full PostgreSQL RLS/legacy compound keys remain incomplete |
+| OIDC/GHES/provider lifecycle | Implemented but insufficiently validated | Dedicated modules and controlled transport/lifecycle tests; live enterprise IdP/GHES acceptance remains open |
+| Administration | Implemented but insufficiently validated | Administration modules/API tests/unit UI checks exist; 3 private browser cases are skipped in baseline CI |
+| New-hire and internal-transfer learning | Implemented but insufficiently validated | `onboarding.py`, schema 0025, `Learning.tsx`, backend/UI regressions; 2 private learning browser cases skipped in baseline CI |
+| Local durable worker and fenced scheduling | Implemented and verified | Local/queue/fairness/generation failure tests; three recovery boundary defects reproduced and corrected by this milestone |
+| Real Redis/Celery failure recovery on current schema | Implemented but insufficiently validated at baseline | Older VM narratives are historical; REL-003 explicitly remains unqualified for current generation publication. This milestone adds dedicated real-service CI acceptance; use its actual PR checks |
+| Production admission and shared-NAT capacity | Implemented but insufficiently validated | Redis fail-closed policy and bounded local windows; unit/browser quota semantics verified, multi-tenant/NAT sustained load unmeasured |
+| Backup, restore and key rotation | Implemented but insufficiently validated | `local_backup.py`, backup/private-operation tests and historical local restore; production PostgreSQL/object/key RPO/RTO not qualified |
+| Audit integrity and operational diagnostics | Partially implemented | Hash chain/checkpoints, request IDs, structured stages/attempt history; no configured exported tracing SDK, queue dashboards or managed alerting |
+| Responsive UI, accessible dialogs and evidence workflows | Implemented and verified | Existing React modules, unit/browser/Axe checks; bounded acceptance, not exhaustive accessibility/user research |
+| Docker images and deployment templates | Implemented but insufficiently validated | Both image builds pass at baseline; Compose/Kubernetes/configuration are not a production deployment certificate |
+| External AI synthesis / vector retrieval | Planned but not implemented | Deterministic/full-text/graph retrieval exists; external model synthesis and vector services are not configured |
+| Customer production topology/provider compatibility | Unknown pending investigation | No customer infrastructure, actual provider credentials or staging evidence supplied; do not infer from local templates |
+
+## Gap register and prioritization
+
+Severity describes impact; priority combines demonstrated exposure, dependencies and achievable validation. A risk is not promoted to a reproduced defect without execution evidence.
+
+| ID / status / priority | Evidence and reproducible scenario | Impact / recommended correction | Required validation / dependencies / risk |
+|---|---|---|---|
+| REL-004 verified defect / high / P0 milestone | Commit snapshot+terminal job, kill before queue release, expire lease: baseline `recover_expired` requeues terminal outcomes. Seven new baseline regression cases fail across three defects | Outcome/history inconsistency, duplicate work/publication risk. Reconcile terminal queue state without editing the committed job; lock/skip active queue rows | All terminal states, PostgreSQL renewal lock race and actual prefork termination. Depends on existing fence/generation protocol; moderate concurrency risk |
+| REL-005 verified defect / high / P0 milestone | A renewed QueueEntry lease coexists with an older JSON timestamp; legacy fallback requeues the live job | Duplicate processing/fencing churn. Scheduler entry is authoritative; legacy fallback applies only where no entry exists | Fresh/legacy jobs, bounded retries, no cross-runner recovery. Low code volume, moderate lock-order risk |
+| REL-003 qualification gap / high / P0 milestone | Current schema has no retained CI real Redis/prefork outage/redelivery qualification | Jobs may remain stalled after transport/process loss. Add isolated real-service CI with actual application tasks and natural DB lease expiry | Broker outage, worker loss before/after publication, explicit duplicate delivery, revoked actor/tenant visibility. Needs Docker/Redis/PostgreSQL; harness complexity moderate |
+| SEC-002 verified incomplete control / critical exposure / P1 release blocker | Owned parser helpers enforce packet/CPU/memory bounds but lack demonstrated filesystem/network sandbox; Python AST remains in-process | A parser/runtime exploit could reach host resources. Define Linux sandbox envelope and isolate every untrusted parser boundary; use minimum privileges, deny network and restrict mounts | Real filesystem/network denial and escape/failure tests, Windows fallback policy. Depends on target OS/runtime; high compatibility risk. No exploit has been demonstrated here |
+| SCALE-001 verified failure / high / P1 | Pinned OpenMetadata experiment fails VERIFYING under 768 MB; `SDLC_ACCEPTANCE_2026_10_15.md` records resident observations/derived metric aggregation | Large imports cannot meet the measured envelope. Stream/spill global observations and bounded joins without dropping evidence | Same pinned source/hash, cold/warm peak process-tree memory and output equivalence, failure recovery. High algorithm/data-format risk |
+| ACC-001 unmeasured risk / high / P1 | Synthetic benchmark 33 checks cannot estimate production precision/recall | Misleading gates or missed issues. Curate representative labeled corpus, reproducible baselines and rule-specific confidence thresholds | Independent labels, false-positive traps, per-rule denominators and drift comparisons. Needs authorized corpus/reviewers; moderate risk |
+| ADM-LOAD qualification gap / medium-high / P2 | General 240/min shared-IP window reproduced in CI; correctness fixed by test isolation, not production capacity changes | Legitimate NAT users may be throttled. Measure authenticated tenant/user plus edge-IP policy tradeoffs while preserving abuse caps/fail-closed behavior | Concurrent identities/NAT/fairness/Redis outages; target load budget needed. Avoid blindly raising limits; moderate security risk |
+| QA-PRIVATE qualification gap / high / P2 | Baseline skips 5 Administration/Learning + 4 large-account + 1 static-site cases | Important workflow/scale regressions may evade current browser CI. Provision explicit isolated role/large-data/static fixtures | Existing assertions unchanged; permission/privacy and memory budgets preserved. Needs safe fixture provisioning; moderate setup risk |
+| OPS-PROD qualification gap / high / P1 release blocker | Deployment templates/local restores and image builds do not prove live TLS, providers, sustained fairness, external telemetry or full key/object/database restore | Production outage/data loss and undetected failures. Qualify private staging, backup consistency, restoration, RPO/RTO and alerts | Real PostgreSQL/Redis TLS, owned object store/keys, live providers, monitored failure drills. Operator infrastructure/credentials required; high operational risk |
+
+Parser isolation and large-memory failures remain release blockers; they are not dismissed because the achievable next milestone is queue recovery. The queue defects are demonstrated, have a small shared fix, and real-service CI can test them without new external credentials. This makes recovery the selected independent milestone rather than attempting a broad rewrite of all release gates.
+
+## Milestone history and continuation procedure
+
+1. PR #1: captured JWT-to-session claim/source comparison and browser recovery; baseline run linked above.
+2. Broker recovery hardening: `docs/BROKER_RECOVERY_ACCEPTANCE.md` defines scope, exact fault mechanisms, test commands and limitations; ADR 0004 records ownership/branch decisions. The draft PR records the final commit-specific measurements and Actions artifact links, including failed attempts.
+3. Recommended next milestone: Linux parser isolation threat model and executable filesystem/network denial contract, before claiming secure arbitrary-repository processing. SCALE-001 remains a separate bounded-memory milestone; neither is bundled into this PR.
+
+For future continuation, read this register, ADR 0004, the current PR head and latest completed checks first. Inspect working-tree changes before switching branches. Treat historical reports as dated measurements. Preserve schema 0025, source objects/operator keys, existing evidence/learning histories, baseline branch and PR #1. Never infer that a newer head passed because an older one did. Current milestone test totals live in the PR rather than triggering another full CI run merely to write final counts into this file.

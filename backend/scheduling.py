@@ -314,6 +314,7 @@ def owns(db, job_id, token):
 
 def recover_expired(db, *, execution=None):
     from backend.db import AnalysisInput
+    from backend.jobs import TERMINAL
 
     expired = select(QueueEntry).where(QueueEntry.state == "RUNNING", QueueEntry.lease_expires_at <= now())
     if execution is not None:
@@ -328,9 +329,17 @@ def recover_expired(db, *, execution=None):
             return []
     lock(db)
     recovered = []
-    for entry in db.scalars(expired.limit(100)):
-        job = db.get(Record, entry.job_id)
+    # A publishing worker holds the queue row through its final fence/commit.
+    # Skip that row instead of recovering a lease observed before its renewal.
+    for entry in db.scalars(expired.limit(100).with_for_update(skip_locked=True).execution_options(populate_existing=True)):
+        job = db.get(Record, entry.job_id, populate_existing=True, with_for_update=True)
         if execution is not None and job.data.get("execution") != execution:
+            continue
+        if job.data.get("state") in TERMINAL:
+            # Publication and its terminal job commit before worker cleanup/ACK.
+            # A crash in that gap must only reconcile admission bookkeeping.
+            entry.state = job.data["state"]
+            entry.worker_token, entry.lease_expires_at = None, None
             continue
         attempts = job.data.get("recovery_attempts", 0)
         retained = db.get(AnalysisInput, job.id) if job.data.get("source") in {"FILES", "ZIP", "INVENTORY"} else None
@@ -353,6 +362,9 @@ def recover_expired(db, *, execution=None):
             "attempt_history": [*job.data.get("attempt_history", []), previous],
             "finished_at": None if state == "QUEUED" else now(),
             "warnings": ["Expired worker lease recovered; stale workers cannot publish output."],
+            **({"error_code": "WORKER_RECOVERY_EXHAUSTED" if attempts >= 2 else "RETAINED_INPUT_UNAVAILABLE",
+                "errors": ["Worker recovery exhausted or retained input unavailable; upload a fresh snapshot."]}
+               if state == "FAILED" else {}),
         }
         if state == "QUEUED":
             recovered.append(job.id)
