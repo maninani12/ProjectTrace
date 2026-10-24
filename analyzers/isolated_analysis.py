@@ -77,9 +77,18 @@ def native(files, cache, settings, *, performance=None):
             rows.pop(next(reversed(rows)))
         for path in batch:
             if path not in rows:
+                # This worker performs secrets/context as well as syntax.
+                # Losing its packet must not advertise a clean scan in those
+                # consumers, including IaC when its parsed input was prepared
+                # successfully but the combined observation never completed.
+                affected = {"PARSING", "QUALITY", "SAST", "SECRETS", "CLAIMS"}
+                if is_iac_source(path, batch[path]):
+                    affected.add("IAC")
+                if path.endswith((".py", ".json")):
+                    affected.add("API")
                 records[path] = [[], [], [{"analyzer": "PARSING", "path": path, "state": "PARTIAL",
                     "code": failure or "HELPER_PROTOCOL", "message": "Isolated parser did not complete this file."}],
-                    [], [], ["PARSING", "QUALITY", "SAST"], {}, 0]
+                    [], [], sorted(affected), {}, 0]
                 continue
             row = rows[path]
             if not isinstance(row, list) or len(row) != 9 or set(row[6]) != {path}:

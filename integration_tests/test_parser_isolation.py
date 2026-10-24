@@ -176,16 +176,22 @@ def test_real_parser_interruption_preserves_only_completed_file_prefix(monkeypat
 
 
 def test_real_native_crash_publishes_no_successful_observation_cache(monkeypatch):
-    from analyzers.engine import native_observations
+    from analyzers.engine import analyze, native_observations
     invoke = sandbox.invoke
     def crashed(operation, value, **limits):
         return invoke("probe_crash" if operation == "native" else operation, value, **limits)
     monkeypatch.setattr(sandbox, "invoke", crashed)
-    result = native_observations({"app.py": "import subprocess\nsubprocess.run(command,shell=True)\n"})
+    files = {"app.py": "import subprocess\nsubprocess.run(command,shell=True)\n",
+             "main.tf": 'resource "aws_s3_bucket" "owned" {\n acl="public-read"\n}\n',
+             "README.md": "Authentication uses JWT.\n"}
+    result = native_observations(files)
     assert not result[0] and not result[1] and not result[6]
-    assert {"PARSING", "QUALITY", "SAST"} <= result[5]
+    assert {"PARSING", "QUALITY", "SAST", "SECRETS", "IAC", "CLAIMS", "API"} <= result[5]
     assert result[2] and all(row["state"] == "PARTIAL" for row in result[2])
     assert result[2][0]["code"] == "HELPER_PROCESS_LIMIT"
+    analysis = analyze(files, observations=result)
+    assert all(analysis["engines"][name]["state"] == "FAILED" for name in result[5])
+    assert not any(row["status"] == "VERIFIED" for row in analysis["claims"])
 
 
 @pytest.mark.parametrize("format,text", [
