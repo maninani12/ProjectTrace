@@ -1,5 +1,7 @@
 # ProjectTrace
 
+Current source-based continuation: [implementation inventory and release gates](docs/CONTINUATION_STATUS_2026_10_25.md), [fenced broker recovery acceptance](docs/BROKER_RECOVERY_ACCEPTANCE.md), and [ADR 0004](docs/adr/0004-fenced-recovery-ownership.md). Commit-specific outcomes are linked from the current draft PR; historical results below retain their original scope.
+
 Current complete product/pilot qualification: **BLOCKED**. Private resumable generation publication and new-hire/internal-transfer learning are implemented; full global-memory, unchanged OpenMetadata, real broker and production isolation/operations acceptance remain open. Read the [current implementation](docs/GENERATION_AND_LEARNING.md) and [requirements/evidence register](docs/SDLC_ACCEPTANCE_2026_10_15.md); historical reports remain preserved.
 
 ProjectTrace connects engineering claims to current software evidence, then shows what changed, what needs review, and who owns the next action.

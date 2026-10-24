@@ -1,5 +1,7 @@
 # ProjectTrace architecture — enterprise hardening candidate
 
+25 October continuation: [the recovered capability/gap register](docs/CONTINUATION_STATUS_2026_10_25.md) maps current implementation to tests and unverified scope. [ADR 0004](docs/adr/0004-fenced-recovery-ownership.md) preserves one scheduler lease authority, terminal publication outcomes and separate local/Celery recovery ownership. No schema or UI change is introduced; real-service acceptance is defined [here](docs/BROKER_RECOVERY_ACCEPTANCE.md).
+
 Implementation update (15 October 2026): migrations 0024/0025 add private generation publication and evidence-backed learning. See [generation and learning architecture](docs/GENERATION_AND_LEARNING.md) and [acceptance register](docs/SDLC_ACCEPTANCE_2026_10_15.md). Complete global-memory, broker and production qualification remain open.
 
 24 October continuation: Engineering Changes adds bounded BASE/HEAD documentation-claim evidence references, rendered through the existing authorized evidence inspector. Verifier evidence order is canonical. Infrastructure membership uses a correlated EXISTS so the snapshot/class index remains eligible with generation visibility predicates. No schema or migration changes are introduced. See [authentication drift demo](docs/AUTH_DRIFT_DEMO.md) and [current audit](docs/AUTONOMOUS_AUDIT_2026_10_24.md).
