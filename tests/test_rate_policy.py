@@ -50,3 +50,19 @@ def test_metrics_never_include_other_organization_jobs(client):
     client.headers["x-csrf-token"] = second.json()["csrf"]
     assert client.get("/api/analysis/metrics").json()["samples"] == 0
     assert client.get("/api/analysis/metrics?repository_id=" + imported["repository_id"]).status_code == 404
+
+
+def test_owned_job_and_identity_reads_share_the_bounded_general_window(client):
+    registered = client.post("/api/auth/register", json={"email": "job-window@example.com",
+        "password": "Strong-test-password-123!", "organization": "Job admission fixture"})
+    client.headers["x-csrf-token"] = registered.json()["csrf"]
+    receipt = client.post("/api/import", json={"name": "Job visibility", "files": {"app.py": "pass\n"}}).json()
+    path = "/api/record/" + receipt["job_id"]
+    assert client.get(path).status_code == 200
+    for _ in range(rate_limit.LIMITS["general"] - 1):
+        assert rate_limit.allow("testclient", "general")
+    job = client.get(path)
+    assert job.status_code == 429 and job.headers["retry-after"] == "60"
+    assert client.get("/api/auth/me").status_code == 429
+    assert client.get("/api/auth/options").status_code == 200
+    assert rate_limit.LIMITS["general"] == 240

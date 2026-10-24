@@ -48,19 +48,18 @@ jobs:
       - run: pip install -r requirements.lock
       - run: npm ci
         working-directory: frontend
+      - run: npx tsc --noEmit --target es2022 --module esnext --moduleResolution bundler --esModuleInterop --skipLibCheck e2e/*.ts
+        working-directory: frontend
       - run: npx playwright install --with-deps chromium
         working-directory: frontend
-      - run: mkdir -p data && alembic upgrade head && python -m backend.seed
       - name: Run browser acceptance with owned local services
         run: |
-          JOB_MODE=local python -m uvicorn backend.main:app --host 127.0.0.1 --port 8011 > /tmp/projecttrace-api.log 2>&1 &
-          API_PID=$!
           (cd frontend && npm run dev) > /tmp/projecttrace-ui.log 2>&1 &
           UI_PID=$!
-          trap 'kill "$API_PID" "$UI_PID" 2>/dev/null || true' EXIT
+          trap 'kill "$UI_PID" 2>/dev/null || true' EXIT
           python - <<'PYTHON'
           import time, urllib.request
-          for url in ('http://127.0.0.1:8011/ready', 'http://127.0.0.1:5181'):
+          for url in ('http://127.0.0.1:5181',):
               for attempt in range(60):
                   try:
                       urllib.request.urlopen(url, timeout=1).close()
@@ -71,7 +70,9 @@ jobs:
                   raise RuntimeError('Owned acceptance service did not become ready')
           PYTHON
           cd frontend
-          npx playwright test
+          export PROJECTTRACE_E2E_ISOLATED_API=1
+          PROJECTTRACE_E2E_RESULTS=test-results/focused-results.json npx playwright test --grep "native profiles|Phase 2 captured|landing creates|real workspace ZIP" --output=test-results/focused
+          npx playwright test --output=test-results/full
       - name: Retain browser diagnostics
         if: always()
         run: |

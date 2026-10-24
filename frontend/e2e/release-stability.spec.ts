@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./fixtures";
 import { completedAnalysis } from "./analysis";
 
 const origin = new URL(

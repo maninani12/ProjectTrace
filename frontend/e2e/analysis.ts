@@ -8,7 +8,7 @@ import {
 /** Verify real completion in both synchronous and durable queued runtimes. */
 export async function completedAnalysis(
   request: APIRequestContext,
-  response: APIResponse,
+  response: Pick<APIResponse, "status" | "json">,
 ) {
   expect([200, 202]).toContain(response.status());
   const receipt = await response.json();

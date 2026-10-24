@@ -1,4 +1,4 @@
-import { test, expect, type Page } from "@playwright/test";
+import { test, expect, type Page } from "./fixtures";
 import AxeBuilder from "@axe-core/playwright";
 import { readFileSync, mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
