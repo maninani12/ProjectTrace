@@ -36,7 +36,7 @@ The original query-plan tests also passed in the local Python 3.12 / SQLite 3.53
 
 ## Verification
 
-The final handoff records raw command output and the API proof. Counts below must be finalized after all running checks finish.
+The final handoff records the authoritative JUnit report, explicit exit code, raw logs and API proof. Runtime: Python 3.12.14, SQLite 3.53.1 and Node 24.22.1. The configured CI Python 3.14 environment was not available locally.
 
 | Check | Result |
 | --- | --- |
@@ -47,7 +47,7 @@ The final handoff records raw command output and the API proof. Counts below mus
 | Native analyzer benchmark | 33/33 labeled checks passed; 7 false-positive traps, none triggered; synthetic scope only |
 | API demonstration against disposable migrated DB with local worker | Passed: VERIFIED → CONTRADICTED; both source versions/hash references retrieved; runtime UNOBSERVED |
 | Fresh disposable SQLite upgrade to 0025 | Passed; populated databases not downgraded or deleted |
-| Full backend suite | PENDING |
+| Full backend suite | 593 passed, 16 skipped, 0 failures/errors; 609 JUnit cases; exit 0; 869.010 s. Skips: 14 disposable-PostgreSQL checks and 2 Windows-only checks. |
 | Backend dependency audit | Passed after 3 pin updates: no known vulnerabilities; `pip check` found no broken requirements. Initial 5-advisory failure is retained separately. |
 | Frontend dependency audit | No reported vulnerabilities |
 | Browser acceptance | BLOCKED: launch fails because Chromium is absent. Chromium and headless-shell downloads returned unusable HTML/truncated archives, not ZIPs. No browser test or screenshot is claimed as passed. |
@@ -71,6 +71,6 @@ Backend dependency findings from the initial `pip-audit -r requirements.lock` an
 | filelock | 4.0.10 | 4.2.1 | CVE-2026-112940, CVE-2026-112913, CVE-2026-112907 |
 | opentelemetry-api | 1.45.0 | 1.45.1 | CVE-2026-114603 |
 
-The full final suite runs after installing these exact updated pins, with Python 3.12 as the available local interpreter. The first full run returned exit code 0 but retained no final summary; it is not counted as a passing full suite. The rerun records JUnit output and an explicit exit-code artifact. Original failure and audit evidence remain alongside final results.
+The full final suite runs after installing these exact updated pins, with Python 3.12 as the available local interpreter. The first full run returned exit code 0 but retained no final summary; it is not counted as a passing full suite. The rerun records 609 JUnit cases (593 passed, 16 skipped, no failures/errors) and an explicit exit-code artifact of 0. Original failure and audit evidence remain alongside final results.
 
 No public deployment, force-push, merge, database deletion, branch deletion or migration rewrite was performed. Imported fixture source was only parsed as data; a sentinel regression verifies that source-side file writes never execute.
