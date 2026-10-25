@@ -1,5 +1,5 @@
 import json
-from pathlib import Path
+import sqlite3
 
 import pytest
 from cryptography.fernet import InvalidToken
@@ -10,21 +10,24 @@ from analyzers.observation_store import EncryptedRows, ObservationBudgetExceeded
 
 
 def test_spill_is_lossless_ordered_encrypted_and_streams_json(tmp_path):
-    rows = EncryptedRows(("tenant-a", "repo", "inventory"), directory=tmp_path)
+    rows = EncryptedRows(("tenant-a", "repo", "inventory"))
     expected = [{"path": f"source/{i}.py", "nested": ["OWNED-PRIVATE-SENTINEL", i]} for i in range(500)]
     rows.extend(expected)
     assert rows == expected and expected == rows
     assert rows[-1] == expected[-1] and rows[2:5] == expected[2:5]
+    assert expected[0] in rows and {"absent": True} not in rows
+    assert rows.count(expected[0]) == 1 and rows.index(expected[-1]) == len(expected) - 1
+    assert list(reversed(rows)) == list(reversed(expected))
     assert list(rows.select(lambda r: r["nested"][1] % 2 == 0)) == expected[::2]
     assert json.loads(json.dumps({"rows": rows})) == {"rows": expected}
     assert json.loads("".join(json.JSONEncoder(sort_keys=True).iterencode(rows))) == expected
     # Encryption and sqlite paging must not leave plaintext in any spill file.
-    assert all(b"OWNED-PRIVATE-SENTINEL" not in p.read_bytes() for p in Path(rows.temporary.name).iterdir())
+    assert b"OWNED-PRIVATE-SENTINEL" not in rows.connection.serialize()
     rows[0]["nested"].append("discarded mutation")
     assert rows[0] == expected[0]
-    root = Path(rows.temporary.name)
     rows.close()
-    assert not root.exists()
+    with pytest.raises(sqlite3.ProgrammingError):
+        rows.connection.execute("SELECT 1")
     with pytest.raises(ValueError, match="closed"):
         rows[0]
 
@@ -96,14 +99,16 @@ def test_spill_exhaustion_closes_private_state_without_publication(storage, monk
     files = captured(storage, {"app.py": "def work(value):\n    return eval(value)\n"})
     stores = []
     def bounded(scope):
-        store = EncryptedRows(scope, maximum_bytes=1, row_bytes=1, directory=tmp_path)
+        store = EncryptedRows(scope, maximum_bytes=1, row_bytes=1)
         stores.append(store)
         return store
     monkeypatch.setattr(partitioned_analysis, "EncryptedRows", bounded)
     with pytest.raises(ObservationBudgetExceeded):
         execute_analysis(db, user, repo, files)
     assert stores and all(store.closed for store in stores)
-    assert all(not Path(store.temporary.name).exists() for store in stores)
+    for store in stores:
+        with pytest.raises(sqlite3.ProgrammingError):
+            store.connection.execute("SELECT 1")
     job = db.scalar(select(Record).where(Record.kind == "job"))
     assert job.data["state"] == "FAILED" and job.data["error_code"] == "ANALYSIS_OBSERVATION_BUDGET"
     assert db.scalar(select(func.count()).select_from(Record).where(Record.kind == "snapshot")) == 0
@@ -113,3 +118,91 @@ def test_spill_exhaustion_closes_private_state_without_publication(storage, monk
     assert recovered.data["state"] == "COMPLETED"
 
 from tests.test_repository_store import storage as storage  # noqa: E402 -- pytest fixture re-export
+
+
+def test_mutable_spill_keeps_order_and_rejects_over_budget_update():
+    from analyzers.observation_store import EncryptedMapping
+    values = EncryptedMapping(("tenant-a", "repo", "generation"))
+    try:
+        values["a"] = {"value": "OWNED-MAPPING-SENTINEL"}
+        values["b"] = {"value": "other"}
+        for i in range(100):
+            values["a"] = {"number": i}
+        assert len(values) == 2 and "a" in values and "missing" not in values
+        assert values["a"] == {"number": 99}
+        assert list(values.snapshots()) == [{"id": "a", "data": {"number": 99}}, {"id": "b", "data": {"value": "other"}}]
+        assert json.loads(json.dumps(values.snapshots())) == list(values.snapshots())
+        values.rows.maximum_bytes = values.rows.bytes
+        with pytest.raises(ObservationBudgetExceeded):
+            values["a"] = {"value": "x" * 1000}
+        assert values["a"] == {"number": 99}
+        assert b"OWNED-MAPPING-SENTINEL" not in values.rows.connection.serialize()
+        with pytest.raises(KeyError):
+            values["missing"]
+    finally:
+        values.close()
+
+
+def test_spill_finalization_outside_creating_thread():
+    from concurrent.futures import ThreadPoolExecutor
+    with ThreadPoolExecutor(max_workers=1) as pool:
+        rows = pool.submit(lambda: EncryptedRows(("owned",))).result()
+    rows.close()
+    with pytest.raises(sqlite3.ProgrammingError):
+        rows.connection.execute("SELECT 1")
+
+
+def test_linux_spill_is_unlinked_and_reclaimed_on_worker_death():
+    import subprocess
+    import sys
+    import textwrap
+    if sys.platform != "linux":
+        pytest.skip("Linux unnamed SQLite lifecycle only")
+    code = textwrap.dedent('''
+        import json,os,time
+        from pathlib import Path
+        from analyzers.observation_store import EncryptedRows
+        rows=EncryptedRows(('owned-lifecycle',))
+        for i in range(100): rows.append({'value':os.urandom(20000).hex()})
+        paths=[]
+        for path in Path('/proc/self/fd').iterdir():
+            try:
+                value=str(path.readlink())
+                if 'etilqs_' in value: paths.append(value)
+            except FileNotFoundError: pass
+        print(json.dumps(paths),flush=True)
+        time.sleep(30)
+    ''')
+    process = subprocess.Popen([sys.executable, "-c", code], stdin=subprocess.DEVNULL,
+                               stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    try:
+        paths = json.loads(process.stdout.readline())
+        assert paths and all(path.endswith(" (deleted)") for path in paths)
+        process.kill()
+        assert process.wait(timeout=5) == -9
+    finally:
+        if process.poll() is None:
+            process.kill()
+        process.wait(timeout=5)
+        process.stdout.close()
+        process.stderr.close()
+
+
+def test_spilled_metric_reverse_iteration_preserves_non_python_identity(monkeypatch):
+    import copy
+
+    from analyzers.finding_identity import annotate
+    monkeypatch.setenv("PROJECTTRACE_PARSER_ISOLATION", "development")
+    files = {"a.js": "function work() {}"}
+    metrics = [{"path": "a.js", "name": "work", "qualified_name": "work", "body_hash": "body", "file_structure_hash": "file"}]
+    findings = [{"rule": "PT-QUALITY-001", "path": "a.js", "line": 1, "symbol": "work", "category": "QUALITY",
+                 "measured": 11, "metric": "cyclomatic", "observation_hash": "observation"}]
+    expected = annotate(files, copy.deepcopy(findings), metrics)
+    rows = EncryptedRows(("owned",))
+    try:
+        rows.extend(metrics)
+        actual = annotate(files, copy.deepcopy(findings), rows)
+        assert actual == expected
+        assert actual[0]["identity_method"] == "PARSER_SYMBOL" and actual[0]["identity_confidence"] == "HIGH"
+    finally:
+        rows.close()

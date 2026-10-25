@@ -2,6 +2,7 @@
 import argparse
 import json
 import os
+import sqlite3
 import subprocess
 import threading
 import time
@@ -20,6 +21,7 @@ def main():
     parser.add_argument("--archive", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--manifest-only", action="store_true")
+    parser.add_argument("--resource-probe", action="store_true")
     args = parser.parse_args()
     if os.getuid() == 0:
         parser.error("Run the host harness as an ordinary runner user.")
@@ -33,7 +35,10 @@ def main():
                "--user", f"{os.getuid()}:{os.getgid()}", "--mount", f"type=bind,src={args.archive.resolve()},dst=/input.zip,readonly",
                "--mount", f"type=bind,src={output},dst=/evidence", "-e", "PROJECTTRACE_PARSER_ISOLATION=required",
                args.image, "python", "-m", "scripts.qualify_scale_workload", "--archive", "/input.zip", "--output", "/evidence"]
-    if args.manifest_only:
+    if args.resource_probe:
+        module = command.index("scripts.qualify_scale_workload")
+        command = command[:module] + ["scripts.scale_resource_probe"]
+    elif args.manifest_only:
         command.append("--manifest-only")
     identity = docker(*command)
     evidence = {"memory_limit_bytes": LIMIT, "swap_limit_bytes": 0, "container": identity,
@@ -89,6 +94,23 @@ def main():
         if thread:
             thread.join(timeout=5)
         artifact.write_text(json.dumps(evidence, indent=2))
+        database = output / "qualification.db"
+        if database.is_file():
+            try:
+                with sqlite3.connect("file:" + str(database) + "?mode=ro", uri=True) as db:
+                    integrity = {
+                        "sqlite_integrity": db.execute("PRAGMA integrity_check").fetchone()[0],
+                        "foreign_key_violations": len(db.execute("PRAGMA foreign_key_check").fetchall()),
+                        "published_pointers": db.execute("SELECT count(*) FROM published_generations").fetchone()[0],
+                        "published_generations": db.execute("SELECT count(*) FROM analysis_generations WHERE state='PUBLISHED'").fetchone()[0],
+                        "generation_states": db.execute("SELECT state,count(*) FROM analysis_generations GROUP BY state").fetchall(),
+                        "parser_artifacts": db.execute("SELECT count(*) FROM parser_artifacts").fetchone()[0],
+                        "job_states": db.execute("SELECT json_extract(data,'$.state'),json_extract(data,'$.stage'),count(*) FROM records WHERE kind='job' GROUP BY 1,2").fetchall(),
+                        "scope": "Read-only post-exit inspection; not fresh-worker recovery",
+                    }
+                (output / "post-exit-integrity.json").write_text(json.dumps(integrity, indent=2))
+            except sqlite3.Error:
+                (output / "post-exit-integrity.json").write_text(json.dumps({"state": "POST_EXIT_READ_FAILED"}))
         # Remove only the disposable owned container; never any source/db volume.
         subprocess.run(["docker", "stop", "--time", "1", identity], capture_output=True)
         subprocess.run(["docker", "rm", identity], capture_output=True)

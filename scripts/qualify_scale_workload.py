@@ -5,6 +5,7 @@ repository scripts, package installers, hooks, builds or tests from the input.
 Cold failure blocks all dependent qualification scenarios, without fake passes.
 """
 import argparse
+import base64
 import hashlib
 import json
 import os
@@ -49,7 +50,7 @@ def main():
     initial = memory()
     if not args.manifest_only and (initial.get("memory.max") != LIMIT or initial.get("memory.swap.max") != 0):
         raise ValueError("Qualification requires actual 768000000-byte cgroup with swap disabled.")
-    receipt = {"schema": "projecttrace-scale-qualification-v1", "verdict": "BLOCKED", "origin": ORIGIN,
+    receipt = {"schema": "projecttrace-scale-qualification-v1", "verdict": "BLOCKED", "scope": "MANIFEST_ONLY" if args.manifest_only else "FULL_WORKLOAD_ATTEMPT", "origin": ORIGIN,
                "source_commit": COMMIT, "archive_sha256": archive_sha, "archive_bytes": args.archive.stat().st_size,
                "historical_archive_sha256": HISTORICAL_SHA, "historical_input_reproduced": False,
                "python": sys.version, "platform": platform.platform(), "initial_memory": initial,
@@ -62,8 +63,8 @@ def main():
                       SOURCE_UPLOAD_DIR=str(output / "uploads"), ANALYSIS_KEY_FILE=str(output / "key"))
     # Never persist this key in public CI artifacts. The encrypted objects and DB
     # also remain private; exported evidence is counts/hashes only.
-    from cryptography.fernet import Fernet
-    os.environ["ANALYSIS_INPUT_KEY"] = Fernet.generate_key().decode()
+    # The private 0600 key file supports a later fresh-process retry; no key
+    # or database file is exported as a qualification artifact.
     from sqlalchemy import func, select
 
     from analyzers import sandbox
@@ -122,9 +123,24 @@ def main():
             db.flush()
             db.add(Grant(user_id=user.id, repository_id=repo.id))
             db.commit()
-            stage[0] = "CAPTURING"
-            with args.archive.open("rb") as stream, closing(archive_items(stream, sort_paths=True)) as rows:
-                inventory = capture(db, user.organization_id, repo, rows, source="PINNED_AUTHORIZED_COMMIT_ZIP")
+            from analyzers.observation_store import EncryptedRows
+            stage[0] = "ARCHIVE_TO_ENCRYPTED_REPLAY"
+            # Finish the isolated archive stream within its unchanged deadline;
+            # downstream classification/persistence then replay encrypted rows.
+            with closing(EncryptedRows((user.organization_id, repo.id, ARCHIVE_SHA),
+                                      maximum_bytes=512_000_000, row_bytes=2_000_000)) as replay:
+                with args.archive.open("rb") as stream, closing(archive_items(stream, sort_paths=True)) as rows:
+                    for path, value in rows:
+                        replay.append({"path": path, "raw": base64.b64encode(value).decode()}
+                                      if isinstance(value, bytes) else {"path": path, "metadata": value})
+                receipt["intake_replay"] = {"rows": len(replay), "ciphertext_bytes": replay.bytes,
+                                            "maximum_ciphertext_bytes": replay.maximum_bytes,
+                                            "plaintext_source_on_disk": False}
+                write(output / "qualification.json", receipt)
+                stage[0] = "CAPTURING"
+                inventory = capture(db, user.organization_id, repo,
+                    ((row["path"], base64.b64decode(row["raw"], validate=True) if "raw" in row else row["metadata"])
+                     for row in replay), source="PINNED_AUTHORIZED_COMMIT_ZIP_ENCRYPTED_REPLAY")
             db.commit()
             files = RepositoryFiles(db, user.organization_id, repo.id, inventory.id)
             receipt["inventory"] = {"file_count": len(files.entries), "retained_text": len(files),
@@ -167,6 +183,9 @@ def main():
             receipt["verdict"] = "PARTIALLY QUALIFIED"
             raise RuntimeError("Remaining qualification scenarios are NOT_RUN.")
     except BaseException as error:
+        for name, state in receipt["scenarios"].items():
+            if state == "RUNNING":
+                receipt["scenarios"][name] = "FAILED"
         receipt["error_type"] = type(error).__name__  # no source/traceback/key leakage
         receipt["error_code"] = getattr(error, "code", None)
         receipt["failed_stage"] = stage[0]

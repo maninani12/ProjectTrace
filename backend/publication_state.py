@@ -1,6 +1,7 @@
 """Bounded ORM cache and shared JSON working state for private correlation."""
 from collections import OrderedDict
 
+from analyzers.observation_store import EncryptedMapping
 from backend.db import Record
 
 
@@ -26,7 +27,11 @@ class FindingView:
 class FindingRecords:
     def __init__(self, db, snapshots=(), maximum=250):
         self.db, self.maximum = db, maximum
-        self.data, self.cache = {}, OrderedDict()
+        context = db.info.get("analysis_generation")
+        if context is None:
+            raise ValueError("Private finding state requires an active generation owner.")
+        self.data = EncryptedMapping((context.row.organization_id, context.row.repository_id, context.generation_id))
+        self.cache = OrderedDict()
         old_ids = []
         for snapshot in snapshots:
             if isinstance(snapshot, str):
@@ -49,7 +54,8 @@ class FindingRecords:
                 actual = {row.id: row.data for row in rows}
                 if set(actual) != set(expected):
                     raise ValueError("Legacy finding context is unavailable in scope.")
-                self.data.update(actual)
+                for identity, data in actual.items():
+                    self.data[identity] = data
 
     def __setitem__(self, identity, record):
         if identity != record.id:
@@ -73,4 +79,4 @@ class FindingRecords:
     def snapshots(self):
         for identity, record in self.cache.items():
             self.data[identity] = record.data
-        return [{"id": identity, "data": data} for identity, data in self.data.items()]
+        return self.data.snapshots()

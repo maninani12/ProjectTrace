@@ -33,11 +33,13 @@ jobs:
       - name: Build owned current runtime and full per-file manifest
         run: |
           docker build -t projecttrace-scale-candidate -f infrastructure/Dockerfile .
+          python3 -m scripts.run_scale_cgroup --image projecttrace-scale-candidate --archive "$RUNNER_TEMP/openmetadata.zip" --output "$RUNNER_TEMP/scale/envelope-probe" --resource-probe
           python3 -m scripts.run_scale_cgroup --image projecttrace-scale-candidate --archive "$RUNNER_TEMP/openmetadata.zip" --output "$RUNNER_TEMP/scale/manifest" --manifest-only
       - name: Prepare matching baseline harness without changing baseline production modules
         if: matrix.revision == 'baseline'
         run: |
           cp scripts/qualify_scale_workload.py scripts/scale_linux_resources.py baseline/scripts/
+          cp analyzers/observation_store.py baseline/analyzers/
           docker build -t projecttrace-scale-baseline -f baseline/infrastructure/Dockerfile baseline
       - name: Full source capture, verification and publication under actual cgroup limit
         env:
@@ -55,5 +57,7 @@ jobs:
             ${{ runner.temp }}/scale/**/memory.jsonl
             ${{ runner.temp }}/scale/**/kernel-cgroup.jsonl
             ${{ runner.temp }}/scale/**/container-envelope.json
+            ${{ runner.temp }}/scale/**/post-exit-integrity.json
+            ${{ runner.temp }}/scale/**/resource-probe.json
           if-no-files-found: error
           retention-days: 7

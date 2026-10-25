@@ -1,0 +1,426 @@
+{
+  "run_id": 40189259317,
+  "head": "9309c026449dba712fa14037e0b0322148f4d658",
+  "manifest": {
+    "files": 21636,
+    "expanded_bytes": 330420155,
+    "sha256": "081071ce099d103270175ab53ef12842586d7b0f1ee0c58dadbc3654a2246a89",
+    "policy": "Every non-directory ZIP member, including link bytes and oversized files; no extraction"
+  },
+  "candidate": {
+    "candidate/qualification.json": {
+      "schema": "projecttrace-scale-qualification-v1",
+      "verdict": "BLOCKED",
+      "origin": "https://github.com/maninani12/OpenMetadata",
+      "source_commit": "b1fab2bc21c63335dead4daaaa28194c9878e9bf",
+      "archive_sha256": "95747f22ebf3d01232b1592551bc2bc1866b9bbe7322dd3bf1a97028b0592257",
+      "archive_bytes": 158981993,
+      "historical_archive_sha256": "027615f80245c4534f4af0270951ad7dc0418928440c5332522b46103ddfa914",
+      "historical_input_reproduced": false,
+      "python": "3.14.9 (main, Oct 21 2026, 22:25:42) [GCC 14.2.0]",
+      "platform": "Linux-7.0.0-1017-azure-x86_64-with-glibc2.41",
+      "initial_memory": {
+        "available": true,
+        "coordinator_rss_bytes": 26902528,
+        "namespace_rss_bytes": 26902528,
+        "processes": 1,
+        "child_rss_bytes": 0,
+        "memory.current": 16818176,
+        "memory.peak": 17477632,
+        "memory.max": 768000000,
+        "memory.swap.max": 0,
+        "memory.swap.current": 0,
+        "memory.events": {
+          "low": 0,
+          "high": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0,
+          "sock_throttled": 0
+        }
+      },
+      "service_boundary": "SQLite in same cgroup; PostgreSQL/Redis acceptance separate; not broker recovery qualification",
+      "scenarios": {
+        "cold": "NOT_RUN",
+        "warm": "NOT_RUN",
+        "one_file_change": "NOT_RUN",
+        "multi_file_change": "NOT_RUN",
+        "exhaustion_recovery": "NOT_RUN",
+        "cancellation": "NOT_RUN",
+        "fresh_worker_recovery": "NOT_RUN",
+        "concurrent_tenants": "NOT_RUN"
+      },
+      "error_type": "SandboxFailure",
+      "error_code": "ARCHIVE_HELPER_TIMEOUT",
+      "failed_stage": "CAPTURING",
+      "failure_integrity": {
+        "published_pointers": 0,
+        "published_generations": 0,
+        "parser_artifacts": 0,
+        "jobs": [],
+        "sqlite_integrity": "ok",
+        "foreign_key_violations": 0
+      },
+      "duration_seconds": 150.89,
+      "sampled_maxima": {
+        "coordinator_rss_bytes": 116375552,
+        "child_rss_bytes": 126173184,
+        "namespace_rss_bytes": 241094656,
+        "memory.current": 392769536,
+        "memory.peak": 396099584
+      },
+      "final_memory": {
+        "available": true,
+        "coordinator_rss_bytes": 116547584,
+        "namespace_rss_bytes": 116547584,
+        "processes": 1,
+        "child_rss_bytes": 0,
+        "memory.current": 310960128,
+        "memory.peak": 396099584,
+        "memory.max": 768000000,
+        "memory.swap.max": 0,
+        "memory.swap.current": 0,
+        "memory.events": {
+          "low": 0,
+          "high": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0,
+          "sock_throttled": 0
+        }
+      }
+    },
+    "candidate/container-envelope.json": {
+      "memory_limit_bytes": 768000000,
+      "swap_limit_bytes": 0,
+      "container": "622482eb809152225e459cbab6b4e827da36707c511e31cd30394a5017491c4e",
+      "all_descendants_in_container_cgroup": true,
+      "network": "none",
+      "sec002": "required",
+      "postgres_redis": "Outside this SQLite qualification container; separate acceptance jobs",
+      "docker_server": {
+        "Platform": {
+          "Name": "Docker Engine - Community"
+        },
+        "Version": "29.4.2",
+        "ApiVersion": "1.54",
+        "MinAPIVersion": "1.40",
+        "Os": "linux",
+        "Arch": "amd64",
+        "Components": [
+          {
+            "Name": "Engine",
+            "Version": "29.4.2",
+            "Details": {
+              "ApiVersion": "1.54",
+              "Arch": "amd64",
+              "BuildTime": "Fri May  1 10:24:04 2026",
+              "Experimental": "false",
+              "GitCommit": "d329809",
+              "GoVersion": "go1.26.2",
+              "KernelVersion": "7.0.0-1017-azure",
+              "MinAPIVersion": "1.40",
+              "Module": "github.com/moby/moby/v2",
+              "ModuleVersion": "v2.0.0+unknown",
+              "Os": "linux"
+            }
+          },
+          {
+            "Name": "containerd",
+            "Version": "v2.4.1",
+            "Details": {
+              "GitCommit": "f2551031d7276a770f65f98c9b52e57e7dad07e8"
+            }
+          },
+          {
+            "Name": "runc",
+            "Version": "1.5.2",
+            "Details": {
+              "GitCommit": "v1.5.2-0-g29dd3dc2"
+            }
+          },
+          {
+            "Name": "docker-init",
+            "Version": "0.19.0",
+            "Details": {
+              "GitCommit": "de40ad0"
+            }
+          }
+        ],
+        "GitCommit": "d329809",
+        "GoVersion": "go1.26.2",
+        "KernelVersion": "7.0.0-1017-azure",
+        "BuildTime": "2026-05-01T10:24:04.000000000+00:00"
+      },
+      "configured": {
+        "Memory": 768000000,
+        "MemorySwap": 768000000,
+        "PidsLimit": 64,
+        "CgroupnsMode": "private",
+        "NetworkMode": "none"
+      },
+      "kernel_enforcement_verified": true,
+      "last_kernel_sample": {
+        "memory.current": "310956032",
+        "memory.peak": "396099584",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.swap.current": "0",
+        "cgroup.procs": "3002",
+        "monotonic": 285.443771133
+      },
+      "exit_status": 1,
+      "oom_killed": false,
+      "container_error": ""
+    },
+    "manifest/qualification.json": {
+      "schema": "projecttrace-scale-qualification-v1",
+      "verdict": "PARTIALLY QUALIFIED",
+      "origin": "https://github.com/maninani12/OpenMetadata",
+      "source_commit": "b1fab2bc21c63335dead4daaaa28194c9878e9bf",
+      "archive_sha256": "95747f22ebf3d01232b1592551bc2bc1866b9bbe7322dd3bf1a97028b0592257",
+      "archive_bytes": 158981993,
+      "historical_archive_sha256": "027615f80245c4534f4af0270951ad7dc0418928440c5332522b46103ddfa914",
+      "historical_input_reproduced": false,
+      "python": "3.14.9 (main, Oct 21 2026, 22:25:42) [GCC 14.2.0]",
+      "platform": "Linux-7.0.0-1017-azure-x86_64-with-glibc2.41",
+      "initial_memory": {
+        "available": true,
+        "coordinator_rss_bytes": 26886144,
+        "namespace_rss_bytes": 26886144,
+        "processes": 1,
+        "child_rss_bytes": 0,
+        "memory.current": 16973824,
+        "memory.peak": 17633280,
+        "memory.max": 768000000,
+        "memory.swap.max": 0,
+        "memory.swap.current": 0,
+        "memory.events": {
+          "low": 0,
+          "high": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0,
+          "sock_throttled": 0
+        }
+      },
+      "service_boundary": "SQLite in same cgroup; PostgreSQL/Redis acceptance separate; not broker recovery qualification",
+      "scenarios": {
+        "cold": "NOT_RUN",
+        "warm": "NOT_RUN",
+        "one_file_change": "NOT_RUN",
+        "multi_file_change": "NOT_RUN",
+        "exhaustion_recovery": "NOT_RUN",
+        "cancellation": "NOT_RUN",
+        "fresh_worker_recovery": "NOT_RUN",
+        "concurrent_tenants": "NOT_RUN"
+      },
+      "manifest": {
+        "files": 21636,
+        "expanded_bytes": 330420155,
+        "sha256": "081071ce099d103270175ab53ef12842586d7b0f1ee0c58dadbc3654a2246a89",
+        "policy": "Every non-directory ZIP member, including link bytes and oversized files; no extraction"
+      },
+      "manifest_state": "PASSED",
+      "duration_seconds": 13.454,
+      "sampled_maxima": {
+        "coordinator_rss_bytes": 88461312,
+        "child_rss_bytes": 70963200,
+        "namespace_rss_bytes": 157958144,
+        "memory.current": 127160320,
+        "memory.peak": 127967232
+      },
+      "final_memory": {
+        "available": true,
+        "coordinator_rss_bytes": 86515712,
+        "namespace_rss_bytes": 86515712,
+        "processes": 1,
+        "child_rss_bytes": 0,
+        "memory.current": 75661312,
+        "memory.peak": 127967232,
+        "memory.max": 768000000,
+        "memory.swap.max": 0,
+        "memory.swap.current": 0,
+        "memory.events": {
+          "low": 0,
+          "high": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0,
+          "sock_throttled": 0
+        }
+      }
+    }
+  },
+  "baseline": {
+    "baseline/qualification.json": {
+      "schema": "projecttrace-scale-qualification-v1",
+      "verdict": "BLOCKED",
+      "origin": "https://github.com/maninani12/OpenMetadata",
+      "source_commit": "b1fab2bc21c63335dead4daaaa28194c9878e9bf",
+      "archive_sha256": "95747f22ebf3d01232b1592551bc2bc1866b9bbe7322dd3bf1a97028b0592257",
+      "archive_bytes": 158981993,
+      "historical_archive_sha256": "027615f80245c4534f4af0270951ad7dc0418928440c5332522b46103ddfa914",
+      "historical_input_reproduced": false,
+      "python": "3.14.9 (main, Oct 21 2026, 22:25:42) [GCC 14.2.0]",
+      "platform": "Linux-7.0.0-1017-azure-x86_64-with-glibc2.41",
+      "initial_memory": {
+        "available": true,
+        "coordinator_rss_bytes": 26882048,
+        "namespace_rss_bytes": 26882048,
+        "processes": 1,
+        "child_rss_bytes": 0,
+        "memory.current": 16592896,
+        "memory.peak": 17207296,
+        "memory.max": 768000000,
+        "memory.swap.max": 0,
+        "memory.swap.current": 0,
+        "memory.events": {
+          "low": 0,
+          "high": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0,
+          "sock_throttled": 0
+        }
+      },
+      "service_boundary": "SQLite in same cgroup; PostgreSQL/Redis acceptance separate; not broker recovery qualification",
+      "scenarios": {
+        "cold": "NOT_RUN",
+        "warm": "NOT_RUN",
+        "one_file_change": "NOT_RUN",
+        "multi_file_change": "NOT_RUN",
+        "exhaustion_recovery": "NOT_RUN",
+        "cancellation": "NOT_RUN",
+        "fresh_worker_recovery": "NOT_RUN",
+        "concurrent_tenants": "NOT_RUN"
+      },
+      "error_type": "SandboxFailure",
+      "error_code": "ARCHIVE_HELPER_TIMEOUT",
+      "failed_stage": "CAPTURING",
+      "failure_integrity": {
+        "published_pointers": 0,
+        "published_generations": 0,
+        "parser_artifacts": 0,
+        "jobs": [],
+        "sqlite_integrity": "ok",
+        "foreign_key_violations": 0
+      },
+      "duration_seconds": 150.762,
+      "sampled_maxima": {
+        "coordinator_rss_bytes": 116838400,
+        "child_rss_bytes": 111861760,
+        "namespace_rss_bytes": 226136064,
+        "memory.current": 408834048,
+        "memory.peak": 409628672
+      },
+      "final_memory": {
+        "available": true,
+        "coordinator_rss_bytes": 116973568,
+        "namespace_rss_bytes": 116973568,
+        "processes": 1,
+        "child_rss_bytes": 0,
+        "memory.current": 327229440,
+        "memory.peak": 409628672,
+        "memory.max": 768000000,
+        "memory.swap.max": 0,
+        "memory.swap.current": 0,
+        "memory.events": {
+          "low": 0,
+          "high": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0,
+          "sock_throttled": 0
+        }
+      }
+    },
+    "baseline/container-envelope.json": {
+      "memory_limit_bytes": 768000000,
+      "swap_limit_bytes": 0,
+      "container": "f48dbd0983118d05be3d19037c8d90bead4bd85a220bae2fb5198d13c8bc0aac",
+      "all_descendants_in_container_cgroup": true,
+      "network": "none",
+      "sec002": "required",
+      "postgres_redis": "Outside this SQLite qualification container; separate acceptance jobs",
+      "docker_server": {
+        "Platform": {
+          "Name": "Docker Engine - Community"
+        },
+        "Version": "29.4.2",
+        "ApiVersion": "1.54",
+        "MinAPIVersion": "1.40",
+        "Os": "linux",
+        "Arch": "amd64",
+        "Components": [
+          {
+            "Name": "Engine",
+            "Version": "29.4.2",
+            "Details": {
+              "ApiVersion": "1.54",
+              "Arch": "amd64",
+              "BuildTime": "Fri May  1 10:24:04 2026",
+              "Experimental": "false",
+              "GitCommit": "d329809",
+              "GoVersion": "go1.26.2",
+              "KernelVersion": "7.0.0-1017-azure",
+              "MinAPIVersion": "1.40",
+              "Module": "github.com/moby/moby/v2",
+              "ModuleVersion": "v2.0.0+unknown",
+              "Os": "linux"
+            }
+          },
+          {
+            "Name": "containerd",
+            "Version": "v2.4.1",
+            "Details": {
+              "GitCommit": "f2551031d7276a770f65f98c9b52e57e7dad07e8"
+            }
+          },
+          {
+            "Name": "runc",
+            "Version": "1.5.2",
+            "Details": {
+              "GitCommit": "v1.5.2-0-g29dd3dc2"
+            }
+          },
+          {
+            "Name": "docker-init",
+            "Version": "0.19.0",
+            "Details": {
+              "GitCommit": "de40ad0"
+            }
+          }
+        ],
+        "GitCommit": "d329809",
+        "GoVersion": "go1.26.2",
+        "KernelVersion": "7.0.0-1017-azure",
+        "BuildTime": "2026-05-01T10:24:04.000000000+00:00"
+      },
+      "configured": {
+        "Memory": 768000000,
+        "MemorySwap": 768000000,
+        "PidsLimit": 64,
+        "CgroupnsMode": "private",
+        "NetworkMode": "none"
+      },
+      "kernel_enforcement_verified": true,
+      "last_kernel_sample": {
+        "memory.current": "326782976",
+        "memory.peak": "409628672",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.swap.current": "0",
+        "cgroup.procs": "3092",
+        "monotonic": 250.23118152
+      },
+      "exit_status": 1,
+      "oom_killed": false,
+      "container_error": ""
+    }
+  }
+}
