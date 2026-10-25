@@ -5,6 +5,8 @@ import hashlib
 import json
 from collections import Counter
 
+from analyzers import sandbox
+
 VERSION = "structural-v2"
 
 
@@ -32,6 +34,9 @@ def python_index(source):
 
 
 def annotate(files, findings, metrics):
+    if sandbox.required():
+        from analyzers.isolated_analysis import identity
+        return identity(files, findings, metrics)
     indexes = {}
     file_hashes, contexts = {}, {}
     metric_index = {(m["path"], m.get("qualified_name", m.get("name"))): m for m in reversed(metrics)}

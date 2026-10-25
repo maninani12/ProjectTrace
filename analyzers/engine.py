@@ -14,6 +14,7 @@ from importlib.metadata import version as package_version
 from pathlib import PurePosixPath
 from urllib.parse import quote
 
+from analyzers import sandbox
 from analyzers.analysis_coverage import build as build_analysis_coverage
 from analyzers.baseline import context_signals, implementation_claims, inventory
 from analyzers.code_quality.classification import binary_input
@@ -37,6 +38,7 @@ PARSER_SIGNATURE = hashlib.sha256(
         [
             sys.version,
             "native-observations-v10-partitioned-context",
+            sandbox.cache_policy(),
             *[
                 package_version(p)
                 for p in [
@@ -95,16 +97,14 @@ def hash_text(text):
 
 
 def redact(text):
-    text = PRIVATE_RE.sub("[REDACTED PRIVATE KEY]", text)
-    text = re.sub(r"(?i)((?:postgres(?:ql)?|mysql|mongodb)(?:\+\w+)?://[^\s/:]+:)[^\s/@]+(@)", r"\1[REDACTED]\2", text)
-    text = re.sub(
-        r"(?m)^(?:[A-Z_]*(?:PASSWORD|TOKEN|SECRET|API_KEY))\s*=\s*[^\n]+$", "[REDACTED ENVIRONMENT SECRET]", text
-    )
-    text = ENV_SECRET_RE.sub("[REDACTED ENVIRONMENT SECRET]", text)
-    return SECRET_RE.sub("[REDACTED SECRET]", text)
+    from analyzers.sanitization import redact as trusted_redact
+    return trusted_redact(text)
 
 
 def is_iac_source(path, source):
+    if sandbox.required():
+        from analyzers.lexical import describe_one
+        return describe_one(path, source)["iac_candidate"]
     return (
         path.endswith((".yml", ".yaml", ".tf", ".tf.json"))
         or path.endswith(".json")
@@ -115,13 +115,8 @@ def is_iac_source(path, source):
 
 def redact_metadata(value):
     """Mask credential-shaped strings throughout persisted native metadata."""
-    if isinstance(value, str):
-        return redact(value)
-    if isinstance(value, dict):
-        return {redact(str(key)): redact_metadata(item) for key, item in value.items()}
-    if isinstance(value, list):
-        return [redact_metadata(item) for item in value]
-    return value
+    from analyzers.sanitization import metadata
+    return metadata(value)
 
 
 def safe_path(path):
@@ -189,6 +184,16 @@ def validate_files(files, *, keep_excluded=False):
 def read_zip(blob, *, keep_excluded=False):
     if len(blob) > MAX_TOTAL_BYTES:
         raise ValueError("Archive exceeds the 10 MB limit.")
+    if sandbox.required():
+        import base64
+        result = sandbox.call("legacy_zip", {"archive": base64.b64encode(blob).decode(),
+                                              "keep_excluded": keep_excluded}, maximum=32_000_000)
+        if result.get("invalid_archive"):
+            raise ValueError("Archive failed its isolated integrity or intake-policy check.")
+        files = SourceFiles({path: base64.b64decode(source, validate=True).decode("utf-8")
+                             for path, source in result["files"].items()})
+        files.intake = result["intake"]
+        return validate_files(files, keep_excluded=keep_excluded)
     files = SourceFiles()
     seen_paths = set()
     with zipfile.ZipFile(io.BytesIO(blob)) as archive:
@@ -513,6 +518,8 @@ def secret_context(path, material):
 
 
 def python_analysis(path, source, tree=None):
+    if sandbox.required():
+        return sandbox.call("python", {"path": path, "source": source})
     findings, signals = [], []
     try:
         tree = tree or ast.parse(source)
@@ -831,13 +838,16 @@ def verify(claim, signals, deps):
 
 
 def native_observations(files, cached_analysis=None, infrastructure_settings=None, *, performance=None):
+    if sandbox.required():
+        from analyzers.isolated_analysis import native
+        return native(files, cached_analysis, infrastructure_settings, performance=performance)
     # Only independent owned syntax/IaC helpers run concurrently; source and DB
     # work stay in the caller. Every submitted batch retains its existing caps.
     with ThreadPoolExecutor(max_workers=2, thread_name_prefix="native-parser") as pool:
         return _native_observations(files, cached_analysis, infrastructure_settings, performance, pool)
 
 
-def _native_observations(files, cached_analysis, infrastructure_settings, performance, pool):
+def _native_observations(files, cached_analysis, infrastructure_settings, performance, pool, parsed_inputs=None):
     """File-local parser observations; callers may provide a bounded partition."""
     infrastructure_settings = infrastructure_settings or infrastructure_config(None)
     infrastructure_signature = hash_text(json.dumps(infrastructure_settings, sort_keys=True))
@@ -846,7 +856,8 @@ def _native_observations(files, cached_analysis, infrastructure_settings, perfor
     failures = set()
     cache = {}
     reused = 0
-    language_results, iac_results = None, None
+    language_results = parsed_inputs.get("languages", {}) if parsed_inputs is not None else None
+    iac_results = parsed_inputs.get("iac", {}) if parsed_inputs is not None else None
     language_pending, iac_pending = {}, {}
     for path in files:
         prior = (cached_analysis or {}).get(path, {})
@@ -864,8 +875,8 @@ def _native_observations(files, cached_analysis, infrastructure_settings, perfor
             source = files[path]
             if is_iac_source(path, source):
                 iac_pending[path] = source
-    language_future = pool.submit(analyze_languages, language_pending, performance=performance) if language_pending else None
-    iac_future = pool.submit(structured_iac_batch, iac_pending, finding, infrastructure_settings, performance=performance) if iac_pending else None
+    language_future = pool.submit(analyze_languages, language_pending, performance=performance) if language_pending and pool else None
+    iac_future = pool.submit(structured_iac_batch, iac_pending, finding, infrastructure_settings, performance=performance) if iac_pending and pool else None
     for path in files:
         file_started = time.perf_counter()
         metadata = files.metadata_for(path) if hasattr(files, "metadata_for") else None
@@ -1090,6 +1101,8 @@ def analyze(
     observations=None,
     input_files=None,
 ):
+    if sandbox.required():
+        sandbox.require_runtime()
     input_files = input_files if input_files is not None else validate_files(files, keep_excluded=True)
     infrastructure_settings = infrastructure_config((profile or {}).get("infrastructure"))
     try:
@@ -1166,7 +1179,7 @@ def analyze(
             continue
         source = files[path]
         try:
-            contract = json.loads(source)
+            contract = sandbox.parse_json(source)
             if not isinstance(contract, dict) or "openapi" not in contract:
                 continue
             for route, methods in contract.get("paths", {}).items():
@@ -1189,6 +1202,8 @@ def analyze(
                             "assertion_family": "api_contract",
                         }
                     )
+        except sandbox.SandboxFailure:
+            raise
         except (ValueError, TypeError, AttributeError):
             if "openapi" in source.lower():
                 warnings.append(
@@ -1253,59 +1268,11 @@ def analyze(
         )
     if performance:
         performance.record("CLAIM_VERIFICATION", time.perf_counter() - component_started)
-    storage = [
-        item
-        for item in assets
-        if item["kind"] in {"aws_s3_bucket", "AWS::S3::Bucket", "google_storage_bucket", "azurerm_storage_container"}
-    ]
-    for path in files:
-        if not path.endswith(".md"):
-            continue
-        source = files[path]
-        fenced = False
-        for line, content in enumerate(source.splitlines(), 1):
-            if content.strip().startswith("```"):
-                fenced = not fenced
-            if fenced or not re.search(r"^\s*(?:[-*]\s+)?(?:Production\s+)?storage is private[.!]?\s*$", content, re.I):
-                continue
-            scoped_storage = storage
-            if content.strip().lower().startswith("production"):
-                scoped_storage = [
-                    item
-                    for item in storage
-                    if item.get("environment") in {"prod", "production"}
-                    or re.search(r"(?:^|[._/-])(?:prod|production)(?:$|[._/-])", item["identity"].lower())
-                ]
-            public = [item for item in scoped_storage if item["public"] == "DECLARED_PUBLIC"]
-            claims.append(
-                {
-                    "text": content.strip(),
-                    "origin": "DOCUMENTATION",
-                    "category": "CLOUD_SECURITY",
-                    "expected": "private_storage",
-                    "assertion_family": "storage_privacy",
-                    "path": path,
-                    "line": line,
-                    "status": "CONTRADICTED" if public else "UNVERIFIED",
-                    "reason": "A supported storage declaration explicitly permits public access. This contradicts the broad assertion within the declared configuration scope; live deployment is unobserved."
-                    if public
-                    else "The supported inventory does not establish storage privacy in the assertion's environment scope; complete policy and deployed access are unobserved.",
-                    "signals": [
-                        {
-                            "path": item["path"],
-                            "line": item["line"],
-                            "type": "cloud_resource",
-                            "value": item["identity"],
-                        }
-                        for item in public
-                    ],
-                    "severity": "HIGH",
-                    "confidence": "HIGH" if public else "LOW",
-                    "review_status": "OPEN",
-                    "verifier": "NATIVE_STATIC_STORAGE_PRIVACY",
-                    "verification_scope": "DECLARED_CONFIGURATION",
-                }
-            )
+    if sandbox.required():
+        from analyzers.lexical import storage_claims
+    else:
+        from analyzers.lexical_worker import storage_claims
+    claims.extend(storage_claims(files, assets))
     duplicates = {}
     for metric in quality_metrics:
         if metric["token_count"] >= 30:
@@ -1362,12 +1329,16 @@ def analyze(
         claim.setdefault("claim_key", claim_key(claim))
     py_files = sum(path.endswith(".py") for path in files)
     pattern_files = sum(path.endswith((".js", ".ts", ".jsx", ".tsx", ".java", ".mjs", ".cjs")) for path in files)
-    iac_files = sum(
+    if sandbox.required():
+        from analyzers.lexical import describe
+        iac_files = sum(row["iac_candidate"] for row in describe(files).values())
+    else:
+        iac_files = sum(
         files.metadata_for(path).get("iac_candidate", bool(files.metadata_for(path).get("infrastructure_format")))
         if hasattr(files, "metadata_for")
         else is_iac_source(path, files[path])
         for path in files
-    )
+        )
     manifest_files = sum(
         PurePosixPath(path).name
         in {
@@ -1519,7 +1490,8 @@ def analyze(
         "cloud_assets": assets,
         "quality_metrics": quality["metrics"],
         "code_quality": quality,
-        "analysis_coverage": build_analysis_coverage(input_files, files, quality, signals, warnings, VERSION),
+        "analysis_coverage": {**build_analysis_coverage(input_files, files, quality, signals, warnings, VERSION),
+                              "parser_isolation": sandbox.status()},
         "signals": signals,
         "dependencies": deps,
         "claims": claims,

@@ -7,8 +7,12 @@ import io
 import sys
 import tokenize
 
+from analyzers import sandbox
+
 
 def metrics(path, source, tree=None):
+    if sandbox.required():
+        return sandbox.call("metrics", {"path": path, "source": source})
     tree = tree or ast.parse(source)
     all_nodes = list(ast.walk(tree))
     if len(all_nodes) > 40000:
@@ -112,6 +116,8 @@ def metrics(path, source, tree=None):
 
 
 def structure(path, source, tree):
+    if sandbox.required():
+        return sandbox.call("structure", {"path": path, "source": source})
     nodes = list(ast.walk(tree))
     parents = {child: parent for parent in nodes for child in ast.iter_child_nodes(parent)}
 

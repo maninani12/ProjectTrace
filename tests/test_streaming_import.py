@@ -26,6 +26,29 @@ def private_storage(monkeypatch, tmp_path):
     monkeypatch.setenv("ANALYSIS_INPUT_KEY", Fernet.generate_key().decode())
 
 
+def test_archive_runtime_failure_is_actionable_service_error_without_publication(client, monkeypatch, tmp_path):
+    from sqlalchemy import func
+
+    from analyzers.sandbox import SandboxFailure
+    from backend.db import Repository, SourceInventory
+    from tests.test_import_reliability import account
+
+    private_storage(monkeypatch, tmp_path)
+    account(client)
+    def unavailable(*_args, **_kwargs):
+        raise SandboxFailure("LANDLOCK_ABI_3_REQUIRED")
+    monkeypatch.setattr("backend.repository_store.archive_items", unavailable)
+    response = client.post("/api/archive/import?name=UnavailableRuntime", content=zipped({"app.py": "pass\n"}))
+    assert response.status_code == 503, response.text
+    detail = response.json()["detail"]
+    assert detail["code"] == "PARSER_ISOLATION_LANDLOCK_ABI_3_REQUIRED"
+    assert "libseccomp" in detail["remediation"]
+    with main.Session() as db:
+        assert db.scalar(select(func.count()).select_from(Repository).where(Repository.name == "UnavailableRuntime")) == 0
+        assert db.scalar(select(func.count()).select_from(SourceInventory)) == 0
+    assert not list((tmp_path / "uploads").iterdir())
+
+
 def test_streaming_existing_repository_retains_baseline_and_lazy_authorized_evidence(signed, monkeypatch, tmp_path):
     private_storage(monkeypatch, tmp_path)
     repo, base = import_repo(signed, {"app.py": "VALUE = 1\n"})

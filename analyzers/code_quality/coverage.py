@@ -8,6 +8,8 @@ import re
 import xml.etree.ElementTree as ET
 from pathlib import PurePosixPath
 
+from analyzers import sandbox
+
 MAX_REPORT_BYTES = 1_000_000
 MAX_LINES = 100_000
 
@@ -45,7 +47,16 @@ def import_report(
     strip_prefix="",
     source_root="",
     source="uploaded report",
+    _line_counts=None,
 ):
+    try:
+        if sandbox.required():
+            return sandbox.call("coverage", {"text": text, "line_counts": {p: len(s.splitlines()) for p, s in files.items()},
+                "options": {"format": format, "declared_commit": declared_commit, "snapshot_commit": snapshot_commit,
+                            "changed_lines": changed_lines, "strip_prefix": strip_prefix, "source_root": source_root, "source": source}})
+    except sandbox.SandboxFailure as error:
+        return {**absent(), "state": "REPORT_INVALID", "errors": [str(error)], "error_code": error.code,
+                "report_hash": hashlib.sha256(text.encode()).hexdigest()}
     result = {
         **absent(),
         "report_hash": hashlib.sha256(text.encode()).hexdigest(),
@@ -62,7 +73,7 @@ def import_report(
             result["state"] = "REPORT_SNAPSHOT_MISMATCH"
             result["errors"] = ["Declared producer commit does not match the selected snapshot."]
             return result
-        line_counts = {p: len(s.splitlines()) for p, s in files.items()}
+        line_counts = _line_counts if _line_counts is not None else {p: len(s.splitlines()) for p, s in files.items()}
         mapped, unmapped = {}, set()
         entries = 0
 

@@ -116,6 +116,7 @@ class Drafts:
 
 
 def prepare(db, job_id, files, signature, result, checkpoint):
+    from analyzers import sandbox
     drafts = Drafts(db, job_id, files.organization_id, files.repository_id, signature, checkpoint)
     paths = list(result["files"])
     path_digest = hashlib.sha256()
@@ -130,6 +131,11 @@ def prepare(db, job_id, files, signature, result, checkpoint):
     for signal in result["signals"]:
         if signal["type"] == "function":
             functions.setdefault(signal["path"], []).append(signal)
+    if sandbox.required():
+        from analyzers.lexical import section_map
+        contained_sections = section_map(files, [p for p in paths if p.endswith(".md") and drafts.load("FILE_GRAPH", p) is None])
+    else:
+        contained_sections = None
     for path in paths:
         checkpoint()
         db.commit()  # End the short renewal before bounded source/object reads.
@@ -144,7 +150,7 @@ def prepare(db, job_id, files, signature, result, checkpoint):
         if drafts.load("FILE_GRAPH", path) is None:
             sections = []
             if path.endswith(".md"):
-                sections = [{"title": redact(line.lstrip("# ")), "line": n}
+                sections = contained_sections[path] if contained_sections is not None else [{"title": redact(line.lstrip("# ")), "line": n}
                             for n, line in enumerate(files[path].splitlines(), 1) if line.startswith("#")]
             plan = file_graph(path, files.hash_for(path), sections, functions.get(path, []))
             drafts.save("FILE_GRAPH", path, plan, ("EVIDENCE", path))

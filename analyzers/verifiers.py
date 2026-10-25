@@ -8,6 +8,8 @@ import hashlib
 import json
 import re
 
+from analyzers import sandbox
+
 TECHNOLOGIES = {
     "fastapi": ("FastAPI", "TECHNOLOGY", {"fastapi"}),
     "flask": ("Flask", "TECHNOLOGY", {"flask"}),
@@ -79,6 +81,9 @@ def claim_key(claim):
 
 
 def extract_documentation(files, *, diagnostics=None, limit=1501):
+    if sandbox.required():
+        from analyzers.isolated_analysis import documentation
+        return documentation(files, diagnostics=diagnostics, limit=limit)
     claims, seen, scanned_bytes, scanned_files = [], set(), 0, 0
     diagnostics = diagnostics if diagnostics is not None else []
     for path in files:

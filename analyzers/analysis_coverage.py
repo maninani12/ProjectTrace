@@ -3,11 +3,15 @@
 from collections import Counter, defaultdict
 from pathlib import PurePosixPath
 
+from analyzers import sandbox
 from analyzers.capabilities import registry
 from analyzers.code_quality.classification import coverage_source
 
 
 def infrastructure_format(path, source):
+    if sandbox.required():
+        from analyzers.lexical import describe_one
+        return describe_one(path, source)["infrastructure_format"]
     name = PurePosixPath(path).name
     if name.startswith("Dockerfile"):
         return "Dockerfile"
@@ -29,6 +33,11 @@ def infrastructure_format(path, source):
 
 
 def build(files, analyzed_files, quality, signals, warnings, version):
+    if sandbox.required():
+        from analyzers.lexical import describe
+        lexical = describe(files)
+    else:
+        lexical = None
     capabilities = {r["language"]: r for r in registry(version)["languages"]}
     parsers = {s["path"]: s for s in signals if s.get("type") in {"parser", "quality_file"}}
     diagnostics = defaultdict(list)
@@ -38,10 +47,10 @@ def build(files, analyzed_files, quality, signals, warnings, version):
     rows = []
     for entry in quality["inventory"]:
         path, kind = entry["path"], entry["kind"]
-        metadata = files.metadata_for(path) if hasattr(files, "metadata_for") else None
+        metadata = lexical.get(path) if lexical is not None else files.metadata_for(path) if hasattr(files, "metadata_for") else None
         language = (
             (
-                (metadata or {}).get("infrastructure_format") or infrastructure_format(path, "")
+                (metadata or {}).get("infrastructure_format") if lexical is not None else (metadata or {}).get("infrastructure_format") or infrastructure_format(path, "")
                 if metadata
                 else infrastructure_format(path, files.get(path, ""))
             )

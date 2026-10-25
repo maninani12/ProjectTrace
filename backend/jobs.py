@@ -257,11 +257,17 @@ def execute_analysis(db, user, repo, files, *, request_id=None, job=None, _elaps
         if not owns(db, job_id, owned_token):
             raise JobCancelled("Worker lease was replaced; this attempt cannot modify the job.") from None
         job = db.get(Record, job_id)
+        from analyzers.sandbox import SandboxFailure
         failure = error if isinstance(error, IntakeError) else (
+            IntakeError("PARSER_ISOLATION_" + error.code, "Required parser isolation failed; unfinished analysis was not published.",
+                        remediation="Verify Linux Landlock ABI 3+, libseccomp, allowed container syscalls and immutable parser runtime; inspect SEC-002 operations guidance.")
+            if isinstance(error, SandboxFailure) else
+            (
             IntakeError("ANALYSIS_TIME_BUDGET", "Analysis exceeded its configured execution time budget.",
                         budget="REPOSITORY_ANALYSIS_SECONDS", actual=round(clock() - started, 2), maximum=job_time_budget(job),
                         remediation="Inspect partial parser diagnostics and import a smaller source component; retained inventory remains available.")
             if isinstance(error, TimeoutError) else None
+            )
         )
         job.data = {
             **{k: v for k, v in job.data.items() if k != "files"},

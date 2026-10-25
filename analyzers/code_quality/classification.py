@@ -4,6 +4,8 @@ import fnmatch
 import re
 from pathlib import PurePosixPath
 
+from analyzers import sandbox
+
 LANGUAGES = {
     ".py": "Python",
     ".js": "JavaScript",
@@ -94,6 +96,9 @@ def binary_input(path, raw):
 
 def source_language(path, source=""):
     """Explicit extensions/filenames and a bounded shebang; never semantic detection."""
+    if sandbox.required():
+        from analyzers.lexical import describe_one
+        return describe_one(path, source)["source_language"]
     p = PurePosixPath(path)
     language = LANGUAGES.get(p.suffix.lower()) or OTHER_LANGUAGES.get(p.suffix.lower())
     if language:
@@ -138,6 +143,15 @@ GENERATED = {"dist", "build", "target", "generated", "__pycache__", ".next", "co
 
 
 def matches(path, patterns):
+    if sandbox.required():
+        if (not isinstance(path, str) or len(path) > 240 or not isinstance(patterns, list) or len(patterns) > 5000
+                or any(not isinstance(p, str) or len(p) > 4096 for p in patterns)
+                or sum(len(p.encode()) for p in patterns) > 512_000):
+            raise sandbox.SandboxFailure("GLOB_INPUT_BUDGET")
+        value = sandbox.call("lexical_matches", {"path": path, "patterns": patterns})
+        if type(value) is not bool:
+            raise sandbox.SandboxFailure("GLOB_OUTPUT_SCHEMA")
+        return value
     return any(
         fnmatch.fnmatchcase(path, pattern) or pattern.startswith("**/") and fnmatch.fnmatchcase(path, pattern[3:])
         for pattern in patterns
@@ -145,6 +159,9 @@ def matches(path, patterns):
 
 
 def classify(files, scope=None):
+    if sandbox.required():
+        from analyzers.lexical import classify as contained
+        return contained(files, scope)
     scope = scope or {}
     rows = []
     diagnostics = {r["path"]: r for r in getattr(files, "intake", [])}
@@ -232,6 +249,9 @@ def classify(files, scope=None):
 
 
 def ownership_rules(files):
+    if sandbox.required():
+        from analyzers.lexical import ownership_rules as contained
+        return contained(files)
     cached_rules = getattr(files, "_ownership_rules", None)
     if cached_rules is not None:
         return cached_rules
@@ -264,6 +284,18 @@ def ownership_rules(files):
 
 def ownership(path, files, fallback, *, rules=None):
     """Last matching supported CODEOWNERS glob; owners are not inferred authors."""
+    if sandbox.required():
+        from analyzers.engine import safe_path
+        from analyzers.lexical import Ownership
+        rules = ownership_rules(files) if rules is None else rules
+        if not isinstance(rules, Ownership):
+            raise sandbox.SandboxFailure("OWNERSHIP_POLICY")
+        path = str(safe_path(path))
+        rules.resolve([path])
+        value = rules.values[path]
+        return {"owner": value["selected"] if value["selected"] is not None else fallback,
+                "owner_source": "CODEOWNERS supported glob (last match)" if value["selected"] is not None else "ProjectTrace repository assignment",
+                "ownership_state": value["state"], "ownership_diagnostics": value["diagnostics"]}
     selected = fallback
     provenance = "ProjectTrace repository assignment"
     for checks, owner in ownership_rules(files) if rules is None else rules:

@@ -1,12 +1,9 @@
 """Lazy source access backed by tenant-scoped encrypted, immutable content blobs."""
 
 import hashlib
-import json
 import os
 import re
 import time
-import zipfile
-import zlib
 from collections import OrderedDict
 from collections.abc import Mapping
 from pathlib import PurePosixPath
@@ -55,7 +52,7 @@ class BlobStore:
             self.remote = EncryptedObjectStore()
 
     def path(self, organization_id, digest):
-        if not re.fullmatch(r"[0-9a-f]{64}", digest):
+        if not isinstance(digest, str) or len(digest) != 64 or any(c not in "0123456789abcdef" for c in digest):
             raise ValueError("Blob digest is invalid.")
         tenant = hashlib.sha256(organization_id.encode()).hexdigest()
         return self.root / tenant / digest[:2] / (digest + ".enc")
@@ -229,7 +226,7 @@ def component_boundaries(value, *, basis="PROJECTTRACE_CONFIGURATION"):
             raise ValueError("A component declaration requires only root and name.")
         root = "." if item["root"] == "." else str(safe_path(item["root"]))
         name = item["name"]
-        if root in roots or not isinstance(name, str) or not re.fullmatch(r"[A-Za-z0-9@/_. -]{1,150}", name):
+        if root in roots or not isinstance(name, str) or not 1 <= len(name) <= 150 or any(c not in "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@/_. -" for c in name):
             raise ValueError("Component boundaries contain a duplicate or invalid name.")
         roots[root] = {"name": name, "root": root, "basis": basis}
     return roots
@@ -242,6 +239,7 @@ def capture(db, organization_id, repository, items, *, source="OWNED_STREAM", qu
     inventories may be analyzed; callers must validate their authorization/lease
     in the callback before each commit. Default capture remains atomic.
     """
+    from analyzers.code_quality.classification import binary_input
     started, policy = time.perf_counter(), quota or limits()
     if checkpoint and db.get_bind().dialect.name == "sqlite":
         db.commit()
@@ -269,11 +267,51 @@ def capture(db, organization_id, repository, items, *, source="OWNED_STREAM", qu
         if db.get_bind().dialect.name == "sqlite":
             db.execute(sql_text("BEGIN IMMEDIATE"))
 
+    def prepared_items():
+        from analyzers import sandbox
+        from analyzers.code_quality.classification import binary_input
+        from analyzers.lexical import describe_packets, packet
+        batch, size = [], 0
+        def prepare(rows):
+            values = dict(rows)
+            if len(values) != len(rows):
+                raise IntakeError("DUPLICATE_PATH", "Repository inventory contains duplicate paths.")
+            descriptions = {}
+            texts = {}
+            for path, value in rows:
+                if isinstance(value, bytes) and len(value) <= policy["file_bytes"]:
+                    try:
+                        texts[path] = value.decode("utf-8")
+                    except UnicodeDecodeError:
+                        texts[path] = None
+            if sandbox.required():
+                descriptions = describe_packets(packet(path, text, raw=values[path]) for path, text in texts.items())
+            for path, value in rows:
+                text = texts.get(path)
+                description = descriptions.get(path)
+                if not sandbox.required() and isinstance(value, bytes) and binary_input(path, value):
+                    text = None
+                if description is not None and not description["text_retained"]:
+                    text = None
+                yield path, value, description, text
+        for path, value in items:
+            path = str(safe_path(path))
+            if isinstance(value, bytes) and len(value) > policy["file_bytes"]:
+                value = {"bytes": len(value), "state": "SKIPPED_SIZE_LIMIT"}
+            length = len(value) if isinstance(value, bytes) else 0
+            if batch and (len(batch) >= policy["partition_files"] or size + length > policy["partition_bytes"]):
+                yield from prepare(batch)
+                batch, size = [], 0
+            batch.append((path, value))
+            size += length
+        if batch:
+            yield from prepare(batch)
+
     def buffered_items():
         # Pull provider bytes before opening the next write transaction. Without
         # this buffer, a flush/lease renewal holds SQLite's writer during HTTP.
         batch, size = [], 0
-        for path, value in items:
+        for path, value, description, text in prepared_items():
             if isinstance(value, bytes) and len(value) > policy["file_bytes"]:
                 value = {"bytes": len(value), "state": "SKIPPED_SIZE_LIMIT"}
             raw_size = len(value) if isinstance(value, bytes) else 0
@@ -282,7 +320,7 @@ def capture(db, organization_id, repository, items, *, source="OWNED_STREAM", qu
                 yield from batch
                 commit_batch()
                 batch, size = [], 0
-            batch.append((path, value))
+            batch.append((path, value, description, text))
             size += raw_size
             if len(batch) >= policy["partition_files"] or size >= policy["partition_bytes"]:
                 begin_batch()
@@ -296,7 +334,7 @@ def capture(db, organization_id, repository, items, *, source="OWNED_STREAM", qu
 
     store, seen, total, reused, count = BlobStore(), set(), 0, 0, 0
     roots, configured = {}, {}
-    for path, value in buffered_items() if checkpoint else items:
+    for path, value, description, text in buffered_items() if checkpoint else prepared_items():
         canonical = str(safe_path(path))
         if canonical in seen:
             raise IntakeError("DUPLICATE_PATH", "Repository inventory contains duplicate paths.")
@@ -312,59 +350,59 @@ def capture(db, organization_id, repository, items, *, source="OWNED_STREAM", qu
         if total > policy["bytes"]:
             raise IntakeError("REPOSITORY_UNCOMPRESSED_BYTES", "Repository exceeds its configured uncompressed byte quota.",
                               budget="REPOSITORY_MAX_BYTES", actual=total, maximum=policy["bytes"])
-        digest, text = None, None
+        digest = None
         if isinstance(value, bytes) and len(value) <= policy["file_bytes"]:
             # Blob lookups must not implicitly flush the preceding inventory
             # row. The explicit 100-row flush retains all tenant/FK checks.
             with db.no_autoflush:
                 digest, reused_blob = store.put(db, organization_id, value)
             reused += reused_blob
-            from analyzers.code_quality.classification import binary_input
-
-            if binary_input(canonical, value):
-                data = {**data, "state": "BINARY"}
-            else:
-                try:
-                    text = value.decode("utf-8")
-                except UnicodeDecodeError:
-                    pass
         if text is not None:
             from analyzers.analysis_coverage import infrastructure_format
             from analyzers.code_quality.classification import source_language
 
-            data = {
-                "infrastructure_format": infrastructure_format(canonical, text),
-                "source_language": source_language(canonical, text),
-                "iac_candidate": is_iac_source(canonical, text),
-                "bytes": len(value),
-                "physical_lines": len(text.splitlines()),
-                "text_retained": True,
-                "generated_header": bool(
-                    re.search(
-                        r"(?im)^\s*(?:#|//|/\*|\*)\s*(?:@generated|generated (?:by|file|code)|auto-generated|do not edit)",
-                        text[:2000],
-                    )
-                ),
-            }
+            if description is not None:
+                data = description
+            else:
+                data = {
+                    "infrastructure_format": infrastructure_format(canonical, text),
+                    "source_language": source_language(canonical, text),
+                    "iac_candidate": is_iac_source(canonical, text),
+                    "bytes": len(value),
+                    "physical_lines": len(text.splitlines()),
+                    "text_retained": True,
+                    "generated_header": bool(
+                        re.search(
+                            r"(?im)^\s*(?:#|//|/\*|\*)\s*(?:@generated|generated (?:by|file|code)|auto-generated|do not edit)",
+                            text[:2000],
+                        )
+                    ),
+                }
             if canonical == ".projecttrace/components.json":
-                configured = component_boundaries(json.loads(text))
+                from analyzers import sandbox
+                configured = component_boundaries(sandbox.parse_json(text))
                 for info in configured.values():
                     info["path"] = canonical
             if PurePosixPath(canonical).name == "package.json":
                 try:
-                    name = json.loads(text).get("name")
-                    if isinstance(name, str) and re.fullmatch(r"[A-Za-z0-9@/_.-]{1,150}", name):
+                    from analyzers import sandbox
+                    name = sandbox.parse_json(text).get("name")
+                    if isinstance(name, str) and 1 <= len(name) <= 150 and all(c in "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@/_.-" for c in name):
                         roots[str(PurePosixPath(canonical).parent)] = {
                             "name": name,
                             "root": str(PurePosixPath(canonical).parent),
                             "basis": "PACKAGE_MANIFEST",
                             "path": canonical,
                         }
+                except sandbox.SandboxFailure:
+                    raise
                 except (ValueError, AttributeError):
                     pass
         else:
             data = {
                 **data,
+                **(description or {}),
+                **({"state": "BINARY"} if description and description["binary"] or not description and isinstance(value, bytes) and binary_input(canonical, value) else {}),
                 "physical_lines": None,
                 "text_retained": False,
                 **({"state": "SKIPPED_SIZE_LIMIT"} if data["bytes"] > policy["file_bytes"] else {}),
@@ -441,80 +479,13 @@ def capture(db, organization_id, repository, items, *, source="OWNED_STREAM", qu
     return inventory
 
 
-def archive_items(stream, quota=None, *, validate_only=False):
-    import stat
+def archive_items(stream, quota=None, *, validate_only=False, sort_paths=False):
+    from analyzers import sandbox
 
     policy = quota or limits()
-    # Check the bounded end-directory metadata before ZipFile allocates its
-    # central-directory objects. ZIP64 metadata is handled by the stdlib reader.
-    end = zipfile._EndRecData(stream)
-    if end is None:
-        raise IntakeError("ARCHIVE_INVALID", "Archive has no valid ZIP end directory.")
-    metadata_bytes = end[zipfile._ECD_SIZE]
-    if metadata_bytes > 64_000_000:
-        raise IntakeError("ARCHIVE_METADATA_BYTES", "Archive directory exceeds its metadata budget.",
-                          budget="ARCHIVE_METADATA_BYTES", actual=metadata_bytes, maximum=64_000_000)
-    declared_count = end[zipfile._ECD_ENTRIES_TOTAL]
-    if declared_count > policy["files"]:
-        raise IntakeError("ARCHIVE_ENTRY_COUNT", "Archive directory exceeds the inventory quota.",
-                          budget="REPOSITORY_MAX_FILES", actual=declared_count, maximum=policy["files"])
-    if end[zipfile._ECD_DISK_NUMBER] or end[zipfile._ECD_DISK_START]:
-        raise IntakeError("ARCHIVE_MULTIDISK", "Multi-volume ZIP archives are unsupported.")
-    with zipfile.ZipFile(stream) as archive:
-        entries = archive.infolist()
-        if len(entries) > policy["files"]:
-            raise IntakeError("ARCHIVE_ENTRY_COUNT", "Archive directory exceeds the inventory quota.",
-                              budget="REPOSITORY_MAX_FILES", actual=len(entries), maximum=policy["files"])
-        total, seen = 0, set()
-        # Validate the entire directory before decompressing any eligible entry.
-        for entry in entries:
-            try:
-                safe_path(entry.orig_filename)
-                path = str(safe_path(entry.filename))
-            except ValueError:
-                raise IntakeError("ARCHIVE_UNSAFE_PATH", "Archive contains an invalid path or path traversal.") from None
-            if path in seen:
-                raise IntakeError("DUPLICATE_PATH", "Archive contains duplicate canonical paths.")
-            seen.add(path)
-            if entry.flag_bits & 1:
-                raise IntakeError("ARCHIVE_ENCRYPTED_ENTRY", "Encrypted ZIP entries cannot be inspected safely.",
-                                  remediation="Export an unencrypted source-only ZIP and retry.")
-            mode = stat.S_IFMT(entry.external_attr >> 16)
-            if mode not in {0, stat.S_IFREG, stat.S_IFDIR, stat.S_IFLNK}:
-                raise IntakeError("ARCHIVE_SPECIAL_ENTRY", "Archive contains an unsupported device or special entry.")
-            if entry.is_dir():
-                continue
-            total += entry.file_size
-            if total > policy["bytes"]:
-                raise IntakeError("REPOSITORY_UNCOMPRESSED_BYTES", "Archive exceeds its uncompressed byte quota.",
-                                  budget="REPOSITORY_MAX_BYTES", actual=total, maximum=policy["bytes"],
-                                  remediation="Import a bounded source component without generated/build output.")
-            if entry.file_size > max(entry.compress_size, 1) * 200:
-                raise IntakeError("ARCHIVE_COMPRESSION_RATIO", "Archive entry exceeds the compression ratio policy.",
-                                  budget="ARCHIVE_MAX_COMPRESSION_RATIO", actual=round(entry.file_size / max(entry.compress_size, 1), 2),
-                                  maximum=200)
-        if validate_only:
-            return
-        for entry in entries:
-            if entry.is_dir():
-                continue
-            path = str(safe_path(entry.filename))
-            if stat.S_ISLNK(entry.external_attr >> 16):
-                # Retain only the name/type/declared size. Never read a target,
-                # extract anything, resolve a link or follow a filesystem path.
-                yield path, {"bytes": entry.file_size, "state": "UNSUPPORTED", "source_kind": "SYMLINK"}
-                continue
-            if entry.compress_type not in {zipfile.ZIP_STORED, zipfile.ZIP_DEFLATED}:
-                yield path, {"bytes": entry.file_size, "state": "UNSUPPORTED", "source_kind": "ZIP_COMPRESSION_METHOD"}
-                continue
-            if entry.file_size > policy["file_bytes"]:
-                yield path, {"bytes": entry.file_size, "state": "SKIPPED_SIZE_LIMIT"}
-            else:
-                try:
-                    with archive.open(entry) as source:
-                        raw = source.read(policy["file_bytes"] + 1)
-                except (zipfile.BadZipFile, EOFError, RuntimeError, OSError, zlib.error) as error:
-                    raise IntakeError("ARCHIVE_ENTRY_CORRUPT", "Archive entry failed its ZIP integrity check.") from error
-                if len(raw) != entry.file_size or len(raw) > policy["file_bytes"]:
-                    raise IntakeError("ARCHIVE_ENTRY_SIZE", "Archive entry size is inconsistent with its directory.")
-                yield path, raw
+    if sandbox.required():
+        from analyzers.archive_transport import archive_items as isolated_items
+        yield from isolated_items(stream, policy, validate_only=validate_only, sort_paths=sort_paths)
+    else:
+        from analyzers.archive_parser import archive_items as parse_items
+        yield from parse_items(stream, policy, validate_only=validate_only, sort_paths=sort_paths)

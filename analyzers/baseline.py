@@ -6,8 +6,26 @@ import tomllib
 import xml.etree.ElementTree as ET
 from pathlib import PurePosixPath
 
+from analyzers import sandbox
+
+MANIFESTS = {"package.json", "package-lock.json", "yarn.lock", "pnpm-lock.yaml", "pyproject.toml",
+             "poetry.lock", "uv.lock", "pom.xml", "build.gradle", "build.gradle.kts"}
+
+
+def manifest_path(path):
+    name = PurePosixPath(path).name
+    return name in MANIFESTS or name.startswith("requirements") and name.endswith((".txt", ".lock"))
+
 
 def inventory(files):
+    if sandbox.required():
+        from analyzers.isolated_analysis import partitions, source_reply
+        rows, messages = [], []
+        for batch in partitions(files, selected=(p for p in files if manifest_path(p))):
+            result, warnings = source_reply("inventory", batch)
+            rows.extend(result)
+            messages.extend(warnings)
+        return rows, messages
     rows, warnings = {}, []
 
     def put(path, ecosystem, name, version, direct=None, license=None):

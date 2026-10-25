@@ -29,6 +29,18 @@ class Performance:
         with self.lock:
             self.counters[name] += value
 
+    def merge(self, captured):
+        """Merge measured child durations; helper time still overlaps host wall time."""
+        with self.lock:
+            for component, data in captured.get("components", {}).items():
+                target = self.components[component]
+                target["count"] += data["count"]
+                target["seconds"] += data["seconds"]
+                target["max_seconds"] = max(target["max_seconds"], data["max_seconds"])
+            self.slowest.extend(captured.get("slowest_file_operations", []))
+            self.slowest.sort(key=lambda row: row["seconds"], reverse=True)
+            del self.slowest[40:]
+
     @contextmanager
     def measure(self, component, path=None):
         started = time.perf_counter()

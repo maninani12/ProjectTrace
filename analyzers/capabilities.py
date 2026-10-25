@@ -2,6 +2,8 @@
 
 import importlib.metadata
 
+from analyzers import sandbox
+
 
 def installed(name):
     try:
@@ -80,7 +82,12 @@ def registry(version):
         "version": version,
         "languages": rows,
         "unsupported": "Inventoried as a coverage gap; absence of findings does not prove safety.",
-        "parser_isolation": "PARTIAL: bounded parsing and IaC/grammar subprocess limits; Python AST remains in-process; full OS sandbox is unverified.",
+        "parser_isolation": (
+            "DECLARED LINUX PARSER SCOPE: source/manifest/report/ZIP/lexical/CODEOWNERS parsing requires Landlock/seccomp with per-worker denial probes; bounded validation, independent sanitization and authorized persistence remain coordinator trust responsibilities."
+            if sandbox.status()["mode"] == "required"
+            else "DEVELOPMENT UNCONTAINED: no filesystem/network isolation is claimed; production refuses this mode."
+        ),
+        "parser_isolation_policy": sandbox.status(),
         "rule_blocking": "Disabled by default: representative rule precision is unmeasured.",
         "scale": {"three_million_lines": "UNMEASURED_PARTITIONED_INTAKE", "hundred_concurrent_prs": "UNMEASURED"},
     }

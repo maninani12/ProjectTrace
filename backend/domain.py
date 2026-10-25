@@ -11,6 +11,7 @@ from sqlalchemy import or_, select
 
 from analyzers.code_quality.classification import ownership, ownership_rules
 from analyzers.engine import PARSER_SIGNATURE, VERSION, analyze, hash_text, redact, validate_files
+from analyzers.sanitization import metadata as sanitize_metadata
 from analyzers.verifiers import claim_key
 from backend import quality_domain
 from backend.analysis_budget import checkpoint as output_checkpoint
@@ -23,6 +24,7 @@ def uid():
 
 
 def add(db, org, repo, kind, data, natural_key=None, *, defer_flush=False):
+    data = sanitize_metadata(data)
     checkpoint = db.info.get("analysis_output_checkpoint")
     if checkpoint:
         output_checkpoint(db, flush=not defer_flush)
@@ -1058,12 +1060,12 @@ def persist_analysis(
                 issue_key = f"{cache_key}:{vulnerability['id']}"
                 if issue_key in sca_issues:
                     record = sca_issues[issue_key]
-                    record.data = {
+                    record.data = sanitize_metadata({
                         **record.data,
                         "evidence_ids": list(dict.fromkeys([*record.data["evidence_ids"], evidence[d["path"]]])),
                         "dependency_ids": [*record.data["dependency_ids"], dep.id],
                         "manifest_paths": list(dict.fromkeys([*record.data["manifest_paths"], d["path"]])),
-                    }
+                    })
                     next(f for f in findings if f["id"] == record.id).update(record.data)
                     add(
                         db,
@@ -1185,12 +1187,17 @@ def persist_analysis(
                 count = added_line_counts[path]
                 changed_lines[path] = [(1, count)] if count else []
                 continue
-            old, head = old_lines(path), head_lines(path)
-            changed_lines[path] = [
-                (j1 + 1, max(j1 + 1, j2))
-                for tag, _, _, j1, j2 in difflib.SequenceMatcher(None, old, head, autojunk=False).get_opcodes()
-                if tag != "equal"
-            ]
+            from analyzers import sandbox
+            if sandbox.required():
+                from analyzers.lexical import changed_ranges
+                changed_lines[path] = changed_ranges(path, old_source(path), redact(files.get(path, "")))
+            else:
+                old, head = old_lines(path), head_lines(path)
+                changed_lines[path] = [
+                    (j1 + 1, max(j1 + 1, j2))
+                    for tag, _, _, j1, j2 in difflib.SequenceMatcher(None, old, head, autojunk=False).get_opcodes()
+                    if tag != "equal"
+                ]
         old_signatures = set()
         prior_by_path = defaultdict(list)
         for prior in base_findings.values():
@@ -1228,7 +1235,7 @@ def persist_analysis(
                     for lo, hi in changed_lines.get(item["path"], [])
                 )
                 rec = finding_records[item["id"]]
-                rec.data = {**rec.data, "delta": item["delta"], "new_code": item["new_code"]}
+                rec.data = sanitize_metadata({**rec.data, "delta": item["delta"], "new_code": item["new_code"]})
 
         identity_matches = finding_history.reconcile(db, findings, base, base_records, files)
         comparison_previous = [dict(r.data, id=r.id) for r in base_records if r.kind == "finding"]
@@ -1247,7 +1254,7 @@ def persist_analysis(
             output_checkpoint(db)
             if item.get("category") == "QUALITY":
                 record = finding_records[item["id"]]
-                record.data = {**record.data, **{k: v for k, v in item.items() if k != "id"}}
+                record.data = sanitize_metadata({**record.data, **{k: v for k, v in item.items() if k != "id"}})
         # Normalize findings without losing native/advisory provenance.
         # Reviews only
         # carry when the same issue still cites exactly the same source fingerprints.
@@ -1304,7 +1311,7 @@ def persist_analysis(
                     "machine_status": "REOPENED" if match[1] == "REOPENED" else data.get("machine_status", "OPEN"),
                 }
             suffix = data["path"].rsplit(".", 1)[-1].lower()
-            record.data = {
+            record.data = sanitize_metadata({
                 **data,
                 "fingerprint": fingerprint,
                 "identity_id": identity_id,
@@ -1342,7 +1349,7 @@ def persist_analysis(
                         "exposure": "UNOBSERVED",
                     },
                 ),
-            }
+            })
             packed_finding.update(record.data)
 
         quality_state = result["code_quality"]
@@ -1441,6 +1448,12 @@ def persist_analysis(
         edge(repository_node.id, snapshot_node.id, "HAS_SNAPSHOT")
         components = {}
 
+        from analyzers import sandbox
+        if not drafts and sandbox.required():
+            from analyzers.lexical import section_map
+            contained_sections = section_map(files, evidence)
+        else:
+            contained_sections = None
         for path, eid in evidence.items():
             output_checkpoint(db, flush=False)
             if drafts:
@@ -1461,7 +1474,7 @@ def persist_analysis(
                 edge(file_component(path).id, artifact.id, "CONTAINS")
             edge(artifact.id, eid, "HAS_FILE_EVIDENCE")
             if path.endswith(".md"):
-                sections = drafts.require("FILE_GRAPH", path)["sections"] if drafts else [
+                sections = drafts.require("FILE_GRAPH", path)["sections"] if drafts else contained_sections[path] if contained_sections is not None else [
                     {"title": redact(line.lstrip("# ")), "line": n}
                     for n, line in enumerate(files[path].splitlines(), 1) if line.startswith("#")
                 ]
@@ -1797,7 +1810,7 @@ def persist_analysis(
         publication_performance.record("IMPACT_GRAPH", time.perf_counter() - correlation_started)
     restored = generation.load('FINAL_OUTPUT') if generation else None
     if restored is None:
-        snapshot.data = {
+        snapshot.data = sanitize_metadata({
             **snapshot.data,
             **captured_snapshot_data,
             "claims": claims,
@@ -1817,7 +1830,7 @@ def persist_analysis(
             "scope": scope,
             "impact": impact,
             "status": "PARTIAL" if result["warnings"] else "COMPLETED" if findings else "COMPLETED_NO_FINDINGS",
-        }
+        })
         if stored_input:
             # The quality projection and graph are already flushed in this transaction.
             # Release parsing/correlation working sets before serializing the final

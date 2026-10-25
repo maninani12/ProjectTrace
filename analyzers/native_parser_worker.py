@@ -9,6 +9,9 @@ from pathlib import Path
 def main():
     # -I removes user paths; explicitly add only this installed ProjectTrace root.
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    from analyzers import sandbox
+    if sandbox.required():
+        raise sandbox.SandboxFailure("USE_ATTESTED_PARSER_LAUNCHER")
     from backend.process_limits import self_limits
     self_limits(512 * 1024 * 1024, 25)
     from analyzers.engine import finding

@@ -1,5 +1,11 @@
 # ProjectTrace continuation register
 
+## SEC-002 continuation (PR #3)
+
+Work on `codex/linux-parser-isolation` starts from the exact verified PR #2 commit `6d937e3c25384aecc508d17943f530f8c22dc6fc`, whose [run 40126311475](https://github.com/maninani12/ProjectTrace/actions/runs/40126311475) passed 619 backend / 2 Windows skips, 49 frontend, 18 browser / 10 preserved fixture skips, 4 real broker cases, 33 benchmarks, migration/audits/builds. PRs #1/#2 remain draft and unmerged.
+
+[ADR 0005](adr/0005-linux-parser-containment.md) and the [SEC-002 scope/acceptance guide](SEC002_PARSER_ISOLATION.md) inventory previously in-process Python, manifests, JSON/XML coverage and source paths, define the new Linux Landlock/seccomp boundary and require actual denial evidence. Current PR #3 checks record its results; the PR #2 totals do not qualify new code. The local coding kernel cannot enforce this boundary. ZIP/zlib intake remains a named coordinator exposure, so overall SEC-002 remains open/partial; no blanket all-parsing isolation or production certificate is claimed. Earlier inventory/decisions below remain historical baseline evidence.
+
 This is a source-based continuation reference, not a production certificate. Historical reports remain intact. Verification applies to a named commit/environment; a feature label never implies commercial-platform parity.
 
 ## Recovered baseline and integration decision
@@ -72,3 +78,11 @@ Parser isolation and large-memory failures remain release blockers; they are not
 3. Recommended next milestone: Linux parser isolation threat model and executable filesystem/network denial contract, before claiming secure arbitrary-repository processing. SCALE-001 remains a separate bounded-memory milestone; neither is bundled into this PR.
 
 For future continuation, read this register, ADR 0004, the current PR head and latest completed checks first. Inspect working-tree changes before switching branches. Treat historical reports as dated measurements. Preserve schema 0025, source objects/operator keys, existing evidence/learning histories, baseline branch and PR #1. Never infer that a newer head passed because an older one did. Current milestone test totals live in the PR rather than triggering another full CI run merely to write final counts into this file.
+
+SEC-002 qualification checkpoint: PR #3 commit `88db04a20b69272142c2f2bf716859f389c0195a` security job passed 13 real Linux cases and the built non-root image sentinel/network/exec denial probe in run 40132003797. Overall SEC-002 remains OPEN because ZIP/zlib intake is still in the coordinator; this does not mark later heads or all CI jobs passed. See SEC002_PARSER_ISOLATION.md and current PR checks for continuing evidence.
+
+SEC-002 archive continuation: preserve green 2837b367 baseline; implement attested byte-range IPC for encrypted/seekable ZIP intake and isolated legacy ZIP parsing. New archive acceptance is pending current-head CI. Lexical/classification/CODEOWNERS and production qualification remain open; see the appended acceptance guide section.
+
+SEC-002B continuation from green 6406745b: implement batched isolated source classification, glob/CODEOWNERS interpretation, Markdown sections/storage assertions and an independent bounded coordinator privacy/schema guard. Cache policy changes to v2-lexical; history/schema/queue fencing remain intact. See ADR 0006 and the SEC-002B section of the acceptance guide. Read the commit-specific real Linux/full CI verdict in PR #3; do not reuse prior green counts as proof. SCALE-001 is not part of this change.
+
+SEC-002B final review additionally contains raw snapshot line-diff matching and rejects unreadable CODEOWNERS before cache reuse. Initial real Linux checkpoint run 40161249057 passed 15 source / 17 archive / 20 lexical / 13 selected regressions and the non-root image probe. Later-head qualification, exact counts and final scoped verdict are recorded in PR #3; initial results do not qualify subsequent edits.
