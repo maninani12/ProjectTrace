@@ -163,7 +163,7 @@ def main():
 
 
 def dispatch(operation, value, engine, sandbox):
-    from analyzers.parser_protocol import emit_packet
+    from analyzers.parser_protocol import emit_packet, native_artifact
 
     if operation.startswith("lexical_"):
         import hashlib
@@ -335,8 +335,9 @@ def dispatch(operation, value, engine, sandbox):
                                                        parsed_inputs=value["parsed"]))
             result[5] = sorted(result[5])
             result.append(performance.snapshot())
-            total = emit_packet(path, result, time.perf_counter() - started,
-                                "PARTIAL" if result[2] else "COMPLETED", maximum=16_000_000, total=total)
+            state = "PARTIAL" if result[2] else "COMPLETED"
+            total = emit_packet(path, native_artifact(path, result), time.perf_counter() - started,
+                                state, maximum=16_000_000, total=total)
         return STREAMED
     raise ValueError("Unknown installed parser operation")
 

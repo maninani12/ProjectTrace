@@ -181,3 +181,17 @@ diagnostics support the next qualification. Global output retention and the
 full acceptance matrix remain open. See
 [the local handoff record](SCALE001_LOCAL_HANDOFF_2026_10_26.md) and its sanitized
 evidence for scope, provenance, measurements, tests and remaining gates.
+
+### Completed local CI at 7d717bf; native transport continuation
+
+Regression run 40223143091 passed (756 backend / 2 skips, 77 required Linux,
+4 real broker, 49 frontend, 18 browser / 10 preserved skips plus 4 focused).
+Constrained run 40223143093 failed: baseline OOM / 3,747 artifacts; candidate
+ANALYSIS_TIME_BUDGET / 14,287 artifacts, zero application OOM kills and zero
+publication. Both DB/FK checks passed. The candidate spent 1,712.129 of
+1,809.837 analysis seconds in the partition parse path; global quality and
+publication were not reached. Raw receipts and 37,424 samples are preserved.
+The next correction removes duplicate native wire payloads while reconstructing
+the complete original logical result before the existing guards. See
+[the completed qualification and correction record](SCALE001_7D717BF_QUALIFICATION.md).
+All full-workload acceptance gates remain open.

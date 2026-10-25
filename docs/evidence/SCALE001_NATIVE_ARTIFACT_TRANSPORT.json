@@ -1,0 +1,50 @@
+{
+  "scope": "OWNED_NATIVE_PACKET_TRANSPORT_ONLY",
+  "python": "3.14.3",
+  "files": 12,
+  "tokens_per_file": 2000,
+  "legacy_wire_bytes": 1925900,
+  "compact_wire_bytes": 966820,
+  "wire_and_logical_structure_limits_unchanged": true,
+  "runs": [
+    {
+      "mode": "legacy",
+      "seconds": 0.44700449999982084,
+      "complete_equality": true
+    },
+    {
+      "mode": "compact",
+      "seconds": 0.27495639999870036,
+      "complete_equality": true
+    },
+    {
+      "mode": "legacy_repeat",
+      "seconds": 0.42150779999974475,
+      "complete_equality": true
+    },
+    {
+      "mode": "compact_repeat",
+      "seconds": 0.2692575000000943,
+      "complete_equality": true
+    }
+  ],
+  "allocation": [
+    {
+      "mode": "legacy",
+      "current_bytes": 9853091,
+      "peak_bytes": 13118224
+    },
+    {
+      "mode": "compact",
+      "current_bytes": 9606172,
+      "peak_bytes": 11051137
+    }
+  ],
+  "complete_result_sha256": "ada055f734dce67077277b7d7d4bc8a81db6bc3e0bd934437d30f61b1ad116fb",
+  "limitations": [
+    "Owned typed packets, development mode, no installed Linux bootstrap or complete workload/publication qualification.",
+    "Native observations and cache input remain independent mutable copies after the unchanged privacy guard.",
+    "Allocation peaks exclude preallocated wire buffers; packet timing excludes source parsing and sandbox installation.",
+    "Local microbenchmark durations do not prove whole-workload throughput; other local test activity was not controlled."
+  ]
+}

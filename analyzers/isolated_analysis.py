@@ -7,7 +7,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 
 from analyzers import sandbox
-from analyzers.parser_protocol import completed_packets
+from analyzers.parser_protocol import completed_packets, expand_native_artifact
 
 
 def source_reply(operation, files, **options):
@@ -114,7 +114,12 @@ def native(files, cache, settings, *, performance=None):
         raw, failure = sandbox.invoke("native", {"files": batch, "cache": {},
                                                 "settings": settings, "parsed": {name: {p: rows[p] for p in batch if p in rows}
                                                                                   for name, rows in parsed.items()}})
-        rows = completed_packets(raw, batch, 16_000_000)
+        if performance:
+            performance.record("NATIVE_HELPER_TRANSPORT", time.perf_counter() - started)
+        decode_started = time.perf_counter()
+        rows = completed_packets(raw, batch, 16_000_000, expand=expand_native_artifact)
+        if performance:
+            performance.record("NATIVE_PACKET_VALIDATION", time.perf_counter() - decode_started)
         if failure and set(rows) == set(batch):
             rows.pop(next(reversed(rows)))
         for path in batch:
