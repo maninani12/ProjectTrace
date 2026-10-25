@@ -72,8 +72,9 @@ def test_concurrent_archive_streams_cannot_exchange_tenant_bytes():
     assert results == [{"app.py": b"tenant='A'\n"}, {"app.py": b"tenant='B'\n"}]
 
 
-@pytest.mark.parametrize("operation,code", [("probe_crash", "ARCHIVE_HELPER_CRASH"),
-                                           ("probe_timeout", "ARCHIVE_HELPER_TIMEOUT")])
+@pytest.mark.parametrize("operation,code", [("archive_probe_crash", "ARCHIVE_HELPER_CRASH"),
+                                           ("archive_probe_timeout", "ARCHIVE_HELPER_TIMEOUT"),
+                                           ("archive_probe_malformed", "ARCHIVE_PROTOCOL")])
 def test_actual_archive_worker_loss_never_completes_intake(monkeypatch, operation, code):
     payload = owned_zip({"app.py": "pass"})
     start = subprocess.Popen
@@ -96,3 +97,9 @@ def test_cancelled_archive_consumer_terminates_only_its_owned_helper(monkeypatch
     assert next(iterator) == ("first.py", b"pass")
     iterator.close()
     assert len(processes) == 1 and processes[0].poll() is not None
+
+
+def test_archive_order_is_preserved_with_explicit_sorted_benchmark_selection():
+    payload = owned_zip({"b.py": "b=1", "a.py": "a=1"})
+    assert [path for path, _ in archive_items(io.BytesIO(payload))] == ["b.py", "a.py"]
+    assert [path for path, _ in archive_items(io.BytesIO(payload), sort_paths=True)] == ["a.py", "b.py"]

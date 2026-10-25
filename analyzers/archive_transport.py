@@ -70,7 +70,7 @@ class Wire:
             self.buffer.extend(data)
 
 
-def archive_items(stream, policy, *, validate_only=False, seconds=150):
+def archive_items(stream, policy, *, validate_only=False, seconds=150, sort_paths=False):
     from analyzers.engine import safe_path
 
     # Seeking/decryption are coordinator primitives, not archive interpretation.
@@ -93,7 +93,8 @@ def archive_items(stream, policy, *, validate_only=False, seconds=150):
     read_bytes, total, path_bytes, seen = 0, 0, 0, set()
     try:
         sandbox.validate_proof(wire.line(4096))
-        wire.write(json.dumps({"length": length, "policy": policy, "validate_only": validate_only}).encode() + b"\n")
+        wire.write(json.dumps({"length": length, "policy": policy, "validate_only": validate_only,
+                               "sort_paths": sort_paths}).encode() + b"\n")
         while True:
             packet = sandbox.decode_packet(wire.line())
             if not isinstance(packet, dict):

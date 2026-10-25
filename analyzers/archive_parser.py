@@ -7,7 +7,7 @@ from analyzers.engine import safe_path
 from backend.intake_errors import IntakeError
 
 
-def archive_items(stream, policy, *, validate_only=False):
+def archive_items(stream, policy, *, validate_only=False, sort_paths=False):
     import stat
 
     # Check the bounded end-directory metadata before ZipFile allocates its
@@ -60,6 +60,8 @@ def archive_items(stream, policy, *, validate_only=False):
                                   maximum=200)
         if validate_only:
             return
+        if sort_paths:
+            entries = sorted(entries, key=lambda entry: entry.filename)
         for entry in entries:
             if entry.is_dir():
                 continue

@@ -39,7 +39,7 @@ def prepare(operation):
     from analyzers.code_quality import coverage
     from backend.process_limits import self_limits
 
-    if operation in {"archive_stream", "legacy_zip"}:
+    if operation.startswith("archive_") or operation == "legacy_zip":
         import analyzers.archive_parser  # noqa: F401 -- preload pure archive adapter
         import analyzers.archive_transport  # noqa: F401
         codecs.lookup("cp437")
@@ -119,10 +119,21 @@ def main():
              "denials": ["filesystem", "network", "exec", "metadata"]}
     sys.stdout.buffer.write(json.dumps(proof).encode() + b"\n")
     sys.stdout.buffer.flush()
-    if operation == "archive_stream":
+    if operation.startswith("archive_"):
         configuration = sys.stdin.buffer.readline(8193)
         if len(configuration) > 8192:
             raise ValueError("Archive configuration budget")
+        if operation == "archive_probe_crash":
+            os._exit(73)
+        if operation == "archive_probe_timeout":
+            while True:
+                pass
+        if operation == "archive_probe_malformed":
+            sys.stdout.buffer.write(b"{not json}\n")
+            sys.stdout.buffer.flush()
+            os._exit(0)
+        if operation != "archive_stream":
+            raise ValueError("Unknown installed archive operation")
         archive_stream(json.loads(configuration))
         return
     raw = sys.stdin.buffer.read(32_000_001)
@@ -300,7 +311,7 @@ def archive_stream(configuration):
         sys.stdout.buffer.flush()
     try:
         for path, value in archive_items(RemoteArchive(configuration["length"]), configuration["policy"],
-                                        validate_only=configuration["validate_only"]):
+                                        validate_only=configuration["validate_only"], sort_paths=configuration["sort_paths"]):
             entry = {"path": path, "metadata": value} if isinstance(value, dict) else {
                 "path": path, "raw": base64.b64encode(value).decode(), "hash": hashlib.sha256(value).hexdigest()}
             emit({"entry": entry})

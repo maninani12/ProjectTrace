@@ -442,13 +442,13 @@ def capture(db, organization_id, repository, items, *, source="OWNED_STREAM", qu
     return inventory
 
 
-def archive_items(stream, quota=None, *, validate_only=False):
+def archive_items(stream, quota=None, *, validate_only=False, sort_paths=False):
     from analyzers import sandbox
 
     policy = quota or limits()
     if sandbox.required():
         from analyzers.archive_transport import archive_items as isolated_items
-        yield from isolated_items(stream, policy, validate_only=validate_only)
+        yield from isolated_items(stream, policy, validate_only=validate_only, sort_paths=sort_paths)
     else:
         from analyzers.archive_parser import archive_items as parse_items
-        yield from parse_items(stream, policy, validate_only=validate_only)
+        yield from parse_items(stream, policy, validate_only=validate_only, sort_paths=sort_paths)

@@ -15,7 +15,7 @@ import subprocess
 import sys
 import threading
 import time
-import zipfile
+from contextlib import closing
 from functools import lru_cache
 from pathlib import Path
 
@@ -240,10 +240,10 @@ def main():
     os.environ["ANALYSIS_INPUT_KEY"] = Fernet.generate_key().decode()
     from sqlalchemy import event, func, select
 
-    from analyzers.engine import MAX_FILE_BYTES, safe_path
+    from analyzers.engine import safe_path
     from backend.db import Base, Grant, Organization, Record, Repository, Session, User, engine
     from backend.jobs import execute_analysis
-    from backend.repository_store import RepositoryFiles, capture
+    from backend.repository_store import RepositoryFiles, archive_items, capture
 
     Base.metadata.create_all(engine)
     sources = {
@@ -258,22 +258,15 @@ def main():
         with args.archive.open("rb") as stream:
             archive_hash = hashlib.file_digest(stream, "sha256").hexdigest()
         sources = {}
-        with zipfile.ZipFile(args.archive) as archive:
-            for entry in sorted(archive.infolist(), key=lambda e: e.filename):
-                if not entry.filename.startswith(prefix) or entry.is_dir():
+        with args.archive.open("rb") as stream, closing(archive_items(stream, sort_paths=True)) as items:
+            for name, raw in items:
+                if not name.startswith(prefix):
                     continue
-                name = str(safe_path(entry.filename))
-                if (
-                    name in sources
-                    or entry.file_size > MAX_FILE_BYTES
-                    or entry.file_size / max(entry.compress_size, 1) > 250
-                ):
-                    raise ValueError("Component entry exceeds path, duplicate, size or compression bounds.")
-                if (entry.external_attr >> 16) & 0o170000 == 0o120000:
-                    raise ValueError("Symlinks cannot be benchmark sources.")
-                if sum(len(t.encode()) for t in sources.values()) + entry.file_size > 16_000_000:
+                if not isinstance(raw, bytes):
+                    raise ValueError("Unsupported or oversized entries cannot be benchmark sources.")
+                if sum(len(t.encode()) for t in sources.values()) + len(raw) > 16_000_000:
                     break
-                sources[name] = archive.read(entry).decode("utf-8")
+                sources[name] = raw.decode("utf-8")
                 if len(sources) == args.files:
                     break
         if not sources:
