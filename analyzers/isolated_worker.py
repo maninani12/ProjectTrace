@@ -183,6 +183,8 @@ def dispatch(operation, value, engine, sandbox):
             return lexical_worker.classify(value)
         if operation == "lexical_ownership":
             return lexical_worker.ownership(value)
+        if operation == "lexical_diff":
+            return lexical_worker.changed_ranges(value)
         if operation == "lexical_sections":
             if "files" in value:
                 return {p: {"hash": hashlib.sha256(s.encode()).hexdigest(),

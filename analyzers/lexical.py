@@ -16,6 +16,25 @@ def digest(value):
     return hashlib.sha256(json.dumps(value, sort_keys=True, ensure_ascii=True).encode()).hexdigest()
 
 
+def changed_ranges(path, old, head):
+    from analyzers.engine import safe_path
+    path = str(safe_path(path))
+    if any(not isinstance(s, str) or len(s) > 1_000_000 for s in (old, head)):
+        raise sandbox.SandboxFailure("LEXICAL_DIFF_BUDGET")
+    signature = digest([path, old, head])
+    result = sandbox.call("lexical_diff", {"path": path, "old": old, "head": head, "signature": signature})
+    if (not isinstance(result, dict) or set(result) != {"path", "signature", "ranges"}
+            or result["path"] != path or result["signature"] != signature or not isinstance(result["ranges"], list)):
+        raise sandbox.SandboxFailure("DIFF_SCOPE")
+    maximum, previous = len(head.splitlines()) + 1, 0
+    for row in result["ranges"]:
+        if (not isinstance(row, list) or len(row) != 2 or any(type(n) is not int for n in row)
+                or not previous < row[0] <= row[1] <= maximum):
+            raise sandbox.SandboxFailure("DIFF_SCHEMA")
+        previous = row[1]
+    return [tuple(row) for row in result["ranges"]]
+
+
 def packet(path, source, *, raw=None):
     from analyzers.engine import safe_path
     path = str(safe_path(path))

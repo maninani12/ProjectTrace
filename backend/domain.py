@@ -1187,12 +1187,17 @@ def persist_analysis(
                 count = added_line_counts[path]
                 changed_lines[path] = [(1, count)] if count else []
                 continue
-            old, head = old_lines(path), head_lines(path)
-            changed_lines[path] = [
-                (j1 + 1, max(j1 + 1, j2))
-                for tag, _, _, j1, j2 in difflib.SequenceMatcher(None, old, head, autojunk=False).get_opcodes()
-                if tag != "equal"
-            ]
+            from analyzers import sandbox
+            if sandbox.required():
+                from analyzers.lexical import changed_ranges
+                changed_lines[path] = changed_ranges(path, old_source(path), redact(files.get(path, "")))
+            else:
+                old, head = old_lines(path), head_lines(path)
+                changed_lines[path] = [
+                    (j1 + 1, max(j1 + 1, j2))
+                    for tag, _, _, j1, j2 in difflib.SequenceMatcher(None, old, head, autojunk=False).get_opcodes()
+                    if tag != "equal"
+                ]
         old_signatures = set()
         prior_by_path = defaultdict(list)
         for prior in base_findings.values():

@@ -1,6 +1,7 @@
 """Mandatory SEC-002B: real Linux workers and coordinator-only privacy checks."""
 
 import copy
+import difflib
 import fnmatch
 import json
 import os
@@ -14,7 +15,7 @@ from sqlalchemy import select
 
 from analyzers import sandbox
 from analyzers.code_quality.classification import classify, ownership, ownership_rules
-from analyzers.lexical import describe_one
+from analyzers.lexical import changed_ranges, describe_one
 from analyzers.source_input import SourceFiles
 from backend.db import Record
 from backend.generation_models import AnalysisGeneration
@@ -29,6 +30,26 @@ FILES = SourceFiles({
     "compose.yaml": "services:\n app: {image: owned:v1}\n", "README.md": "# Owned\n",
 }, intake=[{"path": "bad.py", "bytes": 1, "physical_lines": None},
            {"path": "blob.bin", "bytes": 2, "physical_lines": None, "state": "BINARY"}])
+
+
+@pytest.mark.parametrize("old,head", [("a\nb\nc\n", "a\nchanged\nc\n"), ("a\nb\n", "a\n"),
+                                    ("", "λ\n\n"), ("unchanged\n", "unchanged\n")])
+def test_real_source_diff_preserves_ranges_without_coordinator_sequence_matching(monkeypatch, old, head):
+    expected = [(j1 + 1, max(j1 + 1, j2)) for tag, _, _, j1, j2 in
+                difflib.SequenceMatcher(None, old.splitlines(), head.splitlines(), autojunk=False).get_opcodes() if tag != "equal"]
+    def forbidden(*_args, **_kwargs):
+        raise AssertionError("Raw source comparison executed in coordinator")
+    monkeypatch.setattr(difflib, "SequenceMatcher", forbidden)
+    assert changed_ranges("a.py", old, head) == expected
+
+
+def test_actual_source_diff_timeout_is_not_an_empty_successful_comparison(monkeypatch):
+    invoke = sandbox.invoke
+    def routed(operation, value, **limits):
+        return invoke("probe_timeout", value, seconds=5) if operation == "lexical_diff" else invoke(operation, value, **limits)
+    monkeypatch.setattr(sandbox, "invoke", routed)
+    with pytest.raises(sandbox.SandboxFailure, match="HELPER_TIMEOUT"):
+        changed_ranges("a.py", "old\n", "new\n")
 
 
 def test_real_classification_equals_baseline_without_host_regex_or_glob_interpretation(monkeypatch):
@@ -50,6 +71,8 @@ def test_real_classification_equals_baseline_without_host_regex_or_glob_interpre
     ("λ/*.py @unicode\n*.ts @ts", "λ/space name.py"),
     ("src/[ab].py @range\nsrc/* @fallback", "src/a.py"),
     ("*.py @one @two\n*.py @three", "a.py"),
+    ("src/hash#name.py @hash\n*.ts @ts", "src/hash#name.py"),
+    ("*.py @team # legacy-comment-token", "a.py"),
     ("*.py @python", "README.md"),
 ])
 def test_real_supported_codeowners_matching_and_precedence_remain_compatible(monkeypatch, source, path):

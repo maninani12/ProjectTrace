@@ -183,7 +183,7 @@ def call(operation, value, **limits):
         raise SandboxFailure("SOURCE_SYNTAX_FAILED")
     if isinstance(result, dict) and result.get("ok") is False and result.get("code") in {
         "CODEOWNERS_SOURCE_BUDGET", "CODEOWNERS_INPUT_BUDGET", "CODEOWNERS_PATTERN_BUDGET", "CODEOWNERS_MATCH_BUDGET",
-        "SECTIONS_SOURCE_BUDGET", "LEXICAL_FILE_BUDGET",
+        "SECTIONS_SOURCE_BUDGET", "LEXICAL_FILE_BUDGET", "LEXICAL_DIFF_BUDGET",
     }:
         raise SandboxFailure(result["code"])
     if not isinstance(result, dict) or result.get("ok") is not True or "result" not in result:

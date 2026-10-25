@@ -8,7 +8,7 @@ import pytest
 
 from analyzers import lexical_worker, sandbox
 from analyzers.engine import ENV_SECRET_RE, PRIVATE_RE, SECRET_RE
-from analyzers.lexical import packet, validate_description
+from analyzers.lexical import changed_ranges, digest, packet, validate_description
 from analyzers.parser_protocol import completed_packets
 from analyzers.sanitization import metadata, redact
 from analyzers.source_input import SourceFiles
@@ -106,6 +106,14 @@ def test_unreadable_codeowners_cannot_become_absent_or_reuse_cached_ownership(st
     files._contained_ownership = Ownership("")
     with pytest.raises(sandbox.SandboxFailure, match="CODEOWNERS_UNREADABLE"):
         ownership_rules(files)
+
+
+@pytest.mark.parametrize("ranges", [[[1, 999]], [[True, 1]], [[2, 2], [1, 1]]])
+def test_diff_schema_rejects_out_of_range_or_unordered_results(monkeypatch, ranges):
+    monkeypatch.setattr(sandbox, "call", lambda *_a, **_kw: {
+        "path": "a.py", "signature": digest(["a.py", "old", "new"]), "ranges": ranges})
+    with pytest.raises(sandbox.SandboxFailure, match="DIFF_SCHEMA"):
+        changed_ranges("a.py", "old", "new")
 
 
 from tests.test_repository_store import storage  # noqa: E402,F401 -- shared owned SQLite fixture

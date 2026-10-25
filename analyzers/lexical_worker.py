@@ -1,5 +1,6 @@
 """Untrusted lexical interpretation, invoked only after sandbox enforcement."""
 
+import difflib
 import fnmatch
 import hashlib
 import re
@@ -7,6 +8,16 @@ from pathlib import PurePosixPath
 
 from analyzers import sandbox
 from analyzers.lexical import POLICY
+
+
+def changed_ranges(value):
+    old, head = value["old"], value["head"]
+    if any(not isinstance(s, str) or len(s) > 1_000_000 for s in (old, head)):
+        raise sandbox.SandboxFailure("LEXICAL_DIFF_BUDGET")
+    return {"path": value["path"], "signature": value["signature"], "ranges": [
+        [j1 + 1, max(j1 + 1, j2)]
+        for tag, _, _, j1, j2 in difflib.SequenceMatcher(None, old.splitlines(), head.splitlines(), autojunk=False).get_opcodes()
+        if tag != "equal"]}
 
 
 def generated(source):
@@ -59,8 +70,8 @@ def ownership(value):
     if len(lines) > 5000:
         diagnostics.append("CODEOWNERS_LINE_LIMIT")
     for line in lines[:5000]:
-        parts = line.split("#", 1)[0].split()
-        if not parts:
+        parts = line.split()
+        if not parts or parts[0].startswith("#"):
             continue
         if len(parts) < 2 or parts[0].startswith("!") or "\\" in parts[0] or ".." in PurePosixPath(parts[0]).parts:
             diagnostics.append("UNSUPPORTED_CODEOWNERS_SYNTAX")
@@ -73,7 +84,11 @@ def ownership(value):
         variants = [pattern, "**/" + pattern]
         variants.extend(p[3:] for p in tuple(variants) if p.startswith("**/"))
         checks = tuple(re.compile(fnmatch.translate(p)).match for p in dict.fromkeys(variants))
-        rules.append((checks, " ".join(parts[1:])[:200]))
+        owner = " ".join(part for part in parts[1:] if not part.startswith("#"))[:200]
+        if not owner:
+            diagnostics.append("UNSUPPORTED_CODEOWNERS_SYNTAX")
+            continue
+        rules.append((checks, owner))
     if len(rules) * len(paths) > 500_000:
         raise sandbox.SandboxFailure("CODEOWNERS_MATCH_BUDGET")
     owners = {}
