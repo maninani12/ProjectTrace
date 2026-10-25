@@ -185,7 +185,7 @@ def test_real_ownership_failure_cannot_publish_and_recovery_preserves_baseline(s
 
 
 def test_lexical_overhead_is_recorded_on_identical_owned_inputs(monkeypatch):
-    elapsed = {}
+    elapsed, diff_elapsed = {}, {}
     for mode in ("development", "required"):
         monkeypatch.setenv("PROJECTTRACE_PARSER_ISOLATION", mode)
         start = time.perf_counter()
@@ -193,6 +193,17 @@ def test_lexical_overhead_is_recorded_on_identical_owned_inputs(monkeypatch):
         selected = ownership("a.py", {"CODEOWNERS": "* @owned"}, "Assigned")
         elapsed[mode] = time.perf_counter() - start
         assert rows and selected["owner"] == "@owned"
+        old, head = "before\nold\nafter\n", "before\nnew\nafter\n"
+        start = time.perf_counter()
+        if mode == "required":
+            ranges = changed_ranges("a.py", old, head)
+        else:
+            ranges = [(j1 + 1, max(j1 + 1, j2)) for tag, _, _, j1, j2 in
+                      difflib.SequenceMatcher(None, old.splitlines(), head.splitlines(), autojunk=False).get_opcodes()
+                      if tag != "equal"]
+        diff_elapsed[mode] = time.perf_counter() - start
+        assert ranges == [(2, 2)]
     target = Path(os.environ["PROJECTTRACE_SANDBOX_EVIDENCE"])
     target.mkdir(parents=True, exist_ok=True)
     (target / "lexical-overhead.json").write_text(json.dumps(elapsed))
+    (target / "diff-overhead.json").write_text(json.dumps(diff_elapsed))
