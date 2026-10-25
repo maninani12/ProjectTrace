@@ -11,6 +11,7 @@ from analyzers.engine import ENV_SECRET_RE, PRIVATE_RE, SECRET_RE
 from analyzers.lexical import packet, validate_description
 from analyzers.parser_protocol import completed_packets
 from analyzers.sanitization import metadata, redact
+from analyzers.source_input import SourceFiles
 
 
 @pytest.fixture(autouse=True)
@@ -96,6 +97,15 @@ def test_persistence_guard_redacts_even_when_parser_omits_sanitization(storage):
     db.commit()
     db.refresh(row)
     assert "owned-private" not in json.dumps(row.data) and "abcdefghijklmnopqrstuvwxyz" not in json.dumps(row.data)
+
+
+@pytest.mark.parametrize("state", ["BINARY", "OVERSIZED", "UNSUPPORTED_ENCODING"])
+def test_unreadable_codeowners_cannot_become_absent_or_reuse_cached_ownership(state):
+    from analyzers.lexical import Ownership, ownership_rules
+    files = SourceFiles({"a.py": "pass"}, intake=[{"path": "CODEOWNERS", "state": state, "bytes": 600000}])
+    files._contained_ownership = Ownership("")
+    with pytest.raises(sandbox.SandboxFailure, match="CODEOWNERS_UNREADABLE"):
+        ownership_rules(files)
 
 
 from tests.test_repository_store import storage  # noqa: E402,F401 -- shared owned SQLite fixture

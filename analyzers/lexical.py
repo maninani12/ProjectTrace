@@ -176,8 +176,13 @@ class Ownership:
 
 def ownership_rules(files):
     cached = getattr(files, "_contained_ownership", None)
-    candidates = sorted(p for p in files if p in {"CODEOWNERS", ".github/CODEOWNERS", "docs/CODEOWNERS"}
+    declared = set(files) | {row["path"] for row in getattr(files, "intake", [])}
+    candidates = sorted(p for p in declared if p in {"CODEOWNERS", ".github/CODEOWNERS", "docs/CODEOWNERS"}
                         or p.endswith("/.github/CODEOWNERS"))
+    # Excluded/binary/oversized declarations are not evidence of absent ownership.
+    # Check before cache reuse, including a formerly readable declaration.
+    if candidates and candidates[0] not in files:
+        raise sandbox.SandboxFailure("CODEOWNERS_UNREADABLE")
     source = files[candidates[0]] if candidates else ""
     signature = digest(source)
     if cached is not None and cached.signature == signature:

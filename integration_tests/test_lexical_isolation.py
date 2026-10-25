@@ -79,6 +79,12 @@ def test_excessive_codeowners_pattern_is_rejected_inside_actual_worker():
         ownership("a.py", {"CODEOWNERS": "*" * 4097 + " @owned"}, "Assigned team")
 
 
+def test_excluded_codeowners_fails_closed_in_required_mode():
+    files = SourceFiles({"a.py": "pass"}, intake=[{"path": ".github/CODEOWNERS", "state": "BINARY", "bytes": 2}])
+    with pytest.raises(sandbox.SandboxFailure, match="CODEOWNERS_UNREADABLE"):
+        ownership("a.py", files, "Assigned team")
+
+
 def test_pathological_wildcard_work_is_bounded_and_does_not_execute_source():
     source = ("*a" * 1000) + "b @unmatched\n*.py @supported"
     started = time.monotonic()
