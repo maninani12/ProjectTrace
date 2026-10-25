@@ -34,7 +34,7 @@ def main():
                "--cgroupns", "private", "--network", "none", "--cap-drop", "ALL", "--security-opt", "no-new-privileges",
                "--user", f"{os.getuid()}:{os.getgid()}", "--mount", f"type=bind,src={args.archive.resolve()},dst=/input.zip,readonly",
                "--mount", f"type=bind,src={output},dst=/evidence", "-e", "PROJECTTRACE_PARSER_ISOLATION=required",
-               args.image, "python", "-m", "scripts.qualify_scale_workload", "--archive", "/input.zip", "--output", "/evidence"]
+               "-e", "ANALYSIS_OBSERVATION_SPILL_BYTES=512000000", args.image, "python", "-m", "scripts.qualify_scale_workload", "--archive", "/input.zip", "--output", "/evidence"]
     if args.resource_probe:
         module = command.index("scripts.qualify_scale_workload")
         command = command[:module] + ["scripts.scale_resource_probe"]

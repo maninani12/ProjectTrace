@@ -111,3 +111,29 @@ Fresh 100-file / 10-function benchmark: all cold/warm/one-file-change snapshots 
 | one_file_change | 266,199,040 | 274,554,880 | 74.456 / 73.906 s |
 
 **No whole-pipeline memory improvement is demonstrated by this small fixture.** Python 3.12.14, cProfile enabled, development mode, zero helpers, no memory enforcement. Baseline ran concurrently with the provisional candidate; final candidate ran subsequently, so durations are not throughput comparisons. Raw receipts, profiling hotspots, counts and complete semantic fingerprints are committed in docs/evidence/SCALE001_PIPELINE_100.json. This is compatibility/diagnostic evidence, not large-repository qualification. The Linux capped workflow remains authoritative.
+
+### Actual analysis under the shared limit (12a8e14e)
+
+Regression workflow **40210108872 succeeded**: **705 backend passed / 2 Windows skips**, **77 Linux acceptance/regressions**, **4 broker**, **18 full browser passed / 10 preserved skips** plus **4 focused**, **49 frontend**, **33 benchmarks**; migrations, builds, lint/compile/types and both dependency audits passed. These are verified results for 12a8e14e.
+
+Constrained workflow **40210109062 failed**. The encrypted intake replay completed: **21,636 inventory entries, 21,269 retained text entries, 330,420,155 declared bytes**, 324,054,740 replay ciphertext bytes. Both actual kernels enforced memory.max **768,000,000**, swap.max **0**. The owned two-child test genuinely triggered kernel OOM kills in the shared envelope; it is not an application recovery test.
+
+| Full-workload attempt | Baseline 243513ee | Candidate 12a8e14e |
+|---|---|---|
+| Stage reached | ANALYZING | ANALYZING |
+| Kernel memory.peak | 768,000,000 | 768,000,000 |
+| Exit / OOM kill | 137 / yes | 1 / no |
+| Retained valid parser artifacts | 3,747 | 5,327 |
+| Application job | Interrupted ANALYZING | FAILED / ANALYSIS_OBSERVATION_BUDGET |
+| Published pointers / generations | 0 / 0 | 0 / 0 |
+| SQLite integrity / FK errors | ok / 0 | ok / 0 |
+
+The candidate rejected its spill budget safely after **1,153.644 seconds total sampled experiment duration**, rather than completing. Its sampled coordinator RSS peak was **482,889,728**, helper RSS peak **143,265,792**, instantaneous sampled tree RSS peak **620,978,176** bytes. Those RSS peaks occur at different times; do not add individual peaks or equate them to cgroup charge. Raw stage/kernel/RSS samples and post-exit checks are committed in `SCALE001_CGROUP_40210109062.json` and `SCALE001_CGROUP_40210109062_MEMORY.jsonl.gz`. Warm/incremental/cancellation/fresh-worker/concurrent-tenant/full-output-equivalence are **NOT_RUN** for the large workload. The interrupted baseline is not a valid complete golden result. **Verdict at this head: BLOCKED.**
+
+The next bounded correction also spills pre-quality finding payloads (previously resident throughout parsing). A verified 256 MB collection-budget rejection motivates testing an explicitly configured **512,000,000-byte per-collection disk budget**; the process-tree memory limit remains 768,000,000 with zero swap. Default spill budget remains 256 MB, configurable up to the existing 2 GB upper bound. This changes disk allowance, not worker RAM or parser budgets. Metadata/index/free-page overhead is additional disk use. Failure diagnostics now include fixed collection/budget/count fields and owned stack module/function/line only, never source text, locals or credentials.
+
+A separate observed cost regression required correction: with 1,001 owned typed signals and 20 claims, repeated full scans decrypted **40,040 rows** (0.482 s, plain-list control 0.0013 s). Scoped HMAC-tagged type/exact/import-root indexes reduce that case to **20 decryptions** (0.0020 s), with identical complete verdicts/fingerprints/evidence. Verifiers still apply their original predicates, preserve every match/duplicate and include every affirmative authentication mode. Unknown evidence remains unknown. The index values are not plaintext. This is a typed-result index, not an uncontained source parser. Raw cost receipts are in `SCALE001_SIGNAL_LOOKUP.json`; this does not establish large-repository throughput.
+
+Local index/auth/storage selection: **57 passed**; broader current streaming/repository/quality/auth selection: **118 passed**; generation/cache/index selection: **95 passed** (overlapping selections, do not sum). New current-head CI and full constrained results remain mandatory. Global quality/output/correlation/serialization architecture is still not fully bounded; increasing disk allowance must not be presented as closing SCALE-001.
+
+The post-correction owned 20-file cold/warm/one-file-change run also completes with identical complete semantic fingerprints against 243513ee (source inventories, parser artifacts, snapshot/quality projections and every scoped evidence/claim/finding/dependency/node/edge). Raw receipts are retained in `SCALE001_STREAM_EQUIVALENCE_20.json`. It has no memory enforcement and uses development mode on owned inert input; it is not the large qualification. No rows are filtered to obtain equality.

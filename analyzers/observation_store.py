@@ -6,6 +6,7 @@ This bounds resident observation payloads, not every global analyzer index.
 """
 
 import json
+import os
 import sqlite3
 import uuid
 import weakref
@@ -16,16 +17,20 @@ from cryptography.fernet import Fernet
 
 
 class ObservationBudgetExceeded(ValueError):
-    pass
+    def __init__(self, message, *, budget=None, maximum=None, actual=None, rows=None, collection=None):
+        super().__init__(message)
+        self.budget, self.maximum, self.actual, self.rows, self.collection = budget, maximum, actual, rows, collection
 
 
 class EncryptedRows(list):
     # A list subclass is intentional: the existing streaming JSON encoders can
     # iterate rows without materializing them. All ordinary mutation is rejected.
-    def __init__(self, scope, *, maximum_bytes=256_000_000, row_bytes=32_000_000):
+    def __init__(self, scope, *, maximum_bytes=None, row_bytes=32_000_000):
         super().__init__()
+        maximum_bytes = int(os.getenv("ANALYSIS_OBSERVATION_SPILL_BYTES", "256000000")) if maximum_bytes is None else maximum_bytes
         if not 1 <= row_bytes <= maximum_bytes <= 2_000_000_000:
             raise ValueError("Observation spill budgets are invalid.")
+        self.label = "OBSERVATIONS"
         self.scope = tuple(scope)
         self.identity = str(uuid.uuid4())
         self.key = Fernet(Fernet.generate_key())
@@ -61,14 +66,16 @@ class EncryptedRows(list):
         for part in json.JSONEncoder(ensure_ascii=True, separators=(",", ":")).iterencode(envelope):
             encoded = part.encode()
             if len(raw) + len(encoded) > self.row_bytes:
-                raise ObservationBudgetExceeded("Typed observation exceeds its spill row budget.")
+                raise ObservationBudgetExceeded("Typed observation exceeds its spill row budget.", budget="ROW_BYTES",
+                    maximum=self.row_bytes, actual=len(raw) + len(encoded), rows=self._count, collection=self.label)
             raw.extend(encoded)
         return self.key.encrypt(bytes(raw))
 
     def append(self, value):
         ciphertext = self._encrypted(self._count, value)
         if self.bytes + len(ciphertext) > self.maximum_bytes:
-            raise ObservationBudgetExceeded("Typed observations exceed the attempt spill byte budget.")
+            raise ObservationBudgetExceeded("Typed observations exceed the attempt spill byte budget.", budget="COLLECTION_BYTES",
+                maximum=self.maximum_bytes, actual=self.bytes + len(ciphertext), rows=self._count, collection=self.label)
         self.connection.execute("INSERT INTO rows VALUES (?, ?)", (self._count, ciphertext))
         self._count += 1
         self.bytes += len(ciphertext)
@@ -81,7 +88,8 @@ class EncryptedRows(list):
         ciphertext = self._encrypted(position, value)
         size = self.bytes - old[0] + len(ciphertext)
         if size > self.maximum_bytes:
-            raise ObservationBudgetExceeded("Typed observations exceed the attempt spill byte budget.")
+            raise ObservationBudgetExceeded("Typed observations exceed the attempt spill byte budget.", budget="COLLECTION_BYTES",
+                maximum=self.maximum_bytes, actual=size, rows=self._count, collection=self.label)
         self.connection.execute("UPDATE rows SET ciphertext=? WHERE ordinal=?", (ciphertext, position))
         self.bytes = size
 
@@ -169,6 +177,7 @@ class EncryptedMapping:
     def __init__(self, scope):
         import secrets
         self.rows = EncryptedRows(scope)
+        self.rows.label = "FINDING_WORKING_STATE"
         self.secret = secrets.token_bytes(32)
         self.rows.connection.execute("CREATE TABLE keys (key BLOB PRIMARY KEY, ordinal INTEGER UNIQUE NOT NULL)")
 
@@ -210,3 +219,66 @@ class EncryptedMapping:
 
     def close(self):
         self.rows.close()
+
+
+class SignalRows(EncryptedRows):
+    """Private exact/type indexes avoid decrypting every signal for each claim.
+
+    Values and import roots are HMAC tags, not plaintext source-derived values.
+    Verifiers still apply their original predicates to the selected typed rows.
+    """
+    VALUE_TYPES = {"technology", "database", "import", "auth", "auth_hint", "route", "authorization",
+                   "infrastructure", "testing", "ci", "security_control", "configuration"}
+
+    def __init__(self, scope):
+        import secrets
+        super().__init__(scope)
+        self.index_key = secrets.token_bytes(32)
+        self.connection.execute("CREATE TABLE signal_lookup (ordinal INTEGER PRIMARY KEY, kind BLOB, exact BLOB, root BLOB)")
+        self.connection.execute("CREATE INDEX signal_exact ON signal_lookup(kind,exact,ordinal)")
+        self.connection.execute("CREATE INDEX signal_root ON signal_lookup(kind,root,ordinal)")
+
+    def _tag(self, value):
+        import hashlib
+        import hmac
+        return hmac.digest(self.index_key, value.encode(), hashlib.sha256)
+
+    def append(self, value):
+        if not isinstance(value, dict) or not isinstance(value.get("type"), str):
+            raise ValueError("Typed signal has no valid type.")
+        kind, material = value["type"], value.get("value")
+        if kind in self.VALUE_TYPES and not isinstance(material, str):
+            raise ValueError("Verifier signal has no valid typed value.")
+        exact = self._tag(material.lower()) if isinstance(material, str) else None
+        root = self._tag(material.split(".", 1)[0].lower()) if kind == "import" else None
+        position = len(self)
+        super().append(value)
+        self.connection.execute("INSERT INTO signal_lookup VALUES (?,?,?,?)", (position, self._tag(kind), exact, root))
+
+    def _selected(self, query, parameters):
+        # Fetch ordinals lazily. The returned row keeps its original identity,
+        # provenance, context fields and order; nothing is synthesized/truncated.
+        cursor = self.connection.execute(query, parameters)
+        try:
+            for position, in cursor:
+                yield self[position]
+        finally:
+            cursor.close()
+
+    def types(self, kinds):
+        if not kinds:
+            return iter(())
+        tags = [self._tag(kind) for kind in sorted(kinds)]
+        return self._selected("SELECT ordinal FROM signal_lookup WHERE kind IN (" + ",".join("?" for _ in tags) + ") ORDER BY ordinal", tags)
+
+    def verifier_inputs(self, kinds, expected, aliases):
+        if not kinds:
+            return iter(())
+        tags = [self._tag(kind) for kind in sorted(kinds)]
+        condition = "(kind IN (" + ",".join("?" for _ in tags) + ") AND exact=?)"
+        parameters = [*tags, self._tag(expected)]
+        if "import" in kinds:
+            roots = [self._tag(alias) for alias in sorted(aliases)]
+            condition += " OR (kind=? AND root IN (" + ",".join("?" for _ in roots) + "))"
+            parameters.extend([self._tag("import"), *roots])
+        return self._selected("SELECT ordinal FROM signal_lookup WHERE " + condition + " ORDER BY ordinal", parameters)

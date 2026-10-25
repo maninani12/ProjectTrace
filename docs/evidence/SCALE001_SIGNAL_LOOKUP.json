@@ -1,0 +1,21 @@
+{
+  "scope": "OWNED_TYPED_SIGNAL_COST_PROBE; no source execution or publication",
+  "before": {
+    "scope": "OWNED_TYPED_SIGNAL_COST_PROBE; no source execution or publication",
+    "signals": 1001,
+    "claims": 20,
+    "plain_seconds": 0.0013015250001444656,
+    "spooled_seconds": 0.48235304000036194,
+    "decrypted_rows": 40040,
+    "verdicts_identical": true,
+    "spool_closed_after_probe": true
+  },
+  "after": {
+    "signals": 1001,
+    "claims": 20,
+    "seconds": 0.001999355999942054,
+    "decrypted_rows": 20,
+    "verdicts_identical": true
+  },
+  "large_repository_throughput": "UNMEASURED"
+}

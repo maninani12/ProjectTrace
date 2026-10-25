@@ -9,6 +9,7 @@ import json
 import re
 
 from analyzers import sandbox
+from analyzers.observation_store import SignalRows
 
 TECHNOLOGIES = {
     "fastapi": ("FastAPI", "TECHNOLOGY", {"fastapi"}),
@@ -188,9 +189,10 @@ class Verifier:
     def inputs(self, claim, signals, dependencies):
         expected = claim["expected"].lower()
         aliases = TECHNOLOGIES.get(expected, (expected, "", {expected}))[2] | {expected}
+        candidates = signals.verifier_inputs(self.signal_types, expected, aliases) if isinstance(signals, SignalRows) else signals
         selected = [
             s
-            for s in signals
+            for s in candidates
             if s["type"] in self.signal_types
             and (
                 s["value"].lower() == expected or s["type"] == "import" and s["value"].split(".")[0].lower() in aliases
@@ -230,10 +232,11 @@ class AuthenticationVerifier(Verifier):
         selected, deps = super().inputs(claim, signals, dependencies)
         if claim["expected"] == "session":
             selected.extend(
-                s for s in signals if s["type"] == "auth_hint" and "session" in s["value"].lower() and s not in selected
+                s for s in (signals.types({"auth_hint"}) if isinstance(signals, SignalRows) else signals) if s["type"] == "auth_hint" and "session" in s["value"].lower() and s not in selected
             )
         # All affirmative configured modes are inputs to an exclusivity comparison.
-        return [s for s in signals if s["type"] == "auth"] + [s for s in selected if s["type"] != "auth"], deps
+        affirmative = signals.types({"auth"}) if isinstance(signals, SignalRows) else signals
+        return [s for s in affirmative if s["type"] == "auth"] + [s for s in selected if s["type"] != "auth"], deps
 
     def evaluate(self, claim, signals, dependencies):
         modes = {s["value"] for s in signals if s["type"] == "auth"}

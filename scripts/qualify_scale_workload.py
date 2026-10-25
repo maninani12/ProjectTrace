@@ -188,6 +188,13 @@ def main():
                 receipt["scenarios"][name] = "FAILED"
         receipt["error_type"] = type(error).__name__  # no source/traceback/key leakage
         receipt["error_code"] = getattr(error, "code", None)
+        if hasattr(error, "budget"):
+            receipt["safe_budget_diagnostic"] = {k: getattr(error, k, None) for k in
+                ("budget", "maximum", "actual", "rows", "collection")}
+        import traceback
+        receipt["owned_stack"] = [{"module": Path(frame.f_code.co_filename).name,
+                                  "function": frame.f_code.co_name, "line": line}
+                                 for frame, line in list(traceback.walk_tb(error.__traceback__))[-15:]]
         receipt["failed_stage"] = stage[0]
         try:
             with Session() as db:

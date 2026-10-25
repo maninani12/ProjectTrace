@@ -9,7 +9,7 @@ from sqlalchemy import select, text
 
 from analyzers.engine import PARSER_SIGNATURE, VERSION, analyze, native_observations
 from analyzers.infrastructure_deep import config
-from analyzers.observation_store import EncryptedRows
+from analyzers.observation_store import EncryptedRows, SignalRows
 from analyzers.performance import Performance
 from backend.db import ParserArtifact
 from backend.domain import add
@@ -31,24 +31,26 @@ def analyze_inventory(db, files, *, progress=None, verification_context=None, pr
     if not isinstance(files, RepositoryFiles) or files.native_only:
         raise ValueError("Analysis requires an authorized complete inventory.")
     scope = (files.organization_id, files.repository_id, files.inventory_id)
-    signals, metrics = EncryptedRows(scope), EncryptedRows(scope)
+    signals, metrics, findings = SignalRows(scope), EncryptedRows(scope), EncryptedRows(scope)
+    signals.label, metrics.label, findings.label = "NATIVE_SIGNALS", "NATIVE_METRICS", "NATIVE_FINDINGS"
     try:
-        return _analyze_inventory(db, files, signals, metrics, progress=progress,
+        return _analyze_inventory(db, files, signals, metrics, findings, progress=progress,
                                   verification_context=verification_context, profile=profile)
     except BaseException:
         signals.close()
         raise
     finally:
         metrics.close()
+        findings.close()
 
 
-def _analyze_inventory(db, files, signals, metrics, *, progress, verification_context, profile):
+def _analyze_inventory(db, files, signals, metrics, findings, *, progress, verification_context, profile):
     started = time.perf_counter()
     performance = getattr(progress, "performance", None) or Performance()
     native = files.view(native_only=True)
     quota, settings = limits(), config((profile or {}).get("infrastructure"))
     # Source is bounded by a partition. Aggregate collections contain observations only.
-    findings, warnings, assets, failures, cache, reused = [], [], [], set(), {}, 0
+    warnings, assets, failures, cache, reused = [], [], set(), {}, 0
     batch, size, partitions, max_files, max_bytes, hits, misses = [], 0, 0, 0, 0, 0, 0
 
     def parse_partition():
@@ -189,7 +191,8 @@ def _analyze_inventory(db, files, signals, metrics, *, progress, verification_co
     result["source_storage"]["observation_spill"] = {
         "scope": "ATTEMPT_PRIVATE_ENCRYPTED_TYPED_ROWS",
         "signal_rows": len(signals), "metric_rows": len(metrics),
-        "ciphertext_bytes": signals.bytes + metrics.bytes,
+        "pre_quality_finding_rows": len(findings),
+        "ciphertext_bytes": signals.bytes + metrics.bytes + findings.bytes,
         "resident_sqlite_cache_bytes_per_collection": 1_048_576,
         "maximum_ciphertext_bytes_per_collection": signals.maximum_bytes,
         "global_memory_qualification": "NOT_QUALIFIED",
