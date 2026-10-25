@@ -177,6 +177,11 @@ def dispatch(operation, value, engine, sandbox):
             rows = lexical_worker.describe(value["rows"])
             rows[0]["path"] = "other-tenant.py"
             return rows
+        if operation == "lexical_probe_wrong_document":
+            return [[{"text": "Backend uses FastAPI.", "category": "TECHNOLOGY", "expected": "fastapi",
+                      "path": "other-tenant.md", "line": 1, "assertion_family": "declaration"}], []]
+        if operation == "lexical_probe_wrong_manifest":
+            return [[{"path": "other-tenant/package.json"}], []]
         if operation == "lexical_describe":
             return lexical_worker.describe(value["rows"])
         if operation == "lexical_classify":

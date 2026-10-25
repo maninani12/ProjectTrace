@@ -19,10 +19,10 @@ def manifest_path(path):
 
 def inventory(files):
     if sandbox.required():
-        from analyzers.isolated_analysis import partitions
+        from analyzers.isolated_analysis import partitions, source_reply
         rows, messages = [], []
         for batch in partitions(files, selected=(p for p in files if manifest_path(p))):
-            result, warnings = sandbox.call("inventory", {"files": batch})
+            result, warnings = source_reply("inventory", batch)
             rows.extend(result)
             messages.extend(warnings)
         return rows, messages

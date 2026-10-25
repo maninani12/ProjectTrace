@@ -10,6 +10,40 @@ from analyzers import sandbox
 from analyzers.parser_protocol import completed_packets
 
 
+def source_reply(operation, files, **options):
+    value = sandbox.call(operation, {"files": files, **options})
+    if not isinstance(value, list) or len(value) != 2:
+        raise sandbox.SandboxFailure("HELPER_RESULT_SCHEMA")
+    rows, warnings = value
+    validate_source_rows(rows, warnings, files, documentation=operation == "documentation")
+    return rows, warnings
+
+
+def validate_source_rows(rows, warnings, files, *, documentation=False):
+    """Parent identity/schema gate, independent of helper implementation correctness."""
+    if not isinstance(rows, list) or not isinstance(warnings, list):
+        raise sandbox.SandboxFailure("HELPER_RESULT_SCHEMA")
+    for warning in warnings:
+        if not isinstance(warning, dict) or warning.get("path") not in (*files, None):
+            raise sandbox.SandboxFailure("HELPER_WARNING_SCOPE")
+    for row in rows:
+        if not isinstance(row, dict) or not isinstance(row.get("path"), str) or row["path"] not in files:
+            raise sandbox.SandboxFailure("HELPER_RESULT_SCOPE")
+        if documentation:
+            if (set(row) != {"text", "category", "expected", "path", "line", "assertion_family"}
+                    or any(not isinstance(row[key], str) for key in ("text", "category", "expected"))
+                    or row["assertion_family"] != "declaration" or type(row["line"]) is not int
+                    or not 1 <= row["line"] <= len(files[row["path"]].splitlines())):
+                raise sandbox.SandboxFailure("HELPER_DOCUMENT_SCHEMA")
+        elif (set(row) != {"name", "version", "ecosystem", "path", "direct", "dependency_kind", "manifest", "version_kind", "license"}
+                or row["manifest"] != row["path"] or any(not isinstance(row[key], str) for key in ("name", "version", "ecosystem"))
+                or len(row["name"]) > 200 or len(row["version"]) > 100
+                or type(row["direct"]) not in {bool, type(None)}
+                or row["dependency_kind"] not in ("DIRECT", "TRANSITIVE", "UNKNOWN")
+                or row["version_kind"] not in ("EXACT", "CONSTRAINT")):
+            raise sandbox.SandboxFailure("HELPER_MANIFEST_SCHEMA")
+
+
 def partitions(files, *, selected=None, maximum=2_000_000):
     batch, size = {}, 0
     for path in selected if selected is not None else files:
@@ -165,7 +199,9 @@ def documentation(files, *, diagnostics=None, limit=1501):
     result, batch, size, scanned, count = [], {}, 0, 0, 0
 
     def flush():
-        rows, warnings = sandbox.call("documentation", {"files": batch, "limit": max(1, limit - len(result))})
+        rows, warnings = source_reply("documentation", batch, limit=max(1, limit - len(result)))
+        if len(rows) > max(1, limit - len(result)):
+            raise sandbox.SandboxFailure("HELPER_DOCUMENT_BUDGET")
         result.extend(rows)
         messages.extend(warnings)
     for path in files:

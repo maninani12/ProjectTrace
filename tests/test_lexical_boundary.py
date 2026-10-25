@@ -123,4 +123,33 @@ def test_diff_schema_rejects_out_of_range_or_unordered_results(monkeypatch, rang
         changed_ranges("a.py", "old", "new")
 
 
+@pytest.mark.parametrize("row,warnings,code", [
+    ({"path": "foreign.md"}, [], "HELPER_RESULT_SCOPE"),
+    ({"path": "README.md", "text": "x", "category": "TECHNOLOGY", "expected": "fastapi", "line": 999,
+      "assertion_family": "declaration"}, [], "HELPER_DOCUMENT_SCHEMA"),
+    ({"path": "README.md"}, [{"path": "foreign.md"}], "HELPER_WARNING_SCOPE"),
+])
+def test_document_result_identity_and_line_contract_is_independently_validated(row, warnings, code):
+    from analyzers.isolated_analysis import validate_source_rows
+    with pytest.raises(sandbox.SandboxFailure, match=code):
+        validate_source_rows([row], warnings, {"README.md": "Owned\n"}, documentation=True)
+
+
+@pytest.mark.parametrize("value", [None, {}, [[], [], []]])
+def test_source_result_rejects_malformed_envelope(monkeypatch, value):
+    from analyzers.isolated_analysis import source_reply
+    monkeypatch.setattr(sandbox, "call", lambda *_args, **_kwargs: value)
+    with pytest.raises(sandbox.SandboxFailure, match="HELPER_RESULT_SCHEMA"):
+        source_reply("documentation", {"README.md": "Owned"})
+
+
+def test_manifest_parent_validation_preserves_legacy_json_license_metadata():
+    from analyzers.isolated_analysis import validate_source_rows
+    row = {"path": "package-lock.json", "manifest": "package-lock.json", "name": "owned", "version": "1.0.0",
+           "ecosystem": "npm", "direct": True, "dependency_kind": "DIRECT", "version_kind": "EXACT",
+           "license": {"type": "MIT", "url": "https://example.invalid/license"}}
+    validate_source_rows([row], [], {"package-lock.json": "{}"})
+    assert row["license"]["type"] == "MIT"
+
+
 from tests.test_repository_store import storage  # noqa: E402,F401 -- shared owned SQLite fixture

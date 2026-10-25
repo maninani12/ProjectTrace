@@ -140,6 +140,19 @@ def test_actual_worker_scope_substitution_is_rejected(monkeypatch):
         describe_one("owned.py", "pass\n")
 
 
+@pytest.mark.parametrize("operation,probe", [("documentation", "lexical_probe_wrong_document"),
+                                          ("inventory", "lexical_probe_wrong_manifest")])
+def test_actual_legacy_helper_reply_cannot_substitute_another_source_scope(monkeypatch, operation, probe):
+    from analyzers.baseline import inventory
+    from analyzers.isolated_analysis import documentation
+    invoke = sandbox.invoke
+    def routed(current, value, **limits):
+        return invoke(probe if current == operation else current, value, **limits)
+    monkeypatch.setattr(sandbox, "invoke", routed)
+    with pytest.raises(sandbox.SandboxFailure, match="HELPER_RESULT_SCOPE"):
+        (documentation if operation == "documentation" else inventory)({"README.md": "Backend uses FastAPI.", "package.json": "{}"})
+
+
 def test_coordinator_redacts_real_helper_output_without_trusting_worker_sanitization():
     value = sandbox.call("lexical_probe_metadata", {})
     encoded = json.dumps(value)
