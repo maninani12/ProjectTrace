@@ -15,7 +15,7 @@ import sys
 import time
 from pathlib import Path
 
-POLICY = "linux-landlock-seccomp-v1"
+POLICY = "linux-landlock-seccomp-v2-lexical"
 ACTIVE = False  # Set only by the owned bootstrap after enforcement and probes.
 
 
@@ -42,7 +42,7 @@ def cache_policy():
     # Tag import-time signatures without turning an unrelated module import
     # into parsing. Invalid/production downgrade modes still fail at entry.
     selected = os.getenv("PROJECTTRACE_PARSER_ISOLATION", "required" if sys.platform == "linux" else "development")
-    return POLICY if selected == "required" or os.getenv("APP_ENV") == "production" else "development-uncontained-v1"
+    return POLICY if selected == "required" or os.getenv("APP_ENV") == "production" else "development-uncontained-v2-lexical"
 
 
 def status():
@@ -181,9 +181,21 @@ def call(operation, value, **limits):
         raise SandboxFailure("HELPER_PROTOCOL") from None
     if isinstance(result, dict) and result.get("ok") is False and result.get("code") == "SOURCE_SYNTAX_FAILED":
         raise SandboxFailure("SOURCE_SYNTAX_FAILED")
+    if isinstance(result, dict) and result.get("ok") is False and result.get("code") in {
+        "CODEOWNERS_SOURCE_BUDGET", "CODEOWNERS_INPUT_BUDGET", "CODEOWNERS_PATTERN_BUDGET", "CODEOWNERS_MATCH_BUDGET",
+        "SECTIONS_SOURCE_BUDGET", "LEXICAL_FILE_BUDGET",
+    }:
+        raise SandboxFailure(result["code"])
     if not isinstance(result, dict) or result.get("ok") is not True or "result" not in result:
         raise SandboxFailure("HELPER_OPERATION_FAILED")
-    return result["result"]
+    value = result["result"]
+    if operation.startswith("lexical_") or operation in {"python", "identity", "inventory", "documentation", "coverage", "metrics", "structure", "flows"}:
+        from analyzers.sanitization import metadata
+        try:
+            value = metadata(value)
+        except ValueError:
+            raise SandboxFailure("HELPER_UNSAFE_METADATA") from None
+    return value
 
 
 def parse_json(source):

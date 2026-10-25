@@ -97,16 +97,14 @@ def hash_text(text):
 
 
 def redact(text):
-    text = PRIVATE_RE.sub("[REDACTED PRIVATE KEY]", text)
-    text = re.sub(r"(?i)((?:postgres(?:ql)?|mysql|mongodb)(?:\+\w+)?://[^\s/:]+:)[^\s/@]+(@)", r"\1[REDACTED]\2", text)
-    text = re.sub(
-        r"(?m)^(?:[A-Z_]*(?:PASSWORD|TOKEN|SECRET|API_KEY))\s*=\s*[^\n]+$", "[REDACTED ENVIRONMENT SECRET]", text
-    )
-    text = ENV_SECRET_RE.sub("[REDACTED ENVIRONMENT SECRET]", text)
-    return SECRET_RE.sub("[REDACTED SECRET]", text)
+    from analyzers.sanitization import redact as trusted_redact
+    return trusted_redact(text)
 
 
 def is_iac_source(path, source):
+    if sandbox.required():
+        from analyzers.lexical import describe_one
+        return describe_one(path, source)["iac_candidate"]
     return (
         path.endswith((".yml", ".yaml", ".tf", ".tf.json"))
         or path.endswith(".json")
@@ -117,13 +115,8 @@ def is_iac_source(path, source):
 
 def redact_metadata(value):
     """Mask credential-shaped strings throughout persisted native metadata."""
-    if isinstance(value, str):
-        return redact(value)
-    if isinstance(value, dict):
-        return {redact(str(key)): redact_metadata(item) for key, item in value.items()}
-    if isinstance(value, list):
-        return [redact_metadata(item) for item in value]
-    return value
+    from analyzers.sanitization import metadata
+    return metadata(value)
 
 
 def safe_path(path):
@@ -1275,59 +1268,11 @@ def analyze(
         )
     if performance:
         performance.record("CLAIM_VERIFICATION", time.perf_counter() - component_started)
-    storage = [
-        item
-        for item in assets
-        if item["kind"] in {"aws_s3_bucket", "AWS::S3::Bucket", "google_storage_bucket", "azurerm_storage_container"}
-    ]
-    for path in files:
-        if not path.endswith(".md"):
-            continue
-        source = files[path]
-        fenced = False
-        for line, content in enumerate(source.splitlines(), 1):
-            if content.strip().startswith("```"):
-                fenced = not fenced
-            if fenced or not re.search(r"^\s*(?:[-*]\s+)?(?:Production\s+)?storage is private[.!]?\s*$", content, re.I):
-                continue
-            scoped_storage = storage
-            if content.strip().lower().startswith("production"):
-                scoped_storage = [
-                    item
-                    for item in storage
-                    if item.get("environment") in {"prod", "production"}
-                    or re.search(r"(?:^|[._/-])(?:prod|production)(?:$|[._/-])", item["identity"].lower())
-                ]
-            public = [item for item in scoped_storage if item["public"] == "DECLARED_PUBLIC"]
-            claims.append(
-                {
-                    "text": content.strip(),
-                    "origin": "DOCUMENTATION",
-                    "category": "CLOUD_SECURITY",
-                    "expected": "private_storage",
-                    "assertion_family": "storage_privacy",
-                    "path": path,
-                    "line": line,
-                    "status": "CONTRADICTED" if public else "UNVERIFIED",
-                    "reason": "A supported storage declaration explicitly permits public access. This contradicts the broad assertion within the declared configuration scope; live deployment is unobserved."
-                    if public
-                    else "The supported inventory does not establish storage privacy in the assertion's environment scope; complete policy and deployed access are unobserved.",
-                    "signals": [
-                        {
-                            "path": item["path"],
-                            "line": item["line"],
-                            "type": "cloud_resource",
-                            "value": item["identity"],
-                        }
-                        for item in public
-                    ],
-                    "severity": "HIGH",
-                    "confidence": "HIGH" if public else "LOW",
-                    "review_status": "OPEN",
-                    "verifier": "NATIVE_STATIC_STORAGE_PRIVACY",
-                    "verification_scope": "DECLARED_CONFIGURATION",
-                }
-            )
+    if sandbox.required():
+        from analyzers.lexical import storage_claims
+    else:
+        from analyzers.lexical_worker import storage_claims
+    claims.extend(storage_claims(files, assets))
     duplicates = {}
     for metric in quality_metrics:
         if metric["token_count"] >= 30:
@@ -1384,12 +1329,16 @@ def analyze(
         claim.setdefault("claim_key", claim_key(claim))
     py_files = sum(path.endswith(".py") for path in files)
     pattern_files = sum(path.endswith((".js", ".ts", ".jsx", ".tsx", ".java", ".mjs", ".cjs")) for path in files)
-    iac_files = sum(
+    if sandbox.required():
+        from analyzers.lexical import describe
+        iac_files = sum(row["iac_candidate"] for row in describe(files).values())
+    else:
+        iac_files = sum(
         files.metadata_for(path).get("iac_candidate", bool(files.metadata_for(path).get("infrastructure_format")))
         if hasattr(files, "metadata_for")
         else is_iac_source(path, files[path])
         for path in files
-    )
+        )
     manifest_files = sum(
         PurePosixPath(path).name
         in {

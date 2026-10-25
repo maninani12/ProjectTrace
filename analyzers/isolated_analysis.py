@@ -27,12 +27,14 @@ def partitions(files, *, selected=None, maximum=2_000_000):
 
 
 def native(files, cache, settings, *, performance=None):
-    from analyzers.engine import PARSER_SIGNATURE, VERSION, finding, hash_text, is_iac_source
+    from analyzers.engine import PARSER_SIGNATURE, RULES, VERSION, finding, hash_text
     from analyzers.infrastructure import structured_iac_batch
     from analyzers.infrastructure_deep import config
     from analyzers.languages import LANGUAGES, analyze_languages
 
     sandbox.require_runtime()
+    from analyzers.lexical import describe
+    lexical = describe(files)
     settings = settings or config(None)
     signature = hash_text(json.dumps(settings, sort_keys=True))
     records, pending = {}, []
@@ -40,7 +42,7 @@ def native(files, cache, settings, *, performance=None):
         old = (cache or {}).get(path, {})
         metadata = files.metadata_for(path) if hasattr(files, "metadata_for") else None
         content_hash = files.hash_for(path) if metadata else hash_text(files[path])
-        iac = metadata.get("iac_candidate", bool(metadata.get("infrastructure_format"))) if metadata else is_iac_source(path, files[path])
+        iac = lexical[path]["iac_candidate"]
         reusable = (old.get("hash") == content_hash and old.get("version") == VERSION
                     and old.get("parser_signature") == PARSER_SIGNATURE and not old.get("warnings")
                     and not any(row.get("rule") == "PT-PARSE-001" for row in old.get("findings", []))
@@ -49,7 +51,8 @@ def native(files, cache, settings, *, performance=None):
             pending.append(path)
             continue
         started = time.perf_counter()
-        previous = copy.deepcopy(old)
+        from analyzers.sanitization import metadata as sanitize
+        previous = sanitize(copy.deepcopy(old))
         records[path] = [previous["findings"], previous["signals"], [], previous.get("assets", []),
                          previous.get("quality_metrics", []), [], {path: previous}, 1]
         if any(path.endswith(".py") and row.get("identity_confidence") != "HIGH" for row in previous["findings"]):
@@ -62,7 +65,7 @@ def native(files, cache, settings, *, performance=None):
     parsed = {"languages": {}, "iac": {}}
     if cold:
         languages = {p: s for p, s in cold.items() if any(p.endswith(suffix) for suffix in LANGUAGES)}
-        iac = {p: s for p, s in cold.items() if is_iac_source(p, s)}
+        iac = {p: s for p, s in cold.items() if lexical[p]["iac_candidate"]}
         with ThreadPoolExecutor(max_workers=2) as pool:
             syntax = pool.submit(analyze_languages, languages, performance=performance)
             infrastructure = pool.submit(structured_iac_batch, iac, finding, settings, performance=performance)
@@ -82,7 +85,7 @@ def native(files, cache, settings, *, performance=None):
                 # consumers, including IaC when its parsed input was prepared
                 # successfully but the combined observation never completed.
                 affected = {"PARSING", "QUALITY", "SAST", "SECRETS", "CLAIMS"}
-                if is_iac_source(path, batch[path]):
+                if lexical[path]["iac_candidate"]:
                     affected.add("IAC")
                 if path.endswith((".py", ".json")):
                     affected.add("API")
@@ -91,13 +94,25 @@ def native(files, cache, settings, *, performance=None):
                     [], [], sorted(affected), {}, 0]
                 continue
             row = rows[path]
-            if not isinstance(row, list) or len(row) != 9 or set(row[6]) != {path}:
+            if (not isinstance(row, list) or len(row) != 9 or not isinstance(row[6], dict) or set(row[6]) != {path}
+                    or any(not isinstance(values, list) for values in row[:6]) or type(row[7]) is not int or row[7] != 0):
                 raise sandbox.SandboxFailure("HELPER_SCOPE")
-            if row[6][path].get("hash") != hashlib.sha256(batch[path].encode()).hexdigest():
+            artifact = row[6][path]
+            if (not isinstance(artifact, dict) or set(artifact) != {"hash", "version", "parser_signature", "findings",
+                    "signals", "assets", "quality_metrics", "warnings", "infrastructure_signature"}
+                    or artifact["version"] != VERSION or artifact["parser_signature"] != PARSER_SIGNATURE
+                    or artifact["infrastructure_signature"] != signature
+                    or artifact["warnings"] != [w for w in row[2] if w.get("path") == path]
+                    or any(artifact[key] != row[index] for key, index in (("findings", 0), ("signals", 1), ("assets", 3), ("quality_metrics", 4)))):
+                raise sandbox.SandboxFailure("HELPER_CACHE_SCHEMA")
+            if artifact.get("hash") != hashlib.sha256(batch[path].encode()).hexdigest():
                 raise sandbox.SandboxFailure("HELPER_SOURCE_HASH")
             for values in row[:5]:
-                if any(item.get("path") not in {path, None} for item in values):
+                if any(not isinstance(item, dict) or item.get("path") not in {path, None} for item in values):
                     raise sandbox.SandboxFailure("HELPER_SCOPE")
+            for item in row[0]:
+                if item.get("rule") not in RULES or type(item.get("line")) is not int or not 1 <= item["line"] <= len(batch[path].splitlines()) + 1:
+                    raise sandbox.SandboxFailure("HELPER_FINDING_SCHEMA")
             records[path] = row[:8]
             if performance:
                 performance.merge(row[8])

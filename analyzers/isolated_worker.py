@@ -39,6 +39,9 @@ def prepare(operation):
     from analyzers.code_quality import coverage
     from backend.process_limits import self_limits
 
+    if operation.startswith("lexical_"):
+        import analyzers.lexical_worker  # noqa: F401 -- fixed trusted module before enforcement
+
     if operation.startswith("archive_") or operation == "legacy_zip":
         import analyzers.archive_parser  # noqa: F401 -- preload pure archive adapter
         import analyzers.archive_transport  # noqa: F401
@@ -143,7 +146,11 @@ def main():
     if packet["operation"] != operation:
         raise ValueError("Owned parser operation mismatch")
     value = packet["value"]
-    result = dispatch(operation, value, engine, sandbox)
+    try:
+        result = dispatch(operation, value, engine, sandbox)
+    except SandboxFailure as error:
+        sys.stdout.buffer.write(json.dumps({"ok": False, "code": error.code}).encode())
+        return
     if result is STREAMED:
         return
     if result is SOURCE_INVALID:
@@ -157,6 +164,39 @@ def main():
 
 def dispatch(operation, value, engine, sandbox):
     from analyzers.parser_protocol import emit_packet
+
+    if operation.startswith("lexical_"):
+        import hashlib
+
+        from analyzers import lexical_worker
+        if operation == "lexical_probe_metadata":
+            return {"nested": [{"value": "ghp_owned_fixture_abcdefghijklmnopqrstuvwxyz"}],
+                    "credentials": {"encoded_shape": ["owned-private-value"]},
+                    "dsn": "postgresql://owned:owned-private-password@localhost/owned"}
+        if operation == "lexical_probe_wrong_description":
+            rows = lexical_worker.describe(value["rows"])
+            rows[0]["path"] = "other-tenant.py"
+            return rows
+        if operation == "lexical_describe":
+            return lexical_worker.describe(value["rows"])
+        if operation == "lexical_classify":
+            return lexical_worker.classify(value)
+        if operation == "lexical_ownership":
+            return lexical_worker.ownership(value)
+        if operation == "lexical_sections":
+            if "files" in value:
+                return {p: {"hash": hashlib.sha256(s.encode()).hexdigest(),
+                            "sections": lexical_worker.sections({"path": p, "source": s,
+                                "hash": hashlib.sha256(s.encode()).hexdigest()})["sections"]}
+                        for p, s in value["files"].items()}
+            return lexical_worker.sections(value)
+        if operation == "lexical_storage":
+            return {"hashes": {p: hashlib.sha256(s.encode()).hexdigest() for p, s in value["files"].items()},
+                    "claims": lexical_worker.storage_claims(value["files"], value["assets"])}
+        if operation == "lexical_matches":
+            from analyzers.code_quality.classification import matches
+            return matches(value["path"], value["patterns"])
+        raise ValueError("Unknown installed lexical operation")
 
     if operation == "probe":
         return {"enforced": True, "policy": sandbox.POLICY}
