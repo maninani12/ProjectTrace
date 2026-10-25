@@ -75,6 +75,18 @@ def peak_memory():
     return resource.getrusage(resource.RUSAGE_SELF).ru_maxrss * (1 if sys.platform == "darwin" else 1024)
 
 
+def verify_database(database):
+    """A completed timing receipt is invalid if its stored evidence is damaged."""
+    import sqlite3
+    with sqlite3.connect("file:" + str(database.resolve()) + "?mode=ro", uri=True) as connection:
+        checked = connection.execute("PRAGMA integrity_check")
+        integrity = checked.fetchone() == ("ok",) and checked.fetchone() is None
+        violation = connection.execute("PRAGMA foreign_key_check").fetchone()
+    if not integrity or violation is not None:
+        raise ValueError("Owned benchmark database failed post-run integrity validation.")
+    return {"sqlite_integrity": "ok", "foreign_key_violations": 0}
+
+
 def source(index, lines, changed=False):
     body = [f"def transform_{index}(value):", f"    return value + {index + (999999 if changed else 0)}"]
     body.extend(f"CONFIG_{index}_{line} = {line}" for line in range(lines - 2))
@@ -493,9 +505,10 @@ def measure(args):
             base = SimpleNamespace(id=snapshot.id)
             db.expunge(snapshot)
             del snapshot, job, files
-        report["state"] = "MEASURED_SYNTHETIC_LOCAL"
-        save()
     engine.dispose()
+    report["database_integrity"] = verify_database(database)
+    report["state"] = "MEASURED_SYNTHETIC_LOCAL"
+    save()
 
 
 if __name__ == "__main__":

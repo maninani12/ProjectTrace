@@ -66,6 +66,46 @@ def test_spill_limits_never_truncate_or_mutate_previous_rows():
         rows.close()
 
 
+def test_metric_token_spill_compression_is_lossless_without_raising_budgets():
+    rows = EncryptedRows(("owned-compression",), maximum_bytes=50_000, row_bytes=40_000)
+    metric = {"path": "owned.py", "duplicate_tokens": [
+        {"value": "identifier:" + str(i % 11), "line": i // 5 + 1} for i in range(500)
+    ]}
+    try:
+        envelope = [rows.identity, list(rows.scope), 0, metric]
+        raw = json.dumps(envelope, ensure_ascii=True, separators=(",", ":")).encode()
+        legacy_ciphertext_size = len(rows.key.encrypt(raw))
+        rows.append(metric)
+        assert rows[0] == metric
+        assert rows.bytes < legacy_ciphertext_size / 2
+        assert rows.maximum_bytes == 50_000 and rows.row_bytes == 40_000
+        assert len(rows[0]["duplicate_tokens"]) == 500
+        assert json.loads(json.dumps(rows)) == [metric]
+    finally:
+        rows.close()
+
+
+@pytest.mark.parametrize("malformation", ["oversized", "truncated", "trailing", "unknown_encoding"])
+def test_authenticated_compressed_rows_reject_bombs_and_invalid_framing(malformation):
+    import zlib
+    rows = EncryptedRows(("owned-malformation",), maximum_bytes=4096, row_bytes=2048)
+    try:
+        rows.append({"preserved": True})
+        packed = b"PTZ1" + zlib.compress(b"x" * 4096 if malformation == "oversized" else b"[]")
+        if malformation == "truncated":
+            packed = packed[:-1]
+        elif malformation == "trailing":
+            packed += b"unexpected"
+        elif malformation == "unknown_encoding":
+            packed = b"UNKNOWN"
+        ciphertext = rows.key.encrypt(packed)  # ProjectTrace-owned corruption probe.
+        rows.connection.execute("UPDATE rows SET ciphertext=? WHERE ordinal=0", (ciphertext,))
+        with pytest.raises(ValueError, match="encoding|decoded row"):
+            rows[0]
+    finally:
+        rows.close()
+
+
 def test_spill_quality_preserves_duplication_symbols_findings_and_cache(monkeypatch):
     monkeypatch.setenv("PROJECTTRACE_PARSER_ISOLATION", "development")
     body = "def work(x):\n" + "".join(f"    value{i} = x + {i}\n" for i in range(15)) + "    return value0\n"

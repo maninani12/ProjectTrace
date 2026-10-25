@@ -10,6 +10,7 @@ import os
 import sqlite3
 import uuid
 import weakref
+import zlib
 from collections.abc import Sequence
 from itertools import zip_longest
 
@@ -69,7 +70,11 @@ class EncryptedRows(list):
                 raise ObservationBudgetExceeded("Typed observation exceeds its spill row budget.", budget="ROW_BYTES",
                     maximum=self.row_bytes, actual=len(raw) + len(encoded), rows=self._count, collection=self.label)
             raw.extend(encoded)
-        return self.key.encrypt(bytes(raw))
+        # Compress only our own bounded JSON envelope, before authentication.
+        # Token windows repeat JSON keys/values heavily; retaining their verbose
+        # representation exhausted the disk budget on the pinned workload.
+        # This changes no observation, ordering, row or ciphertext budget.
+        return self.key.encrypt(b"PTZ1" + zlib.compress(raw, level=1))
 
     def append(self, value):
         ciphertext = self._encrypted(self._count, value)
@@ -110,7 +115,14 @@ class EncryptedRows(list):
         row = self.connection.execute("SELECT ciphertext FROM rows WHERE ordinal=?", (position,)).fetchone()
         if row is None:
             raise ValueError("Observation spill row is missing.")
-        value = json.loads(self.key.decrypt(row[0]))
+        packed = self.key.decrypt(row[0])
+        if not packed.startswith(b"PTZ1"):
+            raise ValueError("Observation spill encoding is invalid.")
+        decoder = zlib.decompressobj()
+        raw = decoder.decompress(packed[4:], self.row_bytes + 1)
+        if (len(raw) > self.row_bytes or decoder.unconsumed_tail or not decoder.eof or decoder.unused_data):
+            raise ValueError("Observation spill decoded row exceeds its budget or encoding.")
+        value = json.loads(raw)
         if value[:3] != [self.identity, list(self.scope), position] or len(value) != 4:
             raise ValueError("Observation spill scope or ordinal is invalid.")
         return value[3]
