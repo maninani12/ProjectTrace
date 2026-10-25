@@ -151,8 +151,14 @@ def invoke(operation, value, *, seconds=30, maximum=16_000_000, input_maximum=32
     except OSError:
         raise SandboxFailure("ISOLATION_STARTUP") from None
     header, separator, packets = output.partition(b"\n")
+    validate_proof(header if separator else b"")
+    return packets, failure
+
+
+def validate_proof(header):
+    """Shared attestation validation for single-packet and streaming transports."""
     try:
-        proof = decode_packet(header) if separator and len(header) <= 4096 else {}
+        proof = decode_packet(header) if header and len(header) <= 4096 else {}
     except ValueError:
         proof = {}
     if not isinstance(proof, dict):
@@ -162,7 +168,7 @@ def invoke(operation, value, *, seconds=30, maximum=16_000_000, input_maximum=32
         if not isinstance(code, str) or not code.isupper() or len(code) > 60:
             code = "ISOLATION_NOT_ATTESTED"
         raise SandboxFailure(code or "ISOLATION_NOT_ATTESTED")
-    return packets, failure
+    return proof
 
 
 def call(operation, value, **limits):

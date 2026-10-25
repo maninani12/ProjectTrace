@@ -144,6 +144,7 @@ jobs:
         run: |
           mkdir -p "$PROJECTTRACE_SANDBOX_EVIDENCE"
           pytest -q integration_tests/test_parser_isolation.py --tb=short --junitxml="$PROJECTTRACE_SANDBOX_EVIDENCE/results.xml"
+          pytest -q integration_tests/test_archive_isolation.py tests/test_archive_safety.py --tb=short --junitxml="$PROJECTTRACE_SANDBOX_EVIDENCE/archive-results.xml"
           pytest -q tests/test_auth_drift.py tests/test_repository_store.py::test_partitioned_global_claims_and_network_policy_match_legacy tests/test_repository_store.py::test_unchanged_observations_require_no_source_decryption tests/test_repository_store.py::test_new_syntax_failure_is_not_persisted_as_reusable_artifact --tb=short --junitxml="$PROJECTTRACE_SANDBOX_EVIDENCE/regressions.xml"
       - name: Built non-root image must enforce the same boundary
         run: |

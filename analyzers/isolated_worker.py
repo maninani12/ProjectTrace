@@ -5,6 +5,8 @@ imported, evaluated, or used as a command/module/filesystem allowlist.
 """
 
 import ast
+import base64
+import codecs
 import ctypes
 import errno
 import json
@@ -36,6 +38,11 @@ def prepare(operation):
     from analyzers import engine, languages, sandbox
     from analyzers.code_quality import coverage
     from backend.process_limits import self_limits
+
+    if operation in {"archive_stream", "legacy_zip"}:
+        import analyzers.archive_parser  # noqa: F401 -- preload pure archive adapter
+        import analyzers.archive_transport  # noqa: F401
+        codecs.lookup("cp437")
 
     # Distribution discovery stats site-packages and reads dist-info. Resolve
     # these immutable installed versions before filesystem metadata is denied.
@@ -92,6 +99,8 @@ def main():
     operation = sys.argv[1]
     engine, sandbox, self_limits, read_paths, _library = prepare(operation)
     memory, cpu = (384 * 1024 * 1024, 10) if operation.startswith("iac") else (512 * 1024 * 1024, 25)
+    if operation == "archive_stream":
+        cpu = 120
     if operation == "probe_cpu":
         cpu = int(time.process_time()) + 2
     self_limits(memory, cpu)
@@ -110,6 +119,12 @@ def main():
              "denials": ["filesystem", "network", "exec", "metadata"]}
     sys.stdout.buffer.write(json.dumps(proof).encode() + b"\n")
     sys.stdout.buffer.flush()
+    if operation == "archive_stream":
+        configuration = sys.stdin.buffer.readline(8193)
+        if len(configuration) > 8192:
+            raise ValueError("Archive configuration budget")
+        archive_stream(json.loads(configuration))
+        return
     raw = sys.stdin.buffer.read(32_000_001)
     if len(raw) > 32_000_000:
         raise ValueError("Owned parser input budget exceeded")
@@ -124,7 +139,7 @@ def main():
         sys.stdout.buffer.write(b'{"ok": false, "code": "SOURCE_SYNTAX_FAILED"}')
         return
     output = json.dumps({"ok": True, "result": result}, ensure_ascii=True).encode()
-    if len(output) > 16_000_000:
+    if len(output) > (32_000_000 if operation == "legacy_zip" else 16_000_000):
         raise ValueError("Owned parser output budget exceeded")
     sys.stdout.buffer.write(output)
 
@@ -134,6 +149,14 @@ def dispatch(operation, value, engine, sandbox):
 
     if operation == "probe":
         return {"enforced": True, "policy": sandbox.POLICY}
+    if operation == "legacy_zip":
+        import zipfile
+        try:
+            files = engine.read_zip(base64.b64decode(value["archive"], validate=True), keep_excluded=value["keep_excluded"])
+            return {"files": {path: base64.b64encode(source.encode()).decode() for path, source in files.items()},
+                    "intake": files.intake}
+        except (ValueError, zipfile.BadZipFile):
+            return {"invalid_archive": True}
     if operation == "probe_denials":
         libc = ctypes.CDLL(None, use_errno=True)
         network = {}
@@ -258,6 +281,36 @@ def dispatch(operation, value, engine, sandbox):
                                 "PARTIAL" if result[2] else "COMPLETED", maximum=16_000_000, total=total)
         return STREAMED
     raise ValueError("Unknown installed parser operation")
+
+
+def archive_stream(configuration):
+    import hashlib
+    import zipfile
+    import zlib
+
+    from analyzers.archive_parser import archive_items
+    from analyzers.archive_transport import RemoteArchive
+    from backend.intake_errors import IntakeError
+
+    def emit(value):
+        raw = json.dumps(value, ensure_ascii=True).encode()
+        if len(raw) > 1_000_000:
+            raise ValueError("Archive output packet budget")
+        sys.stdout.buffer.write(raw + b"\n")
+        sys.stdout.buffer.flush()
+    try:
+        for path, value in archive_items(RemoteArchive(configuration["length"]), configuration["policy"],
+                                        validate_only=configuration["validate_only"]):
+            entry = {"path": path, "metadata": value} if isinstance(value, dict) else {
+                "path": path, "raw": base64.b64encode(value).decode(), "hash": hashlib.sha256(value).hexdigest()}
+            emit({"entry": entry})
+    except IntakeError as error:
+        emit({"error": error.detail()})
+        return
+    except (zipfile.BadZipFile, EOFError, RuntimeError, OSError, zlib.error, ValueError):
+        emit({"error": {"code": "ARCHIVE_INVALID"}})
+        return
+    emit({"done": True})
 
 
 if __name__ == "__main__":

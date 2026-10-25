@@ -191,6 +191,16 @@ def validate_files(files, *, keep_excluded=False):
 def read_zip(blob, *, keep_excluded=False):
     if len(blob) > MAX_TOTAL_BYTES:
         raise ValueError("Archive exceeds the 10 MB limit.")
+    if sandbox.required():
+        import base64
+        result = sandbox.call("legacy_zip", {"archive": base64.b64encode(blob).decode(),
+                                              "keep_excluded": keep_excluded}, maximum=32_000_000)
+        if result.get("invalid_archive"):
+            raise ValueError("Archive failed its isolated integrity or intake-policy check.")
+        files = SourceFiles({path: base64.b64decode(source, validate=True).decode("utf-8")
+                             for path, source in result["files"].items()})
+        files.intake = result["intake"]
+        return validate_files(files, keep_excluded=keep_excluded)
     files = SourceFiles()
     seen_paths = set()
     with zipfile.ZipFile(io.BytesIO(blob)) as archive:
