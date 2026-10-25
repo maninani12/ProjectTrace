@@ -256,6 +256,27 @@ def dispatch(operation, value, engine, sandbox):
             return json.loads(value["source"])
         except ValueError:
             return SOURCE_INVALID
+    if operation == "openapi_batch":
+        import hashlib
+
+        files = value["files"]
+        if (not isinstance(files, dict) or len(files) > 100
+                or sum(len(source.encode()) for source in files.values()) > 512_000):
+            raise ValueError("OpenAPI batch budget")
+        result = {}
+        for path, source in files.items():
+            if not path.endswith(".json") or len(source.encode()) > 512_000:
+                raise ValueError("OpenAPI source scope or budget")
+            invalid, contract = False, None
+            try:
+                parsed = json.loads(source)
+                if isinstance(parsed, dict) and "openapi" in parsed:
+                    contract = parsed
+            except ValueError:
+                invalid = True
+            result[path] = {"source_hash": hashlib.sha256(source.encode()).hexdigest(), "contract": contract,
+                            "invalid": invalid, "mentions_openapi": "openapi" in source.lower()}
+        return result
     if operation == "python":
         return engine.python_analysis(value["path"], value["source"])
     if operation == "identity":

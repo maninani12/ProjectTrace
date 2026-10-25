@@ -26,3 +26,21 @@ def test_failure_performance_keeps_aggregate_costs_without_exporting_file_detail
     assert result["counters"]["native_metric_rows"] == 11097
     assert "PRIVATE-SOURCE-SENTINEL" not in str(result)
     assert aggregate_performance({}) == {"stage_seconds": {}, "components": {}, "counters": {}}
+
+
+def test_post_exit_job_performance_recovers_committed_aggregates_without_source_details():
+    import json
+    import sqlite3
+
+    from scripts.run_scale_cgroup import durable_job_performance
+
+    with sqlite3.connect(":memory:") as db:
+        db.execute("CREATE TABLE records(kind TEXT,data TEXT)")
+        db.execute("INSERT INTO records VALUES ('job',?)", (json.dumps({"state": "EXTRACTING_CLAIMS",
+            "stage": "EXTRACTING_CLAIMS", "files": "PRIVATE-SOURCE-SENTINEL", "performance": {
+                "components": {"OPENAPI_CONTRACT_BATCH": {"seconds": 0.5, "count": 1}},
+                "slowest_file_operations": [{"path": "PRIVATE-SOURCE-SENTINEL"}]}}),))
+        result = durable_job_performance(db)
+    assert result[0]["state"] == "EXTRACTING_CLAIMS"
+    assert result[0]["performance"]["components"]["OPENAPI_CONTRACT_BATCH"]["count"] == 1
+    assert "PRIVATE-SOURCE-SENTINEL" not in str(result)

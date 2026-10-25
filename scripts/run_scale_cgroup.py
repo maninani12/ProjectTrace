@@ -8,6 +8,7 @@ import threading
 import time
 from pathlib import Path
 
+from scripts.qualify_scale_workload import aggregate_performance
 from scripts.scale_linux_resources import cgroup_diagnostics
 
 LIMIT = 768_000_000
@@ -15,6 +16,14 @@ LIMIT = 768_000_000
 
 def docker(*args, **kwargs):
     return subprocess.run(["docker", *args], check=True, capture_output=True, text=True, **kwargs).stdout.strip()
+
+
+def durable_job_performance(db):
+    """Latest committed aggregates survive a killed process; no source details."""
+    return [{"state": state, "stage": stage, "performance": aggregate_performance(json.loads(captured or "{}"))}
+            for state, stage, captured in db.execute(
+                "SELECT json_extract(data,'$.state'),json_extract(data,'$.stage'),"
+                "json_extract(data,'$.performance') FROM records WHERE kind='job'")]
 
 
 def main():
@@ -109,6 +118,8 @@ def main():
                         "generation_states": db.execute("SELECT state,count(*) FROM analysis_generations GROUP BY state").fetchall(),
                         "parser_artifacts": db.execute("SELECT count(*) FROM parser_artifacts").fetchone()[0],
                         "job_states": db.execute("SELECT json_extract(data,'$.state'),json_extract(data,'$.stage'),count(*) FROM records WHERE kind='job' GROUP BY 1,2").fetchall(),
+                        "durable_job_performance": durable_job_performance(db),
+                        "durable_performance_scope": "Latest committed aggregates; may precede process death, not a terminal receipt",
                         "scope": "Read-only post-exit inspection; not fresh-worker recovery",
                     }
                 (output / "post-exit-integrity.json").write_text(json.dumps(integrity, indent=2))

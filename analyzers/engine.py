@@ -1167,55 +1167,68 @@ def analyze(
                 "state": "FAILED",
             }
         )
+    if performance:
+        performance.record("DOCUMENTATION_CLAIMS", time.perf_counter() - component_started)
+    from analyzers.isolated_analysis import OpenAPIContracts
+    contracts = OpenAPIContracts(files, performance=performance,
+        checkpoint=(lambda: progress("EXTRACTING_CLAIMS")) if progress else None)
+    openapi_started = time.perf_counter()
     # JSON OpenAPI declarations enter the same evidence-grounded verifier pipeline.
-    for path in files:
-        if len(candidates) > 1500:
-            warnings.append(
-                {
-                    "analyzer": "CLAIMS",
-                    "state": "PARTIAL",
-                    "message": "OpenAPI/documentation candidate limit reached; remaining declarations are unmeasured.",
-                }
-            )
-            break
-        if not path.endswith(".json"):
-            continue
-        source = files[path]
-        try:
-            contract = sandbox.parse_json(source)
-            if not isinstance(contract, dict) or "openapi" not in contract:
-                continue
-            for route, methods in contract.get("paths", {}).items():
-                if len(candidates) > 1500:
-                    break
-                for method in methods:
-                    if len(candidates) > 1500:
-                        break
-                    if method.upper() not in {"GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"}:
-                        continue
-                    endpoint = method.upper() + " " + route
-                    candidates.append(
-                        {
-                            "text": f"API contract includes {endpoint}.",
-                            "origin": "DOCUMENTATION",
-                            "category": "API",
-                            "expected": endpoint,
-                            "path": path,
-                            "line": 1,
-                            "assertion_family": "api_contract",
-                        }
-                    )
-        except sandbox.SandboxFailure:
-            raise
-        except (ValueError, TypeError, AttributeError):
-            if "openapi" in source.lower():
+    try:
+        for path in files:
+            if len(candidates) > 1500:
                 warnings.append(
                     {
-                        "analyzer": "API",
-                        "path": path,
-                        "message": "OpenAPI contract could not be parsed; coverage is partial.",
+                        "analyzer": "CLAIMS",
+                        "state": "PARTIAL",
+                        "message": "OpenAPI/documentation candidate limit reached; remaining declarations are unmeasured.",
                     }
                 )
+                break
+            if not path.endswith(".json"):
+                continue
+            source_mentions_openapi = False
+            try:
+                contract, source_mentions_openapi, invalid = contracts.read(path)
+                if invalid:
+                    raise ValueError("OpenAPI source syntax is invalid")
+                if not isinstance(contract, dict) or "openapi" not in contract:
+                    continue
+                for route, methods in contract.get("paths", {}).items():
+                    if len(candidates) > 1500:
+                        break
+                    for method in methods:
+                        if len(candidates) > 1500:
+                            break
+                        if method.upper() not in {"GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"}:
+                            continue
+                        endpoint = method.upper() + " " + route
+                        candidates.append(
+                            {
+                                "text": f"API contract includes {endpoint}.",
+                                "origin": "DOCUMENTATION",
+                                "category": "API",
+                                "expected": endpoint,
+                                "path": path,
+                                "line": 1,
+                                "assertion_family": "api_contract",
+                            }
+                        )
+            except sandbox.SandboxFailure:
+                raise
+            except (ValueError, TypeError, AttributeError):
+                if source_mentions_openapi:
+                    warnings.append(
+                        {
+                            "analyzer": "API",
+                            "path": path,
+                            "message": "OpenAPI contract could not be parsed; coverage is partial.",
+                        }
+                    )
+    finally:
+        contracts.close()
+        if performance:
+            performance.record("OPENAPI_CLAIMS", time.perf_counter() - openapi_started)
     if progress:
         if performance:
             performance.record("CLAIM_EXTRACTION", time.perf_counter() - component_started)

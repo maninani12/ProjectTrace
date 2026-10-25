@@ -65,6 +65,94 @@ def partitions(files, *, selected=None, maximum=2_000_000):
         yield batch
 
 
+class OpenAPIContracts:
+    """Bounded sequential contract reads; unrelated JSON never leaves the helper."""
+    def __init__(self, files, *, performance=None, checkpoint=None):
+        self.files, self.performance, self.checkpoint = files, performance, checkpoint
+        self.contained = sandbox.required()
+        self.batches = partitions(files, selected=(p for p in files if p.endswith(".json")), maximum=512_000)
+        self.pending = {}
+
+    def close(self):
+        self.pending.clear()
+        self.batches.close()
+
+    def read(self, path):
+        if not self.contained:
+            source = self.files[path]
+            mentions = "openapi" in source.lower()
+            try:
+                return sandbox.parse_json(source), mentions, False
+            except sandbox.SandboxFailure:
+                raise
+            except ValueError:
+                return None, mentions, True
+        if path not in self.pending:
+            if self.pending:
+                raise sandbox.SandboxFailure("HELPER_OPENAPI_ORDER")
+            read_started = time.perf_counter()
+            batch = next(self.batches, None)
+            if self.performance:
+                self.performance.record("OPENAPI_SOURCE_READ", time.perf_counter() - read_started)
+            if batch is None or path not in batch:
+                raise sandbox.SandboxFailure("HELPER_OPENAPI_SCOPE")
+            started = time.perf_counter()
+            try:
+                try:
+                    value = sandbox.call("openapi_batch", {"files": batch})
+                except sandbox.SandboxFailure as error:
+                    if error.code != "HELPER_PROTOCOL_DEPTH":
+                        raise
+                    # The batch wrapper adds nesting. Retain the original
+                    # per-source IPC guard for contracts near that boundary.
+                    value = {}
+                    for name, source in batch.items():
+                        contract, invalid = None, False
+                        try:
+                            parsed = sandbox.parse_json(source)
+                            if isinstance(parsed, dict) and "openapi" in parsed:
+                                contract = parsed
+                        except sandbox.SandboxFailure:
+                            raise
+                        except ValueError:
+                            invalid = True
+                        value[name] = {"source_hash": hashlib.sha256(source.encode()).hexdigest(),
+                                       "contract": contract, "invalid": invalid,
+                                       "mentions_openapi": "openapi" in source.lower()}
+                        if self.performance:
+                            self.performance.count("openapi_single_file_fallbacks")
+                        if self.checkpoint:
+                            self.checkpoint()
+                if not isinstance(value, dict) or set(value) != set(batch):
+                    raise sandbox.SandboxFailure("HELPER_OPENAPI_SCOPE")
+                for name, row in value.items():
+                    if (not isinstance(row, dict)
+                            or set(row) != {"source_hash", "contract", "mentions_openapi", "invalid"}
+                            or row["source_hash"] != hashlib.sha256(batch[name].encode()).hexdigest()
+                            or type(row["invalid"]) is not bool or type(row["mentions_openapi"]) is not bool
+                            or row["mentions_openapi"] != ("openapi" in batch[name].lower())
+                            or row["contract"] is not None and (
+                                not isinstance(row["contract"], dict) or "openapi" not in row["contract"]
+                                or row["invalid"])):
+                        raise sandbox.SandboxFailure("HELPER_OPENAPI_SCHEMA")
+                self.pending = value
+            finally:
+                if self.performance:
+                    self.performance.record("OPENAPI_CONTRACT_BATCH", time.perf_counter() - started)
+            if self.performance:
+                self.performance.count("openapi_helper_batches")
+                self.performance.count("openapi_submitted_files", len(batch))
+                self.performance.count("openapi_submitted_bytes", sum(len(source.encode()) for source in batch.values()))
+            if self.checkpoint:
+                self.checkpoint()
+        row = self.pending.pop(path)
+        if self.performance:
+            self.performance.count("openapi_consumed_files")
+            self.performance.count("openapi_invalid_files", int(row["invalid"]))
+            self.performance.count("openapi_contract_files", int(row["contract"] is not None))
+        return row["contract"], row["mentions_openapi"], row["invalid"]
+
+
 def native(files, cache, settings, *, performance=None):
     from analyzers.engine import PARSER_SIGNATURE, RULES, VERSION, finding, hash_text
     from analyzers.infrastructure import structured_iac_batch

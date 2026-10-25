@@ -67,6 +67,55 @@ def test_memory_and_stdout_exhaustion_are_contained():
         sandbox.call("probe_output", {}, maximum=65536)
 
 
+def test_actual_openapi_batch_preserves_escaped_keys_syntax_states_and_source_identity():
+    import hashlib
+
+    files = {"contract.json": '{"open\\u0061pi":"3.0.0","paths":{"/owned":{"get":{}}}}',
+             "unrelated.json": '{"private":"OWNED-NONCONTRACT-SENTINEL"}',
+             "invalid.json": '{"openapi":'}
+    result = sandbox.call("openapi_batch", {"files": files})
+    assert set(result) == set(files)
+    assert result["contract.json"]["contract"]["paths"] == {"/owned": {"get": {}}}
+    assert result["contract.json"]["mentions_openapi"] is False
+    assert result["invalid.json"]["invalid"] is True and result["invalid.json"]["mentions_openapi"] is True
+    assert result["unrelated.json"]["contract"] is None
+    assert "OWNED-NONCONTRACT-SENTINEL" not in json.dumps(result)
+    assert all(row["source_hash"] == hashlib.sha256(files[path].encode()).hexdigest()
+               for path, row in result.items())
+
+
+def test_actual_openapi_reader_batches_without_per_file_helpers(monkeypatch):
+    from analyzers.isolated_analysis import OpenAPIContracts
+
+    files = {f"owned-{i}.json": '{"entity":"owned"}' for i in range(205)}
+    invoke, calls = sandbox.invoke, []
+
+    def counted(operation, value, **limits):
+        calls.append((operation, len(value["files"]), sum(len(s.encode()) for s in value["files"].values())))
+        return invoke(operation, value, **limits)
+
+    monkeypatch.setattr(sandbox, "invoke", counted)
+    reader = OpenAPIContracts(files)
+    assert all(reader.read(path) == (None, False, False) for path in files)
+    assert calls == [("openapi_batch", 100, 1800), ("openapi_batch", 100, 1800), ("openapi_batch", 5, 90)]
+
+
+def test_actual_openapi_reader_retains_single_source_nesting_guard():
+    from analyzers.isolated_analysis import OpenAPIContracts
+
+    for depth in (97, 99):
+        source = '{"openapi":"3","paths":{},"nested":' + '[' * depth + '0' + ']' * depth + '}'
+        reader = OpenAPIContracts({"owned.json": source})
+        try:
+            if depth == 97:
+                assert reader.read("owned.json") == (json.loads(source), True, False)
+            else:
+                with pytest.raises(sandbox.SandboxFailure, match="HELPER_PROTOCOL_DEPTH"):
+                    reader.read("owned.json")
+        finally:
+            reader.close()
+
+
 SOURCES = {
     "README.md": "Authentication uses JWT.\nBackend uses FastAPI.\n",
     "app.py": "from fastapi import FastAPI\nfrom starlette.middleware.sessions import SessionMiddleware\napp=FastAPI()\napp.add_middleware(SessionMiddleware, secret_key=settings.session_key)\n",

@@ -1,0 +1,16 @@
+{
+  "scope": "OWNED_JSON_DISPATCH_BOOTSTRAP_PROTOTYPE",
+  "files": 16,
+  "legacy_processes": 16,
+  "batch_processes": 1,
+  "legacy_seconds": 10.09650700000202,
+  "batch_seconds": 0.6167451000001165,
+  "complete_contract_selection_equal": true,
+  "sha256": "d3902fb15c667cc54e0b92d7418e9f00044fa01a5828f3733b7a5043f4205257",
+  "limitations": [
+    "Owned inert JSON only; explicit development-mode dispatch, not Linux enforcement or a completing cgroup workload.",
+    "Tests identical installed JSON dispatch with one process per file versus one process for the same bounded batch; excludes real Linux setup and coordinator IPC validation."
+  ],
+  "runtime": "Windows / CPython 3.14.3; installed dispatch in fresh interpreter processes",
+  "production_limits_changed": false
+}

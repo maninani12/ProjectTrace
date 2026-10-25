@@ -195,3 +195,19 @@ The next correction removes duplicate native wire payloads while reconstructing
 the complete original logical result before the existing guards. See
 [the completed qualification and correction record](SCALE001_7D717BF_QUALIFICATION.md).
 All full-workload acceptance gates remain open.
+
+### Completed b1fb6fe qualification; bounded OpenAPI continuation
+
+Regression 40227376407 succeeded (770 backend / 2 skips; all four jobs).
+Constrained 40227376411 failed: baseline kernel OOM / 3,747 parser artifacts;
+candidate host 2,400-second timeout / 18,756 artifacts / EXTRACTING_CLAIMS,
+zero application OOM kills and zero publication. Both SQLite/FK checks passed.
+The candidate spent about 1,632 sampled seconds in ANALYZING and at least 592
+in claims; the full timeout is not claim-extraction duration. Anonymous, file
+cache and kernel charges are preserved separately with 38,800 raw samples.
+An owned dispatch profile isolates repeated JSON-helper startup cost. The next
+correction batches all selected JSON inside unchanged Linux isolation, returns
+complete OpenAPI contracts only, preserves the original nesting guard, and adds
+bounded deadline checks and durable aggregate diagnostics. No limits are raised.
+See [the evidence and correction record](SCALE001_B1FB6FE_CLAIM_EXTRACTION.md).
+Complete-workload correctness, publication and recovery remain unqualified.
