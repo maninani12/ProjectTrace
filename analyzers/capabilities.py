@@ -83,7 +83,7 @@ def registry(version):
         "languages": rows,
         "unsupported": "Inventoried as a coverage gap; absence of findings does not prove safety.",
         "parser_isolation": (
-            "PARTIAL SYSTEM SCOPE: source/manifest/report parsers require Linux Landlock/seccomp with per-worker denial probes; ZIP intake remains in-process."
+            "PARTIAL SYSTEM SCOPE: source/manifest/report/ZIP parsers require Linux Landlock/seccomp with per-worker denial probes; coordinator lexical/classification/CODEOWNERS processing remains outside that boundary."
             if sandbox.status()["mode"] == "required"
             else "DEVELOPMENT UNCONTAINED: no filesystem/network isolation is claimed; production refuses this mode."
         ),

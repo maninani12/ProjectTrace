@@ -2,6 +2,8 @@
 
 Status: **source-parser boundary has initial Linux x86-64 runner/image qualification; overall SEC-002 remains OPEN**. Do not infer security from a build or resource-limit flag. Current-head PR #3 checks are authoritative; prior green PR #2 run 40126311475 proves the preserved baseline only.
 
+The table below preserves the original `2837b367` scope inventory. The archive-boundary continuation later in this guide supersedes its ZIP row: required-mode ZIP parsing now uses bounded isolated IPC, with current-head CI results recorded in PR #3. Coordinator lexical/classification/CODEOWNERS processing remains outside the boundary, so overall SEC-002 stays partial.
+
 ## Threat model and reviewed call graph
 
 Assume attacker-controlled repository text exploits a syntax/parser dependency and obtains arbitrary code execution in that parser process. The application coordinator, immutable installed ProjectTrace/runtime files, Linux kernel/LSMs, libseccomp, and bounded IPC decoder remain trusted. Repository scripts, package installers, templates and builds are never executed.
