@@ -70,7 +70,7 @@ def ownership(value):
     if len(lines) > 5000:
         diagnostics.append("CODEOWNERS_LINE_LIMIT")
     for line in lines[:5000]:
-        parts = line.split()
+        parts = line.split("#", 1)[0].split()
         if not parts or parts[0].startswith("#"):
             continue
         if len(parts) < 2 or parts[0].startswith("!") or "\\" in parts[0] or ".." in PurePosixPath(parts[0]).parts:

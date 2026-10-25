@@ -66,17 +66,17 @@ def test_real_classification_equals_baseline_without_host_regex_or_glob_interpre
     assert describe_one("workload.yaml", FILES["workload.yaml"])["infrastructure_format"] == "Kubernetes"
 
 
-@pytest.mark.parametrize("source,path", [
-    ("* @all\n/src/ @source\nsrc/a.py @first\nsrc/a.py @last", "src/a.py"),
-    ("**/tests/** @tests\n*.py @python", "repo/tests/test_λ.py"),
-    ("λ/*.py @unicode\n*.ts @ts", "λ/space name.py"),
-    ("src/[ab].py @range\nsrc/* @fallback", "src/a.py"),
-    ("*.py @one @two\n*.py @three", "a.py"),
-    ("src/hash#name.py @hash\n*.ts @ts", "src/hash#name.py"),
-    ("*.py @team # legacy-comment-token", "a.py"),
-    ("*.py @python", "README.md"),
+@pytest.mark.parametrize("source,path,state", [
+    ("* @all\n/src/ @source\nsrc/a.py @first\nsrc/a.py @last", "src/a.py", "SUPPORTED_RULES"),
+    ("**/tests/** @tests\n*.py @python", "repo/tests/test_λ.py", "SUPPORTED_RULES"),
+    ("λ/*.py @unicode\n*.ts @ts", "λ/space name.py", "SUPPORTED_RULES"),
+    ("src/[ab].py @range\nsrc/* @fallback", "src/a.py", "SUPPORTED_RULES"),
+    ("*.py @one @two\n*.py @three", "a.py", "SUPPORTED_RULES"),
+    ("src/hash#name.py @hash\n*.ts @ts", "src/hash#name.py", "PARTIAL_UNSUPPORTED_RULES"),
+    ("*.py @team # legacy-comment-token", "a.py", "SUPPORTED_RULES"),
+    ("*.py @python", "README.md", "SUPPORTED_RULES"),
 ])
-def test_real_supported_codeowners_matching_and_precedence_remain_compatible(monkeypatch, source, path):
+def test_real_codeowners_matching_precedence_and_uncertainty_remain_compatible(monkeypatch, source, path, state):
     files = {"CODEOWNERS": source}
     monkeypatch.setenv("PROJECTTRACE_PARSER_ISOLATION", "development")
     baseline = ownership(path, files, "Assigned team")
@@ -86,7 +86,10 @@ def test_real_supported_codeowners_matching_and_precedence_remain_compatible(mon
     monkeypatch.setattr(fnmatch, "translate", forbidden)
     result = ownership(path, files, "Assigned team")
     assert {key: result[key] for key in baseline} == baseline
-    assert result["ownership_state"] == "SUPPORTED_RULES"
+    assert result["ownership_state"] == state
+    if state == "PARTIAL_UNSUPPORTED_RULES":
+        assert result["owner"] == "Assigned team"
+        assert result["ownership_diagnostics"] == ["UNSUPPORTED_CODEOWNERS_SYNTAX"]
 
 
 @pytest.mark.parametrize("bad", ["!src/** @unsupported", "../escape.py @outside", "src\\a.py @escape", "pattern-without-owner"])
