@@ -161,7 +161,8 @@ def metadata(value, *, maximum_nodes=1_000_000):
         if isinstance(item, str):
             return redact(item)
         if isinstance(item, (list, tuple)):
-            return [visit(child, depth + 1) for child in item]
+            children = [visit(child, depth + 1) for child in item]
+            return tuple(children) if isinstance(item, tuple) else children
         if isinstance(item, dict):
             output = {}
             for key, child in item.items():

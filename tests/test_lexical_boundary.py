@@ -71,6 +71,13 @@ def test_metadata_guard_redacts_sensitive_containers_and_rejects_cycles():
         metadata(cycle)
 
 
+def test_metadata_guard_preserves_typed_tuple_contract_while_sanitizing_children():
+    value = metadata({"changed_lines": {"owned.py": [(1, 1)]}, "typed": ("ghp_abcdefghijklmnopqrstuvwxyz1234",)})
+    assert value["changed_lines"]["owned.py"] == [(1, 1)]
+    assert value["typed"] == ("[REDACTED SECRET]",)
+    assert json.loads(json.dumps(value))["changed_lines"]["owned.py"] == [[1, 1]]
+
+
 @pytest.mark.parametrize("field,value", [("path", "foreign.py"), ("request_hash", "wrong"),
                                        ("bytes", 999), ("source_language", "VERIFIED"), ("generated_header", "true")])
 def test_description_schema_cannot_substitute_scope_or_counts(field, value):
