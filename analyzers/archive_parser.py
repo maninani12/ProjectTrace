@@ -85,3 +85,35 @@ def archive_items(stream, policy, *, validate_only=False, sort_paths=False):
                 if len(raw) != entry.file_size or len(raw) > policy["file_bytes"]:
                     raise IntakeError("ARCHIVE_ENTRY_SIZE", "Archive entry size is inconsistent with its directory.")
                 yield path, raw
+
+
+def archive_manifest(stream, policy):
+    """Hash every archive payload in bounded chunks, without extracting entries.
+
+    Qualification utility: inventory policy (including unsupported symlinks and
+    large files) is unchanged. Hashing a symlink's bytes never follows its target.
+    """
+    import hashlib
+    import stat
+
+    for _ in archive_items(stream, policy, validate_only=True):
+        pass
+    stream.seek(0)
+    with zipfile.ZipFile(stream) as archive:
+        for entry in sorted(archive.infolist(), key=lambda e: e.filename):
+            if entry.is_dir():
+                continue
+            path = str(safe_path(entry.filename))
+            if entry.compress_type not in {zipfile.ZIP_STORED, zipfile.ZIP_DEFLATED}:
+                raise IntakeError("ARCHIVE_INVALID", "Manifest requires a supported compression method.")
+            digest, count = hashlib.sha256(), 0
+            with archive.open(entry) as source:
+                while chunk := source.read(512_000):
+                    count += len(chunk)
+                    if count > entry.file_size or count > policy["bytes"]:
+                        raise IntakeError("ARCHIVE_ENTRY_SIZE", "Manifest entry size exceeds its declaration.")
+                    digest.update(chunk)
+            if count != entry.file_size:
+                raise IntakeError("ARCHIVE_ENTRY_SIZE", "Manifest entry size differs from its declaration.")
+            yield path, {"bytes": count, "sha256": digest.hexdigest(),
+                         "kind": "SYMLINK" if stat.S_ISLNK(entry.external_attr >> 16) else "FILE"}

@@ -257,6 +257,7 @@ def execute_analysis(db, user, repo, files, *, request_id=None, job=None, _elaps
         if not owns(db, job_id, owned_token):
             raise JobCancelled("Worker lease was replaced; this attempt cannot modify the job.") from None
         job = db.get(Record, job_id)
+        from analyzers.observation_store import ObservationBudgetExceeded
         from analyzers.sandbox import SandboxFailure
         failure = error if isinstance(error, IntakeError) else (
             IntakeError("PARSER_ISOLATION_" + error.code, "Required parser isolation failed; unfinished analysis was not published.",
@@ -269,6 +270,10 @@ def execute_analysis(db, user, repo, files, *, request_id=None, job=None, _elaps
             if isinstance(error, TimeoutError) else None
             )
         )
+        if isinstance(error, ObservationBudgetExceeded):
+            failure = IntakeError("ANALYSIS_OBSERVATION_BUDGET",
+                "Analysis exceeded its encrypted observation spill budget; unfinished output was not published.",
+                remediation="Inspect per-stage observation volume and provision bounded scratch storage; retain the source inventory for retry.")
         job.data = {
             **{k: v for k, v in job.data.items() if k != "files"},
             "state": "CANCELLED" if isinstance(error, JobCancelled) else "FAILED",

@@ -1279,7 +1279,7 @@ def analyze(
     duplicates = {}
     for metric in quality_metrics:
         if metric["token_count"] >= 30:
-            duplicates.setdefault(metric["body_hash"], []).append(metric)
+            duplicates.setdefault(metric["body_hash"], []).append({"path": metric["path"], "line": metric["line"]})
     for group in duplicates.values():
         if len(group) > 1:
             for metric in group[1:]:

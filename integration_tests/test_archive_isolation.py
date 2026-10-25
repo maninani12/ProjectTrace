@@ -103,3 +103,23 @@ def test_archive_order_is_preserved_with_explicit_sorted_benchmark_selection():
     payload = owned_zip({"b.py": "b=1", "a.py": "a=1"})
     assert [path for path, _ in archive_items(io.BytesIO(payload))] == ["b.py", "a.py"]
     assert [path for path, _ in archive_items(io.BytesIO(payload), sort_paths=True)] == ["a.py", "b.py"]
+
+
+def test_full_manifest_hashes_large_and_symlink_bytes_without_host_zip_parser(monkeypatch):
+    import hashlib
+    import stat
+    data = io.BytesIO()
+    large = b"".join(hashlib.sha256(str(i).encode()).digest() for i in range(20_000))
+    with zipfile.ZipFile(data, "w") as archive:
+        archive.writestr("large.bin", large)
+        link = zipfile.ZipInfo("link")
+        link.create_system = 3
+        link.external_attr = (stat.S_IFLNK | 0o777) << 16
+        archive.writestr(link, b"/etc/passwd")
+    data.seek(0)
+    monkeypatch.setattr(zipfile, "ZipFile", lambda *_a, **_kw: pytest.fail("Host ZIP interpretation"))
+    rows = dict(isolated_items(data, limits(), manifest_only=True))
+    assert rows == {
+        "large.bin": {"bytes": len(large), "sha256": hashlib.sha256(large).hexdigest(), "kind": "FILE"},
+        "link": {"bytes": 11, "sha256": hashlib.sha256(b"/etc/passwd").hexdigest(), "kind": "SYMLINK"},
+    }

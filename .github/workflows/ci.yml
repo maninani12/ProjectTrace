@@ -31,7 +31,7 @@ jobs:
       - run: pip install -r requirements.lock
       - run: python -m compileall -q backend analyzers integrations workers scripts tests integration_tests
       - run: ruff check backend analyzers integrations workers tests scripts integration_tests
-      - run: pytest -q
+      - run: pytest -q --junitxml=/tmp/backend-results.xml
       - run: python -m scripts.benchmark_analyzers --samples 12 --output /tmp/native-benchmarks.json
       - name: Owned quality-stage memory comparison (not full SCALE-001 qualification)
         run: python -m scripts.profile_scale_metrics --count 10000 > /tmp/scale-metric-profile.json
@@ -39,7 +39,9 @@ jobs:
         if: always()
         with:
           name: scale-metric-profile-${{ github.run_id }}
-          path: /tmp/scale-metric-profile.json
+          path: |
+            /tmp/scale-metric-profile.json
+            /tmp/backend-results.xml
           retention-days: 7
       - run: mkdir -p data && alembic upgrade head && alembic downgrade base && alembic upgrade head && python -m backend.seed
       - run: pip-audit -r requirements.lock

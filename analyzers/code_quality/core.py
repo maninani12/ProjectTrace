@@ -10,6 +10,7 @@ from analyzers.code_quality.classification import LANGUAGES, classify, coverage_
 from analyzers.code_quality.coverage import absent, percent
 from analyzers.code_quality.duplication import detect
 from analyzers.code_quality.rules import DEFINITIONS, config
+from analyzers.observation_store import EncryptedRows
 
 
 def digest(value):
@@ -55,7 +56,8 @@ def build(files, metrics, signals, raw_findings, warnings, profile=None, *, cons
             row.update(file_metrics.get(row["path"], {}))
     # Only the inventory coordinator owns disposable metric dictionaries. Direct
     # callers and parser-cache rows retain the original non-mutating contract.
-    measured = [m if consume_metrics else {k: v for k, v in m.items() if k != "duplicate_tokens"}
+    spooled = isinstance(metrics, EncryptedRows)
+    measured = [m if consume_metrics and not spooled else {k: v for k, v in m.items() if k != "duplicate_tokens"}
                 for m in metrics if m["path"] in selected]
     # The owning symbol is the narrowest enclosing range, with stable input
     # order breaking ties. Sort each file once instead of sorting every metric
@@ -65,9 +67,12 @@ def build(files, metrics, signals, raw_findings, warnings, profile=None, *, cons
         measured_by_path[metric["path"]].append(metric)
     for path, rows in measured_by_path.items():
         measured_by_path[path] = sorted(rows, key=lambda m: m["end_line"] - m["line"])
-    production = [m for m in metrics if m["path"] in selected and paths[m["path"]]["kind"] == "SOURCE"]
+    def production_metric(m):
+        return m["path"] in selected and paths[m["path"]]["kind"] == "SOURCE"
+
+    production = metrics.select(production_metric) if spooled else [m for m in metrics if production_metric(m)]
     dup = detect(production, settings["rules"].get("PT-QUALITY-007", {}).get("threshold", 50))
-    if consume_metrics:
+    if consume_metrics and not spooled:
         # Token windows have had their final use; durable parser artifacts were
         # already stored independently before global verification began.
         for metric in metrics:
