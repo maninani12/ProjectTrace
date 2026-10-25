@@ -82,3 +82,17 @@ def test_actual_archive_worker_loss_never_completes_intake(monkeypatch, operatio
     monkeypatch.setattr(subprocess, "Popen", failed)
     with pytest.raises(sandbox.SandboxFailure, match=code):
         list(isolated_items(io.BytesIO(payload), limits(), seconds=5))
+
+
+def test_cancelled_archive_consumer_terminates_only_its_owned_helper(monkeypatch):
+    payload = owned_zip({"first.py": "pass", "second.py": "pass"})
+    start, processes = subprocess.Popen, []
+    def tracked(*args, **kwargs):
+        process = start(*args, **kwargs)
+        processes.append(process)
+        return process
+    monkeypatch.setattr(subprocess, "Popen", tracked)
+    iterator = archive_items(io.BytesIO(payload))
+    assert next(iterator) == ("first.py", b"pass")
+    iterator.close()
+    assert len(processes) == 1 and processes[0].poll() is not None
