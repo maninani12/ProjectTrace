@@ -1,0 +1,1189 @@
+{
+  "schema": "projecttrace-scale-local-continuation-v1",
+  "baseline_commit": "7e2f217e2c4cd003d9f606f62f81c739abbc83ea",
+  "branch": "codex/scale-001-local-continuation",
+  "python": "3.14.3",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "verdict": "NOT_QUALIFIED",
+  "latest_large_run": {
+    "run_id": 40216200591,
+    "provenance": "Human-confirmed artifact inspection supplied in chat; raw ZIPs not yet available to this local agent",
+    "baseline": {
+      "exit": 137,
+      "kernel_oom_kill": true,
+      "parser_artifacts": 3747,
+      "published_pointers": 0,
+      "published_generations": 0
+    },
+    "candidate": {
+      "failure_type": "TimeoutError",
+      "job_error": "ANALYSIS_TIME_BUDGET",
+      "failed_stage": "ANALYZING",
+      "parser_artifacts": 11097,
+      "memory_ceiling_bytes": 768000000,
+      "kernel_oom_kills": 0,
+      "sqlite_integrity": "ok",
+      "foreign_key_violations": 0,
+      "published_pointers": 0,
+      "published_generations": 0,
+      "cold": "FAILED",
+      "later_scenarios": "NOT_RUN"
+    }
+  },
+  "sanitization": {
+    "fixture": "OWNED_REPEATED_TYPED_TOKEN_ROWS",
+    "rows": 20,
+    "tokens_per_row": 5000,
+    "enforcement": "NONE; sanitizer-only; not pipeline or SCALE-001 qualification",
+    "runs": [
+      {
+        "implementation": "baseline",
+        "seconds": 1.5336021999992226,
+        "complete_rows_equal": true
+      },
+      {
+        "implementation": "candidate",
+        "seconds": 0.19265660000019125,
+        "complete_rows_equal": true
+      },
+      {
+        "implementation": "baseline_repeat",
+        "seconds": 1.2737995000006777,
+        "complete_rows_equal": true
+      },
+      {
+        "implementation": "candidate_repeat",
+        "seconds": 0.17659339999954682,
+        "complete_rows_equal": true
+      }
+    ]
+  },
+  "visibility": {
+    "fixture": "OWNED_IN_MEMORY_ORGANIZATION_SELECT",
+    "selects": 500,
+    "enforcement": "NONE; expression-construction microbenchmark, not full workload",
+    "runs": [
+      {
+        "implementation": "baseline",
+        "seconds": 0.48194340000009106
+      },
+      {
+        "implementation": "candidate",
+        "seconds": 0.12535290000050736
+      },
+      {
+        "implementation": "baseline_repeat",
+        "seconds": 0.4607874000012089
+      },
+      {
+        "implementation": "candidate_repeat",
+        "seconds": 0.12349639999956707
+      }
+    ]
+  },
+  "quality_memory": {
+    "scope": "OWNED_QUALITY_AND_STREAM_SERIALIZATION_ONLY",
+    "enforcement": "NONE; not whole-pipeline or cgroup qualification",
+    "runs": [
+      {
+        "metric_rows": 1000,
+        "symbols": 1000,
+        "input_spill_python_bytes": [
+          254927,
+          1378520
+        ],
+        "quality_python_bytes": [
+          3299712,
+          3313293
+        ],
+        "serialization_python_bytes": [
+          3301952,
+          3305659
+        ],
+        "quality_seconds_with_tracemalloc": 0.2459550000003219,
+        "stream_serialization_seconds_with_tracemalloc": 0.4456549999995332,
+        "output_bytes": 757983,
+        "sha256": "b3a11c7cb4443c5727681ba3997a9f6a86c27929a702e52c9de873429299e882"
+      },
+      {
+        "metric_rows": 5000,
+        "symbols": 5000,
+        "input_spill_python_bytes": [
+          667183,
+          2572272
+        ],
+        "quality_python_bytes": [
+          15818957,
+          15901338
+        ],
+        "serialization_python_bytes": [
+          15821197,
+          15824904
+        ],
+        "quality_seconds_with_tracemalloc": 1.5499888000013016,
+        "stream_serialization_seconds_with_tracemalloc": 2.457200200000443,
+        "output_bytes": 3805983,
+        "sha256": "0ba7f13e461f946bd9554136274409ddd934191b061cb21d50d1293d381f66cc"
+      }
+    ],
+    "allocation_sample_order": [
+      "current_bytes",
+      "peak_bytes"
+    ]
+  },
+  "complete_output_comparison": {
+    "equal": true,
+    "before": {
+      "snapshots": {
+        "snapshot:a1739c8758ffc5740e2b0eed18804aa2a74029ad1dd07e3a2ce0cfe0ff5e4815": {
+          "claim": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "dependency": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "drift": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "edge": {
+            "count": 83,
+            "sha256": "8c5d70df6c10aacf5fc40d9e676247c0778cccc7013baee98100a453b4f25749"
+          },
+          "evidence": {
+            "count": 20,
+            "sha256": "2d633d4690f930aa03e968e0cfc939260b39d3a6f69368678e5081dc4738001c"
+          },
+          "finding": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "graph_node": {
+            "count": 49,
+            "sha256": "46ab5c1321942dcf20f36c7e5d778c0012f80e76e28e5a2be56c042dce00fca7"
+          },
+          "quality_projection": {
+            "count": 1,
+            "sha256": "87b25af93a8de8e9f528f46a11ee172bef355df672a17a835cb44a234b04509b"
+          },
+          "risk_path": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "snapshot": {
+            "count": 1,
+            "sha256": "7986b163c2dd03ef7be4757a490786896bfec7aa0989889e994773a0a13e77b1"
+          }
+        },
+        "snapshot:bb4a96fc459e9a93016784bf91df719e9d730f1fc2277e437046437c9522f963": {
+          "claim": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "dependency": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "drift": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "edge": {
+            "count": 83,
+            "sha256": "86795ede5e03fc7a7b66217b317d3bc9a2220f581dcf486e3f8f839101af315e"
+          },
+          "evidence": {
+            "count": 20,
+            "sha256": "e3a43c5a83211060b8d624b2662670ee0da38d0b9fc763752ea435619c34c113"
+          },
+          "finding": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "graph_node": {
+            "count": 48,
+            "sha256": "6c2e119fd61027f0960b9f0536755d77e6146bc44ef115e133e231a58b27d318"
+          },
+          "quality_projection": {
+            "count": 1,
+            "sha256": "3487121f716520aed9ccd64bbf07ca880add07b33d1f9eeb85709ae4a29672f9"
+          },
+          "risk_path": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "snapshot": {
+            "count": 1,
+            "sha256": "01d43063a4887b56719b64df46755688618a6319e40bd8cdacea02dc24f78e61"
+          }
+        }
+      },
+      "source_inventories": {
+        "inventory:ff70c42cf7ed3b49b39d081fcc509af6ac8474bae2f259099d13aac31fb2df2c": {
+          "count": 20,
+          "sha256": "ff70c42cf7ed3b49b39d081fcc509af6ac8474bae2f259099d13aac31fb2df2c"
+        },
+        "inventory:e13faf3dd90b0b7ac878fb6179b76ced70db082eaf47f5e1438705858ecd2f92": {
+          "count": 20,
+          "sha256": "e13faf3dd90b0b7ac878fb6179b76ced70db082eaf47f5e1438705858ecd2f92"
+        }
+      },
+      "parser_artifacts": {
+        "count": 28,
+        "sha256": "7dc23a65a200a8179cd5e875cef9296a676c90b2ae7847a15dc9cc782e79dd2b"
+      },
+      "sqlite_integrity": "ok",
+      "foreign_key_violations": 0
+    },
+    "after": {
+      "snapshots": {
+        "snapshot:a1739c8758ffc5740e2b0eed18804aa2a74029ad1dd07e3a2ce0cfe0ff5e4815": {
+          "claim": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "dependency": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "drift": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "edge": {
+            "count": 83,
+            "sha256": "8c5d70df6c10aacf5fc40d9e676247c0778cccc7013baee98100a453b4f25749"
+          },
+          "evidence": {
+            "count": 20,
+            "sha256": "2d633d4690f930aa03e968e0cfc939260b39d3a6f69368678e5081dc4738001c"
+          },
+          "finding": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "graph_node": {
+            "count": 49,
+            "sha256": "46ab5c1321942dcf20f36c7e5d778c0012f80e76e28e5a2be56c042dce00fca7"
+          },
+          "quality_projection": {
+            "count": 1,
+            "sha256": "87b25af93a8de8e9f528f46a11ee172bef355df672a17a835cb44a234b04509b"
+          },
+          "risk_path": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "snapshot": {
+            "count": 1,
+            "sha256": "7986b163c2dd03ef7be4757a490786896bfec7aa0989889e994773a0a13e77b1"
+          }
+        },
+        "snapshot:bb4a96fc459e9a93016784bf91df719e9d730f1fc2277e437046437c9522f963": {
+          "claim": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "dependency": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "drift": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "edge": {
+            "count": 83,
+            "sha256": "86795ede5e03fc7a7b66217b317d3bc9a2220f581dcf486e3f8f839101af315e"
+          },
+          "evidence": {
+            "count": 20,
+            "sha256": "e3a43c5a83211060b8d624b2662670ee0da38d0b9fc763752ea435619c34c113"
+          },
+          "finding": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "graph_node": {
+            "count": 48,
+            "sha256": "6c2e119fd61027f0960b9f0536755d77e6146bc44ef115e133e231a58b27d318"
+          },
+          "quality_projection": {
+            "count": 1,
+            "sha256": "3487121f716520aed9ccd64bbf07ca880add07b33d1f9eeb85709ae4a29672f9"
+          },
+          "risk_path": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "snapshot": {
+            "count": 1,
+            "sha256": "01d43063a4887b56719b64df46755688618a6319e40bd8cdacea02dc24f78e61"
+          }
+        }
+      },
+      "source_inventories": {
+        "inventory:e13faf3dd90b0b7ac878fb6179b76ced70db082eaf47f5e1438705858ecd2f92": {
+          "count": 20,
+          "sha256": "e13faf3dd90b0b7ac878fb6179b76ced70db082eaf47f5e1438705858ecd2f92"
+        },
+        "inventory:ff70c42cf7ed3b49b39d081fcc509af6ac8474bae2f259099d13aac31fb2df2c": {
+          "count": 20,
+          "sha256": "ff70c42cf7ed3b49b39d081fcc509af6ac8474bae2f259099d13aac31fb2df2c"
+        }
+      },
+      "parser_artifacts": {
+        "count": 28,
+        "sha256": "7dc23a65a200a8179cd5e875cef9296a676c90b2ae7847a15dc9cc782e79dd2b"
+      },
+      "sqlite_integrity": "ok",
+      "foreign_key_violations": 0
+    },
+    "normalization": {
+      "timestamps": [
+        "analysis_at",
+        "created_at",
+        "finished_at",
+        "first_seen",
+        "last_seen",
+        "reviewed_at",
+        "updated_at"
+      ],
+      "durations": [
+        "analysis_ms",
+        "analysis_seconds",
+        "duration_ms",
+        "quality_ms"
+      ],
+      "id_sets": [
+        "affected_api",
+        "affected_architecture",
+        "affected_claims",
+        "affected_dependencies",
+        "affected_documentation",
+        "affected_findings",
+        "affected_nodes",
+        "affected_policies",
+        "removed_claims",
+        "via"
+      ],
+      "operational_fields": "Generated performance/spill diagnostics only; unknown fields retained",
+      "ids": "Known job/snapshot/inventory/scoped record/graph identities replaced by semantic references"
+    }
+  },
+  "small_pipeline": {
+    "baseline": {
+      "state": "MEASURED_SYNTHETIC_LOCAL",
+      "database_integrity": {
+        "sqlite_integrity": "ok",
+        "foreign_key_violations": 0
+      },
+      "phases": [
+        {
+          "phase": "INITIAL",
+          "wall_seconds": 28.599,
+          "pipeline_seconds": 28.103,
+          "peak_working_set_bytes": 147206144,
+          "persisted_records": 154
+        },
+        {
+          "phase": "EIGHT_FILE_HEAD",
+          "wall_seconds": 14.681,
+          "pipeline_seconds": 14.473,
+          "peak_working_set_bytes": 151158784,
+          "persisted_records": 308
+        }
+      ],
+      "profile": {
+        "observation_store.py:_encrypted": {
+          "calls": 120,
+          "self_seconds": 0.017768100000000002,
+          "cumulative_seconds": 0.0798862
+        },
+        "analysis_checkpoints.py:load": {
+          "calls": 2,
+          "self_seconds": 3.8400000000000005e-05,
+          "cumulative_seconds": 0.0170428
+        },
+        "generation_visibility.py:hide_unpublished": {
+          "calls": 5371,
+          "self_seconds": 0.2709613,
+          "cumulative_seconds": 21.408617300000003
+        },
+        "core.py:build": {
+          "calls": 2,
+          "self_seconds": 0.0027359000000000003,
+          "cumulative_seconds": 0.0977972
+        },
+        "generations.py:save": {
+          "calls": 28,
+          "self_seconds": 0.0820815,
+          "cumulative_seconds": 19.9674048
+        },
+        "generations.py:load": {
+          "calls": 28,
+          "self_seconds": 0.0003233,
+          "cumulative_seconds": 0.43704940000000003
+        },
+        "partitioned_analysis.py:parse_partition": {
+          "calls": 2,
+          "self_seconds": 0.0014455000000000002,
+          "cumulative_seconds": 2.0923679
+        },
+        "analysis_checkpoints.py:save": {
+          "calls": 2,
+          "self_seconds": 0.0347572,
+          "cumulative_seconds": 0.19896470000000002
+        },
+        "generations.py:validate": {
+          "calls": 2,
+          "self_seconds": 0.0068758000000000005,
+          "cumulative_seconds": 5.4024403
+        },
+        "generations.py:batch": {
+          "calls": 108,
+          "self_seconds": 0.0046889,
+          "cumulative_seconds": 20.6942863
+        }
+      },
+      "job_aggregate_performance": [
+        {
+          "stage_seconds": {
+            "VALIDATING": 0.064206,
+            "PARSING": 0.055686,
+            "ANALYZING": 1.38161,
+            "EXTRACTING_CLAIMS": 0.011636,
+            "VERIFYING": 2.590717,
+            "BUILDING_EVIDENCE": 6.464407,
+            "CORRELATING": 9.683534,
+            "FINALIZING": 3.612471,
+            "COMPLETED_NO_FINDINGS": 0.000558
+          },
+          "components": {
+            "CACHE_LOOKUP": {
+              "count": 1,
+              "seconds": 0.010507,
+              "max_seconds": 0.010507
+            },
+            "PYTHON_NATIVE": {
+              "count": 20,
+              "seconds": 0.828467,
+              "max_seconds": 0.054341
+            },
+            "FILE_POSTPROCESS": {
+              "count": 20,
+              "seconds": 0.02818,
+              "max_seconds": 0.002141
+            },
+            "PARTITION_IDENTITY": {
+              "count": 1,
+              "seconds": 0.000298,
+              "max_seconds": 0.000298
+            },
+            "PARTITION_PARSE": {
+              "count": 1,
+              "seconds": 1.280975,
+              "max_seconds": 1.280975
+            },
+            "CACHE_WRITE": {
+              "count": 1,
+              "seconds": 0.008125,
+              "max_seconds": 0.008125
+            },
+            "DEPENDENCIES": {
+              "count": 1,
+              "seconds": 0.000388,
+              "max_seconds": 0.000388
+            },
+            "CLAIM_EXTRACTION": {
+              "count": 1,
+              "seconds": 8.7e-05,
+              "max_seconds": 8.7e-05
+            },
+            "CLAIM_VERIFICATION": {
+              "count": 1,
+              "seconds": 7e-06,
+              "max_seconds": 7e-06
+            },
+            "QUALITY_AGGREGATION": {
+              "count": 1,
+              "seconds": 0.037901,
+              "max_seconds": 0.037901
+            },
+            "FINAL_IDENTITY": {
+              "count": 1,
+              "seconds": 0.002451,
+              "max_seconds": 0.002451
+            },
+            "EVIDENCE_FILE": {
+              "count": 20,
+              "seconds": 0.4203,
+              "max_seconds": 0.035159
+            },
+            "EVIDENCE_FILES": {
+              "count": 1,
+              "seconds": 0.435854,
+              "max_seconds": 0.435854
+            },
+            "PUBLISH_CLAIMS": {
+              "count": 1,
+              "seconds": 0.062488,
+              "max_seconds": 0.062488
+            },
+            "PUBLISH_FINDINGS": {
+              "count": 1,
+              "seconds": 0.027434,
+              "max_seconds": 0.027434
+            },
+            "PUBLISH_DEPENDENCIES": {
+              "count": 1,
+              "seconds": 0.013363,
+              "max_seconds": 0.013363
+            },
+            "FINDING_CORRELATION": {
+              "count": 1,
+              "seconds": 0.800603,
+              "max_seconds": 0.800603
+            },
+            "FINDING_HISTORY": {
+              "count": 1,
+              "seconds": 0.652902,
+              "max_seconds": 0.652902
+            },
+            "ARTIFACT_GRAPH": {
+              "count": 1,
+              "seconds": 1.45641,
+              "max_seconds": 1.45641
+            },
+            "CONFIGURATION_GRAPH": {
+              "count": 1,
+              "seconds": 0.831037,
+              "max_seconds": 0.831037
+            },
+            "FUNCTION_GRAPH": {
+              "count": 1,
+              "seconds": 1.159064,
+              "max_seconds": 1.159064
+            },
+            "OWNERSHIP_GRAPH": {
+              "count": 1,
+              "seconds": 0.846798,
+              "max_seconds": 0.846798
+            },
+            "POLICY_PROJECTION": {
+              "count": 1,
+              "seconds": 1.55458,
+              "max_seconds": 1.55458
+            },
+            "IMPACT_GRAPH": {
+              "count": 1,
+              "seconds": 0.779158,
+              "max_seconds": 0.779158
+            }
+          },
+          "counters": {
+            "source_blob_reads": 20,
+            "source_cache_hits": 0,
+            "parser_cache_hits": 0,
+            "parser_cache_misses": 20,
+            "global_analysis_checkpoints_saved": 1,
+            "publication_units_reused": 0,
+            "publication_units_completed": 42,
+            "generation_staging_batches": 38,
+            "generation_inserted_records": 153,
+            "generation_maximum_batch_records": 87
+          }
+        },
+        {
+          "stage_seconds": {
+            "VALIDATING": 0.071939,
+            "PARSING": 0.027321,
+            "ANALYZING": 0.769414,
+            "EXTRACTING_CLAIMS": 0.030411,
+            "VERIFYING": 2.682814,
+            "BUILDING_EVIDENCE": 4.297653,
+            "CORRELATING": 4.559502,
+            "FINALIZING": 1.803548,
+            "COMPLETED_NO_FINDINGS": 0.000207
+          },
+          "components": {
+            "CACHE_LOOKUP": {
+              "count": 1,
+              "seconds": 0.003942,
+              "max_seconds": 0.003942
+            },
+            "CACHE_REUSE": {
+              "count": 12,
+              "seconds": 0.001024,
+              "max_seconds": 0.000155
+            },
+            "PYTHON_NATIVE": {
+              "count": 8,
+              "seconds": 0.352226,
+              "max_seconds": 0.068753
+            },
+            "FILE_POSTPROCESS": {
+              "count": 8,
+              "seconds": 0.012297,
+              "max_seconds": 0.002887
+            },
+            "PARTITION_IDENTITY": {
+              "count": 1,
+              "seconds": 7.3e-05,
+              "max_seconds": 7.3e-05
+            },
+            "PARTITION_PARSE": {
+              "count": 1,
+              "seconds": 0.568306,
+              "max_seconds": 0.568306
+            },
+            "CACHE_WRITE": {
+              "count": 1,
+              "seconds": 0.003413,
+              "max_seconds": 0.003413
+            },
+            "DEPENDENCIES": {
+              "count": 1,
+              "seconds": 0.000482,
+              "max_seconds": 0.000482
+            },
+            "CLAIM_EXTRACTION": {
+              "count": 1,
+              "seconds": 0.000213,
+              "max_seconds": 0.000213
+            },
+            "CLAIM_VERIFICATION": {
+              "count": 1,
+              "seconds": 1.8e-05,
+              "max_seconds": 1.8e-05
+            },
+            "QUALITY_AGGREGATION": {
+              "count": 1,
+              "seconds": 0.060013,
+              "max_seconds": 0.060013
+            },
+            "FINAL_IDENTITY": {
+              "count": 1,
+              "seconds": 0.003518,
+              "max_seconds": 0.003518
+            },
+            "EVIDENCE_FILE": {
+              "count": 20,
+              "seconds": 0.235253,
+              "max_seconds": 0.022854
+            },
+            "EVIDENCE_FILES": {
+              "count": 1,
+              "seconds": 0.246082,
+              "max_seconds": 0.246082
+            },
+            "PUBLISH_CLAIMS": {
+              "count": 1,
+              "seconds": 0.00735,
+              "max_seconds": 0.00735
+            },
+            "PUBLISH_FINDINGS": {
+              "count": 1,
+              "seconds": 0.009437,
+              "max_seconds": 0.009437
+            },
+            "PUBLISH_DEPENDENCIES": {
+              "count": 1,
+              "seconds": 0.005694,
+              "max_seconds": 0.005694
+            },
+            "FINDING_CORRELATION": {
+              "count": 1,
+              "seconds": 0.569575,
+              "max_seconds": 0.569575
+            },
+            "FINDING_HISTORY": {
+              "count": 1,
+              "seconds": 0.272709,
+              "max_seconds": 0.272709
+            },
+            "ARTIFACT_GRAPH": {
+              "count": 1,
+              "seconds": 0.62662,
+              "max_seconds": 0.62662
+            },
+            "CONFIGURATION_GRAPH": {
+              "count": 1,
+              "seconds": 0.268018,
+              "max_seconds": 0.268018
+            },
+            "FUNCTION_GRAPH": {
+              "count": 1,
+              "seconds": 0.487944,
+              "max_seconds": 0.487944
+            },
+            "OWNERSHIP_GRAPH": {
+              "count": 1,
+              "seconds": 0.430669,
+              "max_seconds": 0.430669
+            },
+            "POLICY_PROJECTION": {
+              "count": 1,
+              "seconds": 0.728594,
+              "max_seconds": 0.728594
+            },
+            "IMPACT_GRAPH": {
+              "count": 1,
+              "seconds": 0.477365,
+              "max_seconds": 0.477365
+            }
+          },
+          "counters": {
+            "source_blob_reads": 8,
+            "source_cache_hits": 0,
+            "parser_cache_hits": 12,
+            "parser_cache_misses": 8,
+            "global_analysis_checkpoints_saved": 1,
+            "publication_units_reused": 0,
+            "publication_units_completed": 42,
+            "generation_staging_batches": 38,
+            "generation_inserted_records": 153,
+            "generation_maximum_batch_records": 87
+          }
+        }
+      ]
+    },
+    "candidate": {
+      "state": "MEASURED_SYNTHETIC_LOCAL",
+      "database_integrity": {
+        "sqlite_integrity": "ok",
+        "foreign_key_violations": 0
+      },
+      "phases": [
+        {
+          "phase": "INITIAL",
+          "wall_seconds": 4.952,
+          "pipeline_seconds": 4.817,
+          "peak_working_set_bytes": 135606272,
+          "persisted_records": 154
+        },
+        {
+          "phase": "EIGHT_FILE_HEAD",
+          "wall_seconds": 3.59,
+          "pipeline_seconds": 3.527,
+          "peak_working_set_bytes": 140681216,
+          "persisted_records": 308
+        }
+      ],
+      "profile": {
+        "observation_store.py:_encrypted": {
+          "calls": 120,
+          "self_seconds": 0.0081105,
+          "cumulative_seconds": 0.0325825
+        },
+        "core.py:build": {
+          "calls": 2,
+          "self_seconds": 0.0009061000000000001,
+          "cumulative_seconds": 0.030425900000000002
+        },
+        "generation_visibility.py:hide_unpublished": {
+          "calls": 5365,
+          "self_seconds": 0.023304500000000002,
+          "cumulative_seconds": 0.25294500000000003
+        },
+        "generations.py:save": {
+          "calls": 28,
+          "self_seconds": 0.044896200000000004,
+          "cumulative_seconds": 2.8052623000000003
+        },
+        "analysis_checkpoints.py:load": {
+          "calls": 2,
+          "self_seconds": 1.29e-05,
+          "cumulative_seconds": 0.0026687
+        },
+        "generations.py:load": {
+          "calls": 28,
+          "self_seconds": 0.0002064,
+          "cumulative_seconds": 0.0563038
+        },
+        "generations.py:batch": {
+          "calls": 102,
+          "self_seconds": 0.0032960000000000003,
+          "cumulative_seconds": 2.9558792
+        },
+        "analysis_checkpoints.py:save": {
+          "calls": 2,
+          "self_seconds": 0.0171758,
+          "cumulative_seconds": 0.0898085
+        },
+        "partitioned_analysis.py:parse_partition": {
+          "calls": 2,
+          "self_seconds": 0.0007030000000000001,
+          "cumulative_seconds": 1.2327049
+        },
+        "generations.py:validate": {
+          "calls": 2,
+          "self_seconds": 0.005039,
+          "cumulative_seconds": 0.9070007000000001
+        }
+      },
+      "job_aggregate_performance": [
+        {
+          "stage_seconds": {
+            "VALIDATING": 0.010898,
+            "PARSING": 0.008172,
+            "ANALYZING": 0.885597,
+            "EXTRACTING_CLAIMS": 0.004414,
+            "VERIFYING": 0.426123,
+            "BUILDING_EVIDENCE": 0.643224,
+            "CORRELATING": 1.453078,
+            "FINALIZING": 0.461126,
+            "COMPLETED_NO_FINDINGS": 0.000217
+          },
+          "components": {
+            "CACHE_LOOKUP": {
+              "count": 1,
+              "seconds": 0.00226,
+              "max_seconds": 0.00226
+            },
+            "PYTHON_NATIVE": {
+              "count": 20,
+              "seconds": 0.427159,
+              "max_seconds": 0.050798
+            },
+            "FILE_POSTPROCESS": {
+              "count": 20,
+              "seconds": 0.012322,
+              "max_seconds": 0.000963
+            },
+            "PARTITION_IDENTITY": {
+              "count": 1,
+              "seconds": 0.000173,
+              "max_seconds": 0.000173
+            },
+            "PARTITION_PARSE": {
+              "count": 1,
+              "seconds": 0.847734,
+              "max_seconds": 0.847734
+            },
+            "OBSERVATION_SPILL": {
+              "count": 1,
+              "seconds": 0.01787,
+              "max_seconds": 0.01787
+            },
+            "CACHE_WRITE": {
+              "count": 1,
+              "seconds": 0.003486,
+              "max_seconds": 0.003486
+            },
+            "DEPENDENCIES": {
+              "count": 1,
+              "seconds": 0.000196,
+              "max_seconds": 0.000196
+            },
+            "CLAIM_EXTRACTION": {
+              "count": 1,
+              "seconds": 0.000111,
+              "max_seconds": 0.000111
+            },
+            "CLAIM_VERIFICATION": {
+              "count": 1,
+              "seconds": 6e-06,
+              "max_seconds": 6e-06
+            },
+            "QUALITY_AGGREGATION": {
+              "count": 1,
+              "seconds": 0.016366,
+              "max_seconds": 0.016366
+            },
+            "FINAL_IDENTITY": {
+              "count": 1,
+              "seconds": 0.001297,
+              "max_seconds": 0.001297
+            },
+            "EVIDENCE_FILE": {
+              "count": 20,
+              "seconds": 0.066327,
+              "max_seconds": 0.004881
+            },
+            "EVIDENCE_FILES": {
+              "count": 1,
+              "seconds": 0.06751,
+              "max_seconds": 0.06751
+            },
+            "PUBLISH_CLAIMS": {
+              "count": 1,
+              "seconds": 0.004278,
+              "max_seconds": 0.004278
+            },
+            "PUBLISH_FINDINGS": {
+              "count": 1,
+              "seconds": 0.00349,
+              "max_seconds": 0.00349
+            },
+            "PUBLISH_DEPENDENCIES": {
+              "count": 1,
+              "seconds": 0.003337,
+              "max_seconds": 0.003337
+            },
+            "FINDING_CORRELATION": {
+              "count": 1,
+              "seconds": 0.162866,
+              "max_seconds": 0.162866
+            },
+            "FINDING_HISTORY": {
+              "count": 1,
+              "seconds": 0.074476,
+              "max_seconds": 0.074476
+            },
+            "ARTIFACT_GRAPH": {
+              "count": 1,
+              "seconds": 0.269703,
+              "max_seconds": 0.269703
+            },
+            "CONFIGURATION_GRAPH": {
+              "count": 1,
+              "seconds": 0.076816,
+              "max_seconds": 0.076816
+            },
+            "FUNCTION_GRAPH": {
+              "count": 1,
+              "seconds": 0.217583,
+              "max_seconds": 0.217583
+            },
+            "OWNERSHIP_GRAPH": {
+              "count": 1,
+              "seconds": 0.092013,
+              "max_seconds": 0.092013
+            },
+            "POLICY_PROJECTION": {
+              "count": 1,
+              "seconds": 0.224467,
+              "max_seconds": 0.224467
+            },
+            "IMPACT_GRAPH": {
+              "count": 1,
+              "seconds": 0.074884,
+              "max_seconds": 0.074884
+            }
+          },
+          "counters": {
+            "source_blob_reads": 20,
+            "source_cache_hits": 0,
+            "observation_spill_ciphertext_bytes": 49800,
+            "native_metric_rows": 20,
+            "native_duplicate_tokens": 80,
+            "native_symbol_rows": 20,
+            "parsed_partitions": 1,
+            "parser_cache_hits": 0,
+            "parser_cache_misses": 20,
+            "global_analysis_checkpoints_saved": 1,
+            "publication_units_reused": 0,
+            "publication_units_completed": 42,
+            "generation_staging_batches": 38,
+            "generation_inserted_records": 153,
+            "generation_maximum_batch_records": 87
+          }
+        },
+        {
+          "stage_seconds": {
+            "VALIDATING": 0.014856,
+            "PARSING": 0.006094,
+            "ANALYZING": 0.357678,
+            "EXTRACTING_CLAIMS": 0.002651,
+            "VERIFYING": 0.403701,
+            "BUILDING_EVIDENCE": 0.62476,
+            "CORRELATING": 1.610916,
+            "FINALIZING": 0.449501,
+            "COMPLETED_NO_FINDINGS": 0.000218
+          },
+          "components": {
+            "CACHE_LOOKUP": {
+              "count": 1,
+              "seconds": 0.001188,
+              "max_seconds": 0.001188
+            },
+            "CACHE_REUSE": {
+              "count": 12,
+              "seconds": 0.00066,
+              "max_seconds": 0.00018
+            },
+            "PYTHON_NATIVE": {
+              "count": 8,
+              "seconds": 0.155394,
+              "max_seconds": 0.026876
+            },
+            "FILE_POSTPROCESS": {
+              "count": 8,
+              "seconds": 0.005525,
+              "max_seconds": 0.001036
+            },
+            "PARTITION_IDENTITY": {
+              "count": 1,
+              "seconds": 4.9e-05,
+              "max_seconds": 4.9e-05
+            },
+            "PARTITION_PARSE": {
+              "count": 1,
+              "seconds": 0.328714,
+              "max_seconds": 0.328714
+            },
+            "OBSERVATION_SPILL": {
+              "count": 1,
+              "seconds": 0.017803,
+              "max_seconds": 0.017803
+            },
+            "CACHE_WRITE": {
+              "count": 1,
+              "seconds": 0.000937,
+              "max_seconds": 0.000937
+            },
+            "DEPENDENCIES": {
+              "count": 1,
+              "seconds": 0.000164,
+              "max_seconds": 0.000164
+            },
+            "CLAIM_EXTRACTION": {
+              "count": 1,
+              "seconds": 4.1e-05,
+              "max_seconds": 4.1e-05
+            },
+            "CLAIM_VERIFICATION": {
+              "count": 1,
+              "seconds": 5e-06,
+              "max_seconds": 5e-06
+            },
+            "QUALITY_AGGREGATION": {
+              "count": 1,
+              "seconds": 0.014133,
+              "max_seconds": 0.014133
+            },
+            "FINAL_IDENTITY": {
+              "count": 1,
+              "seconds": 0.001563,
+              "max_seconds": 0.001563
+            },
+            "EVIDENCE_FILE": {
+              "count": 20,
+              "seconds": 0.060123,
+              "max_seconds": 0.004203
+            },
+            "EVIDENCE_FILES": {
+              "count": 1,
+              "seconds": 0.060877,
+              "max_seconds": 0.060877
+            },
+            "PUBLISH_CLAIMS": {
+              "count": 1,
+              "seconds": 0.0016,
+              "max_seconds": 0.0016
+            },
+            "PUBLISH_FINDINGS": {
+              "count": 1,
+              "seconds": 0.001495,
+              "max_seconds": 0.001495
+            },
+            "PUBLISH_DEPENDENCIES": {
+              "count": 1,
+              "seconds": 0.002245,
+              "max_seconds": 0.002245
+            },
+            "FINDING_CORRELATION": {
+              "count": 1,
+              "seconds": 0.120786,
+              "max_seconds": 0.120786
+            },
+            "FINDING_HISTORY": {
+              "count": 1,
+              "seconds": 0.070474,
+              "max_seconds": 0.070474
+            },
+            "ARTIFACT_GRAPH": {
+              "count": 1,
+              "seconds": 0.319405,
+              "max_seconds": 0.319405
+            },
+            "CONFIGURATION_GRAPH": {
+              "count": 1,
+              "seconds": 0.082095,
+              "max_seconds": 0.082095
+            },
+            "FUNCTION_GRAPH": {
+              "count": 1,
+              "seconds": 0.214326,
+              "max_seconds": 0.214326
+            },
+            "OWNERSHIP_GRAPH": {
+              "count": 1,
+              "seconds": 0.093863,
+              "max_seconds": 0.093863
+            },
+            "POLICY_PROJECTION": {
+              "count": 1,
+              "seconds": 0.17322,
+              "max_seconds": 0.17322
+            },
+            "IMPACT_GRAPH": {
+              "count": 1,
+              "seconds": 0.140827,
+              "max_seconds": 0.140827
+            }
+          },
+          "counters": {
+            "source_blob_reads": 8,
+            "source_cache_hits": 0,
+            "observation_spill_ciphertext_bytes": 49840,
+            "native_metric_rows": 20,
+            "native_duplicate_tokens": 80,
+            "native_symbol_rows": 20,
+            "parsed_partitions": 1,
+            "parser_cache_hits": 12,
+            "parser_cache_misses": 8,
+            "global_analysis_checkpoints_saved": 1,
+            "publication_units_reused": 0,
+            "publication_units_completed": 42,
+            "generation_staging_batches": 38,
+            "generation_inserted_records": 153,
+            "generation_maximum_batch_records": 87
+          }
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "Owned 20-file, one-function, 80-line generated Python fixture; development mode; no Linux isolation or cgroup qualification.",
+    "Baseline profiled concurrently with a sanitizer/spill microbenchmark; candidate profiled concurrently with tests. Startup/OS caches uncontrolled; wall times are observations, not a controlled throughput comparison.",
+    "Per-process lifetime peak working set differs from cgroup charge and cannot qualify shared parser descendants.",
+    "cProfile cumulative function durations overlap and must not be summed.",
+    "Full pinned workload timeout/memory cause remains unproven without raw latest artifact samples.",
+    "Global quality metrics/symbols, correlation/graph, checkpoint buffering and joined receipt restoration remain size-dependent."
+  ],
+  "implementation_hashes": {
+    "analyzers/sanitization.py": "a515198e59451ebc64ab80d78ecf75dc010db5b946f5ec16bd1852b4569011be",
+    "backend/generation_visibility.py": "d55e56426ee5d7e732bd7a5cab641d0089b42a9e0f388a73cbe3ea759d743b02",
+    "backend/partitioned_analysis.py": "5558f2db54ce977f5ffbd29cd6e23e6cdcbf68b3bfc00154bfefefd1810d996f",
+    "scripts/scale_linux_resources.py": "fa809fe96216e3772148eb4f68b6d496e958d2bd70233a30142e1659361232ac",
+    "scripts/qualify_scale_workload.py": "93621abc9e59aa8924462259584036de0658d9dfb59e2c5b7160fb78ff559dea",
+    "scripts/run_scale_cgroup.py": "c34aac4e0eda3f357eef109188632b16eee984f810a4328265673580805d7547"
+  },
+  "local_validation": {
+    "mode": "explicit development; owned fixtures only",
+    "generation_suite": {
+      "passed": 34
+    },
+    "auth_drift_queue_recovery_selection": {
+      "passed": 45
+    },
+    "ruff": "passed for backend/analyzers/integrations/workers/tests/scripts/integration_tests",
+    "compileall": "passed for backend/analyzers/integrations/workers/scripts/tests/integration_tests",
+    "diff_check": "passed",
+    "linux_cgroup": "NOT_RUN",
+    "latest_raw_zip_inspection": "PENDING_ATTACHMENTS",
+    "storage_lexical_metrics_diagnostics_checkpoint_security_selection": {
+      "passed": 103,
+      "skipped": 1,
+      "skip_scope": "Linux unnamed SQLite worker-death lifecycle only"
+    },
+    "distinct_focused_total": {
+      "passed": 182,
+      "skipped": 1
+    }
+  }
+}

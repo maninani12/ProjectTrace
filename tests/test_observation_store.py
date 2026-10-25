@@ -173,8 +173,12 @@ def test_mutable_spill_keeps_order_and_rejects_over_budget_update():
         assert list(values.snapshots()) == [{"id": "a", "data": {"number": 99}}, {"id": "b", "data": {"value": "other"}}]
         assert json.loads(json.dumps(values.snapshots())) == list(values.snapshots())
         values.rows.maximum_bytes = values.rows.bytes
+        # Repeated "x" compresses so well that it can fit the same Fernet
+        # block as the old row. Use deterministic varied content to exceed it.
+        import hashlib
+        oversized = "".join(hashlib.sha256(f"owned-{i}".encode()).hexdigest() for i in range(32))
         with pytest.raises(ObservationBudgetExceeded):
-            values["a"] = {"value": "x" * 1000}
+            values["a"] = {"value": oversized}
         assert values["a"] == {"number": 99}
         assert b"OWNED-MAPPING-SENTINEL" not in values.rows.connection.serialize()
         with pytest.raises(KeyError):

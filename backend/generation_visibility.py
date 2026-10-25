@@ -47,15 +47,25 @@ def hide_unpublished(execution):
         return
     context = execution.session.info.get("analysis_generation")
     active = context.row.id if context else None
-    options = [with_loader_criteria(Record, visible_record(Record.id, active), include_aliases=True)]
-    for model, field in ((SnapshotView, "snapshot_id"), (SnapshotInventory, "snapshot_id"),
-                         (CloudAsset, "snapshot_id"), (QualityAnalysis, "snapshot_id"),
-                         (QualityOccurrence, "snapshot_id"), (FindingOccurrence, "snapshot_id"),
-                         (FindingIdentity, "introduced_snapshot_id")):
-        options.append(with_loader_criteria(model, visible_record(getattr(model, field), active), include_aliases=True))
+    # These immutable SQL expressions contain no row data or permission result.
+    # Rebuilding all ten on every SELECT also charged unrelated source/cache
+    # queries. Retain one set per Session, replacing it whenever worker scope
+    # changes; publication state is still checked by the database every time.
+    cached = execution.session.info.get("_generation_visibility_criteria")
+    if cached is None or cached[0] != active:
+        options = [with_loader_criteria(Record, visible_record(Record.id, active), include_aliases=True)]
+        for model, field in ((SnapshotView, "snapshot_id"), (SnapshotInventory, "snapshot_id"),
+                             (CloudAsset, "snapshot_id"), (QualityAnalysis, "snapshot_id"),
+                             (QualityOccurrence, "snapshot_id"), (FindingOccurrence, "snapshot_id"),
+                             (FindingIdentity, "introduced_snapshot_id")):
+            options.append(with_loader_criteria(model, visible_record(getattr(model, field), active), include_aliases=True))
+        audit_options = (with_loader_criteria(Audit, visible_audit(Audit.id, active=active), include_aliases=True),
+                        with_loader_criteria(ActivityEvent, visible_audit(ActivityEvent.id, True, active), include_aliases=True))
+        cached = (active, tuple(options), audit_options)
+        execution.session.info["_generation_visibility_criteria"] = cached
+    options = cached[1]
     # Integrity checks verify the entire append-only chain, including private
     # preparation events; public audit/activity endpoints still hide those rows.
     if not execution.execution_options.get("generation_audit_integrity"):
-        options.extend([with_loader_criteria(Audit, visible_audit(Audit.id, active=active), include_aliases=True),
-                        with_loader_criteria(ActivityEvent, visible_audit(ActivityEvent.id, True, active), include_aliases=True)])
+        options += cached[2]
     execution.statement = execution.statement.options(*options)

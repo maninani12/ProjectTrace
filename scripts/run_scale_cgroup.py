@@ -8,6 +8,8 @@ import threading
 import time
 from pathlib import Path
 
+from scripts.scale_linux_resources import cgroup_diagnostics
+
 LIMIT = 768_000_000
 
 
@@ -70,6 +72,7 @@ def main():
                     try:
                         row = {name: (root / name).read_text().strip() for name in
                                ("memory.current", "memory.peak", "memory.events", "memory.swap.current", "cgroup.procs")}
+                        row.update(cgroup_diagnostics(root))
                         row["monotonic"] = time.monotonic()
                         stream.write(json.dumps(row) + "\n")
                         stream.flush()

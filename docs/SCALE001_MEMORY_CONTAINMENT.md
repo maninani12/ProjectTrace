@@ -167,3 +167,17 @@ Standard [CI 40213479256](https://github.com/maninani12/ProjectTrace/actions/run
 Compression follow-up publication/cache/generation/authentication/Engineering Changes selection: **113 passed / 1 Windows extended-path skip** in 208.97 s (development mode on owned fixtures). Two integrity-gate tests also passed. A separate 20-file invocation of the older owned benchmark script reported completion but produced malformed local SQLite files on **both unchanged 243513ee and the compressed candidate** (Python 3.12.14 / SQLite 3.53.1 / overlay filesystem). Those new timing/equivalence measurements are rejected; private fixture files are preserved for diagnosis, not uploaded. No compression causality or production database defect has been established. The benchmark now requires post-run SQLite integrity and foreign-key validation before writing MEASURED_SYNTHETIC_LOCAL. Raw sanitized statuses are retained in SCALE001_COMPRESSED_FOLLOWUP_LOCAL.json. Earlier valid equivalence measurements remain explicitly scoped to their earlier commits.
 
 Fresh sequential guarded 8-file and 20-file benchmark runs complete with post-run SQLite integrity ok and zero FK violations, independently rechecked after process exit. They use one-function owned files, cold/eight-file HEAD, development mode and a per-process guard, not the declared cgroup workload or the earlier ten-function equivalence fixture. The initial malformed local files were not repaired/deleted or used as baselines, and their cause remains unresolved; successful fresh fixtures do not prove that intermittent integrity issue corrected.
+
+### Local Windows continuation, 26 October 2026
+
+Work continues from 7e2f217e on the separate `codex/scale-001-local-continuation`
+branch while cloud state remains unknown. PR #4 and its shared branch remain
+unchanged. The user-confirmed latest run 40216200591 candidate timed out during
+ANALYZING with 11,097 retained artifacts, no application OOM kill, intact DB/FKs
+and zero publication. Raw latest artifacts are pending local inspection.
+Measured local corrections reduce repeated packet sanitization and publication
+visibility SQL-expression construction; aggregate spill and cgroup breakdown
+diagnostics support the next qualification. Global output retention and the
+full acceptance matrix remain open. See
+[the local handoff record](SCALE001_LOCAL_HANDOFF_2026_10_26.md) and its sanitized
+evidence for scope, provenance, measurements, tests and remaining gates.

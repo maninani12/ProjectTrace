@@ -6,6 +6,7 @@ credential forms even if a compromised helper omits its own redaction.
 """
 
 import math
+from functools import lru_cache
 
 MAX_TEXT = 1_000_000
 PRIVATE_LABELS = ("PRIVATE KEY-----", "RSA PRIVATE KEY-----", "EC PRIVATE KEY-----", "OPENSSH PRIVATE KEY-----")
@@ -147,6 +148,16 @@ def redact(text):
 def metadata(value, *, maximum_nodes=1_000_000):
     """Fail closed for cycles/depth, invalid scalars and colliding sanitized keys."""
     nodes = 0
+    # Parser token rows repeat short keys and values thousands of times. Keep
+    # this cache private to one packet traversal; long strings never enter it.
+    # Every node still crosses the structure budget and key-collision checks.
+    @lru_cache(maxsize=128)
+    def short_text(text):
+        return redact(text)
+
+    def text(item):
+        return short_text(item) if len(item) <= 256 else redact(item)
+
     def visit(item, depth):
         nonlocal nodes
         nodes += 1
@@ -159,7 +170,7 @@ def metadata(value, *, maximum_nodes=1_000_000):
                 raise ValueError("Non-finite metadata is invalid")
             return item
         if isinstance(item, str):
-            return redact(item)
+            return text(item)
         if isinstance(item, (list, tuple)):
             children = [visit(child, depth + 1) for child in item]
             return tuple(children) if isinstance(item, tuple) else children
@@ -168,7 +179,7 @@ def metadata(value, *, maximum_nodes=1_000_000):
             for key, child in item.items():
                 if type(key) not in {str, int}:
                     raise ValueError("Metadata key type invalid")
-                name = redact(str(key))
+                name = text(str(key))
                 if name in output:
                     raise ValueError("Sanitized metadata key collision")
                 lowered = name.lower().replace("-", "_")

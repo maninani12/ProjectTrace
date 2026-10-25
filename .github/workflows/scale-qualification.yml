@@ -1,7 +1,7 @@
 name: SCALE-001 constrained qualification
 on:
   push:
-    branches: [codex/scale-001-memory-containment]
+    branches: [codex/scale-001-memory-containment, codex/scale-001-local-continuation]
   pull_request:
     branches: [codex/linux-parser-isolation]
   workflow_dispatch:

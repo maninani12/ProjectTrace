@@ -36,6 +36,49 @@ SOURCES = {
 }
 
 
+def test_visibility_scope_switches_in_one_session_and_rechecks_publication(storage, monkeypatch):  # noqa: F811
+    from types import SimpleNamespace
+
+    db, actor, repo = storage
+    monkeypatch.setenv("PROJECTTRACE_GENERATION_PUBLICATION", "1")
+    save = Generation.save
+
+    def stop(self, stage, state):
+        save(self, stage, state)
+        if stage == "SNAPSHOT":
+            raise RuntimeError("Owned private snapshot")
+
+    monkeypatch.setattr(Generation, "save", stop)
+    for index in range(2):
+        files = captured(storage, {f"owned-{index}.py": f"value = {index}\n"})
+        with pytest.raises(RuntimeError, match="Owned private snapshot"):
+            execute_analysis(db, actor, repo, files, branch=f"owned-{index}")
+    generations = list(db.scalars(select(AnalysisGeneration).order_by(AnalysisGeneration.branch)))
+    assert len(generations) == 2
+    query = select(Record.id).where(Record.kind == "snapshot")
+    alias = aliased(Record)
+    aliased_query = select(alias.id).where(alias.kind == "snapshot")
+    try:
+        # Reuse one Session and the same statements while changing worker scope.
+        for active in (generations[0], generations[1], None, generations[0], None):
+            if active:
+                db.info["analysis_generation"] = SimpleNamespace(row=active)
+            else:
+                db.info.pop("analysis_generation", None)
+            expected = {active.snapshot_id} if active else set()
+            assert set(db.scalars(query)) == expected
+            assert set(db.scalars(aliased_query)) == expected
+        # Criteria cache SQL, never a visibility decision. A database state
+        # change must be observed even though the Session/scope did not change.
+        # A controlled database-state fixture, not application promotion.
+        db.execute(AnalysisGeneration.__table__.update().where(
+            AnalysisGeneration.id == generations[0].id).values(state="PUBLISHED"))
+        db.commit()
+        assert set(db.scalars(query)) == {generations[0].snapshot_id}
+    finally:
+        db.info.pop("analysis_generation", None)
+
+
 @pytest.mark.parametrize("exit_point", ["BATCH", "HISTORY", "VALIDATED"])
 def test_actual_worker_exit_resumes_partial_stage_with_new_lease(storage, monkeypatch, exit_point):  # noqa: F811
     import json

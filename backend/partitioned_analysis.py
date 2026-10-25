@@ -78,6 +78,8 @@ def _analyze_inventory(db, files, signals, metrics, findings, *, progress, verif
         performance.count("source_blob_reads", partition._source_reads)
         performance.count("source_cache_hits", partition._source_hits)
         f, s, w, a, m, failed, parsed, count = observed
+        spill_started = time.perf_counter()
+        old_bytes = findings.bytes + signals.bytes + metrics.bytes
         findings.extend(f)
         signals.extend(s)
         warnings.extend(w)
@@ -85,6 +87,12 @@ def _analyze_inventory(db, files, signals, metrics, findings, *, progress, verif
         # Immutable typed rows spill encrypted per attempt. Parser artifacts
         # keep their independent lossless JSON; retries never depend on this file.
         metrics.extend(m)
+        performance.record("OBSERVATION_SPILL", time.perf_counter() - spill_started)
+        performance.count("observation_spill_ciphertext_bytes", findings.bytes + signals.bytes + metrics.bytes - old_bytes)
+        performance.count("native_metric_rows", len(m))
+        performance.count("native_duplicate_tokens", sum(len(row.get("duplicate_tokens", ())) for row in m))
+        performance.count("native_symbol_rows", sum(len(row.get("symbols", ())) for row in s))
+        performance.count("parsed_partitions")
         failures.update(failed)
         reused += count
         hits += count

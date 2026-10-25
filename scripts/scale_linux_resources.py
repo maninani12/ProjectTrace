@@ -3,6 +3,27 @@ import os
 from pathlib import Path
 
 
+def cgroup_diagnostics(root):
+    """Distinguish resident payloads, charged file pages and reclaim stalls.
+
+    Missing counters are unavailable, never reported as zero or a pass.
+    These fixed kernel files contain no source, credentials or environment.
+    """
+    result = {}
+    for name in ("memory.stat", "cpu.stat"):
+        try:
+            result[name] = {key: int(value) for key, value in
+                            (line.split() for line in (root / name).read_text().splitlines())}
+        except (OSError, ValueError):
+            result[name] = "UNAVAILABLE"
+    for name in ("memory.pressure", "cpu.pressure", "io.pressure", "io.stat"):
+        try:
+            result[name] = (root / name).read_text().strip()
+        except OSError:
+            result[name] = "UNAVAILABLE"
+    return result
+
+
 def memory():
     if os.name != "posix" or not Path("/proc/self/status").is_file():
         return {"available": False}
@@ -30,4 +51,5 @@ def memory():
                                    (line.split() for line in (cgroup / "memory.events").read_text().splitlines())}
     except (OSError, ValueError):
         result["memory.events"] = "UNAVAILABLE"
+    result.update(cgroup_diagnostics(cgroup))
     return result

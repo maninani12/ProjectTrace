@@ -31,6 +31,12 @@ def write(path, value):
     temporary.replace(path)
 
 
+def aggregate_performance(captured):
+    # Failure profiles must survive timeout without exporting the per-file
+    # slowest-operation list or arbitrary future diagnostic payload fields.
+    return {key: captured.get(key, {}) for key in ("stage_seconds", "components", "counters")}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--archive", type=Path, required=True)
@@ -204,7 +210,9 @@ def main():
                     "published_generations": db.scalar(select(func.count()).select_from(AnalysisGeneration).where(AnalysisGeneration.state == "PUBLISHED")),
                     "parser_artifacts": db.scalar(select(func.count()).select_from(ParserArtifact)),
                     "jobs": [{"state": r.data.get("state"), "stage": r.data.get("stage"),
-                              "error_code": r.data.get("error_code")} for r in db.scalars(select(Record).where(Record.kind == "job"))],
+                              "error_code": r.data.get("error_code"),
+                              "performance": aggregate_performance(r.data.get("performance", {}))}
+                             for r in db.scalars(select(Record).where(Record.kind == "job"))],
                     "sqlite_integrity": db.connection().exec_driver_sql("PRAGMA integrity_check").scalar(),
                     "foreign_key_violations": len(db.connection().exec_driver_sql("PRAGMA foreign_key_check").all()),
                 }
