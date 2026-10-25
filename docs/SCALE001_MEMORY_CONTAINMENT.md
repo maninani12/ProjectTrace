@@ -211,3 +211,16 @@ complete OpenAPI contracts only, preserves the original nesting guard, and adds
 bounded deadline checks and durable aggregate diagnostics. No limits are raised.
 See [the evidence and correction record](SCALE001_B1FB6FE_CLAIM_EXTRACTION.md).
 Complete-workload correctness, publication and recovery remain unqualified.
+
+The 5758a63 follow-up (40241617715) confirms full-workload claim extraction now
+completes in 24.987 seconds: 2,275 JSON sources / 49 helpers. It then OOM-kills the
+coordinator in the broad VERIFYING stage, with 18,756 parser artifacts, intact
+SQLite/FKs and no publication. The last host charge is predominantly anonymous
+(741,474,304 bytes; file cache 278,528). Committed aggregates expose 195,982 metric
+rows, 12,435,603 tokens and 53,467 symbols; the precise post-claims allocation
+hotspot still needs operation-level persistence/profiling. Regression has three
+passing jobs and one new nesting-fallback failure; its correction preserves the
+original public protocol guard and needs a fresh Linux run. Both completed
+workflows were allowed to finish before another push. Raw receipts and 30,715
+samples are preserved in SCALE001_CGROUP_40241617715 evidence. No complete-output
+or recovery qualification is claimed.

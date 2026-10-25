@@ -101,10 +101,13 @@ class OpenAPIContracts:
                 try:
                     value = sandbox.call("openapi_batch", {"files": batch})
                 except sandbox.SandboxFailure as error:
-                    if error.code != "HELPER_PROTOCOL_DEPTH":
+                    if error.code not in {"HELPER_PROTOCOL_DEPTH", "HELPER_PROTOCOL"}:
                         raise
                     # The batch wrapper adds nesting. Retain the original
                     # per-source IPC guard for contracts near that boundary.
+                    # call() normalizes decoder failures to HELPER_PROTOCOL.
+                    # No failed batch result is consumed; originals must pass
+                    # the unchanged single-source helper/protocol boundary.
                     value = {}
                     for name, source in batch.items():
                         contract, invalid = None, False

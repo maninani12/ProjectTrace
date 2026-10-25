@@ -110,7 +110,7 @@ def test_actual_openapi_reader_retains_single_source_nesting_guard():
             if depth == 97:
                 assert reader.read("owned.json") == (json.loads(source), True, False)
             else:
-                with pytest.raises(sandbox.SandboxFailure, match="HELPER_PROTOCOL_DEPTH"):
+                with pytest.raises(sandbox.SandboxFailure, match="HELPER_PROTOCOL"):
                     reader.read("owned.json")
         finally:
             reader.close()

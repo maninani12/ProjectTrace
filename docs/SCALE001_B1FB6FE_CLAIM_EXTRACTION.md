@@ -84,6 +84,9 @@ some-stall seconds and 14.107524 IO-pressure some-stall seconds. IO counters
 recorded 279,756,800 bytes read and 3,415,732,224 bytes written. Memory-limit events
 show reclaim under charge pressure; these totals do not establish memory or IO
 stall as the dominant cause of the 592-second claims span.
+The stage samples show memory.events.max rising from 0 to 10,145 during
+ANALYZING, then from 10,145 to 10,172 during claims. Most observed limit events
+therefore preceded claim extraction; only 27 were added in its sampled span.
 
 The killed artifacts contain no operation profile splitting Markdown from JSON,
 nor final metric/symbol/spill counts, checkpoint/serialization costs or hashes.
@@ -120,7 +123,9 @@ and keeps only bounded iterator lookahead. Existing warning predicates, caps,
 route/method order, verdicts and publication behavior remain unchanged.
 
 If the extra batch wrapper exceeds the existing protocol nesting guard, a narrow
-fallback uses the original per-source helper and original guard. Other failures
+protocol-decoder fallback uses the original per-source helper and original guard.
+The public parser API normalizes decoder failures to HELPER_PROTOCOL; no failed
+batch payload is consumed. Other failures
 propagate; an over-deep original source still fails closed. No parser guard is
 raised or bypassed. The batch and fallback check the existing cancellation,
 deadline and lease between bounded work units; finally blocks release pending
@@ -164,3 +169,95 @@ NOT_RUN; that is a remaining implementation/evidence gate. PostgreSQL and real
 Redis/Celery recovery remain separate Linux acceptance gates. Full output
 equivalence requires a complete valid comparator, not the OOM-interrupted
 baseline. No cold-only or regression-only result closes SCALE-001.
+
+## First Linux follow-up at 5758a63
+
+[Regression 40241617717](https://github.com/maninani12/ProjectTrace/actions/runs/40241617717)
+caught the fallback error-code mismatch: the first required isolation selection
+had 17 passed / 1 failed (the new nesting-boundary test). The local mock had
+bypassed the public call() decoder normalization. The ordinary batch/identity
+and multi-batch helper-count tests passed under real Linux enforcement. This is
+not a passing regression workflow.
+
+The correction accepts the public HELPER_PROTOCOL decoder error for a bounded
+retry of the original sources through the original single-source API. Invalid
+originals still fail the unchanged guard. The portable test now substitutes only
+the transport and exercises actual call()/decode_packet(), including the failed
+single-source case. The test's substantive nesting expectations are retained.
+The final focused selection again passed 52 tests / 2 skips (17.18 seconds),
+with Ruff passing. Publication of this follow-up was held until constrained run
+40241617715 completed, avoiding cancellation/duplicate qualification.
+
+## Completed constrained follow-up: claims finish; coordinator OOM later
+
+[Constrained 40241617715](https://github.com/maninani12/ProjectTrace/actions/runs/40241617715)
+failed on both revisions at 5758a63. Both application containers (not the separate
+probe) have Docker OOMKilled=true / exit 137 under the same 768,000,000-byte / zero
+swap envelope. Candidate SQLite integrity is ok, FK violations zero; parser
+artifacts 18,756, published generations/pointers zero. Baseline again retained
+3,747 artifacts and died in ANALYZING. The candidate reached **VERIFYING**.
+Post-kill cold RUNNING receipts are stale; later scenarios were NOT_RUN.
+
+The [new raw receipts](evidence/SCALE001_CGROUP_40241617715.json) and **30,715**
+application samples in `evidence/SCALE001_CGROUP_40241617715_MEMORY.jsonl.gz`
+include the committed aggregate profile recovered by the new post-exit exporter.
+The downloaded candidate ZIP SHA-256 was independently matched to GitHub's
+published digest `8209e90d90622088a214ee08cf93863d7cde8015a8718fa77e8e1329b3064601`.
+The full pinned manifest remains identical.
+
+Durable candidate profile at VERIFYING entry:
+
+| Measured operation | Seconds | Count |
+|---|---:|---:|
+| ANALYZING stage | 1295.110941 | — |
+| PARTITION_PARSE (includes nested helper work) | 1218.486008 | 199 |
+| OBSERVATION_SPILL | 55.830303 | 199 |
+| CACHE_WRITE | 5.783388 | 199 |
+| DEPENDENCIES | 0.663936 | 1 |
+| EXTRACTING_CLAIMS stage | **24.986637** | — |
+| DOCUMENTATION_CLAIMS | 3.125327 | 1 |
+| OPENAPI_SOURCE_READ | 0.444773 | 49 |
+| OPENAPI_CONTRACT_BATCH | 21.268294 | 49 |
+| OPENAPI_CLAIMS (includes batch/read work) | 21.859466 | 1 |
+
+All **2,275** submitted JSON sources / **19,275,081** bytes were consumed in 49
+helpers: four invalid JSON files, one actual OpenAPI contract. This is the actual
+retained-input count, distinct from the 2,276-file manifest count. No source or
+contract was skipped by a keyword heuristic. No fallback counter was recorded on
+this workload. The older run was still extracting after at least 591.932 sampled
+seconds; the corrected path now completes in about 25 seconds. Different runners
+and incomplete older outputs prevent a complete-workload speedup claim or
+attributing the ANALYZING timing difference to this claims-only change.
+
+Native aggregates: **18,859** processed cache misses / zero hits, **103** files
+with persisted diagnostics, **195,982** metric rows, **12,435,603** retained
+duplication tokens, **53,467** symbol rows and **457,636,900** aggregate spill
+ciphertext bytes. These are not resident heap sizes or total disk footprint.
+Timings overlap; do not sum nested helper/component durations.
+
+After claims, VERIFYING lasted **128.708 sampled seconds** until the last inner
+sample at 1596.231 seconds total. Coordinator RSS peaked at **768,835,584 bytes**
+with no helper RSS in that peak sample. Independent stage anonymous/file/kernel
+peaks were 742,498,304 / 269,611,008 / 55,250,944 bytes. The last host sample had
+741,474,304 anonymous, only **278,528 file**, and 25,632,768 kernel bytes. Its OOM
+counters still precede the Docker-confirmed kill. This is now coordinator
+anonymous-memory exhaustion after file-cache reclamation, not the earlier host
+time budget failure or evidence that file cache alone caused the OOM.
+
+The persisted profile is the VERIFYING entry checkpoint; its near-zero VERIFYING
+duration is stale. It cannot identify the operation executing at death. This
+label covers the claim-verdict/evidence cache and claim list, storage claims,
+exact-body duplicate index, infrastructure linking, quality aggregation and final
+identity. No trace proves which retained structure dominated. The next exact
+engineering action is to persist bounded operation-boundary/claim-batch profiles
+within this stage, then reproduce the growing collection with owned equivalent
+fixtures before choosing its spill/ownership correction. Dropping evidence,
+reducing coverage or increasing the ceiling is not a remedy.
+
+Regression 40241617717 finished with **three successful jobs and one failed**:
+validate (786 backend / 2 Windows-specific skips, 49 frontend, builds/migrations/
+audits/Docker), browser (18 / 10 skips plus 4 focused), and real broker (4) passed.
+The required Linux job stopped at the identified 17-pass/1-failure nesting case;
+its remaining selections did not run. The corrected public-API fallback requires
+fresh Linux CI. Full-workload output hashes, successful publication and all later
+qualification scenarios remain unavailable. **SCALE-001 is still unqualified.**

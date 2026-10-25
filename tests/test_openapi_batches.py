@@ -192,12 +192,12 @@ def test_batch_wrapper_preserves_original_per_source_protocol_depth_guard(monkey
     files = {"owned.json": source}
     calls, checkpoints = [], []
 
-    def call(operation, value):
+    def invoke(operation, value, **limits):
         calls.append(operation)
         response = dispatch(operation, value, engine, sandbox)
-        return sandbox.decode_packet(json.dumps({"ok": True, "result": response}))["result"]
+        return json.dumps({"ok": True, "result": response}).encode(), None
 
-    monkeypatch.setattr(sandbox, "call", call)
+    monkeypatch.setattr(sandbox, "invoke", invoke)
     monkeypatch.setattr(sandbox, "required", lambda: True)
     reader = isolated_analysis.OpenAPIContracts(files, checkpoint=lambda: checkpoints.append(True))
     if depth == 97:
@@ -205,6 +205,6 @@ def test_batch_wrapper_preserves_original_per_source_protocol_depth_guard(monkey
         assert actual == json.loads(source) and mentions and not invalid
         assert len(checkpoints) == 2
     else:
-        with pytest.raises(sandbox.SandboxFailure, match="HELPER_PROTOCOL_DEPTH"):
+        with pytest.raises(sandbox.SandboxFailure, match="HELPER_PROTOCOL"):
             reader.read("owned.json")
     assert calls == ["openapi_batch", "json"]
