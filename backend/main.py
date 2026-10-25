@@ -1051,6 +1051,7 @@ def assign_components(repo_id: str, body: ComponentAssignment, request: Request)
 
 
 async def streamed_archive(request, db, user, repo, base_id=None, *, new_repository=False, request_key=None):
+    from analyzers.sandbox import SandboxFailure
     from backend.encrypted_archive import EncryptedArchive
     from backend.queue import check_capacity
     from backend.repository_store import RepositoryFiles, archive_items, capture, limits
@@ -1145,6 +1146,12 @@ async def streamed_archive(request, db, user, repo, base_id=None, *, new_reposit
                 return {"repository_id": repo.id, "snapshot_id": snapshot.id, "job_id": job.id, "state": job.data["state"]}
 
             return await run_in_threadpool(process)
+    except SandboxFailure as error:
+        db.rollback()
+        detail = IntakeError("PARSER_ISOLATION_" + error.code,
+            "Required archive isolation failed; unfinished intake was not published.",
+            remediation="Verify Linux Landlock ABI 3+, libseccomp and container policy; retry after restoring parser availability.")
+        raise HTTPException(503, detail.detail()) from None
     except IntakeError as error:
         db.rollback()
         raise HTTPException(422, error.detail()) from None
