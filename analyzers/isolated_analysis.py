@@ -23,8 +23,13 @@ def validate_source_rows(rows, warnings, files, *, documentation=False):
     """Parent identity/schema gate, independent of helper implementation correctness."""
     if not isinstance(rows, list) or not isinstance(warnings, list):
         raise sandbox.SandboxFailure("HELPER_RESULT_SCHEMA")
+    line_counts = {path: len(source.splitlines()) for path, source in files.items()} if documentation else {}
+    allowed = set(files)
     for warning in warnings:
-        if not isinstance(warning, dict) or warning.get("path") not in (*files, None):
+        if not isinstance(warning, dict):
+            raise sandbox.SandboxFailure("HELPER_WARNING_SCOPE")
+        path = warning.get("path")
+        if path is not None and (not isinstance(path, str) or path not in allowed):
             raise sandbox.SandboxFailure("HELPER_WARNING_SCOPE")
     for row in rows:
         if not isinstance(row, dict) or not isinstance(row.get("path"), str) or row["path"] not in files:
@@ -33,7 +38,7 @@ def validate_source_rows(rows, warnings, files, *, documentation=False):
             if (set(row) != {"text", "category", "expected", "path", "line", "assertion_family"}
                     or any(not isinstance(row[key], str) for key in ("text", "category", "expected"))
                     or row["assertion_family"] != "declaration" or type(row["line"]) is not int
-                    or not 1 <= row["line"] <= len(files[row["path"]].splitlines())):
+                    or not 1 <= row["line"] <= line_counts[row["path"]]):
                 raise sandbox.SandboxFailure("HELPER_DOCUMENT_SCHEMA")
         elif (set(row) != {"name", "version", "ecosystem", "path", "direct", "dependency_kind", "manifest", "version_kind", "license"}
                 or row["manifest"] != row["path"] or any(not isinstance(row[key], str) for key in ("name", "version", "ecosystem"))
@@ -144,8 +149,9 @@ def native(files, cache, settings, *, performance=None):
             for values in row[:5]:
                 if any(not isinstance(item, dict) or item.get("path") not in {path, None} for item in values):
                     raise sandbox.SandboxFailure("HELPER_SCOPE")
+            maximum_line = len(batch[path].splitlines()) + 1
             for item in row[0]:
-                if item.get("rule") not in RULES or type(item.get("line")) is not int or not 1 <= item["line"] <= len(batch[path].splitlines()) + 1:
+                if item.get("rule") not in RULES or type(item.get("line")) is not int or not 1 <= item["line"] <= maximum_line:
                     raise sandbox.SandboxFailure("HELPER_FINDING_SCHEMA")
             records[path] = row[:8]
             if performance:

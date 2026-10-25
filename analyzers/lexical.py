@@ -238,6 +238,7 @@ def section_map(files, selected=None):
     output = {}
     for batch in partitions(files, selected=(p for p in (selected if selected is not None else files) if p.endswith(".md"))):
         hashes = {p: hashlib.sha256(s.encode()).hexdigest() for p, s in batch.items()}
+        line_counts = {p: len(s.splitlines()) for p, s in batch.items()}
         result = sandbox.call("lexical_sections", {"files": batch})
         if not isinstance(result, dict) or set(result) != set(batch):
             raise sandbox.SandboxFailure("SECTIONS_SCOPE")
@@ -247,7 +248,7 @@ def section_map(files, selected=None):
             previous = 0
             for row in value["sections"]:
                 if (not isinstance(row, dict) or set(row) != {"title", "line"} or not isinstance(row["title"], str)
-                        or type(row["line"]) is not int or not previous < row["line"] <= len(batch[path].splitlines())):
+                        or type(row["line"]) is not int or not previous < row["line"] <= line_counts[path]):
                     raise sandbox.SandboxFailure("SECTIONS_SCHEMA")
                 previous = row["line"]
             output[path] = value["sections"]
@@ -261,12 +262,13 @@ def storage_claims(files, assets):
                for a in assets if a["kind"] in {"aws_s3_bucket", "AWS::S3::Bucket", "google_storage_bucket", "azurerm_storage_container"}]
     for batch in partitions(files, selected=(p for p in files if p.endswith(".md"))):
         hashes = {p: hashlib.sha256(s.encode()).hexdigest() for p, s in batch.items()}
+        line_counts = {p: len(s.splitlines()) for p, s in batch.items()}
         value = sandbox.call("lexical_storage", {"files": batch, "assets": minimal})
         if not isinstance(value, dict) or set(value) != {"hashes", "claims"} or value["hashes"] != hashes or not isinstance(value["claims"], list):
             raise sandbox.SandboxFailure("STORAGE_CLAIM_SCOPE")
         for row in value["claims"]:
             if (not isinstance(row, dict) or row.get("path") not in batch or type(row.get("line")) is not int
-                    or not 1 <= row["line"] <= len(batch[row["path"]].splitlines())
+                    or not 1 <= row["line"] <= line_counts[row["path"]]
                     or row.get("category") != "CLOUD_SECURITY" or row.get("expected") != "private_storage"
                     or row.get("status") not in {"CONTRADICTED", "UNVERIFIED"}):
                 raise sandbox.SandboxFailure("STORAGE_CLAIM_SCHEMA")

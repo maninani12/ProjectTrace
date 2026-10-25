@@ -152,4 +152,35 @@ def test_manifest_parent_validation_preserves_legacy_json_license_metadata():
     assert row["license"]["type"] == "MIT"
 
 
+@pytest.mark.parametrize("operation", ["documentation", "sections", "storage"])
+def test_large_reply_line_validation_scans_each_source_once(monkeypatch, operation):
+    import hashlib
+
+    from analyzers.isolated_analysis import validate_source_rows
+    from analyzers.lexical import section_map, storage_claims
+    class Counted(str):
+        scans = 0
+        def splitlines(self, *args, **kwargs):
+            self.scans += 1
+            return super().splitlines(*args, **kwargs)
+    source = Counted("# Owned\n" * 60000)  # 480 KB; many valid-looking helper observations.
+    files = {"README.md": source}
+    digest_value = hashlib.sha256(source.encode()).hexdigest()
+    if operation == "documentation":
+        rows = [{"path": "README.md", "line": n, "text": "Owned", "category": "TECHNOLOGY",
+                 "expected": "fastapi", "assertion_family": "declaration"} for n in range(1, 1001)]
+        validate_source_rows(rows, [], files, documentation=True)
+    elif operation == "sections":
+        rows = [{"title": "Owned", "line": n} for n in range(1, 1001)]
+        monkeypatch.setattr(sandbox, "call", lambda *_a, **_kw: {
+            "README.md": {"hash": digest_value, "sections": rows}})
+        assert len(section_map(files)["README.md"]) == 1000
+    else:
+        rows = [{"path": "README.md", "line": n, "category": "CLOUD_SECURITY", "expected": "private_storage",
+                 "status": "UNVERIFIED"} for n in range(1, 1001)]
+        monkeypatch.setattr(sandbox, "call", lambda *_a, **_kw: {"hashes": {"README.md": digest_value}, "claims": rows})
+        assert len(storage_claims(files, [])) == 1000
+    assert source.scans == 1, "Reply cardinality must not multiply source scanning in the trusted coordinator"
+
+
 from tests.test_repository_store import storage  # noqa: E402,F401 -- shared owned SQLite fixture

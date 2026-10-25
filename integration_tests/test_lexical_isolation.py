@@ -160,6 +160,14 @@ def test_coordinator_redacts_real_helper_output_without_trusting_worker_sanitiza
     assert value["credentials"] == "[REDACTED]"
 
 
+def test_large_actual_section_reply_is_validated_without_multiplying_source_work():
+    from analyzers.lexical import section_map
+    started = time.monotonic()
+    rows = section_map({"README.md": "# Owned\n" * 8000})["README.md"]
+    assert len(rows) == 8000 and rows[0]["line"] == 1 and rows[-1]["line"] == 8000
+    assert time.monotonic() - started < 10
+
+
 def test_concurrent_ownership_contexts_and_mutation_do_not_reuse_another_input():
     def resolve(team):
         return ownership("a.py", {"CODEOWNERS": "* @" + team}, "Assigned")
