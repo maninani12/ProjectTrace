@@ -25,6 +25,7 @@ from tests.test_repository_store import captured, storage  # noqa: F401
 
 FILES = SourceFiles({
     "scripts/start": "#!/usr/bin/env python3\nprint('owned')\n", "λ.py": "# @generated do not edit\npass\n",
+    "scripts/long-header": "#!/usr/bin/env " + " " * 2500 + "python3\nprint('owned')\n",
     "src/main.py": "VALUE=1\n", "src/tests/a.ts": "export const a=1;\n", "vendor/lib.py": "pass\n",
     "workload.yaml": "#" * 3000 + "\napiVersion: v1\nkind: Pod\nmetadata: {name: owned}\n",
     "compose.yaml": "services:\n app: {image: owned:v1}\n", "README.md": "# Owned\n",

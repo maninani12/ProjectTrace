@@ -34,7 +34,7 @@ def describe(rows):
         binary = PurePosixPath(row["path"]).suffix.lower() in BINARY_SUFFIXES or row["nul"] and row["utf8"]
         retained = row["utf8"] and not binary
         value = {"path": row["path"], "request_hash": row["request_hash"], "lexical_policy": POLICY,
-                 "source_language": source_language(row["path"], row["prefix"] if retained else ""),
+                 "source_language": source_language(row["path"], row.get("first_line", row["prefix"]) if retained else ""),
                  "infrastructure_format": infrastructure_format(row["path"], source if retained else ""),
                  "iac_candidate": is_iac_source(row["path"], source) if retained else False,
                  "generated_header": generated(row["prefix"]) if retained else False,

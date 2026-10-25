@@ -44,6 +44,10 @@ def packet(path, source, *, raw=None):
     value = {"path": path, "prefix": source[:2000] if source is not None else "", "bytes": size,
              "physical_lines": len(source.splitlines()) if source is not None else None,
              "utf8": source is not None, "nul": b"\x00" in raw if raw is not None else "\x00" in source if source is not None else False}
+    # Language recognition historically examines the complete first line.
+    # Delimiter selection is a bounded primitive; shebang interpretation stays isolated.
+    if source is not None and len(source) > 2000:
+        value["first_line"] = source.split("\n", 1)[0]
     if source is not None and path.endswith((".json", ".yml", ".yaml")):
         value["source"] = source
     value["request_hash"] = digest(value)
