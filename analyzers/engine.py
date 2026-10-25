@@ -1102,7 +1102,7 @@ def analyze(
     input_files=None,
     consume_metrics=False,
 ):
-    if consume_metrics and observations is None:
+    if consume_metrics and not observations:
         raise ValueError("Metric ownership transfer requires explicit observations.")
     if sandbox.required():
         sandbox.require_runtime()

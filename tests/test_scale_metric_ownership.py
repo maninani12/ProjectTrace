@@ -25,9 +25,10 @@ def test_owned_metric_transfer_preserves_complete_results_and_cached_tokens(monk
     assert observation[6]["a.py"]["quality_metrics"] == original
 
 
-def test_engine_rejects_implicit_cache_ownership_transfer():
+@pytest.mark.parametrize("observations", [None, (), []])
+def test_engine_rejects_implicit_cache_ownership_transfer(observations):
     with pytest.raises(ValueError, match="explicit observations"):
-        analyze({"a.py": "pass"}, consume_metrics=True)
+        analyze({"a.py": "pass"}, observations=observations, consume_metrics=True)
 
 
 def test_owned_transfer_runs_duplication_before_releasing_tokens(monkeypatch):
