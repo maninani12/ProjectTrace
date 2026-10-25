@@ -153,6 +153,7 @@ def analyze_inventory(db, files, *, progress=None, verification_context=None, pr
         profile=profile,
         observations=observations,
         input_files=files,
+        consume_metrics=True,
     )
     result["source_storage"] = {
         "kind": "TENANT_ENCRYPTED_CONTENT_ADDRESSED",

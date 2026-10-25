@@ -16,7 +16,7 @@ def digest(value):
     return hashlib.sha256(json.dumps(value, sort_keys=True).encode()).hexdigest()
 
 
-def build(files, metrics, signals, raw_findings, warnings, profile=None):
+def build(files, metrics, signals, raw_findings, warnings, profile=None, *, consume_metrics=False):
     started = time.perf_counter()
     settings = config((profile or {}).get("quality"))
     # Existing native quality toggles remain effective unless specifically overridden.
@@ -53,7 +53,10 @@ def build(files, metrics, signals, raw_findings, warnings, profile=None):
             selected.discard(row["path"])
         if row["path"] in selected:
             row.update(file_metrics.get(row["path"], {}))
-    measured = [{k: v for k, v in m.items() if k not in {"duplicate_tokens"}} for m in metrics if m["path"] in selected]
+    # Only the inventory coordinator owns disposable metric dictionaries. Direct
+    # callers and parser-cache rows retain the original non-mutating contract.
+    measured = [m if consume_metrics else {k: v for k, v in m.items() if k != "duplicate_tokens"}
+                for m in metrics if m["path"] in selected]
     # The owning symbol is the narrowest enclosing range, with stable input
     # order breaking ties. Sort each file once instead of sorting every metric
     # in the repository for each reliability/duplication observation.
@@ -64,6 +67,12 @@ def build(files, metrics, signals, raw_findings, warnings, profile=None):
         measured_by_path[path] = sorted(rows, key=lambda m: m["end_line"] - m["line"])
     production = [m for m in metrics if m["path"] in selected and paths[m["path"]]["kind"] == "SOURCE"]
     dup = detect(production, settings["rules"].get("PT-QUALITY-007", {}).get("threshold", 50))
+    if consume_metrics:
+        # Token windows have had their final use; durable parser artifacts were
+        # already stored independently before global verification began.
+        for metric in metrics:
+            metric.pop("duplicate_tokens", None)
+    del production
     symbols = [
         sym
         for s in signals

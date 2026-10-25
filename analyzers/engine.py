@@ -1100,7 +1100,10 @@ def analyze(
     *,
     observations=None,
     input_files=None,
+    consume_metrics=False,
 ):
+    if consume_metrics and observations is None:
+        raise ValueError("Metric ownership transfer requires explicit observations.")
     if sandbox.required():
         sandbox.require_runtime()
     input_files = input_files if input_files is not None else validate_files(files, keep_excluded=True)
@@ -1291,6 +1294,7 @@ def analyze(
                         + str(group[0]["line"]),
                     )
                 )
+    del duplicates  # Exact-body index has no consumers after its findings are emitted.
     findings.extend(link_local_declarations(files, assets, warnings, finding, infrastructure_settings))
     for resource in assets:
         resource["environment"] = (
@@ -1299,7 +1303,8 @@ def analyze(
             else resource.get("environment", "UNKNOWN")
         )
     component_started = time.perf_counter()
-    quality_findings, quality = quality_build(input_files, quality_metrics, signals, findings, warnings, profile)
+    quality_findings, quality = quality_build(input_files, quality_metrics, signals, findings, warnings, profile,
+                                             consume_metrics=consume_metrics)
     if performance:
         performance.record("QUALITY_AGGREGATION", time.perf_counter() - component_started)
     findings = [f for f in findings if f["category"] != "QUALITY"] + quality_findings
