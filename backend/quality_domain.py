@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 from sqlalchemy import select
 
 from analyzers.code_quality.core import compare, gate, summary
+from analyzers.observation_store import MetricRows
 from backend.analysis_budget import checkpoint
 from backend.db import QualityAnalysis, QualityOccurrence, Record
 
@@ -54,7 +55,7 @@ def apply_comparison(db, quality, findings, base, changed_lines, model_changed, 
         (m["path"], m.get("qualified_name", m["name"])): m
         for m in base_quality.get("metrics", [])
     }
-    for metric in quality["metrics"]:
+    for position, metric in enumerate(quality["metrics"]):
         checkpoint(db)
         prior = previous_metrics.get((metric["path"], metric.get("qualified_name", metric["name"])))
         metric["new_code"] = (
@@ -71,6 +72,8 @@ def apply_comparison(db, quality, findings, base, changed_lines, model_changed, 
                 lo <= metric["end_line"] and hi >= metric["line"] for lo, hi in changed_lines.get(metric["path"], [])
             )
         )
+        if isinstance(quality["metrics"], MetricRows):
+            quality["metrics"]._replace(position, metric)
     chain = ancestors(db, base) if base else []
     older = {}
     for parent in chain[1:]:

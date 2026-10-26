@@ -33,6 +33,12 @@ spill ciphertext bytes. Parser artifacts retained: **18,756**; SQLite integrity
 ok / zero FK violations; published generations and pointers **zero**. Baseline
 again OOM-killed in ANALYZING with 3,747 artifacts and intact DB/FKs.
 
+The inner VERIFYING entry sample has 484,143,104 coordinator RSS bytes and
+458,084,352 anonymous bytes. The last pre-kill inner sample has 767,320,064
+coordinator RSS bytes and 741,335,040 anonymous bytes, with just 1,069,056 file
+and 25,378,816 kernel bytes. Thus broad VERIFYING adds roughly 283 MB of
+anonymous charge; the entry/last samples still do not name the fatal operation.
+
 Raw receipts and **38,199 application samples** are preserved in
 [SCALE001_CGROUP_40244419571.json](evidence/SCALE001_CGROUP_40244419571.json) and
 `evidence/SCALE001_CGROUP_40244419571_MEMORY.jsonl.gz`. Original artifact IDs,
@@ -101,6 +107,82 @@ selection: **49 passed** (overlapping selections, do not sum). Repository Ruff,
 compilation and diff checks pass. These Windows development tests are not Linux
 enforcement evidence. The next qualification must identify the actual growing
 operation before a correction is presented as the large-run OOM remedy.
+
+## Diagnostic c7031b3 results and bounded quality correction
+
+[Regression 40248291482](https://github.com/maninani12/ProjectTrace/actions/runs/40248291482)
+passed all four jobs, including 790 backend cases / 2 skips and Linux parser,
+real broker recovery and browser acceptance.
+[Constrained 40248291518](https://github.com/maninani12/ProjectTrace/actions/runs/40248291518)
+failed. The candidate **did not reach VERIFYING**: the unchanged production
+deadline stopped ANALYZING after 1803.610262 committed seconds, with
+ANALYSIS_TIME_BUDGET / TimeoutError. It retained 17,382 parser artifacts and
+174,027 metric rows, not the prior attempt's larger counts. Coordinator peak RSS
+was 518,221,824 bytes; no application OOM kill. Both operation journals are
+empty because neither revision reached an instrumented operation. Baseline
+again OOM-killed in ANALYZING, retaining 3,747 artifacts. Both databases pass
+integrity/FKs and have zero published generations/pointers.
+
+The candidate's final cgroup sample contains 435,298,304 anonymous,
+283,344,896 file and 49,143,808 kernel bytes. The file charge includes reclaimable
+cache; counters alone do not identify individual spill/database/blob files.
+Independent anonymous/file/kernel peaks must not be added. Repeated max events
+and a 768,000,000-byte lifetime charge peak are not application OOM evidence.
+The raw receipts, empty-journal hashes and all application samples are retained
+in [SCALE001_CGROUP_40248291518.json](evidence/SCALE001_CGROUP_40248291518.json)
+and its accompanying compressed memory stream. The deliberate envelope OOM
+probe remains separate. No full-run fatal VERIFYING operation has been proven.
+
+The owned profiles independently prove linear retention during token-free
+metric projection and symbol aggregation. For encrypted native inputs, quality
+now streams complete projected metrics and symbols into attempt-private
+encrypted snapshots. A random-key HMAC path index retrieves only one file's
+rows for enclosing-symbol lookup, preserving the narrowest range and original
+order for ties. Gate selection retains scalar ordinals; hotspot lookup avoids
+repeated global payload scans. New-code annotations are explicitly persisted
+to encrypted metric snapshots. Plain-list callers and historical JSON formats
+keep their existing behavior. No native token, metric, symbol or finding is
+discarded.
+
+Derived stores inherit existing row/collection budgets, encryption and cache
+bounds. Their owner closes them on failed attempts, including failures after
+global analysis; retry still replays the complete encrypted checkpoint.
+Computation checks use existing deadlines and read-only lease/cancellation
+checks, leaving the queue writer available to an external cancellation request.
+Stage, receipt and publication fences retain their existing lease renewals.
+
+| Owned 50,000 rows | Before | Encrypted output stores |
+|---|---:|---:|
+| Untraced process peak RSS | 207,810,560 | 38,809,600 |
+| Python live bytes after build (traced) | 155,550,065 | 1,849,119 |
+| Untraced build seconds | 3.42 | 12.09 |
+
+Both versions retain 50,000 metrics and 50,000 symbols and serialize the same
+39,835,983 bytes with the same hash recorded above. At 200,000 rows the corrected
+fixture retains all metrics/symbols with 44,937,216 peak RSS bytes; there is no
+old-code hash baseline at that size. Extra encryption/SQLite work and bounded
+temporary storage cost CPU/IO. These Windows fixtures do not prove Linux
+cgroup success, whole-workload speedup or allocation attribution for the prior
+VERIFYING OOM. Scalar index vectors, findings, inventory, graph/correlation,
+checkpoint serialization and publication can still grow. See
+[owned correction profiles](evidence/SCALE001_VERIFYING_OWNED_CORRECTION.json).
+
+The final correction passes the unchanged complete-output fingerprint comparator
+against its pre-correction fixture for all cold, warm and incremental snapshots,
+including claims, metrics, symbols, findings, graph edges, hashes, parser
+artifacts and publication projections. Each post-exit database passes
+integrity/FKs. Fixture administrative controls are documented; no comparator
+predicate changed and no new field was omitted. See
+[full equivalence receipts](evidence/SCALE001_VERIFYING_CORRECTION_EQUIVALENCE.json).
+
+Final focused regression: **58 passed** in 464.98 seconds, covering encrypted
+quality output, operation recording, complete checkpoint replay, deadline
+recovery, real worker exit, tenant scope, cancellation/replacement/revocation,
+generation corruption and atomic promotion. The additional scheduling/queue
+selection passed 25 cases; selections overlap and are not summed. Ruff,
+compilation and diff checks pass. Full Linux qualification is required for this
+production correction; neither owned equivalence nor a passing regression
+workflow substitutes for it.
 
 ## Remaining acceptance
 

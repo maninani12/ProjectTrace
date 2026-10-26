@@ -76,6 +76,7 @@ def execute_analysis(db, user, repo, files, *, request_id=None, job=None, _elaps
     owned_token = job.data.get("worker_token")
     clock = _elapsed_clock or time.perf_counter
     stages, started = [], clock()
+    attempt_resources, finished_successfully = [], False
     output_started, completed_analysis = False, None
     from analyzers.performance import Performance
     performance = Performance()
@@ -85,7 +86,7 @@ def execute_analysis(db, user, repo, files, *, request_id=None, job=None, _elaps
         "lease_expires_at": (datetime.now(timezone.utc) + timedelta(seconds=job_time_budget(job) + 30)).isoformat(),
     }
 
-    def check_current():
+    def check_current(*, renew=True):
         from backend.scheduling import ensure_current
         elapsed = round((clock() - started) * 1000, 2)
         if elapsed > job_time_budget(job) * 1000:
@@ -93,7 +94,7 @@ def execute_analysis(db, user, repo, files, *, request_id=None, job=None, _elaps
         # A budget/lease check must not implicitly flush all dirty correlation
         # rows. Explicit publication batches retain the transaction's ordering.
         with db.no_autoflush:
-            ensure_current(db, job, renew_seconds=job_time_budget(job))
+            ensure_current(db, job, renew_seconds=job_time_budget(job) if renew else None)
         return elapsed
 
     def retain_completed_analysis(result, content):
@@ -160,6 +161,10 @@ def execute_analysis(db, user, repo, files, *, request_id=None, job=None, _elaps
     stage.performance = performance
     check_current.performance = performance
     stage.job_id = job_id
+    stage.close_on_failure = attempt_resources.append
+    # Long computation checks cancellation without holding the queue writer
+    # lock. Stage/receipt/publication fences retain their existing renewals.
+    stage.check_current = lambda: check_current(renew=False)
     stage.retain_completed_analysis = retain_completed_analysis
     def load_checkpoint(signature):
         from backend.analysis_checkpoints import load
@@ -236,6 +241,7 @@ def execute_analysis(db, user, repo, files, *, request_id=None, job=None, _elaps
         db.commit()
         if generation:
             generation.published = True
+        finished_successfully = True
         return snapshot, job
     except Exception as error:
         interrupted_generation = db.info.get("analysis_generation")
@@ -253,6 +259,7 @@ def execute_analysis(db, user, repo, files, *, request_id=None, job=None, _elaps
             if published and published.state == "PUBLISHED" and terminal_job.data.get("snapshot_id") == published.snapshot_id and terminal_job.data.get("state") in {"COMPLETED", "COMPLETED_NO_FINDINGS", "PARTIAL"}:
                 # A lost commit acknowledgement cannot turn a committed,
                 # consistent generation into a fabricated FAILED job.
+                finished_successfully = True
                 return db.get(Record, published.snapshot_id), terminal_job
         if not owns(db, job_id, owned_token):
             raise JobCancelled("Worker lease was replaced; this attempt cannot modify the job.") from None
@@ -307,6 +314,13 @@ def execute_analysis(db, user, repo, files, *, request_id=None, job=None, _elaps
         )
         raise
     finally:
+        if not finished_successfully:
+            for resource in reversed(attempt_resources):
+                try:
+                    resource.close()
+                except Exception:
+                    log.error("Attempt-private observation cleanup failed.")
+        attempt_resources.clear()
         from backend.generations import clear as clear_generation
         clear_generation(db)
         from backend.analysis_budget import clear

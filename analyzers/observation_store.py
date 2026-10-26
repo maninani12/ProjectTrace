@@ -233,6 +233,59 @@ class EncryptedMapping:
         self.rows.close()
 
 
+class MetricRows(EncryptedRows):
+    """Ordered metric snapshots with a tenant-private path-to-ordinal index.
+
+    Only HMAC tags and ordinals enter the index. Names, paths, ranges and all
+    metric values remain encrypted. Owner lookup decrypts one file's rows and
+    retains only the narrowest match, with original order breaking ties.
+    """
+    def __init__(self, scope, **limits):
+        import secrets
+        super().__init__(scope, **limits)
+        self.index_key = secrets.token_bytes(32)
+        self.connection.execute("CREATE TABLE metric_lookup (ordinal INTEGER PRIMARY KEY, path BLOB NOT NULL)")
+        self.connection.execute("CREATE INDEX metric_path ON metric_lookup(path,ordinal)")
+
+    def _tag(self, path):
+        import hashlib
+        import hmac
+        if not isinstance(path, str):
+            raise ValueError("Metric path is invalid.")
+        return hmac.digest(self.index_key, path.encode(), hashlib.sha256)
+
+    def append(self, value):
+        tag, ordinal = self._tag(value["path"]), len(self)
+        super().append(value)
+        self.connection.execute("INSERT INTO metric_lookup VALUES (?,?)", (ordinal, tag))
+
+    def _replace(self, position, value):
+        tag = self._tag(value["path"])
+        super()._replace(position, value)
+        self.connection.execute("UPDATE metric_lookup SET path=? WHERE ordinal=?", (tag, position))
+
+    def for_path(self, path):
+        self._open()
+        cursor = self.connection.execute("SELECT ordinal FROM metric_lookup WHERE path=? ORDER BY ordinal", (self._tag(path),))
+        try:
+            for position, in cursor:
+                row = self[position]
+                if row["path"] != path:
+                    raise ValueError("Metric index does not match its encrypted row.")
+                yield row
+        finally:
+            cursor.close()
+
+    def containing(self, path, line):
+        best, span = None, None
+        for row in self.for_path(path):
+            if row["line"] <= line <= row["end_line"]:
+                candidate = row["end_line"] - row["line"]
+                if span is None or candidate < span:
+                    best, span = row, candidate
+        return best
+
+
 class SignalRows(EncryptedRows):
     """Private exact/type indexes avoid decrypting every signal for each claim.
 
@@ -245,10 +298,22 @@ class SignalRows(EncryptedRows):
     def __init__(self, scope):
         import secrets
         super().__init__(scope)
+        self.owned_outputs = []
         self.index_key = secrets.token_bytes(32)
         self.connection.execute("CREATE TABLE signal_lookup (ordinal INTEGER PRIMARY KEY, kind BLOB, exact BLOB, root BLOB)")
         self.connection.execute("CREATE INDEX signal_exact ON signal_lookup(kind,exact,ordinal)")
         self.connection.execute("CREATE INDEX signal_root ON signal_lookup(kind,root,ordinal)")
+
+    def own(self, rows):
+        self._open()
+        if rows.scope != self.scope:
+            raise ValueError("Derived observations are outside the attempt scope.")
+        self.owned_outputs.append(rows)
+
+    def close(self):
+        for rows in self.owned_outputs:
+            rows.close()
+        super().close()
 
     def _tag(self, value):
         import hashlib

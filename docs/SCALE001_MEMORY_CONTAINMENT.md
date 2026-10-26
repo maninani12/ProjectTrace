@@ -238,3 +238,16 @@ quality phase observer now distinguish that projection from duplication, final
 identity, checkpointing and publication preparation without changing defaults or
 limits. Raw 2927693 receipts and 38,199 samples are preserved. See
 [the memory recovery record](SCALE001_VERIFYING_MEMORY_RECOVERY.md).
+
+The c7031b3 diagnostic regression passed all four jobs. Its candidate constrained
+attempt timed out in ANALYZING at 1803.610 seconds, before VERIFYING, with 17,382
+artifacts and no application OOM kill; an empty operation journal cannot identify
+the prior VERIFYING fatal operation. Both failed attempts retain intact SQLite/FKs
+and zero publication. All 33,862 application samples and receipts are preserved.
+The next correction addresses independently measured metric/symbol payload
+retention using encrypted ordered snapshots and private indexed owner lookup.
+Owned 50,000-row peak RSS falls from 207,810,560 to 38,809,600 bytes with identical
+complete output, at additional CPU/IO cost. Complete owned cold/warm/incremental
+fingerprints match. This is not full-repository qualification; production limits,
+coverage, output comparison and security semantics remain unchanged. See the
+recovery record for measurements, limitations and remaining gates.

@@ -10,14 +10,43 @@ from analyzers.code_quality.classification import LANGUAGES, classify, coverage_
 from analyzers.code_quality.coverage import absent, percent
 from analyzers.code_quality.duplication import detect
 from analyzers.code_quality.rules import DEFINITIONS, config
-from analyzers.observation_store import EncryptedRows
+from analyzers.observation_store import EncryptedRows, MetricRows, SignalRows
 
 
 def digest(value):
     return hashlib.sha256(json.dumps(value, sort_keys=True).encode()).hexdigest()
 
 
-def build(files, metrics, signals, raw_findings, warnings, profile=None, *, consume_metrics=False, observe=None):
+def build(files, metrics, signals, raw_findings, warnings, profile=None, *, consume_metrics=False, observe=None, checkpoint=None):
+    if checkpoint:
+        checkpoint()
+    if not isinstance(metrics, EncryptedRows):
+        return _build(files, metrics, signals, raw_findings, warnings, profile,
+                      consume_metrics=consume_metrics, observe=observe, checkpoint=checkpoint)
+    outputs = []
+    try:
+        outputs.append(MetricRows(metrics.scope, maximum_bytes=metrics.maximum_bytes, row_bytes=metrics.row_bytes))
+        outputs.append(EncryptedRows(metrics.scope, maximum_bytes=metrics.maximum_bytes, row_bytes=metrics.row_bytes))
+        outputs[0].label, outputs[1].label = "QUALITY_METRICS", "QUALITY_SYMBOLS"
+        result = _build(files, metrics, signals, raw_findings, warnings, profile,
+                        consume_metrics=consume_metrics, observe=observe, checkpoint=checkpoint, outputs=outputs)
+        if isinstance(signals, SignalRows):
+            for rows in outputs:
+                signals.own(rows)
+        return result
+    except BaseException:
+        for rows in outputs:
+            rows.close()
+        raise
+
+
+def _build(files, metrics, signals, raw_findings, warnings, profile=None, *, consume_metrics=False, observe=None, checkpoint=None, outputs=None):
+    def checked(values):
+        for position, row in enumerate(values):
+            if checkpoint and position % 256 == 0:
+                checkpoint()
+            yield row
+
     started = time.perf_counter()
     settings = config((profile or {}).get("quality"))
     # Existing native quality toggles remain effective unless specifically overridden.
@@ -28,10 +57,10 @@ def build(files, metrics, signals, raw_findings, warnings, profile=None, *, cons
     inventory = classify(files, settings["scope"])
     paths = {r["path"]: r for r in inventory}
     failed = {w.get("path") for w in warnings if w.get("analyzer") == "PARSING"}
-    failed.update(s["path"] for s in signals if s.get("type") == "parser" and s.get("state") != "COMPLETED")
+    failed.update(s["path"] for s in checked(signals) if s.get("type") == "parser" and s.get("state") != "COMPLETED")
     failed.intersection_update(p for p, row in paths.items() if row["kind"] in {"SOURCE", "TEST", "EXAMPLE"})
-    observed = {s["path"] for s in signals if s.get("type") in {"parser", "quality_file"}}
-    file_metrics = {s["path"]: s.get("file_metrics", {}) for s in signals if s.get("type") == "quality_file"}
+    observed = {s["path"] for s in checked(signals) if s.get("type") in {"parser", "quality_file"}}
+    file_metrics = {s["path"]: s.get("file_metrics", {}) for s in checked(signals) if s.get("type") == "quality_file"}
     selected = {p for p, r in paths.items() if r["kind"] in {"SOURCE", "TEST", "EXAMPLE"} and p in observed}
     for row in inventory:
         row["hash"] = (
@@ -59,20 +88,24 @@ def build(files, metrics, signals, raw_findings, warnings, profile=None, *, cons
     spooled = isinstance(metrics, EncryptedRows)
     if observe:
         observe("METRIC_PROJECTION", "START")
-    measured = [m if consume_metrics and not spooled else {k: v for k, v in m.items() if k != "duplicate_tokens"}
-                for m in metrics if m["path"] in selected]
+    measured = outputs[0] if outputs else []
+    for metric in checked(metrics):
+        if metric["path"] in selected:
+            measured.append(metric if consume_metrics and not spooled else
+                            {k: v for k, v in metric.items() if k != "duplicate_tokens"})
     if observe:
         observe("METRIC_PROJECTION", "END")
     # The owning symbol is the narrowest enclosing range, with stable input
-    # order breaking ties. Sort each file once instead of sorting every metric
-    # in the repository for each reliability/duplication observation.
+    # order breaking ties. Resident inputs sort each file once; encrypted inputs
+    # use a private path index and retain only the best enclosing row.
     if observe:
         observe("METRIC_OWNER_INDEX", "START")
     measured_by_path = defaultdict(list)
-    for metric in measured:
-        measured_by_path[metric["path"]].append(metric)
-    for path, rows in measured_by_path.items():
-        measured_by_path[path] = sorted(rows, key=lambda m: m["end_line"] - m["line"])
+    if not isinstance(measured, MetricRows):
+        for metric in measured:
+            measured_by_path[metric["path"]].append(metric)
+        for path, rows in measured_by_path.items():
+            measured_by_path[path] = sorted(rows, key=lambda m: m["end_line"] - m["line"])
     if observe:
         observe("METRIC_OWNER_INDEX", "END")
     def production_metric(m):
@@ -81,6 +114,8 @@ def build(files, metrics, signals, raw_findings, warnings, profile=None, *, cons
     if observe:
         observe("PRODUCTION_METRIC_SELECTION", "START")
     production = metrics.select(production_metric) if spooled else [m for m in metrics if production_metric(m)]
+    if checkpoint:
+        checkpoint()
     if observe:
         observe("PRODUCTION_METRIC_SELECTION", "END")
     dup = detect(production, settings["rules"].get("PT-QUALITY-007", {}).get("threshold", 50))
@@ -92,12 +127,13 @@ def build(files, metrics, signals, raw_findings, warnings, profile=None, *, cons
     del production
     if observe:
         observe("QUALITY_SYMBOLS", "START")
-    symbols = [
+    symbols = outputs[1] if outputs else []
+    symbols.extend(
         sym
-        for s in signals
+        for s in checked(signals)
         if s.get("type") == "quality_file" and s["path"] in selected
         for sym in s.get("symbols", [])
-    ]
+    )
     symbols.extend(
         {
             "path": m["path"],
@@ -108,7 +144,7 @@ def build(files, metrics, signals, raw_findings, warnings, profile=None, *, cons
             "end_line": m["end_line"],
             "hash": m["body_hash"],
         }
-        for m in measured
+        for m in checked(measured)
     )
     if observe:
         observe("QUALITY_SYMBOLS", "END")
@@ -132,14 +168,14 @@ def build(files, metrics, signals, raw_findings, warnings, profile=None, *, cons
         setting = settings["rules"].get(rule, {})
         if not setting.get("enabled", True) or path not in selected:
             return
-        containing = metric or next(
+        containing = metric or (measured.containing(path, line) if isinstance(measured, MetricRows) else next(
             (
                 m
                 for m in measured_by_path.get(path, ())
                 if m["line"] <= line <= m["end_line"]
             ),
             None,
-        )
+        ))
         symbol = (containing or {}).get("qualified_name", (containing or {}).get("name", "<module>"))
         # Symbol identity is independent of offsets; observation hash controls review carry.
         fingerprint = digest([FINGERPRINT_VERSION, rule, path, symbol, anchor or "threshold"])
@@ -178,7 +214,7 @@ def build(files, metrics, signals, raw_findings, warnings, profile=None, *, cons
             }
         )
 
-    for metric in measured:
+    for metric in checked(measured):
         if paths[metric["path"]]["kind"] != "SOURCE":
             continue
         for rule in ["PT-QUALITY-001", "PT-QUALITY-002", "PT-QUALITY-003", "PT-QUALITY-008", "PT-QUALITY-009"]:
@@ -186,7 +222,7 @@ def build(files, metrics, signals, raw_findings, warnings, profile=None, *, cons
             threshold = settings["rules"].get(rule, {}).get("threshold", default)
             if metric.get(key, 0) > threshold:
                 emit(rule, metric["path"], metric["line"], metric=metric, actual=metric[key], threshold=threshold)
-    for symbol in symbols:
+    for symbol in checked(symbols):
         if symbol["kind"] == "CLASS" and paths[symbol["path"]]["kind"] == "SOURCE":
             actual = symbol["end_line"] - symbol["line"] + 1
             threshold = settings["rules"].get("PT-QUALITY-004", {}).get("threshold", 200)
@@ -206,7 +242,7 @@ def build(files, metrics, signals, raw_findings, warnings, profile=None, *, cons
                 actual=row["physical_lines"],
                 threshold=file_threshold,
             )
-    for signal in signals:
+    for signal in checked(signals):
         if signal.get("type") == "quality_file" and signal["path"] in selected:
             for observation in signal.get("observations", []):
                 emit(
@@ -218,7 +254,7 @@ def build(files, metrics, signals, raw_findings, warnings, profile=None, *, cons
                     context=observation.get("context"),
                 )
     # Existing parser-backed exception observations; re-anchor to owning symbol.
-    for item in raw_findings:
+    for item in checked(raw_findings):
         if item["rule"] in {"PT-QUALITY-005", "PT-QUALITY-006"}:
             lines = files[item["path"]].splitlines()
             anchor = lines[item["line"] - 1].strip() if item["line"] <= len(lines) else item["rule"]
@@ -465,7 +501,10 @@ def gate(quality, findings, coverage=None):
         ),
     ]:
         condition(name, len(items), threshold, len(items) > threshold, [f.get("id", f["fingerprint"]) for f in items])
-    eligible_metrics = [m for m in quality["metrics"] if settings["scope"] == "OVERALL" or m.get("new_code", False)]
+    all_metrics = quality["metrics"]
+    eligible_metrics = (all_metrics.select(lambda m: settings["scope"] == "OVERALL" or m.get("new_code", False))
+                        if isinstance(all_metrics, EncryptedRows) else
+                        [m for m in all_metrics if settings["scope"] == "OVERALL" or m.get("new_code", False)])
     maximum = max((m["cyclomatic"] for m in eligible_metrics), default=0)
     condition(
         "Quality: function complexity",
@@ -560,7 +599,9 @@ def gate(quality, findings, coverage=None):
             and (not configured.get("severities") or f["severity"] in configured["severities"])
             and (not configured.get("rule_ids") or f["rule"] in configured["rule_ids"])
         ]
-        measured_metrics = [m for m in quality["metrics"] if not new_code or m.get("new_code")]
+        measured_metrics = (all_metrics.select(lambda m: not new_code or m.get("new_code"))
+                            if isinstance(all_metrics, EncryptedRows) else
+                            [m for m in all_metrics if not new_code or m.get("new_code")])
         metric = configured["metric"]
         affected_files = [f["path"] for f in scoped]
         if metric == "finding_count":
@@ -687,7 +728,8 @@ def summary(quality, findings):
 def hotspot_rows(quality, findings, history=()):
     rows = []
     for path in sorted({m["path"] for m in quality["metrics"]}):
-        metrics = [m for m in quality["metrics"] if m["path"] == path]
+        metrics = (quality["metrics"].for_path(path) if isinstance(quality["metrics"], MetricRows) else
+                   [m for m in quality["metrics"] if m["path"] == path])
         active = [
             f
             for f in findings

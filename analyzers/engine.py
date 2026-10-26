@@ -1317,7 +1317,8 @@ def analyze(
         )
     component_started = time.perf_counter()
     quality_findings, quality = quality_build(input_files, quality_metrics, signals, findings, warnings, profile,
-                                             consume_metrics=consume_metrics)
+                                             consume_metrics=consume_metrics,
+                                             checkpoint=getattr(progress, "check_current", None))
     if performance:
         performance.record("QUALITY_AGGREGATION", time.perf_counter() - component_started)
     findings = [f for f in findings if f["category"] != "QUALITY"] + quality_findings

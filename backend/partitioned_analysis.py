@@ -33,6 +33,8 @@ def analyze_inventory(db, files, *, progress=None, verification_context=None, pr
     scope = (files.organization_id, files.repository_id, files.inventory_id)
     signals, metrics, findings = SignalRows(scope), EncryptedRows(scope), EncryptedRows(scope)
     signals.label, metrics.label, findings.label = "NATIVE_SIGNALS", "NATIVE_METRICS", "NATIVE_FINDINGS"
+    if getattr(progress, "close_on_failure", None):
+        progress.close_on_failure(signals)
     try:
         return _analyze_inventory(db, files, signals, metrics, findings, progress=progress,
                                   verification_context=verification_context, profile=profile)
