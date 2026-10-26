@@ -17,7 +17,7 @@ def digest(value):
     return hashlib.sha256(json.dumps(value, sort_keys=True).encode()).hexdigest()
 
 
-def build(files, metrics, signals, raw_findings, warnings, profile=None, *, consume_metrics=False):
+def build(files, metrics, signals, raw_findings, warnings, profile=None, *, consume_metrics=False, observe=None):
     started = time.perf_counter()
     settings = config((profile or {}).get("quality"))
     # Existing native quality toggles remain effective unless specifically overridden.
@@ -57,20 +57,32 @@ def build(files, metrics, signals, raw_findings, warnings, profile=None, *, cons
     # Only the inventory coordinator owns disposable metric dictionaries. Direct
     # callers and parser-cache rows retain the original non-mutating contract.
     spooled = isinstance(metrics, EncryptedRows)
+    if observe:
+        observe("METRIC_PROJECTION", "START")
     measured = [m if consume_metrics and not spooled else {k: v for k, v in m.items() if k != "duplicate_tokens"}
                 for m in metrics if m["path"] in selected]
+    if observe:
+        observe("METRIC_PROJECTION", "END")
     # The owning symbol is the narrowest enclosing range, with stable input
     # order breaking ties. Sort each file once instead of sorting every metric
     # in the repository for each reliability/duplication observation.
+    if observe:
+        observe("METRIC_OWNER_INDEX", "START")
     measured_by_path = defaultdict(list)
     for metric in measured:
         measured_by_path[metric["path"]].append(metric)
     for path, rows in measured_by_path.items():
         measured_by_path[path] = sorted(rows, key=lambda m: m["end_line"] - m["line"])
+    if observe:
+        observe("METRIC_OWNER_INDEX", "END")
     def production_metric(m):
         return m["path"] in selected and paths[m["path"]]["kind"] == "SOURCE"
 
+    if observe:
+        observe("PRODUCTION_METRIC_SELECTION", "START")
     production = metrics.select(production_metric) if spooled else [m for m in metrics if production_metric(m)]
+    if observe:
+        observe("PRODUCTION_METRIC_SELECTION", "END")
     dup = detect(production, settings["rules"].get("PT-QUALITY-007", {}).get("threshold", 50))
     if consume_metrics and not spooled:
         # Token windows have had their final use; durable parser artifacts were
@@ -78,6 +90,8 @@ def build(files, metrics, signals, raw_findings, warnings, profile=None, *, cons
         for metric in metrics:
             metric.pop("duplicate_tokens", None)
     del production
+    if observe:
+        observe("QUALITY_SYMBOLS", "START")
     symbols = [
         sym
         for s in signals
@@ -96,6 +110,9 @@ def build(files, metrics, signals, raw_findings, warnings, profile=None, *, cons
         }
         for m in measured
     )
+    if observe:
+        observe("QUALITY_SYMBOLS", "END")
+        observe("QUALITY_RULES", "START")
     findings = []
 
     def emit(
@@ -227,6 +244,8 @@ def build(files, metrics, signals, raw_findings, warnings, profile=None, *, cons
                 end_line=occurrence["end_line"],
                 detail=f"Native normalized block in {len(group['occurrences'])} occurrences; {group['tokens']} tokens. Group {group['id'][:12]}.",
             )
+    if observe:
+        observe("QUALITY_RULES", "END")
     # Multiple identical symptom anchors in one symbol are explicitly distinguished by order.
     counts = Counter()
     for finding in findings:

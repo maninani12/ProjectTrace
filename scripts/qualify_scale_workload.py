@@ -162,26 +162,30 @@ def main():
                 stage[0] = state
                 return original(owner, state)
             Performance.switch = measured_switch
+            from scripts.scale_operation_probe import operation_probe
+            scenario = ["NOT_STARTED"]
             try:
-                for number, mode in enumerate(("cold", "warm")):
-                    receipt["scenarios"][mode] = "RUNNING"
-                    write(output / "qualification.json", receipt)
-                    snapshot, job = execute_analysis(db, user, repo, files, git_commit=COMMIT,
-                                                     branch="qualification-" + mode)
-                    receipt["scenarios"][mode] = job.data["state"]
-                    receipt.setdefault("outputs", {})[mode] = {
-                        "files": snapshot.data["file_count"], "claims": len(snapshot.data.get("claims", [])),
-                        "findings": len(snapshot.data.get("findings", [])),
-                        "metrics": len(snapshot.data.get("quality_metrics", [])),
-                        "parser_artifacts": db.scalar(select(func.count()).select_from(ParserArtifact)),
-                        "performance": job.data.get("performance", {}),
-                    }
-                    write(output / "qualification.json", receipt)
-                    del snapshot, job
-                    db.expunge_all()
-                    import gc
-                    gc.collect()
-                    user, repo = db.get(User, "scale-owned"), db.get(Repository, "scale-owned")
+                with operation_probe(stage, output / "operation-memory.jsonl", started, scenario=scenario):
+                    for number, mode in enumerate(("cold", "warm")):
+                        scenario[0] = mode
+                        receipt["scenarios"][mode] = "RUNNING"
+                        write(output / "qualification.json", receipt)
+                        snapshot, job = execute_analysis(db, user, repo, files, git_commit=COMMIT,
+                                                         branch="qualification-" + mode)
+                        receipt["scenarios"][mode] = job.data["state"]
+                        receipt.setdefault("outputs", {})[mode] = {
+                            "files": snapshot.data["file_count"], "claims": len(snapshot.data.get("claims", [])),
+                            "findings": len(snapshot.data.get("findings", [])),
+                            "metrics": len(snapshot.data.get("quality_metrics", [])),
+                            "parser_artifacts": db.scalar(select(func.count()).select_from(ParserArtifact)),
+                            "performance": job.data.get("performance", {}),
+                        }
+                        write(output / "qualification.json", receipt)
+                        del snapshot, job
+                        db.expunge_all()
+                        import gc
+                        gc.collect()
+                        user, repo = db.get(User, "scale-owned"), db.get(Repository, "scale-owned")
             finally:
                 Performance.switch = original
             # Remaining scenarios must be implemented and verified before this

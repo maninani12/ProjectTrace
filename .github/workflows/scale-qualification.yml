@@ -38,7 +38,7 @@ jobs:
       - name: Prepare matching baseline harness without changing baseline production modules
         if: matrix.revision == 'baseline'
         run: |
-          cp scripts/qualify_scale_workload.py scripts/scale_linux_resources.py baseline/scripts/
+          cp scripts/qualify_scale_workload.py scripts/scale_linux_resources.py scripts/scale_operation_probe.py baseline/scripts/
           cp analyzers/observation_store.py baseline/analyzers/
           docker build -t projecttrace-scale-baseline -f baseline/infrastructure/Dockerfile baseline
       - name: Full source capture, verification and publication under actual cgroup limit
@@ -55,6 +55,7 @@ jobs:
             ${{ runner.temp }}/scale/**/qualification.json
             ${{ runner.temp }}/scale/**/manifest.jsonl
             ${{ runner.temp }}/scale/**/memory.jsonl
+            ${{ runner.temp }}/scale/**/operation-memory.jsonl
             ${{ runner.temp }}/scale/**/kernel-cgroup.jsonl
             ${{ runner.temp }}/scale/**/container-envelope.json
             ${{ runner.temp }}/scale/**/post-exit-integrity.json

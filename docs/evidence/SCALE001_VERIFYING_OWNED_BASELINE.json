@@ -1,0 +1,969 @@
+{
+  "scope": "OWNED_WINDOWS_DIAGNOSTIC_BASELINE_ONLY",
+  "production_head": "29276932016be52e6fb3580b744e4bf471a3707f",
+  "limitations": [
+    "Owned typed metric rows, not customer input or whole-workload cgroup qualification.",
+    "Tracemalloc snapshots substantially perturb RSS; separate untraced process is provided.",
+    "Complete serialization hashes retain all values and ordered rows; only generated quality timing removed."
+  ],
+  "profiles": [
+    {
+      "scope": "OWNED_SPOOLED_QUALITY_AND_SERIALIZATION",
+      "runtime": "3.14.3 (tags/v3.14.3:323c59a, Feb  3 2026, 16:04:56) [MSC v.1944 64 bit (AMD64)]",
+      "enforcement": "NONE; Windows development owned fixture, not cgroup or full repository",
+      "count": 10000,
+      "metrics": 10000,
+      "symbols": 10000,
+      "findings": 0,
+      "input_ciphertext_bytes": 6520000,
+      "complete_output_sha256": "acb90ee537a37d660f40f4814e095acb9590834cde6e02f166148a0f9644515a",
+      "complete_output_bytes": 7915983,
+      "build_seconds_including_tracemalloc": 3.181719600001088,
+      "stages": [
+        {
+          "operation": "ENCRYPTED_INPUT_READY",
+          "seconds": 2.9764743000014278,
+          "python_current_bytes": 690731,
+          "python_peak_bytes": 3229444,
+          "process": {
+            "cpu_seconds": 3.125,
+            "rss_bytes": 39362560,
+            "peak_rss_bytes": 39755776
+          },
+          "top_allocations": [
+            {
+              "file": "encoder.py",
+              "line": 280,
+              "bytes": 215520,
+              "blocks": 1133
+            },
+            {
+              "file": "encoder.py",
+              "line": 426,
+              "bytes": 207128,
+              "blocks": 1133
+            },
+            {
+              "file": "encoder.py",
+              "line": 226,
+              "bytes": 94672,
+              "blocks": 1091
+            },
+            {
+              "file": "encoder.py",
+              "line": 259,
+              "bytes": 73920,
+              "blocks": 1848
+            },
+            {
+              "file": "__init__.py",
+              "line": 295,
+              "bytes": 45557,
+              "blocks": 205
+            },
+            {
+              "file": "encoder.py",
+              "line": 339,
+              "bytes": 32256,
+              "blocks": 168
+            },
+            {
+              "file": "<frozen importlib._bootstrap_external>",
+              "line": 511,
+              "bytes": 22201,
+              "blocks": 271
+            },
+            {
+              "file": "observation_store.py",
+              "line": 84,
+              "bytes": 13960,
+              "blocks": 159
+            },
+            {
+              "file": "encoder.py",
+              "line": 288,
+              "bytes": 13440,
+              "blocks": 84
+            },
+            {
+              "file": "observation_store.py",
+              "line": 67,
+              "bytes": 12768,
+              "blocks": 84
+            },
+            {
+              "file": "_layout.py",
+              "line": 282,
+              "bytes": 6064,
+              "blocks": 63
+            },
+            {
+              "file": "__init__.py",
+              "line": 421,
+              "bytes": 5040,
+              "blocks": 20
+            }
+          ]
+        },
+        {
+          "operation": "QUALITY_DUPLICATION_ENTER",
+          "seconds": 4.53515459999835,
+          "python_current_bytes": 29397329,
+          "python_peak_bytes": 29488706,
+          "process": {
+            "cpu_seconds": 4.625,
+            "rss_bytes": 108314624,
+            "peak_rss_bytes": 108314624
+          },
+          "top_allocations": [
+            {
+              "file": "decoder.py",
+              "line": 361,
+              "bytes": 19736378,
+              "blocks": 379992
+            },
+            {
+              "file": "core.py",
+              "line": 60,
+              "bytes": 8405120,
+              "blocks": 20001
+            },
+            {
+              "file": "observation_store.py",
+              "line": 152,
+              "bytes": 394120,
+              "blocks": 9648
+            },
+            {
+              "file": "encoder.py",
+              "line": 280,
+              "bytes": 209304,
+              "blocks": 1096
+            },
+            {
+              "file": "encoder.py",
+              "line": 426,
+              "bytes": 200912,
+              "blocks": 1096
+            },
+            {
+              "file": "core.py",
+              "line": 67,
+              "bytes": 85176,
+              "blocks": 2
+            },
+            {
+              "file": "core.py",
+              "line": 69,
+              "bytes": 80000,
+              "blocks": 1
+            },
+            {
+              "file": "__init__.py",
+              "line": 295,
+              "bytes": 45557,
+              "blocks": 205
+            },
+            {
+              "file": "encoder.py",
+              "line": 259,
+              "bytes": 41360,
+              "blocks": 1034
+            },
+            {
+              "file": "<frozen importlib._bootstrap_external>",
+              "line": 511,
+              "bytes": 22201,
+              "blocks": 271
+            },
+            {
+              "file": "encoder.py",
+              "line": 339,
+              "bytes": 18048,
+              "blocks": 94
+            },
+            {
+              "file": "encoder.py",
+              "line": 226,
+              "bytes": 14616,
+              "blocks": 131
+            }
+          ]
+        },
+        {
+          "operation": "QUALITY_DUPLICATION_EXIT",
+          "seconds": 5.643957899999805,
+          "python_current_bytes": 29354915,
+          "python_peak_bytes": 29488706,
+          "process": {
+            "cpu_seconds": 5.703125,
+            "rss_bytes": 112173056,
+            "peak_rss_bytes": 192749568
+          },
+          "top_allocations": [
+            {
+              "file": "decoder.py",
+              "line": 361,
+              "bytes": 19736378,
+              "blocks": 379992
+            },
+            {
+              "file": "core.py",
+              "line": 60,
+              "bytes": 8405120,
+              "blocks": 20001
+            },
+            {
+              "file": "observation_store.py",
+              "line": 152,
+              "bytes": 394120,
+              "blocks": 9648
+            },
+            {
+              "file": "encoder.py",
+              "line": 280,
+              "bytes": 205440,
+              "blocks": 1073
+            },
+            {
+              "file": "encoder.py",
+              "line": 426,
+              "bytes": 197048,
+              "blocks": 1073
+            },
+            {
+              "file": "core.py",
+              "line": 67,
+              "bytes": 85176,
+              "blocks": 2
+            },
+            {
+              "file": "core.py",
+              "line": 69,
+              "bytes": 80000,
+              "blocks": 1
+            },
+            {
+              "file": "__init__.py",
+              "line": 295,
+              "bytes": 45557,
+              "blocks": 205
+            },
+            {
+              "file": "<frozen importlib._bootstrap_external>",
+              "line": 511,
+              "bytes": 22201,
+              "blocks": 271
+            },
+            {
+              "file": "encoder.py",
+              "line": 259,
+              "bytes": 21120,
+              "blocks": 528
+            },
+            {
+              "file": "tracemalloc.py",
+              "line": 193,
+              "bytes": 13888,
+              "blocks": 248
+            },
+            {
+              "file": "tracemalloc.py",
+              "line": 67,
+              "bytes": 12816,
+              "blocks": 178
+            }
+          ]
+        },
+        {
+          "operation": "QUALITY_BUILD_COMPLETE",
+          "seconds": 6.173577900000964,
+          "python_current_bytes": 31607963,
+          "python_peak_bytes": 31768861,
+          "process": {
+            "cpu_seconds": 6.234375,
+            "rss_bytes": 115539968,
+            "peak_rss_bytes": 192749568
+          },
+          "top_allocations": [
+            {
+              "file": "decoder.py",
+              "line": 361,
+              "bytes": 19736314,
+              "blocks": 379991
+            },
+            {
+              "file": "core.py",
+              "line": 60,
+              "bytes": 8405120,
+              "blocks": 20001
+            },
+            {
+              "file": "core.py",
+              "line": 88,
+              "bytes": 2720000,
+              "blocks": 20000
+            },
+            {
+              "file": "encoder.py",
+              "line": 280,
+              "bytes": 205440,
+              "blocks": 1073
+            },
+            {
+              "file": "encoder.py",
+              "line": 426,
+              "bytes": 197048,
+              "blocks": 1073
+            },
+            {
+              "file": "core.py",
+              "line": 87,
+              "bytes": 85120,
+              "blocks": 1
+            },
+            {
+              "file": "__init__.py",
+              "line": 295,
+              "bytes": 45557,
+              "blocks": 205
+            },
+            {
+              "file": "<frozen importlib._bootstrap_external>",
+              "line": 511,
+              "bytes": 22201,
+              "blocks": 271
+            },
+            {
+              "file": "encoder.py",
+              "line": 259,
+              "bytes": 21120,
+              "blocks": 528
+            },
+            {
+              "file": "tracemalloc.py",
+              "line": 193,
+              "bytes": 14616,
+              "blocks": 261
+            },
+            {
+              "file": "tracemalloc.py",
+              "line": 67,
+              "bytes": 13176,
+              "blocks": 183
+            },
+            {
+              "file": "<frozen abc>",
+              "line": 123,
+              "bytes": 9543,
+              "blocks": 98
+            }
+          ]
+        },
+        {
+          "operation": "COMPLETE_SERIALIZATION",
+          "seconds": 10.19909539999935,
+          "python_current_bytes": 31613773,
+          "python_peak_bytes": 31768861,
+          "process": {
+            "cpu_seconds": 10.09375,
+            "rss_bytes": 118358016,
+            "peak_rss_bytes": 195723264
+          },
+          "top_allocations": [
+            {
+              "file": "decoder.py",
+              "line": 361,
+              "bytes": 19736250,
+              "blocks": 379990
+            },
+            {
+              "file": "core.py",
+              "line": 60,
+              "bytes": 8405120,
+              "blocks": 20001
+            },
+            {
+              "file": "core.py",
+              "line": 88,
+              "bytes": 2720000,
+              "blocks": 20000
+            },
+            {
+              "file": "encoder.py",
+              "line": 280,
+              "bytes": 205608,
+              "blocks": 1074
+            },
+            {
+              "file": "encoder.py",
+              "line": 426,
+              "bytes": 197216,
+              "blocks": 1074
+            },
+            {
+              "file": "core.py",
+              "line": 87,
+              "bytes": 85120,
+              "blocks": 1
+            },
+            {
+              "file": "__init__.py",
+              "line": 295,
+              "bytes": 45557,
+              "blocks": 205
+            },
+            {
+              "file": "<frozen importlib._bootstrap_external>",
+              "line": 511,
+              "bytes": 22201,
+              "blocks": 271
+            },
+            {
+              "file": "encoder.py",
+              "line": 259,
+              "bytes": 22000,
+              "blocks": 550
+            },
+            {
+              "file": "tracemalloc.py",
+              "line": 193,
+              "bytes": 14840,
+              "blocks": 265
+            },
+            {
+              "file": "tracemalloc.py",
+              "line": 67,
+              "bytes": 13248,
+              "blocks": 184
+            },
+            {
+              "file": "encoder.py",
+              "line": 339,
+              "bytes": 9600,
+              "blocks": 50
+            }
+          ]
+        }
+      ],
+      "tracemalloc_enabled": true
+    },
+    {
+      "scope": "OWNED_SPOOLED_QUALITY_AND_SERIALIZATION",
+      "runtime": "3.14.3 (tags/v3.14.3:323c59a, Feb  3 2026, 16:04:56) [MSC v.1944 64 bit (AMD64)]",
+      "enforcement": "NONE; Windows development owned fixture, not cgroup or full repository",
+      "count": 50000,
+      "metrics": 50000,
+      "symbols": 50000,
+      "findings": 0,
+      "input_ciphertext_bytes": 32600048,
+      "complete_output_sha256": "5d6572bfc5a48a1620989253e768e4219ab6274d0fac26da6afc4044735560e5",
+      "complete_output_bytes": 39835983,
+      "build_seconds_including_tracemalloc": 20.00782479999907,
+      "stages": [
+        {
+          "operation": "ENCRYPTED_INPUT_READY",
+          "seconds": 15.303533700000116,
+          "python_current_bytes": 891487,
+          "python_peak_bytes": 3289112,
+          "process": {
+            "cpu_seconds": 15.03125,
+            "rss_bytes": 39329792,
+            "peak_rss_bytes": 40235008
+          },
+          "top_allocations": [
+            {
+              "file": "encoder.py",
+              "line": 280,
+              "bytes": 234168,
+              "blocks": 1241
+            },
+            {
+              "file": "encoder.py",
+              "line": 426,
+              "bytes": 225608,
+              "blocks": 1241
+            },
+            {
+              "file": "encoder.py",
+              "line": 259,
+              "bytes": 150480,
+              "blocks": 3762
+            },
+            {
+              "file": "encoder.py",
+              "line": 226,
+              "bytes": 110968,
+              "blocks": 1199
+            },
+            {
+              "file": "encoder.py",
+              "line": 339,
+              "bytes": 65664,
+              "blocks": 342
+            },
+            {
+              "file": "__init__.py",
+              "line": 295,
+              "bytes": 46645,
+              "blocks": 222
+            },
+            {
+              "file": "encoder.py",
+              "line": 288,
+              "bytes": 27360,
+              "blocks": 171
+            },
+            {
+              "file": "observation_store.py",
+              "line": 67,
+              "bytes": 25992,
+              "blocks": 171
+            },
+            {
+              "file": "<frozen importlib._bootstrap_external>",
+              "line": 511,
+              "bytes": 22201,
+              "blocks": 271
+            },
+            {
+              "file": "observation_store.py",
+              "line": 84,
+              "bytes": 14040,
+              "blocks": 160
+            },
+            {
+              "file": "encoder.py",
+              "line": 260,
+              "bytes": 10240,
+              "blocks": 160
+            },
+            {
+              "file": "encoder.py",
+              "line": 218,
+              "bytes": 9216,
+              "blocks": 144
+            }
+          ]
+        },
+        {
+          "operation": "QUALITY_DUPLICATION_ENTER",
+          "seconds": 23.74319739999919,
+          "python_current_bytes": 144371899,
+          "python_peak_bytes": 144462949,
+          "process": {
+            "cpu_seconds": 23.21875,
+            "rss_bytes": 398606336,
+            "peak_rss_bytes": 398610432
+          },
+          "top_allocations": [
+            {
+              "file": "decoder.py",
+              "line": 361,
+              "bytes": 98816378,
+              "blocks": 1899992
+            },
+            {
+              "file": "core.py",
+              "line": 60,
+              "bytes": 42042848,
+              "blocks": 99978
+            },
+            {
+              "file": "observation_store.py",
+              "line": 152,
+              "bytes": 2033320,
+              "blocks": 49648
+            },
+            {
+              "file": "core.py",
+              "line": 67,
+              "bytes": 444376,
+              "blocks": 2
+            },
+            {
+              "file": "core.py",
+              "line": 69,
+              "bytes": 400000,
+              "blocks": 1
+            },
+            {
+              "file": "encoder.py",
+              "line": 280,
+              "bytes": 207624,
+              "blocks": 1083
+            },
+            {
+              "file": "encoder.py",
+              "line": 426,
+              "bytes": 199064,
+              "blocks": 1083
+            },
+            {
+              "file": "__init__.py",
+              "line": 295,
+              "bytes": 46645,
+              "blocks": 222
+            },
+            {
+              "file": "<frozen importlib._bootstrap_external>",
+              "line": 511,
+              "bytes": 22201,
+              "blocks": 271
+            },
+            {
+              "file": "encoder.py",
+              "line": 226,
+              "bytes": 12424,
+              "blocks": 141
+            },
+            {
+              "file": "encoder.py",
+              "line": 259,
+              "bytes": 11440,
+              "blocks": 286
+            },
+            {
+              "file": "tracemalloc.py",
+              "line": 67,
+              "bytes": 8208,
+              "blocks": 114
+            }
+          ]
+        },
+        {
+          "operation": "QUALITY_DUPLICATION_EXIT",
+          "seconds": 31.993490600001678,
+          "python_current_bytes": 144373657,
+          "python_peak_bytes": 144471515,
+          "process": {
+            "cpu_seconds": 31.125,
+            "rss_bytes": 409100288,
+            "peak_rss_bytes": 783179776
+          },
+          "top_allocations": [
+            {
+              "file": "decoder.py",
+              "line": 361,
+              "bytes": 98816250,
+              "blocks": 1899990
+            },
+            {
+              "file": "core.py",
+              "line": 60,
+              "bytes": 42042848,
+              "blocks": 99978
+            },
+            {
+              "file": "observation_store.py",
+              "line": 152,
+              "bytes": 2033320,
+              "blocks": 49648
+            },
+            {
+              "file": "core.py",
+              "line": 67,
+              "bytes": 444376,
+              "blocks": 2
+            },
+            {
+              "file": "core.py",
+              "line": 69,
+              "bytes": 400000,
+              "blocks": 1
+            },
+            {
+              "file": "encoder.py",
+              "line": 280,
+              "bytes": 207624,
+              "blocks": 1083
+            },
+            {
+              "file": "encoder.py",
+              "line": 426,
+              "bytes": 199064,
+              "blocks": 1083
+            },
+            {
+              "file": "__init__.py",
+              "line": 295,
+              "bytes": 46645,
+              "blocks": 222
+            },
+            {
+              "file": "<frozen importlib._bootstrap_external>",
+              "line": 511,
+              "bytes": 22201,
+              "blocks": 271
+            },
+            {
+              "file": "tracemalloc.py",
+              "line": 193,
+              "bytes": 13720,
+              "blocks": 245
+            },
+            {
+              "file": "tracemalloc.py",
+              "line": 67,
+              "bytes": 12744,
+              "blocks": 177
+            },
+            {
+              "file": "encoder.py",
+              "line": 259,
+              "bytes": 11440,
+              "blocks": 286
+            }
+          ]
+        },
+        {
+          "operation": "QUALITY_BUILD_COMPLETE",
+          "seconds": 35.33232820000194,
+          "python_current_bytes": 155550065,
+          "python_peak_bytes": 156390211,
+          "process": {
+            "cpu_seconds": 34.4375,
+            "rss_bytes": 452894720,
+            "peak_rss_bytes": 783515648
+          },
+          "top_allocations": [
+            {
+              "file": "decoder.py",
+              "line": 361,
+              "bytes": 98816250,
+              "blocks": 1899990
+            },
+            {
+              "file": "core.py",
+              "line": 60,
+              "bytes": 42042848,
+              "blocks": 99978
+            },
+            {
+              "file": "core.py",
+              "line": 88,
+              "bytes": 13600000,
+              "blocks": 100000
+            },
+            {
+              "file": "core.py",
+              "line": 87,
+              "bytes": 444320,
+              "blocks": 1
+            },
+            {
+              "file": "encoder.py",
+              "line": 280,
+              "bytes": 207624,
+              "blocks": 1083
+            },
+            {
+              "file": "encoder.py",
+              "line": 426,
+              "bytes": 199064,
+              "blocks": 1083
+            },
+            {
+              "file": "__init__.py",
+              "line": 295,
+              "bytes": 46645,
+              "blocks": 222
+            },
+            {
+              "file": "<frozen importlib._bootstrap_external>",
+              "line": 511,
+              "bytes": 22201,
+              "blocks": 271
+            },
+            {
+              "file": "tracemalloc.py",
+              "line": 193,
+              "bytes": 14504,
+              "blocks": 259
+            },
+            {
+              "file": "tracemalloc.py",
+              "line": 67,
+              "bytes": 13248,
+              "blocks": 184
+            },
+            {
+              "file": "encoder.py",
+              "line": 259,
+              "bytes": 11440,
+              "blocks": 286
+            },
+            {
+              "file": "<frozen abc>",
+              "line": 123,
+              "bytes": 9543,
+              "blocks": 98
+            }
+          ]
+        },
+        {
+          "operation": "COMPLETE_SERIALIZATION",
+          "seconds": 60.67701330000273,
+          "python_current_bytes": 155555883,
+          "python_peak_bytes": 156390211,
+          "process": {
+            "cpu_seconds": 59.21875,
+            "rss_bytes": 445353984,
+            "peak_rss_bytes": 873119744
+          },
+          "top_allocations": [
+            {
+              "file": "decoder.py",
+              "line": 361,
+              "bytes": 98816250,
+              "blocks": 1899990
+            },
+            {
+              "file": "core.py",
+              "line": 60,
+              "bytes": 42042848,
+              "blocks": 99978
+            },
+            {
+              "file": "core.py",
+              "line": 88,
+              "bytes": 13600000,
+              "blocks": 100000
+            },
+            {
+              "file": "core.py",
+              "line": 87,
+              "bytes": 444320,
+              "blocks": 1
+            },
+            {
+              "file": "encoder.py",
+              "line": 280,
+              "bytes": 207792,
+              "blocks": 1084
+            },
+            {
+              "file": "encoder.py",
+              "line": 426,
+              "bytes": 199232,
+              "blocks": 1084
+            },
+            {
+              "file": "__init__.py",
+              "line": 295,
+              "bytes": 46645,
+              "blocks": 222
+            },
+            {
+              "file": "<frozen importlib._bootstrap_external>",
+              "line": 511,
+              "bytes": 22201,
+              "blocks": 271
+            },
+            {
+              "file": "tracemalloc.py",
+              "line": 193,
+              "bytes": 14784,
+              "blocks": 264
+            },
+            {
+              "file": "tracemalloc.py",
+              "line": 67,
+              "bytes": 13320,
+              "blocks": 185
+            },
+            {
+              "file": "encoder.py",
+              "line": 259,
+              "bytes": 12320,
+              "blocks": 308
+            },
+            {
+              "file": "<frozen abc>",
+              "line": 123,
+              "bytes": 9543,
+              "blocks": 98
+            }
+          ]
+        }
+      ],
+      "tracemalloc_enabled": true
+    },
+    {
+      "scope": "OWNED_SPOOLED_QUALITY_AND_SERIALIZATION",
+      "runtime": "3.14.3 (tags/v3.14.3:323c59a, Feb  3 2026, 16:04:56) [MSC v.1944 64 bit (AMD64)]",
+      "enforcement": "NONE; Windows development owned fixture, not cgroup or full repository",
+      "tracemalloc_enabled": false,
+      "count": 50000,
+      "metrics": 50000,
+      "symbols": 50000,
+      "findings": 0,
+      "input_ciphertext_bytes": 32600048,
+      "complete_output_sha256": "5d6572bfc5a48a1620989253e768e4219ab6274d0fac26da6afc4044735560e5",
+      "complete_output_bytes": 39835983,
+      "build_seconds_including_tracemalloc": 3.420479399999749,
+      "stages": [
+        {
+          "operation": "ENCRYPTED_INPUT_READY",
+          "seconds": 3.2209380000022065,
+          "python_current_bytes": null,
+          "python_peak_bytes": null,
+          "process": {
+            "cpu_seconds": 3.453125,
+            "rss_bytes": 35508224,
+            "peak_rss_bytes": 35508224
+          },
+          "top_allocations": []
+        },
+        {
+          "operation": "QUALITY_DUPLICATION_ENTER",
+          "seconds": 5.516425900001195,
+          "python_current_bytes": null,
+          "python_peak_bytes": null,
+          "process": {
+            "cpu_seconds": 5.734375,
+            "rss_bytes": 195674112,
+            "peak_rss_bytes": 195674112
+          },
+          "top_allocations": []
+        },
+        {
+          "operation": "QUALITY_DUPLICATION_EXIT",
+          "seconds": 6.567050700003165,
+          "python_current_bytes": null,
+          "python_peak_bytes": null,
+          "process": {
+            "cpu_seconds": 6.765625,
+            "rss_bytes": 195674112,
+            "peak_rss_bytes": 195674112
+          },
+          "top_allocations": []
+        },
+        {
+          "operation": "QUALITY_BUILD_COMPLETE",
+          "seconds": 6.647726300001523,
+          "python_current_bytes": null,
+          "python_peak_bytes": null,
+          "process": {
+            "cpu_seconds": 6.859375,
+            "rss_bytes": 207810560,
+            "peak_rss_bytes": 207810560
+          },
+          "top_allocations": []
+        },
+        {
+          "operation": "COMPLETE_SERIALIZATION",
+          "seconds": 9.309182900000451,
+          "python_current_bytes": null,
+          "python_peak_bytes": null,
+          "process": {
+            "cpu_seconds": 9.515625,
+            "rss_bytes": 207810560,
+            "peak_rss_bytes": 207810560
+          },
+          "top_allocations": []
+        }
+      ]
+    }
+  ]
+}

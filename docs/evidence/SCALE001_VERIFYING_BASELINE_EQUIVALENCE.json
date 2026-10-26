@@ -1,0 +1,298 @@
+{
+  "scope": "OWNED_COMPLETE_PIPELINE_DIAGNOSTIC_TRANSPARENCY_ONLY",
+  "equal": true,
+  "fixture_controls": "Administrative UUID streams scoped by caller, opaque record UID stream, generation capture timestamp and PYTHONHASHSEED fixed; execution clock and production limits unchanged. No fields omitted or equality predicates relaxed.",
+  "normalization": "Existing complete scoped output comparator; generated timings/known administrative identities only",
+  "before": {
+    "snapshots": {
+      "snapshot:3566f7630bd77c564b2cc4de1d826ffb30d5c4884ab67148648ba7d85f1843dc": {
+        "claim": {
+          "count": 8,
+          "sha256": "2bd112363400c3d0ca5676a65317037b8f98f8bad62cf6b63bfac421e55e171d"
+        },
+        "dependency": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "drift": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "edge": {
+          "count": 1230,
+          "sha256": "94984310b57b7f669c4b3367c3a364517182b89e6a571eb715a758f92b921e79"
+        },
+        "evidence": {
+          "count": 19,
+          "sha256": "05cbec300bb80740f2875d884f1f3568c2f59b22d15e65157d1f9bf8eea038f2"
+        },
+        "finding": {
+          "count": 336,
+          "sha256": "3aa0a75ff9d4a3a83d8b25e7dc48a475bd01b407d367e6d719dadb89ef50b5dd"
+        },
+        "graph_node": {
+          "count": 182,
+          "sha256": "60a90e4c16d6f40e9ab638ac917d1d57dbe3b68d8dc0283e4e5ed8e0956cd177"
+        },
+        "quality_projection": {
+          "count": 1,
+          "sha256": "f647a96a2c156e4158c2a196b14c2247071b22e19a44376d111f8c667178a444"
+        },
+        "risk_path": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "snapshot": {
+          "count": 1,
+          "sha256": "f4f00a064ac9f34b0181a1f0cfd90339f19f7af299f9f74c6454ae215dda9107"
+        }
+      },
+      "snapshot:746a8883eae1ba02dc319fe3553479bc0dfe9049cc7d89c4d1be46b2ad1b65fa": {
+        "claim": {
+          "count": 8,
+          "sha256": "3ab675eff8f0f828f5589ecf60d4a072a294d5b4944c700585d0f0430b158d12"
+        },
+        "dependency": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "drift": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "edge": {
+          "count": 1230,
+          "sha256": "65a41c4b992a52560f8e05e928134a57876d917558e4a59181317eca568754cc"
+        },
+        "evidence": {
+          "count": 19,
+          "sha256": "8139ef67dbdcd1fb3bc8072458095b5008b56c95e6ce114407ae12511b9dc261"
+        },
+        "finding": {
+          "count": 336,
+          "sha256": "9e59e785faba7a119a7998f95aff8c3e4929afded71c29cd0761e70dddb3799f"
+        },
+        "graph_node": {
+          "count": 182,
+          "sha256": "71a2e87ebddb5eb4cc0c225459b3846fd0c9efa20a12fa2c4433cc3ce39f2b8d"
+        },
+        "quality_projection": {
+          "count": 1,
+          "sha256": "f647a96a2c156e4158c2a196b14c2247071b22e19a44376d111f8c667178a444"
+        },
+        "risk_path": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "snapshot": {
+          "count": 1,
+          "sha256": "09dd501ece56cd53220f33c914783c6871af33115e842221e633e6c72fefe583"
+        }
+      },
+      "snapshot:8f88b43de4a53d177f650e77450b6f56621c28b18fbf6eb3b5ab41e3fb56baf8": {
+        "claim": {
+          "count": 8,
+          "sha256": "13c77b3ad0aee032a58e6d9d16b467c899000b7661a8e87df17affc9ba7e65c0"
+        },
+        "dependency": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "drift": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "edge": {
+          "count": 1234,
+          "sha256": "4769df7dae3779eb63fbc9e88f639aa12d095b82f7204a38ea117b19a95b4d78"
+        },
+        "evidence": {
+          "count": 19,
+          "sha256": "04b333e8db69d4050ad1a741724eb86172fbfbb00a058df2e86d4c5c1949fcf9"
+        },
+        "finding": {
+          "count": 337,
+          "sha256": "f8f6510afdf6da56019a5148c6e806384b7f968e4cb5100b88c684eda3f02b9f"
+        },
+        "graph_node": {
+          "count": 182,
+          "sha256": "ed8bb442ef89c9c8a458915979d0dcab7acfabf956a41272139a6b75ecb6fdb5"
+        },
+        "quality_projection": {
+          "count": 1,
+          "sha256": "63f78ebb441624e178c1d5fd80ce4e661dbcd4250c893459d680c4f99c7187bd"
+        },
+        "risk_path": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "snapshot": {
+          "count": 1,
+          "sha256": "9a734626be748eef1c060ddf4242f36bc5cd9170505bf29de70ef6680ac955fd"
+        }
+      }
+    },
+    "source_inventories": {
+      "inventory:4cffe841bdbd8392d3fff4bcc261e1713c2b01a3864a1ebb1b56d275769c5225": {
+        "count": 19,
+        "sha256": "4cffe841bdbd8392d3fff4bcc261e1713c2b01a3864a1ebb1b56d275769c5225"
+      },
+      "inventory:08d9add80d09b560e5b244133a067aae2951499da85621f5d01b3cf04fa9c46c": {
+        "count": 19,
+        "sha256": "08d9add80d09b560e5b244133a067aae2951499da85621f5d01b3cf04fa9c46c"
+      }
+    },
+    "parser_artifacts": {
+      "count": 20,
+      "sha256": "16f1a9cc2d7f583c794b6e22c1ca6fb4c22e13d882ee7fd6fa7aa654692f5d13"
+    },
+    "sqlite_integrity": "ok",
+    "foreign_key_violations": 0
+  },
+  "after": {
+    "snapshots": {
+      "snapshot:3566f7630bd77c564b2cc4de1d826ffb30d5c4884ab67148648ba7d85f1843dc": {
+        "claim": {
+          "count": 8,
+          "sha256": "2bd112363400c3d0ca5676a65317037b8f98f8bad62cf6b63bfac421e55e171d"
+        },
+        "dependency": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "drift": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "edge": {
+          "count": 1230,
+          "sha256": "94984310b57b7f669c4b3367c3a364517182b89e6a571eb715a758f92b921e79"
+        },
+        "evidence": {
+          "count": 19,
+          "sha256": "05cbec300bb80740f2875d884f1f3568c2f59b22d15e65157d1f9bf8eea038f2"
+        },
+        "finding": {
+          "count": 336,
+          "sha256": "3aa0a75ff9d4a3a83d8b25e7dc48a475bd01b407d367e6d719dadb89ef50b5dd"
+        },
+        "graph_node": {
+          "count": 182,
+          "sha256": "60a90e4c16d6f40e9ab638ac917d1d57dbe3b68d8dc0283e4e5ed8e0956cd177"
+        },
+        "quality_projection": {
+          "count": 1,
+          "sha256": "f647a96a2c156e4158c2a196b14c2247071b22e19a44376d111f8c667178a444"
+        },
+        "risk_path": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "snapshot": {
+          "count": 1,
+          "sha256": "f4f00a064ac9f34b0181a1f0cfd90339f19f7af299f9f74c6454ae215dda9107"
+        }
+      },
+      "snapshot:746a8883eae1ba02dc319fe3553479bc0dfe9049cc7d89c4d1be46b2ad1b65fa": {
+        "claim": {
+          "count": 8,
+          "sha256": "3ab675eff8f0f828f5589ecf60d4a072a294d5b4944c700585d0f0430b158d12"
+        },
+        "dependency": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "drift": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "edge": {
+          "count": 1230,
+          "sha256": "65a41c4b992a52560f8e05e928134a57876d917558e4a59181317eca568754cc"
+        },
+        "evidence": {
+          "count": 19,
+          "sha256": "8139ef67dbdcd1fb3bc8072458095b5008b56c95e6ce114407ae12511b9dc261"
+        },
+        "finding": {
+          "count": 336,
+          "sha256": "9e59e785faba7a119a7998f95aff8c3e4929afded71c29cd0761e70dddb3799f"
+        },
+        "graph_node": {
+          "count": 182,
+          "sha256": "71a2e87ebddb5eb4cc0c225459b3846fd0c9efa20a12fa2c4433cc3ce39f2b8d"
+        },
+        "quality_projection": {
+          "count": 1,
+          "sha256": "f647a96a2c156e4158c2a196b14c2247071b22e19a44376d111f8c667178a444"
+        },
+        "risk_path": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "snapshot": {
+          "count": 1,
+          "sha256": "09dd501ece56cd53220f33c914783c6871af33115e842221e633e6c72fefe583"
+        }
+      },
+      "snapshot:8f88b43de4a53d177f650e77450b6f56621c28b18fbf6eb3b5ab41e3fb56baf8": {
+        "claim": {
+          "count": 8,
+          "sha256": "13c77b3ad0aee032a58e6d9d16b467c899000b7661a8e87df17affc9ba7e65c0"
+        },
+        "dependency": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "drift": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "edge": {
+          "count": 1234,
+          "sha256": "4769df7dae3779eb63fbc9e88f639aa12d095b82f7204a38ea117b19a95b4d78"
+        },
+        "evidence": {
+          "count": 19,
+          "sha256": "04b333e8db69d4050ad1a741724eb86172fbfbb00a058df2e86d4c5c1949fcf9"
+        },
+        "finding": {
+          "count": 337,
+          "sha256": "f8f6510afdf6da56019a5148c6e806384b7f968e4cb5100b88c684eda3f02b9f"
+        },
+        "graph_node": {
+          "count": 182,
+          "sha256": "ed8bb442ef89c9c8a458915979d0dcab7acfabf956a41272139a6b75ecb6fdb5"
+        },
+        "quality_projection": {
+          "count": 1,
+          "sha256": "63f78ebb441624e178c1d5fd80ce4e661dbcd4250c893459d680c4f99c7187bd"
+        },
+        "risk_path": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "snapshot": {
+          "count": 1,
+          "sha256": "9a734626be748eef1c060ddf4242f36bc5cd9170505bf29de70ef6680ac955fd"
+        }
+      }
+    },
+    "source_inventories": {
+      "inventory:4cffe841bdbd8392d3fff4bcc261e1713c2b01a3864a1ebb1b56d275769c5225": {
+        "count": 19,
+        "sha256": "4cffe841bdbd8392d3fff4bcc261e1713c2b01a3864a1ebb1b56d275769c5225"
+      },
+      "inventory:08d9add80d09b560e5b244133a067aae2951499da85621f5d01b3cf04fa9c46c": {
+        "count": 19,
+        "sha256": "08d9add80d09b560e5b244133a067aae2951499da85621f5d01b3cf04fa9c46c"
+      }
+    },
+    "parser_artifacts": {
+      "count": 20,
+      "sha256": "16f1a9cc2d7f583c794b6e22c1ca6fb4c22e13d882ee7fd6fa7aa654692f5d13"
+    },
+    "sqlite_integrity": "ok",
+    "foreign_key_violations": 0
+  }
+}

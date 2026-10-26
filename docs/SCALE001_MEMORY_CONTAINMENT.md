@@ -224,3 +224,17 @@ original public protocol guard and needs a fresh Linux run. Both completed
 workflows were allowed to finish before another push. Raw receipts and 30,715
 samples are preserved in SCALE001_CGROUP_40241617715 evidence. No complete-output
 or recovery qualification is claimed.
+
+### Verified 2927693 and operation-level VERIFYING attribution
+
+Regression 40244419518 passed all four jobs (786 backend / 2 Windows-specific
+skips; 80 real Linux cases and non-root Docker enforcement). Constrained
+40244419571 failed: the candidate completed claims in 31.546 seconds, then
+OOM-killed under VERIFYING with 18,756 retained artifacts, intact SQLite/FKs and
+zero publication. Its entry checkpoint does not identify the fatal operation.
+Owned encrypted metric probes measure linear retention in quality's token-free
+metric and symbol vectors. A qualification-only operation journal and optional
+quality phase observer now distinguish that projection from duplication, final
+identity, checkpointing and publication preparation without changing defaults or
+limits. Raw 2927693 receipts and 38,199 samples are preserved. See
+[the memory recovery record](SCALE001_VERIFYING_MEMORY_RECOVERY.md).
