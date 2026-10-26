@@ -186,6 +186,13 @@ workflow substitutes for it.
 
 ## Remaining acceptance
 
+The subsequent full run at 57e71b9 again stopped in ANALYZING before any
+VERIFYING journal event, at 1809.807 seconds with 15,329 parser artifacts. It
+cannot establish full-workload memory recovery for the output stores. Its
+completed regression, actual packet-validation timing, raw evidence and minimal
+privacy-scanning throughput correction are documented in
+[the full-workload gate](SCALE001_FULL_WORKLOAD_GATE_57E71B9.md).
+
 No full cold publication has passed. Warm, incremental, cancellation, exhaustion,
 fresh-worker recovery and concurrent-tenant qualification remain open under the
 same agreed process-tree cgroup ceiling. Graph/correlation, checkpoint buffering,

@@ -1,0 +1,493 @@
+{
+  "scope": "OWNED_NATIVE_SHAPED_PACKET_VALIDATION_ONLY",
+  "profiles": [
+    {
+      "scope": "OWNED_NATIVE_SHAPED_PACKET_VALIDATION_ONLY",
+      "label": "before",
+      "profiled": false,
+      "files": 8,
+      "metrics": 400,
+      "tokens": 25600,
+      "wire_bytes": 1698416,
+      "wire_sha256": "d5c135c95099217ab39936ecf454f42491dce35afbecc898cc9c612cd031cb4f",
+      "seconds": 0.6777243999995335,
+      "process": {
+        "cpu_seconds": 1.546875,
+        "rss_bytes": 63623168,
+        "peak_rss_bytes": 65490944
+      },
+      "complete_output_sha256": "716bad37484f44c67a5c379edf94e9502c7132d29d3226947b4b6ac06cd809cf",
+      "complete_output_bytes": 3390872,
+      "guard": "Unchanged decode_packet, compact expansion and full metadata traversal; no helper transport/isolation/publication exercised"
+    },
+    {
+      "scope": "OWNED_NATIVE_SHAPED_PACKET_VALIDATION_ONLY",
+      "label": "after",
+      "profiled": false,
+      "files": 8,
+      "metrics": 400,
+      "tokens": 25600,
+      "wire_bytes": 1698416,
+      "wire_sha256": "d5c135c95099217ab39936ecf454f42491dce35afbecc898cc9c612cd031cb4f",
+      "seconds": 0.32000950000019657,
+      "process": {
+        "cpu_seconds": 0.90625,
+        "rss_bytes": 63860736,
+        "peak_rss_bytes": 65568768
+      },
+      "complete_output_sha256": "716bad37484f44c67a5c379edf94e9502c7132d29d3226947b4b6ac06cd809cf",
+      "complete_output_bytes": 3390872,
+      "guard": "Unchanged decode_packet, compact expansion and full metadata traversal; no helper transport/isolation/publication exercised"
+    },
+    {
+      "scope": "OWNED_NATIVE_SHAPED_PACKET_VALIDATION_ONLY",
+      "label": "before-profiled",
+      "profiled": true,
+      "files": 8,
+      "metrics": 400,
+      "tokens": 25600,
+      "wire_bytes": 1698416,
+      "wire_sha256": "d5c135c95099217ab39936ecf454f42491dce35afbecc898cc9c612cd031cb4f",
+      "seconds": 2.432489699999678,
+      "process": {
+        "cpu_seconds": 3.0,
+        "rss_bytes": 63823872,
+        "peak_rss_bytes": 65667072
+      },
+      "complete_output_sha256": "716bad37484f44c67a5c379edf94e9502c7132d29d3226947b4b6ac06cd809cf",
+      "complete_output_bytes": 3390872,
+      "guard": "Unchanged decode_packet, compact expansion and full metadata traversal; no helper transport/isolation/publication exercised",
+      "top_cumulative_calls": [
+        {
+          "file": "parser_protocol.py",
+          "line": 42,
+          "function": "completed_packets",
+          "calls": 1,
+          "self_seconds": 0.0008351000000000001,
+          "cumulative_seconds": 2.4311629000000003
+        },
+        {
+          "file": "sanitization.py",
+          "line": 148,
+          "function": "metadata",
+          "calls": 8,
+          "self_seconds": 3.9e-05,
+          "cumulative_seconds": 2.1186521000000003
+        },
+        {
+          "file": "sanitization.py",
+          "line": 161,
+          "function": "visit",
+          "calls": 164960,
+          "self_seconds": 0.2740338,
+          "cumulative_seconds": 2.1184612
+        },
+        {
+          "file": "sanitization.py",
+          "line": 158,
+          "function": "text",
+          "calls": 168112,
+          "self_seconds": 0.0677577,
+          "cumulative_seconds": 1.7670401
+        },
+        {
+          "file": "sanitization.py",
+          "line": 154,
+          "function": "short_text",
+          "calls": 36240,
+          "self_seconds": 0.012738200000000002,
+          "cumulative_seconds": 1.6872147000000002
+        },
+        {
+          "file": "sanitization.py",
+          "line": 102,
+          "function": "redact",
+          "calls": 36240,
+          "self_seconds": 0.41854850000000005,
+          "cumulative_seconds": 1.6744765000000001
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<built-in method builtins.next>",
+          "calls": 177692,
+          "self_seconds": 0.050679400000000006,
+          "cumulative_seconds": 0.6242083
+        },
+        {
+          "file": "sanitization.py",
+          "line": 123,
+          "function": "<genexpr>",
+          "calls": 177708,
+          "self_seconds": 0.37686040000000004,
+          "cumulative_seconds": 0.5735331
+        },
+        {
+          "file": "sanitization.py",
+          "line": 75,
+          "function": "_assignments",
+          "calls": 36240,
+          "self_seconds": 0.2517779,
+          "cumulative_seconds": 0.4097408
+        },
+        {
+          "file": "sandbox.py",
+          "line": 53,
+          "function": "decode_packet",
+          "calls": 8,
+          "self_seconds": 0.07874740000000001,
+          "cumulative_seconds": 0.3105198
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<built-in method builtins.len>",
+          "calls": 3805645,
+          "self_seconds": 0.24799670000000001,
+          "cumulative_seconds": 0.24799670000000001
+        },
+        {
+          "file": "decoder.py",
+          "line": 340,
+          "function": "decode",
+          "calls": 8,
+          "self_seconds": 3.96e-05,
+          "cumulative_seconds": 0.23129760000000002
+        },
+        {
+          "file": "decoder.py",
+          "line": 351,
+          "function": "raw_decode",
+          "calls": 8,
+          "self_seconds": 9.7e-06,
+          "cumulative_seconds": 0.23121280000000002
+        },
+        {
+          "file": "scanner.py",
+          "line": 65,
+          "function": "scan_once",
+          "calls": 8,
+          "self_seconds": 2.09e-05,
+          "cumulative_seconds": 0.23120310000000002
+        },
+        {
+          "file": "scanner.py",
+          "line": 28,
+          "function": "_scan_once",
+          "calls": 82560,
+          "self_seconds": 0.038368400000000004,
+          "cumulative_seconds": 0.23117220000000002
+        },
+        {
+          "file": "decoder.py",
+          "line": 137,
+          "function": "JSONObject",
+          "calls": 26032,
+          "self_seconds": 0.0695192,
+          "cumulative_seconds": 0.2311535
+        },
+        {
+          "file": "decoder.py",
+          "line": 221,
+          "function": "JSONArray",
+          "calls": 448,
+          "self_seconds": 0.014698500000000001,
+          "cumulative_seconds": 0.23043110000000003
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<method 'lower' of 'str' objects>",
+          "calls": 1570656,
+          "self_seconds": 0.1558315,
+          "cumulative_seconds": 0.1558315
+        },
+        {
+          "file": "decoder.py",
+          "line": 70,
+          "function": "py_scanstring",
+          "calls": 27664,
+          "self_seconds": 0.027986100000000003,
+          "cumulative_seconds": 0.059679100000000006
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<method 'isalnum' of 'str' objects>",
+          "calls": 505616,
+          "self_seconds": 0.048655000000000004,
+          "cumulative_seconds": 0.048655000000000004
+        },
+        {
+          "file": "sanitization.py",
+          "line": 18,
+          "function": "_private",
+          "calls": 36240,
+          "self_seconds": 0.023606000000000002,
+          "cumulative_seconds": 0.0387477
+        },
+        {
+          "file": "sanitization.py",
+          "line": 45,
+          "function": "_urls",
+          "calls": 36240,
+          "self_seconds": 0.021814100000000003,
+          "cumulative_seconds": 0.035400100000000004
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<method 'match' of 're.Pattern' objects>",
+          "calls": 86624,
+          "self_seconds": 0.0346742,
+          "cumulative_seconds": 0.0346742
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<method 'append' of 'list' objects>",
+          "calls": 255176,
+          "self_seconds": 0.029260300000000003,
+          "cumulative_seconds": 0.029260300000000003
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<built-in method builtins.isinstance>",
+          "calls": 250272,
+          "self_seconds": 0.0281897,
+          "cumulative_seconds": 0.0281897
+        }
+      ]
+    },
+    {
+      "scope": "OWNED_NATIVE_SHAPED_PACKET_VALIDATION_ONLY",
+      "label": "after-profiled",
+      "profiled": true,
+      "files": 8,
+      "metrics": 400,
+      "tokens": 25600,
+      "wire_bytes": 1698416,
+      "wire_sha256": "d5c135c95099217ab39936ecf454f42491dce35afbecc898cc9c612cd031cb4f",
+      "seconds": 0.8826128999999128,
+      "process": {
+        "cpu_seconds": 1.5,
+        "rss_bytes": 63963136,
+        "peak_rss_bytes": 65716224
+      },
+      "complete_output_sha256": "716bad37484f44c67a5c379edf94e9502c7132d29d3226947b4b6ac06cd809cf",
+      "complete_output_bytes": 3390872,
+      "guard": "Unchanged decode_packet, compact expansion and full metadata traversal; no helper transport/isolation/publication exercised",
+      "top_cumulative_calls": [
+        {
+          "file": "parser_protocol.py",
+          "line": 42,
+          "function": "completed_packets",
+          "calls": 1,
+          "self_seconds": 0.0010538000000000001,
+          "cumulative_seconds": 0.8801346000000001
+        },
+        {
+          "file": "sanitization.py",
+          "line": 162,
+          "function": "metadata",
+          "calls": 8,
+          "self_seconds": 4.1e-05,
+          "cumulative_seconds": 0.563307
+        },
+        {
+          "file": "sanitization.py",
+          "line": 175,
+          "function": "visit",
+          "calls": 164960,
+          "self_seconds": 0.2574493,
+          "cumulative_seconds": 0.5631113
+        },
+        {
+          "file": "sandbox.py",
+          "line": 53,
+          "function": "decode_packet",
+          "calls": 8,
+          "self_seconds": 0.0791714,
+          "cumulative_seconds": 0.3146514
+        },
+        {
+          "file": "decoder.py",
+          "line": 340,
+          "function": "decode",
+          "calls": 8,
+          "self_seconds": 5.1000000000000006e-05,
+          "cumulative_seconds": 0.23502240000000002
+        },
+        {
+          "file": "decoder.py",
+          "line": 351,
+          "function": "raw_decode",
+          "calls": 8,
+          "self_seconds": 1.02e-05,
+          "cumulative_seconds": 0.2349128
+        },
+        {
+          "file": "scanner.py",
+          "line": 65,
+          "function": "scan_once",
+          "calls": 8,
+          "self_seconds": 2.47e-05,
+          "cumulative_seconds": 0.23490260000000002
+        },
+        {
+          "file": "scanner.py",
+          "line": 28,
+          "function": "_scan_once",
+          "calls": 82560,
+          "self_seconds": 0.039119100000000004,
+          "cumulative_seconds": 0.2348654
+        },
+        {
+          "file": "decoder.py",
+          "line": 137,
+          "function": "JSONObject",
+          "calls": 26032,
+          "self_seconds": 0.07304770000000001,
+          "cumulative_seconds": 0.23484390000000002
+        },
+        {
+          "file": "decoder.py",
+          "line": 221,
+          "function": "JSONArray",
+          "calls": 448,
+          "self_seconds": 0.0148733,
+          "cumulative_seconds": 0.23405910000000002
+        },
+        {
+          "file": "sanitization.py",
+          "line": 172,
+          "function": "text",
+          "calls": 168112,
+          "self_seconds": 0.0623157,
+          "cumulative_seconds": 0.23302810000000002
+        },
+        {
+          "file": "sanitization.py",
+          "line": 168,
+          "function": "short_text",
+          "calls": 36240,
+          "self_seconds": 0.0092825,
+          "cumulative_seconds": 0.15823040000000002
+        },
+        {
+          "file": "sanitization.py",
+          "line": 104,
+          "function": "redact",
+          "calls": 36240,
+          "self_seconds": 0.08121020000000001,
+          "cumulative_seconds": 0.14894790000000002
+        },
+        {
+          "file": "decoder.py",
+          "line": 70,
+          "function": "py_scanstring",
+          "calls": 27664,
+          "self_seconds": 0.0277044,
+          "cumulative_seconds": 0.0590139
+        },
+        {
+          "file": "sanitization.py",
+          "line": 113,
+          "function": "<genexpr>",
+          "calls": 543440,
+          "self_seconds": 0.055175600000000005,
+          "cumulative_seconds": 0.055175600000000005
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<method 'match' of 're.Pattern' objects>",
+          "calls": 86624,
+          "self_seconds": 0.0341464,
+          "cumulative_seconds": 0.0341464
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<built-in method builtins.isinstance>",
+          "calls": 250272,
+          "self_seconds": 0.024599600000000003,
+          "cumulative_seconds": 0.024599600000000003
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<method 'lower' of 'str' objects>",
+          "calls": 149584,
+          "self_seconds": 0.0208641,
+          "cumulative_seconds": 0.0208641
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<method 'replace' of 'str' objects>",
+          "calls": 112880,
+          "self_seconds": 0.015572700000000002,
+          "cumulative_seconds": 0.015572700000000002
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<built-in method builtins.len>",
+          "calls": 205289,
+          "self_seconds": 0.015277800000000001,
+          "cumulative_seconds": 0.015277800000000001
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<method 'endswith' of 'str' objects>",
+          "calls": 112880,
+          "self_seconds": 0.013358100000000001,
+          "cumulative_seconds": 0.013358100000000001
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<built-in method _json.scanstring>",
+          "calls": 56552,
+          "self_seconds": 0.0098622,
+          "cumulative_seconds": 0.0098622
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<method 'append' of 'list' objects>",
+          "calls": 110280,
+          "self_seconds": 0.009564900000000001,
+          "cumulative_seconds": 0.009564900000000001
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<method 'end' of 're.Match' objects>",
+          "calls": 86624,
+          "self_seconds": 0.0089831,
+          "cumulative_seconds": 0.0089831
+        },
+        {
+          "file": "~",
+          "line": 0,
+          "function": "<method 'groups' of 're.Match' objects>",
+          "calls": 56080,
+          "self_seconds": 0.0082244,
+          "cumulative_seconds": 0.0082244
+        }
+      ]
+    }
+  ],
+  "complete_output_equal": true,
+  "limits_changed": false,
+  "limitations": [
+    "8 owned native-shaped file packets, not full-repository qualification.",
+    "cProfile perturbs wall timings; nested cumulative times must not be summed.",
+    "Unprofiled before/after are fresh processes on Windows, not Linux cgroup enforcement.",
+    "Detailed redactor retained for every possible supported credential introducer; no parser/schema/node/depth/privacy gate removed."
+  ]
+}

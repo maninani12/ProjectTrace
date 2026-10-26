@@ -13,6 +13,8 @@ PRIVATE_LABELS = ("PRIVATE KEY-----", "RSA PRIVATE KEY-----", "EC PRIVATE KEY---
 SENSITIVE_KEYS = {"password", "passwd", "token", "access_token", "refresh_token", "secret", "secret_key",
                   "client_secret", "api_key", "apikey", "authorization", "cookie", "credentials",
                   "database_url", "private_key"}
+TEXT_TRIGGERS = ("://", "-----begin ", "password", "token", "secret", "api_key", "api-key", "apikey",
+                 "ghp_", "gho_", "ghu_", "ghs_", "ghr_", "akia")
 
 
 def _private(text):
@@ -102,6 +104,18 @@ def _assignments(text):
 def redact(text):
     if not isinstance(text, str) or len(text) > MAX_TEXT:
         raise ValueError("Sanitization text budget or type invalid")
+    # Each supported rewrite requires one of these fixed introducers. Most
+    # parser identifiers, hashes and operators contain none. A negative search
+    # avoids Python character scanning without changing the candidate scanner
+    # or metadata's independent structure, sensitive-key and collision checks.
+    if type(text) is str:
+        lowered = text.lower()
+        if not any(trigger in lowered for trigger in TEXT_TRIGGERS):
+            return text
+    return _redact_candidates(text)
+
+
+def _redact_candidates(text):
     text = _assignments(_urls(_private(text)))
     chunks, last, i = [], 0, 0
     keywords = ("password", "api_key", "api-key", "apikey", "secret_key", "secret", "token")

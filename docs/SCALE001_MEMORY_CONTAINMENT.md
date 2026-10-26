@@ -251,3 +251,19 @@ complete output, at additional CPU/IO cost. Complete owned cold/warm/incremental
 fingerprints match. This is not full-repository qualification; production limits,
 coverage, output comparison and security semantics remain unchanged. See the
 recovery record for measurements, limitations and remaining gates.
+
+### Full-workload gate at 57e71b9: native throughput still blocks quality
+
+Regression 40274461867 passed all four jobs (798 backend / 2 skips, 80 Linux
+security cases, real broker recovery and browser acceptance). Constrained
+40274461935 failed: baseline OOM in ANALYZING / 3,747 artifacts; candidate
+ANALYSIS_TIME_BUDGET at 1809.807 seconds in ANALYZING / 15,329 artifacts, no OOM,
+intact SQLite/FKs and zero publication. Neither reached VERIFYING, so this run
+cannot prove full-workload benefit from the encrypted metric/symbol outputs.
+PARTITION_PARSE accounts for 1700.337 seconds, including 469.147 seconds of
+parent packet validation. Owned replay identifies fixed-format privacy scanning
+as a major reducible validation cost. A fixed-introducer negative search retains
+the original candidate scanner and every structural/security gate, with matching
+complete output and 93 focused passes / 2 preserved skips. Raw receipts and
+37,972 application samples are preserved. See
+[the completed gate and next correction](SCALE001_FULL_WORKLOAD_GATE_57E71B9.md).

@@ -1,0 +1,173 @@
+{
+  "scope": "OWNED_TOKEN_BEARING_QUALITY_ONLY",
+  "before": {
+    "scope": "OWNED_TOKEN_BEARING_QUALITY_ONLY",
+    "variant": "before",
+    "source_files": 200,
+    "native_tokens": 3200000,
+    "native_symbols": 13600,
+    "runtime": "3.14.3 (tags/v3.14.3:323c59a, Feb  3 2026, 16:04:56) [MSC v.1944 64 bit (AMD64)]",
+    "enforcement": "NONE; Windows development owned fixture, not cgroup or full repository",
+    "tracemalloc_enabled": false,
+    "count": 50000,
+    "metrics": 50000,
+    "symbols": 63600,
+    "findings": 0,
+    "input_ciphertext_bytes": 64466620,
+    "complete_output_sha256": "4cf0253b9d31d2339a907873a0d3f2d9ef9aee74018e972a8f856cc72f4ed567",
+    "complete_output_bytes": 42962760,
+    "build_seconds_including_tracemalloc": 38.40593720000015,
+    "stages": [
+      {
+        "operation": "ENCRYPTED_INPUT_READY",
+        "seconds": 65.30906059999961,
+        "python_current_bytes": null,
+        "python_peak_bytes": null,
+        "process": {
+          "cpu_seconds": 63.46875,
+          "rss_bytes": 35635200,
+          "peak_rss_bytes": 35635200
+        },
+        "top_allocations": []
+      },
+      {
+        "operation": "QUALITY_DUPLICATION_ENTER",
+        "seconds": 97.3816569999999,
+        "python_current_bytes": null,
+        "python_peak_bytes": null,
+        "process": {
+          "cpu_seconds": 93.9375,
+          "rss_bytes": 200503296,
+          "peak_rss_bytes": 200503296
+        },
+        "top_allocations": []
+      },
+      {
+        "operation": "QUALITY_DUPLICATION_EXIT",
+        "seconds": 103.32136589999982,
+        "python_current_bytes": null,
+        "python_peak_bytes": null,
+        "process": {
+          "cpu_seconds": 99.71875,
+          "rss_bytes": 204816384,
+          "peak_rss_bytes": 240467968
+        },
+        "top_allocations": []
+      },
+      {
+        "operation": "QUALITY_BUILD_COMPLETE",
+        "seconds": 103.7584311999999,
+        "python_current_bytes": null,
+        "python_peak_bytes": null,
+        "process": {
+          "cpu_seconds": 100.109375,
+          "rss_bytes": 213487616,
+          "peak_rss_bytes": 240467968
+        },
+        "top_allocations": []
+      },
+      {
+        "operation": "COMPLETE_SERIALIZATION",
+        "seconds": 120.18354539999973,
+        "python_current_bytes": null,
+        "python_peak_bytes": null,
+        "process": {
+          "cpu_seconds": 116.0625,
+          "rss_bytes": 213491712,
+          "peak_rss_bytes": 240467968
+        },
+        "top_allocations": []
+      }
+    ]
+  },
+  "after": {
+    "scope": "OWNED_TOKEN_BEARING_QUALITY_ONLY",
+    "variant": "after",
+    "source_files": 200,
+    "native_tokens": 3200000,
+    "native_symbols": 13600,
+    "runtime": "3.14.3 (tags/v3.14.3:323c59a, Feb  3 2026, 16:04:56) [MSC v.1944 64 bit (AMD64)]",
+    "enforcement": "NONE; Windows development owned fixture, not cgroup or full repository",
+    "tracemalloc_enabled": false,
+    "count": 50000,
+    "metrics": 50000,
+    "symbols": 63600,
+    "findings": 0,
+    "input_ciphertext_bytes": 64467900,
+    "complete_output_sha256": "4cf0253b9d31d2339a907873a0d3f2d9ef9aee74018e972a8f856cc72f4ed567",
+    "complete_output_bytes": 42962760,
+    "build_seconds_including_tracemalloc": 117.83574420000014,
+    "stages": [
+      {
+        "operation": "ENCRYPTED_INPUT_READY",
+        "seconds": 64.44481360000009,
+        "python_current_bytes": null,
+        "python_peak_bytes": null,
+        "process": {
+          "cpu_seconds": 61.640625,
+          "rss_bytes": 34725888,
+          "peak_rss_bytes": 34725888
+        },
+        "top_allocations": []
+      },
+      {
+        "operation": "QUALITY_DUPLICATION_ENTER",
+        "seconds": 127.99351360000037,
+        "python_current_bytes": null,
+        "python_peak_bytes": null,
+        "process": {
+          "cpu_seconds": 123.03125,
+          "rss_bytes": 44568576,
+          "peak_rss_bytes": 44568576
+        },
+        "top_allocations": []
+      },
+      {
+        "operation": "QUALITY_DUPLICATION_EXIT",
+        "seconds": 134.0257505000004,
+        "python_current_bytes": null,
+        "python_peak_bytes": null,
+        "process": {
+          "cpu_seconds": 128.8125,
+          "rss_bytes": 46850048,
+          "peak_rss_bytes": 81457152
+        },
+        "top_allocations": []
+      },
+      {
+        "operation": "QUALITY_BUILD_COMPLETE",
+        "seconds": 182.30216710000013,
+        "python_current_bytes": null,
+        "python_peak_bytes": null,
+        "process": {
+          "cpu_seconds": 175.515625,
+          "rss_bytes": 46678016,
+          "peak_rss_bytes": 81457152
+        },
+        "top_allocations": []
+      },
+      {
+        "operation": "COMPLETE_SERIALIZATION",
+        "seconds": 219.9864491000003,
+        "python_current_bytes": null,
+        "python_peak_bytes": null,
+        "process": {
+          "cpu_seconds": 212.125,
+          "rss_bytes": 46047232,
+          "peak_rss_bytes": 81457152
+        },
+        "top_allocations": []
+      }
+    ]
+  },
+  "complete_output_equal": true,
+  "limits_changed": false,
+  "limitations": [
+    "Windows development, not full Linux cgroup qualification.",
+    "Direct owned typed rows; parser/transport/publication/recovery not exercised.",
+    "Token contents are unique inert identifiers; real duplication matches and global identity/graph costs are not reproduced.",
+    "Generated quality duration removed from this hash; no verdict or metric/symbol field omitted."
+  ],
+  "quality_before_head": "c7031b3ab2b161c78e3123ec2c83a7f385c3a4b6",
+  "quality_after_head": "57e71b90262a48b83c924baa9c0c6b67d8d83c19"
+}
