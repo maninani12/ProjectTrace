@@ -47,16 +47,12 @@ jobs:
           grep -qw memory /sys/fs/cgroup/cgroup.controllers || {
             echo "BLOCKED: host memory controller is unavailable"; exit 1;
           }
-          for control in memory.max memory.swap.max memory.current memory.stat memory.events; do
-            [[ -r "/sys/fs/cgroup/$control" ]] || {
-              echo "BLOCKED: host cgroup control is missing or unreadable: $control"; exit 1;
-            }
-          done
-          host_memory_max="$(cat /sys/fs/cgroup/memory.max)"
-          host_swap_max="$(cat /sys/fs/cgroup/memory.swap.max)"
-          host_events="$(tr '\n' ' ' </sys/fs/cgroup/memory.events)"
-          printf 'HostCgroupV2 memory.max=%s memory.swap.max=%s\n' "$host_memory_max" "$host_swap_max"
-          printf 'HostMemoryEvents=%s\n' "$host_events"
+          # cgroup v2 controller resource files such as memory.max and
+          # memory.events are exposed on non-root cgroups, not necessarily
+          # on the hierarchy root. Check availability here; verify the exact
+          # effective limits on the disposable container's child cgroup below.
+          available_controllers="$(tr ' ' '\n' </sys/fs/cgroup/cgroup.controllers | paste -sd, -)"
+          printf 'HostCgroupV2 available_controllers=%s\n' "$available_controllers"
 
           command -v docker >/dev/null || { echo "BLOCKED: Docker CLI unavailable"; exit 1; }
           docker --version
@@ -77,7 +73,8 @@ jobs:
             echo
             echo '- Runner/Docker capability checks: **PASS**'
             echo '- Runner image label/version are observed identities, not an immutable hosted-runner image.'
-            printf '%s\n' "- Host cgroup v2 root: memory.max=$host_memory_max, memory.swap.max=$host_swap_max, events=$host_events"
+            printf '%s\n' "- Host cgroup v2 root advertises controllers: $available_controllers"
+            echo '- Effective memory and swap controls are verified from the disposable container child cgroup, where cgroup v2 resource files are exposed.'
             printf '%s\n' "- Runner: $ImageOS / $ImageVersion, $PRETTY_NAME $VERSION_ID, $(uname -m)"
             printf '%s\n' "- Docker server: $docker_server, Linux, cgroup v$docker_cgroup, driver $docker_driver, runtime $docker_runtime, kernel $docker_kernel, arch $docker_arch"
             printf '%s\n' "- Python image: $PYTHON_IMAGE, image ID $image_id"
