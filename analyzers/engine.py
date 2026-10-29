@@ -854,6 +854,7 @@ def _native_observations(files, cached_analysis, infrastructure_settings, perfor
     findings, signals, warnings = [], [], []
     assets, quality_metrics = [], []
     failures = set()
+    python_trees = {}
     cache = {}
     reused = 0
     language_results = parsed_inputs.get("languages", {}) if parsed_inputs is not None else None
@@ -952,9 +953,13 @@ def _native_observations(files, cached_analysis, infrastructure_settings, perfor
                         for metric in measured
                         if metric["cyclomatic"] > 10
                     )
-                    flows = python_flows(path, source, finding)
+                    flows = python_flows(path, source, finding, tree=parsed_tree)
                     proven = {(item["rule"], item["line"]) for item in flows}
                     f = [item for item in f if (item["rule"], item["line"]) not in proven] + flows
+                # Retain the tree through identity only when this file produced
+                # findings that can use it. Empty files release the AST promptly.
+                if parsed_tree is not None and f:
+                    python_trees[path] = parsed_tree
                 findings.extend(f)
                 signals.extend(s)
             except Exception as error:
@@ -1085,7 +1090,7 @@ def _native_observations(files, cached_analysis, infrastructure_settings, perfor
         if performance:
             performance.record("FILE_POSTPROCESS", time.perf_counter() - post_started, path)
     identity_started = time.perf_counter()
-    annotate_finding_identity(files, findings, quality_metrics)
+    annotate_finding_identity(files, findings, quality_metrics, trees=python_trees)
     if performance:
         performance.record("PARTITION_IDENTITY", time.perf_counter() - identity_started)
     return findings, signals, warnings, assets, quality_metrics, failures, cache, reused
