@@ -2,6 +2,8 @@
 
 Implementation update (15 October 2026): migrations 0024/0025 add private generation publication and evidence-backed learning. See [generation and learning architecture](docs/GENERATION_AND_LEARNING.md) and [acceptance register](docs/SDLC_ACCEPTANCE_2026_10_15.md). Complete global-memory, broker and production qualification remain open.
 
+24 October continuation: Engineering Changes adds bounded BASE/HEAD documentation-claim evidence references, rendered through the existing authorized evidence inspector. Verifier evidence order is canonical. Infrastructure membership uses a correlated EXISTS so the snapshot/class index remains eligible with generation visibility predicates. No schema or migration changes are introduced. See [authentication drift demo](docs/AUTH_DRIFT_DEMO.md) and [current audit](docs/AUTONOMOUS_AUDIT_2026_10_24.md).
+
 The public route `/` and permanent Guide are separate from authorized `/app` and existing workspace routes. Forty-one public routes are statically rendered at build time, then hydrated when the current path matches. Public navigation reads only opaque auth flags. Workspace, query cache and graph code load lazily; private records remain inside the existing authorized API boundary. Shared theme, badge and source components keep the public/product interface consistent. Version 1.5.0 extends native observations and adds migration 0006 for quality projections. See [Public architecture](docs/PUBLIC_EXPERIENCE.md).
 
 ```mermaid

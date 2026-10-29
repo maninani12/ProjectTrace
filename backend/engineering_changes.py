@@ -12,6 +12,49 @@ from backend.security import allowed_repositories, authenticate, require_repo
 router = APIRouter(prefix="/api/engineering-changes", tags=["Engineering Changes"])
 
 
+def claim_comparisons(db, organization_id, repository_id, before, after):
+    """Bounded captured references; source stays behind the evidence reader.
+
+    Keep both sides so a presenter need not reconstruct the old verdict from
+    the current claim. No imported application is executed or source copied
+    into this projection. Legacy captures without references remain readable.
+    """
+    previous = {c.get("claim_key", c.get("text")): c for c in before.get("claims", [])}
+    changed = []
+    for claim in after.get("claims", []):
+        prior = previous.get(claim.get("claim_key", claim.get("text")))
+        if prior and claim.get("origin", "DOCUMENTATION") == "DOCUMENTATION" and prior.get("status") != claim.get("status"):
+            changed.append((prior, claim))
+    pairs = changed[:50]
+    evidence_ids = {
+        identifier for pair in pairs for claim in pair
+        for field in ("evidence_ids", "supporting_ids", "contradicting_ids")
+        for identifier in claim.get(field, [])[:8]
+    }
+    evidence = {
+        row.id: {"id": row.id, "path": row.path, "hash": row.hash}
+        for row in db.execute(select(Record.id, Record.data["path"].as_string().label("path"),
+                                     Record.data["hash"].as_string().label("hash")).where(
+            Record.organization_id == organization_id, Record.repository_id == repository_id,
+            Record.kind == "evidence", Record.id.in_(evidence_ids)))
+    }
+
+    def side(claim):
+        identifiers = claim.get("contradicting_ids", []) if claim.get("status") == "CONTRADICTED" else claim.get("supporting_ids", [])
+        return {"claim_id": claim.get("id"), "status": claim.get("status"), "reason": claim.get("reason"),
+                "evidence": [evidence[i] for i in identifiers[:8] if i in evidence],
+                "evidence_truncated": len(identifiers) > 8}
+
+    comparisons = []
+    for prior, claim in pairs:
+        document = next((evidence[i] for i in prior.get("evidence_ids", [])[:8]
+                         if i in evidence and evidence[i]["path"] == prior.get("path")), None)
+        comparisons.append({"claim_key": claim.get("claim_key"), "text": prior.get("text"),
+                            "path": prior.get("path"), "line": prior.get("line"), "document": document,
+                            "before": side(prior), "after": side(claim)})
+    return comparisons, len(changed) > len(pairs)
+
+
 def persist(db, user, repo, snapshot, base, pr_number=None):
     from backend.domain import add, audit, snapshot_record_query
     from backend.snapshot_context import quality_fields
@@ -183,6 +226,7 @@ def persist(db, user, repo, snapshot, base, pr_number=None):
         )
     if not rows:
         return None
+    comparisons, comparisons_truncated = claim_comparisons(db, user.organization_id, repo.id, old, head)
     counts = dict(Counter(r["category"] for r in rows))
     factors = []
     if not reevaluated:
@@ -242,6 +286,8 @@ def persist(db, user, repo, snapshot, base, pr_number=None):
             "at": head["analysis_at"],
             "counts": counts,
             "changes": rows[:500],
+            "claim_comparisons": comparisons,
+            "claim_comparisons_truncated": comparisons_truncated,
             "truncated": len(rows) > 500,
             "total_changes": len(rows),
             "priority": sum(f["weight"] for f in factors),

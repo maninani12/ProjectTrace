@@ -9,5 +9,14 @@ export default defineConfig({
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   workers: 1,
-  reporter: [["list"], ["json", { outputFile: "test-results/results.json" }]],
+  reporter: [
+    ["list"],
+    [
+      "json",
+      {
+        outputFile:
+          process.env.PROJECTTRACE_E2E_RESULTS || "test-results/results.json",
+      },
+    ],
+  ],
 });

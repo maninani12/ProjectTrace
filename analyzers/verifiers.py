@@ -329,7 +329,12 @@ def verifier_for(claim):
 def verify_claim(claim, signals, dependencies, previous=None):
     verifier = verifier_for(claim)
     selected, deps = verifier.inputs(claim, signals, dependencies)
+    # Keep evidence presentation as deterministic as the cache key. Discovery
+    # order (including parallel file parsing) is not evidence of a change.
+    selected = sorted(selected, key=lambda item: json.dumps(item, sort_keys=True))
+    deps = sorted(deps, key=lambda item: json.dumps(item, sort_keys=True))
     payload = [
+        "canonical-evidence-v1",
         verifier.name,
         claim["category"],
         claim["expected"],

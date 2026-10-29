@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./fixtures";
 import path from "node:path";
 const proof = process.env.PROJECTTRACE_PROOF || "test-results";
 test("a delayed review response cannot reopen a closed evidence inspector", async ({
