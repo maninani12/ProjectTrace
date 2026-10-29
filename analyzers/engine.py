@@ -928,8 +928,6 @@ def _native_observations(files, cached_analysis, infrastructure_settings, perfor
                     pass
                 f, s = python_analysis(path, source, parsed_tree)
                 if not any(item["rule"] == "PT-PARSE-001" for item in f):
-                    if parsed_tree is not None:
-                        python_trees[path] = parsed_tree
                     measured = python_metrics(path, source, parsed_tree)
                     s.append(python_structure(path, source, parsed_tree))
                     quality_metrics.extend(measured)
@@ -958,6 +956,10 @@ def _native_observations(files, cached_analysis, infrastructure_settings, perfor
                     flows = python_flows(path, source, finding, tree=parsed_tree)
                     proven = {(item["rule"], item["line"]) for item in flows}
                     f = [item for item in f if (item["rule"], item["line"]) not in proven] + flows
+                # Retain the tree through identity only when this file produced
+                # findings that can use it. Empty files release the AST promptly.
+                if parsed_tree is not None and f:
+                    python_trees[path] = parsed_tree
                 findings.extend(f)
                 signals.extend(s)
             except Exception as error:
