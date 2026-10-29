@@ -1,3 +1,5 @@
+import ast
+
 import pytest
 
 from analyzers.engine import analyze
@@ -6,6 +8,26 @@ from tests.test_code_quality import import_repo
 
 def issue(source):
     return next(f for f in analyze({"app.py": source})["findings"] if f["rule"] == "PT-QUALITY-011")
+
+
+def test_native_python_analysis_reuses_its_parsed_tree(monkeypatch):
+    monkeypatch.setenv("PROJECTTRACE_PARSER_ISOLATION", "development")
+    from analyzers import engine
+
+    source = "import subprocess\\nsubprocess.run(command, shell=True)\\n"
+    original_parse = ast.parse
+    calls = 0
+
+    def counted_parse(*args, **kwargs):
+        nonlocal calls
+        calls += 1
+        return original_parse(*args, **kwargs)
+
+    monkeypatch.setattr(ast, "parse", counted_parse)
+    findings, _, _, _, _, _, _, _ = engine._native_observations({"app.py": source}, {}, None, None, None)
+
+    assert calls == 1
+    assert any(row["rule"] == "PT-SAST-002" for row in findings)
 
 
 def test_structural_anchor_formatting_movement_context_and_duplicates():
