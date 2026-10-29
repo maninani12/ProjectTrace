@@ -14,7 +14,7 @@ def test_native_python_analysis_reuses_its_parsed_tree(monkeypatch):
     monkeypatch.setenv("PROJECTTRACE_PARSER_ISOLATION", "development")
     from analyzers import engine
 
-    source = "import subprocess\\nsubprocess.run(command, shell=True)\\n"
+    source = "import subprocess\nsubprocess.run(command, shell=True)\n"
     original_parse = ast.parse
     calls = 0
 
