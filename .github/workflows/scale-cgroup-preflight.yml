@@ -1,0 +1,179 @@
+name: ProjectTrace Linux cgroup preflight (manual)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: none
+
+jobs:
+  cgroup-preflight:
+    name: Verify bounded Linux cgroup v2 configuration
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    env:
+      PYTHON_IMAGE: python:3.14.9-slim-bookworm@sha256:7dff173021016c8829ae58d5ce112ffc388073ebe67f351aeb6ba2909e35f847
+    steps:
+      - name: Inspect runner and Docker capabilities
+        shell: bash
+        run: |
+          set -euo pipefail
+          report_failure() {
+            rc=$?
+            if ((rc != 0)); then
+              printf '%s\n' "- Runner/Docker capability checks failed with exit status $rc; see step logs." >>"$GITHUB_STEP_SUMMARY"
+            fi
+          }
+          trap report_failure EXIT
+
+          [[ "${RUNNER_OS:-}" == Linux ]] || { echo "BLOCKED: runner OS is not Linux"; exit 1; }
+          [[ "${RUNNER_ARCH:-}" == X64 ]] || { echo "BLOCKED: expected x64 runner"; exit 1; }
+          [[ -n "${ImageOS:-}" && -n "${ImageVersion:-}" ]] || {
+            echo "BLOCKED: GitHub runner image identity is unavailable"; exit 1;
+          }
+          [[ -r /etc/os-release ]] || { echo "BLOCKED: runner OS identity is unavailable"; exit 1; }
+          . /etc/os-release
+          printf 'RunnerOS=%s RunnerArch=%s ImageOS=%s ImageVersion=%s\n' \
+            "$RUNNER_OS" "$RUNNER_ARCH" "$ImageOS" "$ImageVersion"
+          printf 'RunnerDistro=%s RunnerVersion=%s\n' "$PRETTY_NAME" "$VERSION_ID"
+          uname -a
+
+          [[ "$(stat -fc %T /sys/fs/cgroup)" == cgroup2fs ]] || {
+            echo "BLOCKED: runner host is not using cgroup v2"; exit 1;
+          }
+          [[ -r /sys/fs/cgroup/cgroup.controllers ]] || {
+            echo "BLOCKED: host cgroup controllers are unreadable"; exit 1;
+          }
+          grep -qw memory /sys/fs/cgroup/cgroup.controllers || {
+            echo "BLOCKED: host memory controller is unavailable"; exit 1;
+          }
+          for control in memory.max memory.swap.max memory.current memory.stat memory.events; do
+            [[ -r "/sys/fs/cgroup/$control" ]] || {
+              echo "BLOCKED: host cgroup control is missing or unreadable: $control"; exit 1;
+            }
+          done
+          host_memory_max="$(cat /sys/fs/cgroup/memory.max)"
+          host_swap_max="$(cat /sys/fs/cgroup/memory.swap.max)"
+          host_events="$(tr '\n' ' ' </sys/fs/cgroup/memory.events)"
+          printf 'HostCgroupV2 memory.max=%s memory.swap.max=%s\n' "$host_memory_max" "$host_swap_max"
+          printf 'HostMemoryEvents=%s\n' "$host_events"
+
+          command -v docker >/dev/null || { echo "BLOCKED: Docker CLI unavailable"; exit 1; }
+          docker --version
+          docker_info="$(docker info --format '{{.ServerVersion}}|{{.OSType}}|{{.CgroupVersion}}|{{.CgroupDriver}}|{{.KernelVersion}}|{{.Architecture}}|{{.DefaultRuntime}}')"
+          IFS='|' read -r docker_server docker_os docker_cgroup docker_driver docker_kernel docker_arch docker_runtime <<<"$docker_info"
+          [[ -n "$docker_server" && "$docker_os" == linux && "$docker_cgroup" == 2 ]] || {
+            echo "BLOCKED: Docker server must be Linux with cgroup v2"; exit 1;
+          }
+          printf 'DockerServer=%s OSType=%s CgroupVersion=%s CgroupDriver=%s Kernel=%s Arch=%s Runtime=%s\n' \
+            "$docker_server" "$docker_os" "$docker_cgroup" "$docker_driver" \
+            "$docker_kernel" "$docker_arch" "$docker_runtime"
+
+          docker pull --platform linux/amd64 "$PYTHON_IMAGE"
+          image_id="$(docker image inspect --format '{{.Id}}' "$PYTHON_IMAGE")"
+          printf 'ContainerImageRef=%s\nContainerImageId=%s\n' "$PYTHON_IMAGE" "$image_id"
+          {
+            echo '## SCALE-001 preflight identities'
+            echo
+            echo '- Runner/Docker capability checks: **PASS**'
+            echo '- Runner image label/version are observed identities, not an immutable hosted-runner image.'
+            printf '%s\n' "- Host cgroup v2 root: memory.max=$host_memory_max, memory.swap.max=$host_swap_max, events=$host_events"
+            printf '%s\n' "- Runner: $ImageOS / $ImageVersion, $PRETTY_NAME $VERSION_ID, $(uname -m)"
+            printf '%s\n' "- Docker server: $docker_server, Linux, cgroup v$docker_cgroup, driver $docker_driver, runtime $docker_runtime, kernel $docker_kernel, arch $docker_arch"
+            printf '%s\n' "- Python image: $PYTHON_IMAGE, image ID $image_id"
+            echo '- Application dependencies and external services are not used by this probe.'
+          } >>"$GITHUB_STEP_SUMMARY"
+
+      - name: Verify effective memory and swap limits inside a disposable container
+        shell: bash
+        run: |
+          set -euo pipefail
+          report_failure() {
+            rc=$?
+            if ((rc != 0)); then
+              printf '%s\n' "- Effective child-cgroup verification failed with exit status $rc; see step logs." >>"$GITHUB_STEP_SUMMARY"
+            fi
+          }
+          trap report_failure EXIT
+          container_report="$(docker run --rm --interactive \
+            --platform linux/amd64 \
+            --network none \
+            --memory 768000000 \
+            --memory-swap 768000000 \
+            --cpus 2 \
+            --pids-limit 64 \
+            --cgroupns private \
+            --read-only \
+            --cap-drop ALL \
+            --security-opt no-new-privileges \
+            --user 65534:65534 \
+            --entrypoint python "$PYTHON_IMAGE" -I -B - <<'PY'
+          import json
+          import os
+          import platform
+          import sys
+          from pathlib import Path
+
+          def blocked(message):
+              raise SystemExit(f"BLOCKED: {message}")
+
+          mount = Path("/sys/fs/cgroup").resolve()
+          controllers = mount / "cgroup.controllers"
+          if not controllers.is_file() or "memory" not in controllers.read_text().split():
+              blocked("container cgroup v2 memory controller is missing")
+
+          rows = [line.split(":", 2) for line in Path("/proc/self/cgroup").read_text().splitlines()
+                  if line.startswith("0::")]
+          if len(rows) != 1:
+              blocked("process is not in one visible cgroup v2 hierarchy")
+          relative = rows[0][2].lstrip("/")
+          current = (mount / relative).resolve()
+          if current != mount and mount not in current.parents:
+              blocked("process cgroup path escapes the mounted cgroup v2 root")
+
+          required = ("memory.max", "memory.swap.max", "memory.current", "memory.stat", "memory.events")
+          for name in required:
+              path = current / name
+              if not path.is_file() or not os.access(path, os.R_OK):
+                  blocked(f"container cgroup control missing or unreadable: {name}")
+
+          limit = (current / "memory.max").read_text().strip()
+          swap = (current / "memory.swap.max").read_text().strip()
+          if limit != "768000000":
+              blocked(f"effective memory.max is {limit!r}, expected 768000000")
+          if swap != "0":
+              blocked(f"effective memory.swap.max is {swap!r}, expected 0")
+
+          events = {key: int(value) for key, value in
+                    (line.split() for line in (current / "memory.events").read_text().splitlines())}
+          stats = {key: int(value) for key, value in
+                   (line.split() for line in (current / "memory.stat").read_text().splitlines())}
+          summary = {
+              "schema": "projecttrace-cgroup-preflight-v1",
+              "scope": "small configuration probe only; no ProjectTrace or imported repository code",
+              "python": sys.version.split()[0],
+              "container_os": platform.platform(),
+              "cgroup_version": 2,
+              "memory_limit_bytes": int(limit),
+              "swap_limit_bytes": int(swap),
+              "memory_current_bytes": int((current / "memory.current").read_text().strip()),
+              "memory_peak_bytes": int((current / "memory.peak").read_text().strip())
+                  if (current / "memory.peak").is_file() else None,
+              "memory_events": events,
+              "memory_stat_selected": {key: stats[key] for key in ("anon", "file", "kernel", "slab") if key in stats},
+          }
+          print(json.dumps(summary, sort_keys=True))
+          PY
+          )"
+
+          printf '%s\n' "$container_report"
+          {
+            echo '## SCALE-001 Linux cgroup preflight'
+            echo
+            echo '- Result: **PASS** (runner and effective child-cgroup checks only)'
+            echo '- Services: PostgreSQL, Redis, and Celery are outside this cgroup-only probe and were not tested.'
+            echo
+            echo '```json'
+            printf '%s\n' "$container_report"
+            echo '```'
+          } >>"$GITHUB_STEP_SUMMARY"
