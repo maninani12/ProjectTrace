@@ -17,6 +17,87 @@ from itertools import zip_longest
 from cryptography.fernet import Fernet
 
 
+_FAST_JSON_SERIALIZATION_BYTES = 4_000_000
+
+
+def _json_size_upper_bound(value, maximum, depth=0):
+    """Conservative ASCII-JSON byte bound; return maximum + 1 when not safely small."""
+    if maximum < 0 or depth > 100:
+        return maximum + 1
+    kind = type(value)
+    if kind is str:
+        size = 12 * len(value) + 2  # ensure_ascii escapes astral codepoints as surrogate pairs
+        return size if size <= maximum else maximum + 1
+    if value is None:
+        return 4
+    if kind is bool:
+        return 4 if value is False else 5
+    if kind is int:
+        try:
+            size = len(str(value))
+        except ValueError:
+            return maximum + 1
+        return size if size <= maximum else maximum + 1
+    if kind is float:
+        size = len(json.dumps(value, ensure_ascii=True, separators=(",", ":")))
+        return size if size <= maximum else maximum + 1
+    if kind in (list, tuple):
+        size = 2 + max(0, len(value) - 1)
+        if size > maximum:
+            return maximum + 1
+        for item in value:
+            size += _json_size_upper_bound(item, maximum - size, depth + 1)
+            if size > maximum:
+                return maximum + 1
+        return size
+    if kind is dict:
+        size = 2 + max(0, len(value) - 1)
+        if size > maximum:
+            return maximum + 1
+        for key, item in value.items():
+            # Fast path is for the internal string-keyed JSON schema. Preserve
+            # JSONEncoder compatibility for other mappings with the fallback.
+            if type(key) is not str:
+                return maximum + 1
+            size += _json_size_upper_bound(key, maximum - size, depth + 1) + 1
+            if size > maximum:
+                return maximum + 1
+            size += _json_size_upper_bound(item, maximum - size, depth + 1)
+            if size > maximum:
+                return maximum + 1
+        return size
+    return maximum + 1
+
+
+def _bounded_json_bytes(value, maximum, *, rows=0, collection="OBSERVATIONS"):
+    """Use the C-backed encoder only when a conservative bound guarantees a small row."""
+    fast_limit = min(maximum, _FAST_JSON_SERIALIZATION_BYTES)
+    if _json_size_upper_bound(value, fast_limit) <= fast_limit:
+        raw = json.dumps(value, ensure_ascii=True, separators=(",", ":")).encode("ascii")
+        # Defensive equality check: the upper bound should make this impossible,
+        # but the row budget is authoritative even if the estimator changes.
+        if len(raw) > maximum:
+            raise ObservationBudgetExceeded(
+                "Typed observation exceeds its spill row budget.", budget="ROW_BYTES",
+                maximum=maximum, actual=len(raw), rows=rows, collection=collection,
+            )
+        return raw
+
+    # Larger/unknown structures keep the incremental encoder: this guarantees
+    # rejection at row_bytes instead of materializing an arbitrarily large JSON string.
+    raw = bytearray()
+    encoder = json.JSONEncoder(ensure_ascii=True, separators=(",", ":"))
+    for part in encoder.iterencode(value):
+        encoded = part.encode()
+        if len(raw) + len(encoded) > maximum:
+            raise ObservationBudgetExceeded(
+                "Typed observation exceeds its spill row budget.", budget="ROW_BYTES",
+                maximum=maximum, actual=len(raw) + len(encoded), rows=rows, collection=collection,
+            )
+        raw.extend(encoded)
+    return bytes(raw)
+
+
 class ObservationBudgetExceeded(ValueError):
     def __init__(self, message, *, budget=None, maximum=None, actual=None, rows=None, collection=None):
         super().__init__(message)
@@ -63,13 +144,7 @@ class EncryptedRows(list):
     def _encrypted(self, position, value):
         self._open()
         envelope = [self.identity, self.scope, position, value]
-        raw = bytearray()
-        for part in json.JSONEncoder(ensure_ascii=True, separators=(",", ":")).iterencode(envelope):
-            encoded = part.encode()
-            if len(raw) + len(encoded) > self.row_bytes:
-                raise ObservationBudgetExceeded("Typed observation exceeds its spill row budget.", budget="ROW_BYTES",
-                    maximum=self.row_bytes, actual=len(raw) + len(encoded), rows=self._count, collection=self.label)
-            raw.extend(encoded)
+        raw = _bounded_json_bytes(envelope, self.row_bytes, rows=self._count, collection=self.label)
         # Compress only our own bounded JSON envelope, before authentication.
         # Token windows repeat JSON keys/values heavily; retaining their verbose
         # representation exhausted the disk budget on the pinned workload.

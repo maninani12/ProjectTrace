@@ -198,3 +198,11 @@ Regression workflow [40961124908](https://github.com/maninani12/ProjectTrace/act
 
 A follow-up optimization removes a redundant second decrypt/decompress scan of encrypted metric rows. Quality aggregation now records source-row offsets while deriving the token-free metrics in one pass, then passes those offsets to a lazy selected-row view for duplication analysis. An output-parity regression compares full quality findings/results against the list-backed control and rejects a second predicate scan. This targets CPU/I/O cost only; it does not close the global-memory architecture gap, and no time, RAM, parser or spill budget is raised.
 
+### Bounded JSON serialization fast path — follow-up implementation
+
+The encrypted row append path now computes a conservative upper bound for small ASCII-escaped JSON envelopes. When the bound is at most 4,000,000 bytes and within the unchanged per-row quota, it uses the C-backed `json.dumps` encoder. Unknown or larger structures retain the original incremental `JSONEncoder.iterencode` path, which enforces the exact `row_bytes` limit before appending each fragment. The same compressed-and-authenticated framing remains in place; no row is discarded, and neither the per-row ceiling nor the 512,000,000-byte collection experiment allowance is increased.
+
+A local synthetic microbenchmark of a representative 39,726-byte metric envelope (Fernet + zlib level 1 included) measured 395 rows/s for the original fragment loop and 653 rows/s for the bounded preflight/C-encoder path, approximately 1.65× faster. This is an illustrative microbenchmark, **not** full-workload evidence; the new CI test checks byte-for-byte serialization parity for both the small fast path and the larger streaming fallback, plus preservation of the row budget.
+
+The previous constrained failure occurred during `parse_partition`, before the later whole-repository quality aggregation. This serialization improvement targets work performed as encrypted observations are appended during parsing; full constrained qualification remains required to establish whether the improvement is sufficient.
+

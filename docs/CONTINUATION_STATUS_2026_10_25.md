@@ -109,3 +109,7 @@ The baseline receipt has a classification discrepancy: Docker inspect says `OOMK
 
 Regression workflow [40961124908](https://github.com/maninani12/ProjectTrace/actions/runs/40961124908) passed validate, browser, parser-isolation and broker-recovery on the current head, but does not qualify SCALE-001. Follow-up changes add one-pass encrypted metric selection with an output-parity regression, and remove the duplicate `push` trigger that caused a push run to be cancelled by the same revision's PR run. Full constrained qualification remains mandatory; no budgets are increased.
 
+### Encrypted observation serialization optimization — 2026-10-30
+
+The prior large workload fails during `ANALYZING / parse_partition`, before repository-wide quality aggregation; therefore the one-pass quality projection alone cannot address the observed timeout. A new bounded serialization fast path uses a conservative upper bound and C-backed JSON encoding only for rows guaranteed to serialize below 4,000,000 bytes. Larger/unknown structures keep incremental streaming serialization, preserving the exact row-size gate. A regression checks byte-for-byte parity for the small path and large fallback, including row-budget errors. Local synthetic timing is illustrative only; the constrained workload must pass before making a qualification claim.
+

@@ -246,3 +246,24 @@ def test_spilled_metric_reverse_iteration_preserves_non_python_identity(monkeypa
         assert actual[0]["identity_method"] == "PARSER_SYMBOL" and actual[0]["identity_confidence"] == "HIGH"
     finally:
         rows.close()
+
+def test_bounded_json_fast_path_matches_streaming_and_keeps_row_budget():
+    from analyzers.observation_store import _bounded_json_bytes
+
+    envelopes = [
+        ["scope", ["tenant-a", "repo"], 1, {"unicode": "café 🚀", "values": [None, True, 12]}],
+        ["scope", ["tenant-a", "repo"], 2, {"value": "x" * 350_000}],
+    ]
+    for envelope, maximum in zip(envelopes, (1_000_000, 1_000_000), strict=True):
+        expected = "".join(
+            json.JSONEncoder(ensure_ascii=True, separators=(",", ":")).iterencode(envelope)
+        ).encode()
+        assert _bounded_json_bytes(envelope, maximum, rows=0, collection="TEST") == expected
+
+    with pytest.raises(ObservationBudgetExceeded) as error:
+        _bounded_json_bytes(["too-large", "x" * 3_000], 1_024, rows=7, collection="TEST")
+    assert error.value.budget == "ROW_BYTES"
+    assert error.value.maximum == 1_024
+    assert error.value.rows == 7
+    assert error.value.collection == "TEST"
+
