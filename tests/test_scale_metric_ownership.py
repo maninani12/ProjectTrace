@@ -4,6 +4,7 @@ import pytest
 
 from analyzers.code_quality.core import build
 from analyzers.engine import analyze, native_observations
+from analyzers.observation_store import EncryptedRows
 
 
 def test_owned_metric_transfer_preserves_complete_results_and_cached_tokens(monkeypatch):
@@ -42,3 +43,35 @@ def test_owned_transfer_runs_duplication_before_releasing_tokens(monkeypatch):
         quality.pop("performance")
     assert owned == baseline
     assert owned[1]["duplication"]["groups"]
+
+
+def test_spooled_quality_selection_avoids_a_second_metric_decode_pass(monkeypatch):
+    monkeypatch.setenv("PROJECTTRACE_PARSER_ISOLATION", "development")
+    body = "def work(x):\n" + "".join(f"    value{i} = x + {i}\n" for i in range(15)) + "    return value0\n"
+    files = {"a.py": body, "b.py": body}
+    observation = native_observations(files)
+    expected_findings, expected = build(
+        files, observation[4], observation[1], observation[0], observation[2]
+    )
+    rows = EncryptedRows(
+        ("org-1", "repo-1", "inventory-1"),
+        maximum_bytes=16_000_000,
+        row_bytes=2_000_000,
+    )
+    rows.label = "NATIVE_METRICS"
+    try:
+        rows.extend(copy.deepcopy(observation[4]))
+
+        def reject_full_rescan(*_args, **_kwargs):
+            pytest.fail("quality aggregation performed a redundant predicate scan of encrypted metrics")
+
+        monkeypatch.setattr(rows, "select", reject_full_rescan)
+        actual_findings, actual = build(
+            files, rows, observation[1], observation[0], observation[2]
+        )
+        expected.pop("performance")
+        actual.pop("performance")
+        assert (actual_findings, actual) == (expected_findings, expected)
+    finally:
+        rows.close()
+

@@ -57,8 +57,23 @@ def build(files, metrics, signals, raw_findings, warnings, profile=None, *, cons
     # Only the inventory coordinator owns disposable metric dictionaries. Direct
     # callers and parser-cache rows retain the original non-mutating contract.
     spooled = isinstance(metrics, EncryptedRows)
-    measured = [m if consume_metrics and not spooled else {k: v for k, v in m.items() if k != "duplicate_tokens"}
-                for m in metrics if m["path"] in selected]
+    measured, production_positions, production_rows = [], [], []
+    # Walk encrypted metric rows once: the former production select independently
+    # decrypted and decoded every row a second time before duplication analysis.
+    for position, metric in enumerate(metrics):
+        path = metric["path"]
+        if path not in selected:
+            continue
+        measured.append(
+            metric
+            if consume_metrics and not spooled
+            else {key: value for key, value in metric.items() if key != "duplicate_tokens"}
+        )
+        if paths[path]["kind"] == "SOURCE":
+            if spooled:
+                production_positions.append(position)
+            else:
+                production_rows.append(metric)
     # The owning symbol is the narrowest enclosing range, with stable input
     # order breaking ties. Sort each file once instead of sorting every metric
     # in the repository for each reliability/duplication observation.
@@ -67,10 +82,7 @@ def build(files, metrics, signals, raw_findings, warnings, profile=None, *, cons
         measured_by_path[metric["path"]].append(metric)
     for path, rows in measured_by_path.items():
         measured_by_path[path] = sorted(rows, key=lambda m: m["end_line"] - m["line"])
-    def production_metric(m):
-        return m["path"] in selected and paths[m["path"]]["kind"] == "SOURCE"
-
-    production = metrics.select(production_metric) if spooled else [m for m in metrics if production_metric(m)]
+    production = metrics.select_positions(production_positions) if spooled else production_rows
     dup = detect(production, settings["rules"].get("PT-QUALITY-007", {}).get("threshold", 50))
     if consume_metrics and not spooled:
         # Token windows have had their final use; durable parser artifacts were

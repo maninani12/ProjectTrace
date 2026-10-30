@@ -1,14 +1,13 @@
 name: SCALE-001 constrained qualification
 on:
-  push:
-    branches: [codex/scale-001-memory-containment]
+  # Run this expensive qualification once per PR revision; push duplicates the PR event.
   pull_request:
     branches: [codex/linux-parser-isolation]
   workflow_dispatch:
 permissions:
   contents: read
 concurrency:
-  group: scale-qualification-${{ github.event.pull_request.head.ref || github.ref_name }}
+  group: scale-qualification-${{ github.event_name }}-${{ github.event.pull_request.head.ref || github.ref_name }}
   cancel-in-progress: true
 jobs:
   full-workload:

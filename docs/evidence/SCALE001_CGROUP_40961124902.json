@@ -1,0 +1,128 @@
+{
+  "schema": "projecttrace-scale-cgroup-evidence-summary-v1",
+  "run_id": 40961124902,
+  "run_url": "https://github.com/maninani12/ProjectTrace/actions/runs/40961124902",
+  "tested_head": "0d9a52e6e713c58612037575caeda66e6e423d4a",
+  "verdict": "BLOCKED",
+  "source": {
+    "repository": "maninani12/OpenMetadata",
+    "commit": "b1fab2bc21c63335dead4daaaa28194c9878e9bf",
+    "archive_bytes": 158981993,
+    "archive_sha256": "95747f22ebf3d01232b1592551bc2bc1866b9bbe7322dd3bf1a97028b0592257",
+    "historical_archive_reproduced": false,
+    "manifest_sha256": "081071ce099d103270175ab53ef12842586d7b0f1ee0c58dadbc3654a2246a89",
+    "inventory_entries": 21636,
+    "retained_text_entries": 21269,
+    "declared_bytes": 330420155,
+    "intake_replay_ciphertext_bytes": {
+      "baseline": 128333816,
+      "candidate": 128344164
+    },
+    "intake_replay_ciphertext_limit_bytes": 512000000,
+    "plaintext_source_on_disk": false
+  },
+  "enforced_envelope": {
+    "kernel_cgroup_verified": true,
+    "memory_max_bytes": 768000000,
+    "swap_max_bytes": 0,
+    "network": "none",
+    "pids_limit": 64,
+    "non_root_container": true
+  },
+  "baseline": {
+    "verdict": "BLOCKED",
+    "exit_status": 137,
+    "docker_inspect_oom_killed": true,
+    "kernel_cgroup_sample_count": 7667,
+    "kernel_event_maxima": {
+      "memory_max_events": 2320,
+      "oom": 0,
+      "oom_kill": 0,
+      "oom_group_kill": 0
+    },
+    "oom_classification": "UNRESOLVED_DISCREPANCY",
+    "oom_classification_note": "Docker inspect reports OOMKilled=true, but all 7,667 sampled cgroup-kernel rows report zero oom/oom_kill/oom_group_kill counters. Exit 137 alone does not establish a kernel OOM kill.",
+    "failed_stage": "ANALYZING",
+    "parser_artifacts_after_exit": 3747,
+    "sampled_maxima": {
+      "coordinator_rss_bytes": 702382080,
+      "child_rss_bytes": 126083072,
+      "namespace_rss_bytes": 744685568,
+      "cgroup_memory_peak_bytes": 768000000,
+      "swap_current_bytes": 0
+    },
+    "post_exit": {
+      "sqlite_integrity": "ok",
+      "foreign_key_violations": 0,
+      "published_pointers": 0,
+      "published_generations": 0,
+      "job_state": "ANALYZING"
+    },
+    "artifact": {
+      "id": 12935363866,
+      "url": "https://github.com/maninani12/ProjectTrace/actions/runs/40961124902/artifacts/12935363866",
+      "digest": "sha256:f29fe7e74c01e873f7da93cc851d4e16cee942e8f52c90096cb53fc6fcfd8d94"
+    }
+  },
+  "candidate": {
+    "verdict": "BLOCKED",
+    "exit_status": 1,
+    "docker_inspect_oom_killed": false,
+    "kernel_cgroup_sample_count": 20636,
+    "kernel_event_maxima": {
+      "memory_max_events": 8141,
+      "oom": 0,
+      "oom_kill": 0,
+      "oom_group_kill": 0
+    },
+    "failed_stage": "ANALYZING",
+    "error_type": "TimeoutError",
+    "error_code_from_persisted_job": "ANALYSIS_TIME_BUDGET",
+    "qualification_receipt_error_code": null,
+    "duration_seconds": 2071.177,
+    "parser_artifacts_after_exit": 10999,
+    "sampled_maxima": {
+      "coordinator_rss_bytes": 510230528,
+      "child_rss_bytes": 143257600,
+      "namespace_rss_bytes": 646496256,
+      "cgroup_memory_peak_bytes": 768000000,
+      "swap_current_bytes": 0
+    },
+    "post_exit": {
+      "sqlite_integrity": "ok",
+      "foreign_key_violations": 0,
+      "published_pointers": 0,
+      "published_generations": 0,
+      "job_state": "FAILED",
+      "job_stage": "ANALYZING"
+    },
+    "artifact": {
+      "id": 12937342992,
+      "url": "https://github.com/maninani12/ProjectTrace/actions/runs/40961124902/artifacts/12937342992",
+      "digest": "sha256:88328209fd8f8a1629d0b7c8f6842c939439e9eebd4ad63e81eda3a809828625"
+    }
+  },
+  "scenarios": {
+    "cold": "did_not_complete",
+    "warm": "NOT_RUN",
+    "one_file_change": "NOT_RUN",
+    "multi_file_change": "NOT_RUN",
+    "exhaustion_recovery": "NOT_RUN",
+    "cancellation": "NOT_RUN",
+    "fresh_worker_recovery": "NOT_RUN",
+    "concurrent_tenants": "NOT_RUN"
+  },
+  "equivalence": "NOT_ESTABLISHED: neither run produced complete output or published generation",
+  "standard_regression_run": {
+    "run_id": 40961124908,
+    "verdict": "SUCCESS",
+    "url": "https://github.com/maninani12/ProjectTrace/actions/runs/40961124908",
+    "note": "validate, browser, parser-isolation and broker-recovery passed; these jobs do not qualify the constrained workload"
+  },
+  "retention": {
+    "original_artifacts_retention_days": 7,
+    "permanent_summary_contains_source_bytes": false,
+    "permanent_summary_contains_database_contents": false,
+    "permanent_summary_contains_keys": false
+  }
+}

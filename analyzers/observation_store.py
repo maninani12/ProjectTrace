@@ -149,7 +149,14 @@ class EncryptedRows(list):
             yield self[position]
 
     def select(self, predicate):
-        return SelectedRows(self, [i for i, value in enumerate(self) if predicate(value)])
+        return self.select_positions(i for i, value in enumerate(self) if predicate(value))
+
+    def select_positions(self, positions):
+        """Return a lazy view over known row offsets; never copy encrypted payloads."""
+        selected = list(positions)
+        if any(type(position) is not int or not 0 <= position < self._count for position in selected):
+            raise IndexError("Selected observation row position is out of range.")
+        return SelectedRows(self, selected)
 
     def _immutable(self, *args, **kwargs):
         raise TypeError("Observation rows are immutable snapshots; append new rows instead.")

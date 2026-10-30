@@ -1,6 +1,6 @@
 # SCALE-001: metric ownership increment
 
-Verdict: **PARTIALLY ADDRESSED — NOT QUALIFIED**. Base PR #3 commit f655415f0971b86c2eddfb77ac98ae21f411d79c and CI 40178440270 were verified green. This separate branch targets codex/linux-parser-isolation; earlier PRs and main are unchanged. SEC-002 controls and all existing CI jobs remain required.
+Verdict: **BLOCKED — NOT QUALIFIED**. Latest constrained attempt [40961124902](https://github.com/maninani12/ProjectTrace/actions/runs/40961124902) on head `0d9a52e6e713c58612037575caeda66e6e423d4a` failed to complete the cold workload; details are appended below. Base PR #3 commit f655415f0971b86c2eddfb77ac98ae21f411d79c and CI 40178440270 were verified green. This separate branch targets codex/linux-parser-isolation; earlier PRs and main remain unchanged. SEC-002 controls and all existing CI jobs remain required.
 
 ## Historical qualification target and recovery
 
@@ -167,3 +167,34 @@ Standard [CI 40213479256](https://github.com/maninani12/ProjectTrace/actions/run
 Compression follow-up publication/cache/generation/authentication/Engineering Changes selection: **113 passed / 1 Windows extended-path skip** in 208.97 s (development mode on owned fixtures). Two integrity-gate tests also passed. A separate 20-file invocation of the older owned benchmark script reported completion but produced malformed local SQLite files on **both unchanged 243513ee and the compressed candidate** (Python 3.12.14 / SQLite 3.53.1 / overlay filesystem). Those new timing/equivalence measurements are rejected; private fixture files are preserved for diagnosis, not uploaded. No compression causality or production database defect has been established. The benchmark now requires post-run SQLite integrity and foreign-key validation before writing MEASURED_SYNTHETIC_LOCAL. Raw sanitized statuses are retained in SCALE001_COMPRESSED_FOLLOWUP_LOCAL.json. Earlier valid equivalence measurements remain explicitly scoped to their earlier commits.
 
 Fresh sequential guarded 8-file and 20-file benchmark runs complete with post-run SQLite integrity ok and zero FK violations, independently rechecked after process exit. They use one-function owned files, cold/eight-file HEAD, development mode and a per-process guard, not the declared cgroup workload or the earlier ten-function equivalence fixture. The initial malformed local files were not repaired/deleted or used as baselines, and their cause remains unresolved; successful fresh fixtures do not prove that intermittent integrity issue corrected.
+
+### Latest constrained attempt: run 40961124902 at head 0d9a52e
+
+The pinned input and manifest succeeded in both runners. The full cold attempt remains **BLOCKED** on both revisions; neither completed analysis or published a generation/public pointer. Warm, incremental, exhaustion/recovery, cancellation, fresh-worker recovery and concurrent-tenant scenarios were **NOT_RUN**.
+
+| Counter | Baseline 243513ee | Candidate 0d9a52e |
+|---|---:|---:|
+| Enforced cgroup `memory.peak` | 768,000,000 bytes | 768,000,000 bytes |
+| Swap limit / observed use | 0 / 0 bytes | 0 / 0 bytes |
+| Sampled coordinator RSS peak | 702,382,080 bytes | 510,230,528 bytes |
+| Sampled child RSS peak | 126,083,072 bytes | 143,257,600 bytes |
+| Sampled namespace RSS peak | 744,685,568 bytes | 646,496,256 bytes |
+| Retained parser artifacts after exit | 3,747 | 10,999 |
+| Exit status | 137 | 1 |
+| Stage/outcome | ANALYZING / interrupted | ANALYZING / `ANALYSIS_TIME_BUDGET` |
+| Experiment duration recorded | No complete receipt | 2,071.177 seconds |
+| Published pointers / generations | 0 / 0 | 0 / 0 |
+| SQLite integrity / FK violations | ok / 0 | ok / 0 |
+
+**OOM evidence discrepancy:** Docker inspect reports `OOMKilled=true` for the baseline container, but *all 7,667 sampled cgroup-kernel rows* report `oom=0`, `oom_kill=0`, and `oom_group_kill=0`; the largest observed cgroup `max` counter is 2,320. The candidate reports `OOMKilled=false` and zero cgroup OOM counters as well, while `memory.max` events reach 8,141. Exit 137 by itself does not establish a kernel OOM kill, so the baseline classification remains unresolved pending reconciliation of Docker state and cgroup evidence. No OOM cause is inferred from these records alone.
+
+The common input is the authorized OpenMetadata commit `b1fab2bc21c63335dead4daaaa28194c9878e9bf`, archive 158,981,993 bytes / SHA-256 `95747f22ebf3d01232b1592551bc2bc1866b9bbe7322dd3bf1a97028b0592257`. The full manifest digest is `081071ce099d103270175ab53ef12842586d7b0f1ee0c58dadbc3654a2246a89`: 21,636 entries, 21,269 retained text entries, and 330,420,155 declared bytes. This is an explicitly recovered alternative, not the unavailable historical archive `027615f8…`. The baseline and candidate never produced complete outputs, so counts, RSS and timing cannot be treated as a valid completed-workload performance or output-equivalence comparison.
+
+- [Baseline artifact (ID 12935363866)](https://github.com/maninani12/ProjectTrace/actions/runs/40961124902/artifacts/12935363866), digest `sha256:f29fe7e74c01e873f7da93cc851d4e16cee942e8f52c90096cb53fc6fcfd8d94`.
+- [Candidate artifact (ID 12937342992)](https://github.com/maninani12/ProjectTrace/actions/runs/40961124902/artifacts/12937342992), digest `sha256:88328209fd8f8a1629d0b7c8f6842c939439e9eebd4ad63e81eda3a809828625`.
+- Permanent sanitized counters and outcome metadata: `docs/evidence/SCALE001_CGROUP_40961124902.json`. Seven-day artifacts are transient; the permanent file excludes source bytes, database contents and keys.
+
+Regression workflow [40961124908](https://github.com/maninani12/ProjectTrace/actions/runs/40961124908) passed validation, browser, parser-isolation and broker-recovery jobs for head 0d9a52e. It does not override the constrained-workload failure.
+
+A follow-up optimization removes a redundant second decrypt/decompress scan of encrypted metric rows. Quality aggregation now records source-row offsets while deriving the token-free metrics in one pass, then passes those offsets to a lazy selected-row view for duplication analysis. An output-parity regression compares full quality findings/results against the list-backed control and rejects a second predicate scan. This targets CPU/I/O cost only; it does not close the global-memory architecture gap, and no time, RAM, parser or spill budget is raised.
+
