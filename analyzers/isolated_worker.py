@@ -346,7 +346,7 @@ def archive_stream(configuration):
     import zipfile
     import zlib
 
-    from analyzers.archive_parser import archive_items
+    from analyzers.archive_parser import archive_items, archive_manifest
     from analyzers.archive_transport import RemoteArchive
     from backend.intake_errors import IntakeError
 
@@ -357,8 +357,11 @@ def archive_stream(configuration):
         sys.stdout.buffer.write(raw + b"\n")
         sys.stdout.buffer.flush()
     try:
-        for path, value in archive_items(RemoteArchive(configuration["length"]), configuration["policy"],
-                                        validate_only=configuration["validate_only"], sort_paths=configuration["sort_paths"]):
+        stream = RemoteArchive(configuration["length"])
+        items = (archive_manifest(stream, configuration["policy"]) if configuration.get("manifest_only") else
+                 archive_items(stream, configuration["policy"], validate_only=configuration["validate_only"],
+                               sort_paths=configuration["sort_paths"]))
+        for path, value in items:
             entry = {"path": path, "metadata": value} if isinstance(value, dict) else {
                 "path": path, "raw": base64.b64encode(value).decode(), "hash": hashlib.sha256(value).hexdigest()}
             emit({"entry": entry})

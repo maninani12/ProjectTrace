@@ -1,0 +1,1144 @@
+{
+  "run_id": 40213479233,
+  "head": "204e448132372dee5dc6fb34d659bb00d9907c9e",
+  "starting_commit": "243513ee9acb6e4ed66cd3582ba79dc5a787b084",
+  "verdict": "BLOCKED",
+  "records": {
+    "baseline": {
+      "baseline/container-envelope.json": {
+        "memory_limit_bytes": 768000000,
+        "swap_limit_bytes": 0,
+        "container": "94d7ef02eecbbcfbbc7d0c543525d95cd21565d90e88dd44a6d55434817278f8",
+        "all_descendants_in_container_cgroup": true,
+        "network": "none",
+        "sec002": "required",
+        "postgres_redis": "Outside this SQLite qualification container; separate acceptance jobs",
+        "docker_server": {
+          "Platform": {
+            "Name": "Docker Engine - Community"
+          },
+          "Version": "29.4.2",
+          "ApiVersion": "1.54",
+          "MinAPIVersion": "1.40",
+          "Os": "linux",
+          "Arch": "amd64",
+          "Components": [
+            {
+              "Name": "Engine",
+              "Version": "29.4.2",
+              "Details": {
+                "ApiVersion": "1.54",
+                "Arch": "amd64",
+                "BuildTime": "Fri May  1 10:24:04 2026",
+                "Experimental": "false",
+                "GitCommit": "d329809",
+                "GoVersion": "go1.26.2",
+                "KernelVersion": "7.0.0-1017-azure",
+                "MinAPIVersion": "1.40",
+                "Module": "github.com/moby/moby/v2",
+                "ModuleVersion": "v2.0.0+unknown",
+                "Os": "linux"
+              }
+            },
+            {
+              "Name": "containerd",
+              "Version": "v2.4.1",
+              "Details": {
+                "GitCommit": "f2551031d7276a770f65f98c9b52e57e7dad07e8"
+              }
+            },
+            {
+              "Name": "runc",
+              "Version": "1.5.2",
+              "Details": {
+                "GitCommit": "v1.5.2-0-g29dd3dc2"
+              }
+            },
+            {
+              "Name": "docker-init",
+              "Version": "0.19.0",
+              "Details": {
+                "GitCommit": "de40ad0"
+              }
+            }
+          ],
+          "GitCommit": "d329809",
+          "GoVersion": "go1.26.2",
+          "KernelVersion": "7.0.0-1017-azure",
+          "BuildTime": "2026-05-01T10:24:04.000000000+00:00"
+        },
+        "configured": {
+          "Memory": 768000000,
+          "MemorySwap": 768000000,
+          "PidsLimit": 64,
+          "CgroupnsMode": "private",
+          "NetworkMode": "none"
+        },
+        "kernel_enforcement_verified": true,
+        "last_kernel_sample": {
+          "memory.current": "146661376",
+          "memory.peak": "768000000",
+          "memory.events": "low 0\nhigh 0\nmax 3224\noom 1\noom_kill 1\noom_group_kill 0\nsock_throttled 0",
+          "memory.swap.current": "0",
+          "cgroup.procs": "3720",
+          "monotonic": 600.873276116
+        },
+        "exit_status": 137,
+        "oom_killed": true,
+        "container_error": ""
+      },
+      "baseline/post-exit-integrity.json": {
+        "sqlite_integrity": "ok",
+        "foreign_key_violations": 0,
+        "published_pointers": 0,
+        "published_generations": 0,
+        "generation_states": [],
+        "parser_artifacts": 3747,
+        "job_states": [
+          [
+            "ANALYZING",
+            "ANALYZING",
+            1
+          ]
+        ],
+        "scope": "Read-only post-exit inspection; not fresh-worker recovery"
+      },
+      "baseline/qualification.json": {
+        "schema": "projecttrace-scale-qualification-v1",
+        "verdict": "BLOCKED",
+        "scope": "FULL_WORKLOAD_ATTEMPT",
+        "origin": "https://github.com/maninani12/OpenMetadata",
+        "source_commit": "b1fab2bc21c63335dead4daaaa28194c9878e9bf",
+        "archive_sha256": "95747f22ebf3d01232b1592551bc2bc1866b9bbe7322dd3bf1a97028b0592257",
+        "archive_bytes": 158981993,
+        "historical_archive_sha256": "027615f80245c4534f4af0270951ad7dc0418928440c5332522b46103ddfa914",
+        "historical_input_reproduced": false,
+        "python": "3.14.9 (main, Oct 21 2026, 22:25:42) [GCC 14.2.0]",
+        "platform": "Linux-7.0.0-1017-azure-x86_64-with-glibc2.41",
+        "initial_memory": {
+          "available": true,
+          "coordinator_rss_bytes": 27860992,
+          "namespace_rss_bytes": 27860992,
+          "processes": 1,
+          "child_rss_bytes": 0,
+          "memory.current": 18018304,
+          "memory.peak": 18018304,
+          "memory.max": 768000000,
+          "memory.swap.max": 0,
+          "memory.swap.current": 0,
+          "memory.events": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0,
+            "sock_throttled": 0
+          }
+        },
+        "service_boundary": "SQLite in same cgroup; PostgreSQL/Redis acceptance separate; not broker recovery qualification",
+        "scenarios": {
+          "cold": "RUNNING",
+          "warm": "NOT_RUN",
+          "one_file_change": "NOT_RUN",
+          "multi_file_change": "NOT_RUN",
+          "exhaustion_recovery": "NOT_RUN",
+          "cancellation": "NOT_RUN",
+          "fresh_worker_recovery": "NOT_RUN",
+          "concurrent_tenants": "NOT_RUN"
+        },
+        "intake_replay": {
+          "rows": 21636,
+          "ciphertext_bytes": 324054740,
+          "maximum_ciphertext_bytes": 512000000,
+          "plaintext_source_on_disk": false
+        },
+        "inventory": {
+          "file_count": 21636,
+          "retained_text": 21269,
+          "declared_bytes": 330420155
+        }
+      },
+      "envelope-probe/container-envelope.json": {
+        "memory_limit_bytes": 768000000,
+        "swap_limit_bytes": 0,
+        "container": "32b630fd36f1d7df3007b441103e2c941669059ab91fc2a436e4374de35245fb",
+        "all_descendants_in_container_cgroup": true,
+        "network": "none",
+        "sec002": "required",
+        "postgres_redis": "Outside this SQLite qualification container; separate acceptance jobs",
+        "docker_server": {
+          "Platform": {
+            "Name": "Docker Engine - Community"
+          },
+          "Version": "29.4.2",
+          "ApiVersion": "1.54",
+          "MinAPIVersion": "1.40",
+          "Os": "linux",
+          "Arch": "amd64",
+          "Components": [
+            {
+              "Name": "Engine",
+              "Version": "29.4.2",
+              "Details": {
+                "ApiVersion": "1.54",
+                "Arch": "amd64",
+                "BuildTime": "Fri May  1 10:24:04 2026",
+                "Experimental": "false",
+                "GitCommit": "d329809",
+                "GoVersion": "go1.26.2",
+                "KernelVersion": "7.0.0-1017-azure",
+                "MinAPIVersion": "1.40",
+                "Module": "github.com/moby/moby/v2",
+                "ModuleVersion": "v2.0.0+unknown",
+                "Os": "linux"
+              }
+            },
+            {
+              "Name": "containerd",
+              "Version": "v2.4.1",
+              "Details": {
+                "GitCommit": "f2551031d7276a770f65f98c9b52e57e7dad07e8"
+              }
+            },
+            {
+              "Name": "runc",
+              "Version": "1.5.2",
+              "Details": {
+                "GitCommit": "v1.5.2-0-g29dd3dc2"
+              }
+            },
+            {
+              "Name": "docker-init",
+              "Version": "0.19.0",
+              "Details": {
+                "GitCommit": "de40ad0"
+              }
+            }
+          ],
+          "GitCommit": "d329809",
+          "GoVersion": "go1.26.2",
+          "KernelVersion": "7.0.0-1017-azure",
+          "BuildTime": "2026-05-01T10:24:04.000000000+00:00"
+        },
+        "configured": {
+          "Memory": 768000000,
+          "MemorySwap": 768000000,
+          "PidsLimit": 64,
+          "CgroupnsMode": "private",
+          "NetworkMode": "none"
+        },
+        "kernel_enforcement_verified": true,
+        "last_kernel_sample": {
+          "memory.current": "758370304",
+          "memory.peak": "758894592",
+          "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+          "memory.swap.current": "0",
+          "cgroup.procs": "2631\n2661\n2662",
+          "monotonic": 123.983164742
+        },
+        "exit_status": 0,
+        "oom_killed": true,
+        "container_error": ""
+      },
+      "envelope-probe/resource-probe.json": {
+        "schema": "projecttrace-cgroup-owned-child-probe-v1",
+        "enforced": true,
+        "children": [
+          7,
+          8
+        ],
+        "child_exit_statuses": [
+          -9,
+          -9
+        ],
+        "allocation_bytes_each": 600000000,
+        "before": {
+          "available": true,
+          "coordinator_rss_bytes": 16990208,
+          "namespace_rss_bytes": 16990208,
+          "processes": 1,
+          "child_rss_bytes": 0,
+          "memory.current": 11673600,
+          "memory.peak": 11976704,
+          "memory.max": 768000000,
+          "memory.swap.max": 0,
+          "memory.swap.current": 0,
+          "memory.events": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0,
+            "sock_throttled": 0
+          }
+        },
+        "after": {
+          "available": true,
+          "coordinator_rss_bytes": 16986112,
+          "namespace_rss_bytes": 16986112,
+          "processes": 1,
+          "child_rss_bytes": 0,
+          "memory.current": 11247616,
+          "memory.peak": 768000000,
+          "memory.max": 768000000,
+          "memory.swap.max": 0,
+          "memory.swap.current": 0,
+          "memory.events": {
+            "low": 0,
+            "high": 0,
+            "max": 145,
+            "oom": 6,
+            "oom_kill": 2,
+            "oom_group_kill": 0,
+            "sock_throttled": 0
+          }
+        },
+        "scope": "Kernel shared-envelope enforcement only; no application job/publication/recovery exercised"
+      },
+      "manifest/container-envelope.json": {
+        "memory_limit_bytes": 768000000,
+        "swap_limit_bytes": 0,
+        "container": "bce2bbf85d9863d910d4624599ce841b566e6e07cee9da21c3e9b30b589a2f78",
+        "all_descendants_in_container_cgroup": true,
+        "network": "none",
+        "sec002": "required",
+        "postgres_redis": "Outside this SQLite qualification container; separate acceptance jobs",
+        "docker_server": {
+          "Platform": {
+            "Name": "Docker Engine - Community"
+          },
+          "Version": "29.4.2",
+          "ApiVersion": "1.54",
+          "MinAPIVersion": "1.40",
+          "Os": "linux",
+          "Arch": "amd64",
+          "Components": [
+            {
+              "Name": "Engine",
+              "Version": "29.4.2",
+              "Details": {
+                "ApiVersion": "1.54",
+                "Arch": "amd64",
+                "BuildTime": "Fri May  1 10:24:04 2026",
+                "Experimental": "false",
+                "GitCommit": "d329809",
+                "GoVersion": "go1.26.2",
+                "KernelVersion": "7.0.0-1017-azure",
+                "MinAPIVersion": "1.40",
+                "Module": "github.com/moby/moby/v2",
+                "ModuleVersion": "v2.0.0+unknown",
+                "Os": "linux"
+              }
+            },
+            {
+              "Name": "containerd",
+              "Version": "v2.4.1",
+              "Details": {
+                "GitCommit": "f2551031d7276a770f65f98c9b52e57e7dad07e8"
+              }
+            },
+            {
+              "Name": "runc",
+              "Version": "1.5.2",
+              "Details": {
+                "GitCommit": "v1.5.2-0-g29dd3dc2"
+              }
+            },
+            {
+              "Name": "docker-init",
+              "Version": "0.19.0",
+              "Details": {
+                "GitCommit": "de40ad0"
+              }
+            }
+          ],
+          "GitCommit": "d329809",
+          "GoVersion": "go1.26.2",
+          "KernelVersion": "7.0.0-1017-azure",
+          "BuildTime": "2026-05-01T10:24:04.000000000+00:00"
+        },
+        "configured": {
+          "Memory": 768000000,
+          "MemorySwap": 768000000,
+          "PidsLimit": 64,
+          "CgroupnsMode": "private",
+          "NetworkMode": "none"
+        },
+        "kernel_enforcement_verified": true,
+        "last_kernel_sample": {
+          "memory.current": "73662464",
+          "memory.peak": "128126976",
+          "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+          "memory.swap.current": "0",
+          "cgroup.procs": "2772",
+          "monotonic": 131.702487033
+        },
+        "exit_status": 0,
+        "oom_killed": false,
+        "container_error": ""
+      },
+      "manifest/post-exit-integrity.json": {
+        "sqlite_integrity": "ok",
+        "foreign_key_violations": 0,
+        "published_pointers": 0,
+        "published_generations": 0,
+        "generation_states": [],
+        "parser_artifacts": 0,
+        "job_states": [],
+        "scope": "Read-only post-exit inspection; not fresh-worker recovery"
+      },
+      "manifest/qualification.json": {
+        "schema": "projecttrace-scale-qualification-v1",
+        "verdict": "PARTIALLY QUALIFIED",
+        "scope": "MANIFEST_ONLY",
+        "origin": "https://github.com/maninani12/OpenMetadata",
+        "source_commit": "b1fab2bc21c63335dead4daaaa28194c9878e9bf",
+        "archive_sha256": "95747f22ebf3d01232b1592551bc2bc1866b9bbe7322dd3bf1a97028b0592257",
+        "archive_bytes": 158981993,
+        "historical_archive_sha256": "027615f80245c4534f4af0270951ad7dc0418928440c5332522b46103ddfa914",
+        "historical_input_reproduced": false,
+        "python": "3.14.9 (main, Oct 21 2026, 22:25:42) [GCC 14.2.0]",
+        "platform": "Linux-7.0.0-1017-azure-x86_64-with-glibc2.41",
+        "initial_memory": {
+          "available": true,
+          "coordinator_rss_bytes": 27140096,
+          "namespace_rss_bytes": 27140096,
+          "processes": 1,
+          "child_rss_bytes": 0,
+          "memory.current": 17006592,
+          "memory.peak": 17670144,
+          "memory.max": 768000000,
+          "memory.swap.max": 0,
+          "memory.swap.current": 0,
+          "memory.events": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0,
+            "sock_throttled": 0
+          }
+        },
+        "service_boundary": "SQLite in same cgroup; PostgreSQL/Redis acceptance separate; not broker recovery qualification",
+        "scenarios": {
+          "cold": "NOT_RUN",
+          "warm": "NOT_RUN",
+          "one_file_change": "NOT_RUN",
+          "multi_file_change": "NOT_RUN",
+          "exhaustion_recovery": "NOT_RUN",
+          "cancellation": "NOT_RUN",
+          "fresh_worker_recovery": "NOT_RUN",
+          "concurrent_tenants": "NOT_RUN"
+        },
+        "manifest": {
+          "files": 21636,
+          "expanded_bytes": 330420155,
+          "sha256": "081071ce099d103270175ab53ef12842586d7b0f1ee0c58dadbc3654a2246a89",
+          "policy": "Every non-directory ZIP member, including link bytes and oversized files; no extraction"
+        },
+        "manifest_state": "PASSED",
+        "duration_seconds": 6.049,
+        "sampled_maxima": {
+          "coordinator_rss_bytes": 88236032,
+          "child_rss_bytes": 70909952,
+          "namespace_rss_bytes": 157474816,
+          "memory.current": 127279104,
+          "memory.peak": 128126976
+        },
+        "final_memory": {
+          "available": true,
+          "coordinator_rss_bytes": 86269952,
+          "namespace_rss_bytes": 86269952,
+          "processes": 1,
+          "child_rss_bytes": 0,
+          "memory.current": 75567104,
+          "memory.peak": 128126976,
+          "memory.max": 768000000,
+          "memory.swap.max": 0,
+          "memory.swap.current": 0,
+          "memory.events": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0,
+            "sock_throttled": 0
+          }
+        }
+      },
+      "stage_summary": {
+        "INITIALIZING": {
+          "samples": 1,
+          "first_seconds": 0.012,
+          "last_seconds": 0.012,
+          "coordinator_rss_bytes": 81932288,
+          "child_rss_bytes": 0,
+          "namespace_rss_bytes": 81932288,
+          "memory.current": 65212416,
+          "memory.peak": 87252992
+        },
+        "ARCHIVE_TO_ENCRYPTED_REPLAY": {
+          "samples": 66,
+          "first_seconds": 0.268,
+          "last_seconds": 16.664,
+          "coordinator_rss_bytes": 100020224,
+          "child_rss_bytes": 69718016,
+          "namespace_rss_bytes": 169738240,
+          "memory.current": 478556160,
+          "memory.peak": 478638080
+        },
+        "CAPTURING": {
+          "samples": 543,
+          "first_seconds": 16.916,
+          "last_seconds": 153.706,
+          "coordinator_rss_bytes": 250527744,
+          "child_rss_bytes": 47841280,
+          "namespace_rss_bytes": 250527744,
+          "memory.current": 768000000,
+          "memory.peak": 768000000
+        },
+        "PARSING": {
+          "samples": 1,
+          "first_seconds": 153.963,
+          "last_seconds": 153.963,
+          "coordinator_rss_bytes": 255471616,
+          "child_rss_bytes": 0,
+          "namespace_rss_bytes": 255471616,
+          "memory.current": 638627840,
+          "memory.peak": 768000000
+        },
+        "ANALYZING": {
+          "samples": 1054,
+          "first_seconds": 154.243,
+          "last_seconds": 466.563,
+          "coordinator_rss_bytes": 693317632,
+          "child_rss_bytes": 149553152,
+          "namespace_rss_bytes": 757764096,
+          "memory.current": 768000000,
+          "memory.peak": 768000000
+        }
+      },
+      "artifact_zip_sha256": "8f11fd5aeda53dfb9e7f3ce1483dc9ea89eef90e28eebfe538c33764723f4e4e"
+    },
+    "candidate": {
+      "candidate/container-envelope.json": {
+        "memory_limit_bytes": 768000000,
+        "swap_limit_bytes": 0,
+        "container": "0ba90b73c8574fef1d5db715047a50191f29698e29cbaeda777413c488116ebf",
+        "all_descendants_in_container_cgroup": true,
+        "network": "none",
+        "sec002": "required",
+        "postgres_redis": "Outside this SQLite qualification container; separate acceptance jobs",
+        "docker_server": {
+          "Platform": {
+            "Name": "Docker Engine - Community"
+          },
+          "Version": "29.4.2",
+          "ApiVersion": "1.54",
+          "MinAPIVersion": "1.40",
+          "Os": "linux",
+          "Arch": "amd64",
+          "Components": [
+            {
+              "Name": "Engine",
+              "Version": "29.4.2",
+              "Details": {
+                "ApiVersion": "1.54",
+                "Arch": "amd64",
+                "BuildTime": "Fri May  1 10:24:04 2026",
+                "Experimental": "false",
+                "GitCommit": "d329809",
+                "GoVersion": "go1.26.2",
+                "KernelVersion": "7.0.0-1017-azure",
+                "MinAPIVersion": "1.40",
+                "Module": "github.com/moby/moby/v2",
+                "ModuleVersion": "v2.0.0+unknown",
+                "Os": "linux"
+              }
+            },
+            {
+              "Name": "containerd",
+              "Version": "v2.4.1",
+              "Details": {
+                "GitCommit": "f2551031d7276a770f65f98c9b52e57e7dad07e8"
+              }
+            },
+            {
+              "Name": "runc",
+              "Version": "1.5.2",
+              "Details": {
+                "GitCommit": "v1.5.2-0-g29dd3dc2"
+              }
+            },
+            {
+              "Name": "docker-init",
+              "Version": "0.19.0",
+              "Details": {
+                "GitCommit": "de40ad0"
+              }
+            }
+          ],
+          "GitCommit": "d329809",
+          "GoVersion": "go1.26.2",
+          "KernelVersion": "7.0.0-1017-azure",
+          "BuildTime": "2026-05-01T10:24:04.000000000+00:00"
+        },
+        "configured": {
+          "Memory": 768000000,
+          "MemorySwap": 768000000,
+          "PidsLimit": 64,
+          "CgroupnsMode": "private",
+          "NetworkMode": "none"
+        },
+        "kernel_enforcement_verified": true,
+        "last_kernel_sample": {
+          "memory.current": "749039616",
+          "memory.peak": "768000000",
+          "memory.events": "low 0\nhigh 0\nmax 11599\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+          "memory.swap.current": "0",
+          "cgroup.procs": "2921",
+          "monotonic": 1369.209720416
+        },
+        "exit_status": 1,
+        "oom_killed": false,
+        "container_error": ""
+      },
+      "candidate/post-exit-integrity.json": {
+        "sqlite_integrity": "ok",
+        "foreign_key_violations": 0,
+        "published_pointers": 0,
+        "published_generations": 0,
+        "generation_states": [],
+        "parser_artifacts": 11797,
+        "job_states": [
+          [
+            "FAILED",
+            "ANALYZING",
+            1
+          ]
+        ],
+        "scope": "Read-only post-exit inspection; not fresh-worker recovery"
+      },
+      "candidate/qualification.json": {
+        "schema": "projecttrace-scale-qualification-v1",
+        "verdict": "BLOCKED",
+        "scope": "FULL_WORKLOAD_ATTEMPT",
+        "origin": "https://github.com/maninani12/OpenMetadata",
+        "source_commit": "b1fab2bc21c63335dead4daaaa28194c9878e9bf",
+        "archive_sha256": "95747f22ebf3d01232b1592551bc2bc1866b9bbe7322dd3bf1a97028b0592257",
+        "archive_bytes": 158981993,
+        "historical_archive_sha256": "027615f80245c4534f4af0270951ad7dc0418928440c5332522b46103ddfa914",
+        "historical_input_reproduced": false,
+        "python": "3.14.9 (main, Oct 21 2026, 22:25:42) [GCC 14.2.0]",
+        "platform": "Linux-7.0.0-1017-azure-x86_64-with-glibc2.41",
+        "initial_memory": {
+          "available": true,
+          "coordinator_rss_bytes": 27693056,
+          "namespace_rss_bytes": 27693056,
+          "processes": 1,
+          "child_rss_bytes": 0,
+          "memory.current": 17760256,
+          "memory.peak": 17760256,
+          "memory.max": 768000000,
+          "memory.swap.max": 0,
+          "memory.swap.current": 0,
+          "memory.events": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0,
+            "sock_throttled": 0
+          }
+        },
+        "service_boundary": "SQLite in same cgroup; PostgreSQL/Redis acceptance separate; not broker recovery qualification",
+        "scenarios": {
+          "cold": "FAILED",
+          "warm": "NOT_RUN",
+          "one_file_change": "NOT_RUN",
+          "multi_file_change": "NOT_RUN",
+          "exhaustion_recovery": "NOT_RUN",
+          "cancellation": "NOT_RUN",
+          "fresh_worker_recovery": "NOT_RUN",
+          "concurrent_tenants": "NOT_RUN"
+        },
+        "intake_replay": {
+          "rows": 21636,
+          "ciphertext_bytes": 324054740,
+          "maximum_ciphertext_bytes": 512000000,
+          "plaintext_source_on_disk": false
+        },
+        "inventory": {
+          "file_count": 21636,
+          "retained_text": 21269,
+          "declared_bytes": 330420155
+        },
+        "error_type": "ObservationBudgetExceeded",
+        "error_code": null,
+        "safe_budget_diagnostic": {
+          "budget": "COLLECTION_BYTES",
+          "maximum": 512000000,
+          "actual": 512001320,
+          "rows": 98329,
+          "collection": "NATIVE_METRICS"
+        },
+        "owned_stack": [
+          {
+            "module": "qualify_scale_workload.py",
+            "function": "main",
+            "line": 163
+          },
+          {
+            "module": "jobs.py",
+            "function": "execute_analysis",
+            "line": 197
+          },
+          {
+            "module": "domain.py",
+            "function": "persist_analysis",
+            "line": 501
+          },
+          {
+            "module": "partitioned_analysis.py",
+            "function": "analyze_inventory",
+            "line": 37
+          },
+          {
+            "module": "partitioned_analysis.py",
+            "function": "_analyze_inventory",
+            "line": 156
+          },
+          {
+            "module": "partitioned_analysis.py",
+            "function": "parse_partition",
+            "line": 87
+          },
+          {
+            "module": "observation_store.py",
+            "function": "extend",
+            "line": 98
+          },
+          {
+            "module": "observation_store.py",
+            "function": "append",
+            "line": 77
+          }
+        ],
+        "failed_stage": "ANALYZING",
+        "failure_integrity": {
+          "published_pointers": 0,
+          "published_generations": 0,
+          "parser_artifacts": 11797,
+          "jobs": [
+            {
+              "state": "FAILED",
+              "stage": "ANALYZING",
+              "error_code": "ANALYSIS_OBSERVATION_BUDGET"
+            }
+          ],
+          "sqlite_integrity": "ok",
+          "foreign_key_violations": 0
+        },
+        "duration_seconds": 1265.813,
+        "sampled_maxima": {
+          "coordinator_rss_bytes": 526123008,
+          "child_rss_bytes": 148852736,
+          "namespace_rss_bytes": 661630976,
+          "memory.current": 768000000,
+          "memory.peak": 768000000
+        },
+        "final_memory": {
+          "available": true,
+          "coordinator_rss_bytes": 507904000,
+          "namespace_rss_bytes": 507904000,
+          "processes": 1,
+          "child_rss_bytes": 0,
+          "memory.current": 767897600,
+          "memory.peak": 768000000,
+          "memory.max": 768000000,
+          "memory.swap.max": 0,
+          "memory.swap.current": 0,
+          "memory.events": {
+            "low": 0,
+            "high": 0,
+            "max": 11599,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0,
+            "sock_throttled": 0
+          }
+        }
+      },
+      "envelope-probe/container-envelope.json": {
+        "memory_limit_bytes": 768000000,
+        "swap_limit_bytes": 0,
+        "container": "0be4e6b0a5d69461632bd17370cdb31d3ae210637d1731d1c11ea66180770ad9",
+        "all_descendants_in_container_cgroup": true,
+        "network": "none",
+        "sec002": "required",
+        "postgres_redis": "Outside this SQLite qualification container; separate acceptance jobs",
+        "docker_server": {
+          "Platform": {
+            "Name": "Docker Engine - Community"
+          },
+          "Version": "29.4.2",
+          "ApiVersion": "1.54",
+          "MinAPIVersion": "1.40",
+          "Os": "linux",
+          "Arch": "amd64",
+          "Components": [
+            {
+              "Name": "Engine",
+              "Version": "29.4.2",
+              "Details": {
+                "ApiVersion": "1.54",
+                "Arch": "amd64",
+                "BuildTime": "Fri May  1 10:24:04 2026",
+                "Experimental": "false",
+                "GitCommit": "d329809",
+                "GoVersion": "go1.26.2",
+                "KernelVersion": "7.0.0-1017-azure",
+                "MinAPIVersion": "1.40",
+                "Module": "github.com/moby/moby/v2",
+                "ModuleVersion": "v2.0.0+unknown",
+                "Os": "linux"
+              }
+            },
+            {
+              "Name": "containerd",
+              "Version": "v2.4.1",
+              "Details": {
+                "GitCommit": "f2551031d7276a770f65f98c9b52e57e7dad07e8"
+              }
+            },
+            {
+              "Name": "runc",
+              "Version": "1.5.2",
+              "Details": {
+                "GitCommit": "v1.5.2-0-g29dd3dc2"
+              }
+            },
+            {
+              "Name": "docker-init",
+              "Version": "0.19.0",
+              "Details": {
+                "GitCommit": "de40ad0"
+              }
+            }
+          ],
+          "GitCommit": "d329809",
+          "GoVersion": "go1.26.2",
+          "KernelVersion": "7.0.0-1017-azure",
+          "BuildTime": "2026-05-01T10:24:04.000000000+00:00"
+        },
+        "configured": {
+          "Memory": 768000000,
+          "MemorySwap": 768000000,
+          "PidsLimit": 64,
+          "CgroupnsMode": "private",
+          "NetworkMode": "none"
+        },
+        "kernel_enforcement_verified": true,
+        "last_kernel_sample": {
+          "memory.current": "577458176",
+          "memory.peak": "577720320",
+          "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+          "memory.swap.current": "0",
+          "cgroup.procs": "2632\n2663\n2664",
+          "monotonic": 93.224926213
+        },
+        "exit_status": 0,
+        "oom_killed": true,
+        "container_error": ""
+      },
+      "envelope-probe/resource-probe.json": {
+        "schema": "projecttrace-cgroup-owned-child-probe-v1",
+        "enforced": true,
+        "children": [
+          7,
+          8
+        ],
+        "child_exit_statuses": [
+          -9,
+          -9
+        ],
+        "allocation_bytes_each": 600000000,
+        "before": {
+          "available": true,
+          "coordinator_rss_bytes": 16949248,
+          "namespace_rss_bytes": 16949248,
+          "processes": 1,
+          "child_rss_bytes": 0,
+          "memory.current": 11132928,
+          "memory.peak": 11436032,
+          "memory.max": 768000000,
+          "memory.swap.max": 0,
+          "memory.swap.current": 0,
+          "memory.events": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0,
+            "sock_throttled": 0
+          }
+        },
+        "after": {
+          "available": true,
+          "coordinator_rss_bytes": 16945152,
+          "namespace_rss_bytes": 16945152,
+          "processes": 1,
+          "child_rss_bytes": 0,
+          "memory.current": 12857344,
+          "memory.peak": 768000000,
+          "memory.max": 768000000,
+          "memory.swap.max": 0,
+          "memory.swap.current": 0,
+          "memory.events": {
+            "low": 0,
+            "high": 0,
+            "max": 90,
+            "oom": 3,
+            "oom_kill": 2,
+            "oom_group_kill": 0,
+            "sock_throttled": 0
+          }
+        },
+        "scope": "Kernel shared-envelope enforcement only; no application job/publication/recovery exercised"
+      },
+      "manifest/container-envelope.json": {
+        "memory_limit_bytes": 768000000,
+        "swap_limit_bytes": 0,
+        "container": "9ef7a0b42f94dcd10a7ab37aa6ef6e6638fddef81671d176289a98d3540d1361",
+        "all_descendants_in_container_cgroup": true,
+        "network": "none",
+        "sec002": "required",
+        "postgres_redis": "Outside this SQLite qualification container; separate acceptance jobs",
+        "docker_server": {
+          "Platform": {
+            "Name": "Docker Engine - Community"
+          },
+          "Version": "29.4.2",
+          "ApiVersion": "1.54",
+          "MinAPIVersion": "1.40",
+          "Os": "linux",
+          "Arch": "amd64",
+          "Components": [
+            {
+              "Name": "Engine",
+              "Version": "29.4.2",
+              "Details": {
+                "ApiVersion": "1.54",
+                "Arch": "amd64",
+                "BuildTime": "Fri May  1 10:24:04 2026",
+                "Experimental": "false",
+                "GitCommit": "d329809",
+                "GoVersion": "go1.26.2",
+                "KernelVersion": "7.0.0-1017-azure",
+                "MinAPIVersion": "1.40",
+                "Module": "github.com/moby/moby/v2",
+                "ModuleVersion": "v2.0.0+unknown",
+                "Os": "linux"
+              }
+            },
+            {
+              "Name": "containerd",
+              "Version": "v2.4.1",
+              "Details": {
+                "GitCommit": "f2551031d7276a770f65f98c9b52e57e7dad07e8"
+              }
+            },
+            {
+              "Name": "runc",
+              "Version": "1.5.2",
+              "Details": {
+                "GitCommit": "v1.5.2-0-g29dd3dc2"
+              }
+            },
+            {
+              "Name": "docker-init",
+              "Version": "0.19.0",
+              "Details": {
+                "GitCommit": "de40ad0"
+              }
+            }
+          ],
+          "GitCommit": "d329809",
+          "GoVersion": "go1.26.2",
+          "KernelVersion": "7.0.0-1017-azure",
+          "BuildTime": "2026-05-01T10:24:04.000000000+00:00"
+        },
+        "configured": {
+          "Memory": 768000000,
+          "MemorySwap": 768000000,
+          "PidsLimit": 64,
+          "CgroupnsMode": "private",
+          "NetworkMode": "none"
+        },
+        "kernel_enforcement_verified": true,
+        "last_kernel_sample": {
+          "memory.current": "73576448",
+          "memory.peak": "128008192",
+          "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+          "memory.swap.current": "0",
+          "cgroup.procs": "2774",
+          "monotonic": 101.383936099
+        },
+        "exit_status": 0,
+        "oom_killed": false,
+        "container_error": ""
+      },
+      "manifest/post-exit-integrity.json": {
+        "sqlite_integrity": "ok",
+        "foreign_key_violations": 0,
+        "published_pointers": 0,
+        "published_generations": 0,
+        "generation_states": [],
+        "parser_artifacts": 0,
+        "job_states": [],
+        "scope": "Read-only post-exit inspection; not fresh-worker recovery"
+      },
+      "manifest/qualification.json": {
+        "schema": "projecttrace-scale-qualification-v1",
+        "verdict": "PARTIALLY QUALIFIED",
+        "scope": "MANIFEST_ONLY",
+        "origin": "https://github.com/maninani12/OpenMetadata",
+        "source_commit": "b1fab2bc21c63335dead4daaaa28194c9878e9bf",
+        "archive_sha256": "95747f22ebf3d01232b1592551bc2bc1866b9bbe7322dd3bf1a97028b0592257",
+        "archive_bytes": 158981993,
+        "historical_archive_sha256": "027615f80245c4534f4af0270951ad7dc0418928440c5332522b46103ddfa914",
+        "historical_input_reproduced": false,
+        "python": "3.14.9 (main, Oct 21 2026, 22:25:42) [GCC 14.2.0]",
+        "platform": "Linux-7.0.0-1017-azure-x86_64-with-glibc2.41",
+        "initial_memory": {
+          "available": true,
+          "coordinator_rss_bytes": 27013120,
+          "namespace_rss_bytes": 27013120,
+          "processes": 1,
+          "child_rss_bytes": 0,
+          "memory.current": 17076224,
+          "memory.peak": 17694720,
+          "memory.max": 768000000,
+          "memory.swap.max": 0,
+          "memory.swap.current": 0,
+          "memory.events": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0,
+            "sock_throttled": 0
+          }
+        },
+        "service_boundary": "SQLite in same cgroup; PostgreSQL/Redis acceptance separate; not broker recovery qualification",
+        "scenarios": {
+          "cold": "NOT_RUN",
+          "warm": "NOT_RUN",
+          "one_file_change": "NOT_RUN",
+          "multi_file_change": "NOT_RUN",
+          "exhaustion_recovery": "NOT_RUN",
+          "cancellation": "NOT_RUN",
+          "fresh_worker_recovery": "NOT_RUN",
+          "concurrent_tenants": "NOT_RUN"
+        },
+        "manifest": {
+          "files": 21636,
+          "expanded_bytes": 330420155,
+          "sha256": "081071ce099d103270175ab53ef12842586d7b0f1ee0c58dadbc3654a2246a89",
+          "policy": "Every non-directory ZIP member, including link bytes and oversized files; no extraction"
+        },
+        "manifest_state": "PASSED",
+        "duration_seconds": 6.176,
+        "sampled_maxima": {
+          "coordinator_rss_bytes": 88031232,
+          "child_rss_bytes": 69943296,
+          "namespace_rss_bytes": 157728768,
+          "memory.current": 126685184,
+          "memory.peak": 128008192
+        },
+        "final_memory": {
+          "available": true,
+          "coordinator_rss_bytes": 86474752,
+          "namespace_rss_bytes": 86474752,
+          "processes": 1,
+          "child_rss_bytes": 0,
+          "memory.current": 75476992,
+          "memory.peak": 128008192,
+          "memory.max": 768000000,
+          "memory.swap.max": 0,
+          "memory.swap.current": 0,
+          "memory.events": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0,
+            "sock_throttled": 0
+          }
+        }
+      },
+      "stage_summary": {
+        "INITIALIZING": {
+          "samples": 1,
+          "first_seconds": 0.011,
+          "last_seconds": 0.011,
+          "coordinator_rss_bytes": 81895424,
+          "child_rss_bytes": 0,
+          "namespace_rss_bytes": 81895424,
+          "memory.current": 65445888,
+          "memory.peak": 89481216
+        },
+        "ARCHIVE_TO_ENCRYPTED_REPLAY": {
+          "samples": 69,
+          "first_seconds": 0.269,
+          "last_seconds": 17.42,
+          "coordinator_rss_bytes": 98697216,
+          "child_rss_bytes": 77873152,
+          "namespace_rss_bytes": 176570368,
+          "memory.current": 481968128,
+          "memory.peak": 482000896
+        },
+        "CAPTURING": {
+          "samples": 549,
+          "first_seconds": 17.671,
+          "last_seconds": 156.015,
+          "coordinator_rss_bytes": 244457472,
+          "child_rss_bytes": 48627712,
+          "namespace_rss_bytes": 244457472,
+          "memory.current": 767979520,
+          "memory.peak": 768000000
+        },
+        "VALIDATING": {
+          "samples": 1,
+          "first_seconds": 156.34,
+          "last_seconds": 156.34,
+          "coordinator_rss_bytes": 251412480,
+          "child_rss_bytes": 0,
+          "namespace_rss_bytes": 251412480,
+          "memory.current": 635297792,
+          "memory.peak": 768000000
+        },
+        "ANALYZING": {
+          "samples": 3657,
+          "first_seconds": 156.597,
+          "last_seconds": 1265.623,
+          "coordinator_rss_bytes": 526123008,
+          "child_rss_bytes": 148852736,
+          "namespace_rss_bytes": 661630976,
+          "memory.current": 768000000,
+          "memory.peak": 768000000
+        }
+      },
+      "artifact_zip_sha256": "76bbb94f1827579363a0f3ca5865793a1537a4a05302d971fcecf12556be7d55"
+    }
+  },
+  "scope": "Actual pinned replacement under shared 768000000-byte cgroup, zero swap; no large publication or fresh-worker recovery pass"
+}

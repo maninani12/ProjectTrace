@@ -70,7 +70,7 @@ class Wire:
             self.buffer.extend(data)
 
 
-def archive_items(stream, policy, *, validate_only=False, seconds=150, sort_paths=False):
+def archive_items(stream, policy, *, validate_only=False, seconds=150, sort_paths=False, manifest_only=False):
     from analyzers.engine import safe_path
 
     # Seeking/decryption are coordinator primitives, not archive interpretation.
@@ -94,7 +94,7 @@ def archive_items(stream, policy, *, validate_only=False, seconds=150, sort_path
     try:
         sandbox.validate_proof(wire.line(4096))
         wire.write(json.dumps({"length": length, "policy": policy, "validate_only": validate_only,
-                               "sort_paths": sort_paths}).encode() + b"\n")
+                               "sort_paths": sort_paths, "manifest_only": manifest_only}).encode() + b"\n")
         while True:
             packet = sandbox.decode_packet(wire.line())
             if not isinstance(packet, dict):
@@ -134,7 +134,14 @@ def archive_items(stream, policy, *, validate_only=False, seconds=150, sort_path
                         raise sandbox.SandboxFailure("ARCHIVE_ENTRY_INTEGRITY")
                 else:
                     value = entry["metadata"]
-                    if (not isinstance(value, dict) or set(value) - {"bytes", "state", "source_kind"}
+                    if manifest_only:
+                        if (not isinstance(value, dict) or set(value) != {"bytes", "sha256", "kind"}
+                                or type(value["bytes"]) is not int or value["bytes"] < 0
+                                or value["kind"] not in {"FILE", "SYMLINK"}
+                                or not isinstance(value["sha256"], str) or len(value["sha256"]) != 64
+                                or any(c not in "0123456789abcdef" for c in value["sha256"])):
+                            raise sandbox.SandboxFailure("ARCHIVE_MANIFEST_PROTOCOL")
+                    elif (not isinstance(value, dict) or set(value) - {"bytes", "state", "source_kind"}
                             or value.get("state") not in {"UNSUPPORTED", "SKIPPED_SIZE_LIMIT"}
                             or type(value.get("bytes")) is not int or value["bytes"] < 0
                             or value.get("source_kind") not in {None, "SYMLINK", "ZIP_COMPRESSION_METHOD"}):

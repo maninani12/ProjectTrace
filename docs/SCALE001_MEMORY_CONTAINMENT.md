@@ -1,0 +1,273 @@
+# SCALE-001: metric ownership increment
+
+Verdict: **BLOCKED — NOT QUALIFIED**. Latest constrained attempt [41026991220](https://github.com/maninani12/ProjectTrace/actions/runs/41026991220) on head `f50fb0cb5139623a873a51c6f55b9f2c09a5b00b` failed before publishing a complete cold analysis: the baseline hit a kernel-confirmed cgroup OOM and the candidate reached its existing analysis-time budget. Standard validation [41026991246](https://github.com/maninani12/ProjectTrace/actions/runs/41026991246) passed all four jobs on this head. PR #4 remains a draft against `codex/linux-parser-isolation`; main remains unchanged. SEC-002 controls, full-workload equivalence and recovery gates remain required.
+
+## Historical qualification target and recovery
+
+SDLC_ACCEPTANCE_2026_10_15.md records 21,636 captured files / 7,744 artifacts and MemoryError during VERIFYING under a Windows 768 MB process-tree committed-memory ceiling. The line-56 traceback identifies allocation at metric projection, not the sole cause. Original raw profiling logs, encrypted inventory/DB and archive manifest are absent from this workspace. GitHub access to the documented b1fab2bc21c63335dead4daaaa28194c9878e9bf commit was verified (tree 98be740cd54db8653ce735946b6fd6bd5986e5e3). That commit identity alone does not recover the exact later pinned archive/hash or retained-inventory experiment. No historical failure was relabeled reproduced or passed.
+
+## Retention inventory
+
+- partitioned_analysis bounds source parsing but retains all findings, signals, warnings, assets and metric dictionaries globally. CompactTokens reduces token storage; it does not bound total observations.
+- engine retains those observations while deriving dependencies, claims, exact-body duplicate indexes and quality output. Its exact-body duplicate index also holds metric references until return.
+- code_quality.core created a second dictionary for every selected metric, plus per-path indexes, production metric references and symbol dictionaries. Duplication has existing work budgets; they remain unchanged.
+- publication has bounded ORM batches and encrypted receipts, but complete result/graph/snapshot serialization and several correlation indexes remain global. Queue/recovery and publication contracts are unchanged.
+- native helper resource limits are per process, not a coordinator-wide memory budget. The local cgroup filesystem is not writable; Windows Job Objects are unavailable on Linux. RLIMIT_AS must not be represented as a general process-tree committed-memory ceiling.
+
+## Implemented correction and ownership contract
+
+The inventory coordinator already creates disposable metric dictionaries separate from durable ParserArtifact JSON. It now explicitly transfers their ownership to global quality aggregation. Selected metric rows reuse those dictionaries; duplicate token arrays are released only after token-window duplication has completed. Unselected owned token arrays are released too. Symbol/index/source/observation collections are not truncated. Default callers retain the non-mutating copy behavior; implicit engine cache ownership transfer is rejected.
+
+Failure after consuming scratch metrics does not mutate durable parser artifacts; a retry reconstructs observations from tenant-scoped cache rows. No schema, tenant, source identity, admission, sandbox, timeout, cancellation or publication controls change. Existing interruption/cache/publication tests remain required. This reduces one peak; it does not make global aggregation bounded.
+
+## Executed profiling
+
+Raw per-stage Python allocation peaks, peak RSS, durations, output sizes/counts and SHA-256 values are committed in evidence/SCALE001_METRIC_STAGE.json. Command: `python -m scripts.profile_scale_metrics --count N` for 1000, 10000 and 50000. Each launches copy-control and two ownership runs, asserting identical output digests. Inputs are owned synthetic metric dictionaries, one inert file, zero parser artifacts and no publication. They are not real parser observations or a large-repository accuracy test. Copy-control measures the retained legacy projection behavior in the same code, not a replay of the full historical commit.
+
+Python 3.12 local measurements (bytes):
+
+| Metric rows | Copy Python peak | Owned Python peak | Copy peak RSS | Owned peak RSS |
+|---|---:|---:|---:|---:|
+| 1,000 | 3,266,419 | 2,381,611 | 19,816,448 | 18,640,896 |
+| 10,000 | 32,614,699 | 23,737,891 | 80,777,216 | 71,860,224 |
+| 50,000 | 163,250,283 | 118,859,779 | 342,495,232 | 284,823,552 |
+
+Each worker enforces 768 MiB RLIMIT_AS and has no helper subprocesses. RSS includes tracemalloc overhead and imports; sampling records cumulative process peak, not instantaneous stage RSS. This is not the historical Windows process-tree commit limit, a cgroup-enforced concurrent parser tree, or production throughput. Outputs match at each size across all three runs. Publication integrity is NOT EXERCISED by this microbenchmark.
+
+Tests verify full quality/duplication output equality, ownership identity, unchanged borrowed/cache token data, positive duplicate findings before token release and rejection of implicit cache transfer. CI retains the medium profile and preserves backend/PostgreSQL, real Linux sandbox, broker and browser jobs. Commit-specific final counts/status live in the draft PR; no previous head's green counts qualify this change.
+
+## Remaining acceptance gates
+
+Recover an authorized exact source archive plus byte/hash manifest (no application credentials needed), or agree an explicitly different pinned qualification input. Replay cold, warm and incremental analyses under an actual 768 MB process-tree limit with per-stage tree measurements. Require complete file/artifact accounting, deterministic ordered digests, unchanged claims/findings/edges/source identity, successful atomic publication, forced exhaustion/cancellation with no public pointer, and recovery in a fresh worker/session. Global observations, symbols, duplication indexes, graph and serialization need further bounded storage/iteration design before this gate can close. Synthetic 50,000 metrics do not satisfy it.
+
+The exact-body duplicate index in engine is also released immediately after its findings are emitted, before quality aggregation; its last-use lifetime is independently identifiable in the call graph. The microbenchmark does not measure that engine-wide saving. Final local focused selection: 78 passed; Ruff, compilation and diff checks passed. Current-head infrastructure/CI outcomes will be recorded in the draft PR.
+
+## Continuation: encrypted observation spill and full-workload resource gate
+
+Integration starting head: `243513ee9acb6e4ed66cd3582ba79dc5a787b084`. Earlier history and the contrary 500-file RSS result above remain valid. This continuation does not claim closure.
+
+### Workload reconciliation
+
+The authorized commit ZIP downloaded from `https://codeload.github.com/maninani12/OpenMetadata/zip/b1fab2bc21c63335dead4daaaa28194c9878e9bf` is **158,981,993 bytes**, SHA-256 **95747f22ebf3d01232b1592551bc2bc1866b9bbe7322dd3bf1a97028b0592257**. This independently matches the reported alternative, rather than the 157,126,481-byte historical archive with SHA-256 `027615f80245c4534f4af0270951ad7dc0418928440c5332522b46103ddfa914`. The historical archive is absent locally. This is explicitly a new qualification workload, not a reproduction of the historical byte input.
+
+No repacking, customer script execution, package installation, checkout hooks or source imports occur. The archive retains GitHub's top directory prefix. The required-isolation manifest pass hashes **all non-directory members**, including oversized content and symlink payload bytes, without extraction or following links. SHA-256/byte counts for every member are retained in canonical ordered JSONL; its whole-file digest, count and expanded bytes are checked against 21,636 / 330,420,155. Analysis uses the existing 512,000-byte parser limit and full inventory accounting, including explicit unsupported/size exclusions. This is not silent truncation or removal of those entries. Codeload may change archive bytes; SHA mismatch fails the gate and requires an explicitly documented new pin.
+
+### Retention findings and correction
+
+`analyze_inventory` held all partition signals (including nested symbol/flow data) and all raw metric dictionaries/token windows until global verification/publication. Metric ownership alone did not remove this residence. Exact-body duplication also retained references to complete metric dictionaries although its later consumers need only path and line.
+
+The coordinator now appends immutable typed signal and raw metric snapshots to separate **attempt-private encrypted SQLite spill stores**. SQLite uses unnamed temporary databases (already-unlinked files on tested Linux); scoped envelopes authenticate tenant/repository/inventory, store identity and ordinal, and no key, path or database connection reaches a parser. Each collection uses a 1 MiB SQLite page cache with mmap disabled, a 32,000,000-byte row budget (without tightening the existing maximum IPC envelope) and a 256,000,000-byte ciphertext budget. Full rows are decrypted individually. Duplication retains integer selected-row offsets and its pre-existing work budgets; it can retrieve prior token rows without retaining every token array. Exact-body duplicate groups retain path/line only. Ordered JSON checkpoint/graph consumers iterate lazily. Completed parser artifacts remain the independent durable retry authority. Ephemeral spill files are not recovery receipts and are closed on interruption; exhaustion produces an actionable failed-job diagnostic without publication. Disk filesystem metadata/unused pages add to ciphertext size, so this is not a literal total-disk cap.
+
+The final token-free quality metrics, selected/path/symbol indexes, findings, assets, global correlation, snapshot JSON and reconstructed generation receipts remain size-dependent. These are **still unresolved architecture**, not qualification assumptions. Encrypted spill is a coherent reduction of repository-wide raw payload retention, not a complete bounded global pipeline. Installed coordinator code remains trusted. Row mutation is explicitly unsupported; artifact data and parser cache are unchanged. Existing v1 checkpoints and generation receipts remain readable. No migration/schema change is introduced.
+
+### Enforced Linux experiment
+
+`.github/workflows/scale-qualification.yml` compares the exact integration baseline with the candidate, with the same owned profiling scripts copied into the baseline image (production modules untouched). Both use the same pinned ZIP. Each cold/warm attempt executes in a separate non-root Docker cgroup v2 with **memory.max=768000000**, **memory.swap.max=0**, network disabled, all capabilities dropped and no-new-privileges. The harness verifies Docker configuration, kernel counters and the inner limit; a missing prerequisite fails rather than skipping. Coordinator, archive helper and native parser descendants share this cgroup. SQLite is inside it; PostgreSQL/Redis validations remain separate service-backed regression jobs and are not falsely included in the envelope. Kernel cgroup charge includes page cache; sampled RSS and Python allocation peaks are different counters. Linux charge is not Windows committed-memory accounting.
+
+Outer kernel sampling retains `memory.current`, `memory.peak`, `memory.events`, swap and cgroup process membership. Inner sampling retains coordinator/child RSS and stage names. The manifest pass also crosses the production SEC-002 archive boundary; no untrusted ZIP parser runs in the coordinator. No filesystem/network sandbox or resource budget is relaxed.
+
+The current qualification driver runs full cold and warm capture/analysis/publication, failing on actual application/resource errors. Incremental, forced OOM recovery, stage cancellation, fresh-worker restart and concurrent-tenant scenarios are explicitly **NOT_RUN** until implemented on a completing workload; the driver cannot award full qualification while these are missing and exits unsuccessfully. Complete graph/claim/evidence equivalence remains a mandatory gate, not an assumed consequence of matching metric output. CI preserves sanitized JSON/JSONL only, never source bytes, encrypted tenant databases, encryption keys or full environment dumps. Seven-day artifact retention is not permanent evidence retention.
+
+At implementation time: local cgroup mount read-only; Docker/PostgreSQL/Redis unavailable; required Landlock unavailable. Local owned-fixture development-mode tests are not security enforcement evidence. Initial existing focused regression selection: **80 passed**. Additional tests and actual CI/resource results must be recorded after execution. No large-workload pass is claimed by this guide.
+
+### Full constrained experiment: actual failure, not memory qualification
+
+Head `9309c026449dba712fa14037e0b0322148f4d658` has successful regression workflow [40189259310](https://github.com/maninani12/ProjectTrace/actions/runs/40189259310): **692 backend passed / 2 Windows skips**, **77 Linux acceptance/regressions**, **4 real broker cases**, **18 browser passed / 10 preserved fixture skips**, **49 frontend units**, **33 benchmarks**. Ruff/compilation, types/build, migrations/seed, Python/npm audits and both Docker builds passed. These results apply to that head only. Expected FK rejection logs belong to passing tenant-constraint tests.
+
+The separate [constrained workflow 40189259317](https://github.com/maninani12/ProjectTrace/actions/runs/40189259317) **failed on both revisions during CAPTURING**, before global analysis. Both manifest passes succeeded in real Linux isolation under memory.max **768,000,000** and swap.max **0**. Full canonical per-file JSONL SHA-256: **081071ce099d103270175ab53ef12842586d7b0f1ee0c58dadbc3654a2246a89**, independently identical across both runners: **21,636 entries, 330,420,155 expanded bytes, 38 symlinks, 32 oversized regular files**. The complete hash-only manifest is retained as deterministic gzip in `docs/evidence/SCALE001_OPENMETADATA_MANIFEST.jsonl.gz`; raw experiment receipts are in `SCALE001_CGROUP_INTAKE_FAILURE.json`. No source payload or key is committed.
+
+| Initial capture | Baseline 243513ee | Candidate 9309c026 |
+|---|---:|---:|
+| Kernel memory.peak bytes | 409,628,672 | 396,099,584 |
+| Sampled coordinator RSS peak | 116,838,400 | 116,375,552 |
+| Sampled helper RSS peak | 111,861,760 | 126,173,184 |
+| Duration seconds / exit | 150.762 / 1 | 150.890 / 1 |
+| Error / stage | ARCHIVE_HELPER_TIMEOUT / CAPTURING | ARCHIVE_HELPER_TIMEOUT / CAPTURING |
+| OOM / pointers / artifacts | 0 / 0 / 0 | 0 / 0 / 0 |
+| SQLite integrity / FK violations | ok / 0 | ok / 0 |
+
+The manifest worker finished in **13.143 / 13.454 seconds**. Code inspection confirms the fixed archive deadline also counts time suspended at `yield` while downstream lexical classification, encryption and persistence run. The continuation's qualification adapter first drains validated entries into bounded encrypted replay rows (512 MB ciphertext / 2 MB row budgets), then calls unchanged production `capture` from bounded replay. Both revisions use the same adapter; baseline production modules are untouched. The helper's time, CPU, memory, filesystem and network budgets are unchanged. This is an analysis qualification adapter, **not a claim that the application's direct ZIP-to-capture backpressure defect is repaired**.
+
+### Continued bounded working storage and recovery contract
+
+The finding working map now uses encrypted row storage rather than a repository-wide second dictionary of full finding JSON. Its existing 250-object ORM cache, fenced pending updates, deterministic order and serialized v1 receipt representation remain compatible. Encoders iterate snapshots without constructing another complete finding list. Raw signals/metrics and finding working rows are attempt-private; parser artifacts and encrypted generation receipts remain the durable recovery authority. Linux unnamed SQLite files were observed already unlinked while live and tested through owned-process SIGKILL; kernel descriptor cleanup reclaims them. No Windows cleanup equivalence is claimed.
+
+A mandatory owned two-child allocation test verifies that the shared cgroup actually denies aggregate memory, separately from the application analysis. It is **envelope enforcement evidence, not application exhaustion/recovery evidence**. The harness also performs read-only post-container-exit DB checks. Keys remain in a private 0600 fixture key file for later replay and are excluded from uploads. No source, DB or key artifact is uploaded. The cold/warm/incremental/cancellation/fresh-worker/concurrent-tenant matrix remains required; this driver cannot award full qualification while scenarios are missing.
+
+The workspace reset during continuation. Published head 9309c026 and its CI artifacts were recovered into a separate worktree, preserving the older local PR #3 checkout. Unpublished code was reconstructed and retested; original uncaptured local profiling files were unavailable. Previous observed small-workload results must not be represented as newly recovered raw files. New benchmark receipts are generated afresh where feasible.
+
+**Remaining architecture:** token-free metric/symbol/output vectors, global correlation/graph structures, snapshot JSON, checkpoint buffering/encryption, and joined receipt restoration remain size-dependent. A passing small workload or regression suite does not close SCALE-001. New current-head CI/cgroup evidence must be evaluated before the final verdict.
+
+### Recovered-workspace validation of the reconstructed revision
+
+Local generation/auth/repository/storage selection: **70 passed** (before the additional read-protocol case); latest dedicated storage/comparison/manifest cases pass, including membership/reverse iteration and preservation of JavaScript parser-symbol identity. Ruff/compilation/diff checks pass. The local required Linux probe actually failed closed with LANDLOCK_ABI_3_REQUIRED; cgroup is read-only and Docker/PostgreSQL/Redis executables are absent. Only CI can qualify active enforcement here.
+
+Fresh 100-file / 10-function benchmark: all cold/warm/one-file-change snapshots completed with 1,000 findings, 1,000 metrics, 2,108/2,108/2,107 graph nodes, 3,303 edges per snapshot, and 101 final parser artifacts. Canonical hashes of all scoped rows, complete snapshot/quality projections, source inventories and parser artifacts match. The comparator retains every edge/row and rejects ambiguous snapshot identities. Unknown fields named performance are retained; only known generated timing/spill diagnostics are excluded. Tests deliberately alter edges, claims, metrics, source hashes and artifacts and detect mismatches.
+
+| Owned small fixture | Baseline cumulative parent RSS | Final candidate RSS | Baseline / candidate duration |
+|---|---:|---:|---:|
+| cold | 221,904,896 | 227,766,272 | 77.939 / 71.295 s |
+| warm | 234,213,376 | 246,579,200 | 71.574 / 68.493 s |
+| one_file_change | 266,199,040 | 274,554,880 | 74.456 / 73.906 s |
+
+**No whole-pipeline memory improvement is demonstrated by this small fixture.** Python 3.12.14, cProfile enabled, development mode, zero helpers, no memory enforcement. Baseline ran concurrently with the provisional candidate; final candidate ran subsequently, so durations are not throughput comparisons. Raw receipts, profiling hotspots, counts and complete semantic fingerprints are committed in docs/evidence/SCALE001_PIPELINE_100.json. This is compatibility/diagnostic evidence, not large-repository qualification. The Linux capped workflow remains authoritative.
+
+### Actual analysis under the shared limit (12a8e14e)
+
+Regression workflow **40210108872 succeeded**: **705 backend passed / 2 Windows skips**, **77 Linux acceptance/regressions**, **4 broker**, **18 full browser passed / 10 preserved skips** plus **4 focused**, **49 frontend**, **33 benchmarks**; migrations, builds, lint/compile/types and both dependency audits passed. These are verified results for 12a8e14e.
+
+Constrained workflow **40210109062 failed**. The encrypted intake replay completed: **21,636 inventory entries, 21,269 retained text entries, 330,420,155 declared bytes**, 324,054,740 replay ciphertext bytes. Both actual kernels enforced memory.max **768,000,000**, swap.max **0**. The owned two-child test genuinely triggered kernel OOM kills in the shared envelope; it is not an application recovery test.
+
+| Full-workload attempt | Baseline 243513ee | Candidate 12a8e14e |
+|---|---|---|
+| Stage reached | ANALYZING | ANALYZING |
+| Kernel memory.peak | 768,000,000 | 768,000,000 |
+| Exit / OOM kill | 137 / yes | 1 / no |
+| Retained valid parser artifacts | 3,747 | 5,327 |
+| Application job | Interrupted ANALYZING | FAILED / ANALYSIS_OBSERVATION_BUDGET |
+| Published pointers / generations | 0 / 0 | 0 / 0 |
+| SQLite integrity / FK errors | ok / 0 | ok / 0 |
+
+The candidate rejected its spill budget safely after **1,153.644 seconds total sampled experiment duration**, rather than completing. Its sampled coordinator RSS peak was **482,889,728**, helper RSS peak **143,265,792**, instantaneous sampled tree RSS peak **620,978,176** bytes. Those RSS peaks occur at different times; do not add individual peaks or equate them to cgroup charge. Raw stage/kernel/RSS samples and post-exit checks are committed in `SCALE001_CGROUP_40210109062.json` and `SCALE001_CGROUP_40210109062_MEMORY.jsonl.gz`. Warm/incremental/cancellation/fresh-worker/concurrent-tenant/full-output-equivalence are **NOT_RUN** for the large workload. The interrupted baseline is not a valid complete golden result. **Verdict at this head: BLOCKED.**
+
+The next bounded correction also spills pre-quality finding payloads (previously resident throughout parsing). A verified 256 MB collection-budget rejection motivates testing an explicitly configured **512,000,000-byte per-collection disk budget**; the process-tree memory limit remains 768,000,000 with zero swap. Default spill budget remains 256 MB, configurable up to the existing 2 GB upper bound. This changes disk allowance, not worker RAM or parser budgets. Metadata/index/free-page overhead is additional disk use. Failure diagnostics now include fixed collection/budget/count fields and owned stack module/function/line only, never source text, locals or credentials.
+
+A separate observed cost regression required correction: with 1,001 owned typed signals and 20 claims, repeated full scans decrypted **40,040 rows** (0.482 s, plain-list control 0.0013 s). Scoped HMAC-tagged type/exact/import-root indexes reduce that case to **20 decryptions** (0.0020 s), with identical complete verdicts/fingerprints/evidence. Verifiers still apply their original predicates, preserve every match/duplicate and include every affirmative authentication mode. Unknown evidence remains unknown. The index values are not plaintext. This is a typed-result index, not an uncontained source parser. Raw cost receipts are in `SCALE001_SIGNAL_LOOKUP.json`; this does not establish large-repository throughput.
+
+Local index/auth/storage selection: **57 passed**; broader current streaming/repository/quality/auth selection: **118 passed**; generation/cache/index selection: **95 passed** (overlapping selections, do not sum). New current-head CI and full constrained results remain mandatory. Global quality/output/correlation/serialization architecture is still not fully bounded; increasing disk allowance must not be presented as closing SCALE-001.
+
+The post-correction owned 20-file cold/warm/one-file-change run also completes with identical complete semantic fingerprints against 243513ee (source inventories, parser artifacts, snapshot/quality projections and every scoped evidence/claim/finding/dependency/node/edge). Raw receipts are retained in `SCALE001_STREAM_EQUIVALENCE_20.json`. It has no memory enforcement and uses development mode on owned inert input; it is not the large qualification. No rows are filtered to obtain equality.
+
+
+### Continued constrained run at 204e4481: measured native metric storage exhaustion
+
+[Run 40213479233](https://github.com/maninani12/ProjectTrace/actions/runs/40213479233) failed on both revisions under the same verified **768,000,000-byte cgroup / zero swap**. Complete capture and the unchanged per-file manifest succeeded. The candidate reached **11,797 durable parser artifacts** before **98,329 metric rows** would exceed its **512,000,000-byte ciphertext budget** (attempted 512,001,320 bytes, collection NATIVE_METRICS). The owned stack identifies `partitioned_analysis.parse_partition -> metrics.extend -> EncryptedRows.append`. It had not reached global verification/quality/publication. This is a storage-budget rejection, not a kernel OOM or an attribution of all memory to metrics.
+
+| Full cold attempt | Baseline 243513ee | Candidate 204e4481 |
+|---|---:|---:|
+| Kernel memory.peak bytes | 768,000,000 | 768,000,000 |
+| Sampled coordinator RSS peak bytes | 693,317,632 | 526,123,008 |
+| Sampled helpers RSS peak bytes | 149,553,152 | 148,852,736 |
+| Sampled instantaneous namespace RSS peak bytes | 757,764,096 | 661,630,976 |
+| Retained parser artifacts | 3,747 | 11,797 |
+| Exit / kernel OOM kills | 137 / 1 | 1 / 0 |
+| Published pointers / generations | 0 / 0 | 0 / 0 |
+| SQLite integrity / FK errors | ok / 0 | ok / 0 |
+
+The baseline's last inner sample was **466.563 seconds**, without a completed receipt because it was killed. The candidate's complete sampled experiment lasted **1,265.813 seconds**, including intake/capture. Different progress and incomplete outputs prohibit presenting these peaks/durations as a completed whole-pipeline before/after improvement. The baseline job remains interrupted ANALYZING; the candidate is FAILED / ANALYSIS_OBSERVATION_BUDGET. Neither is fresh-worker recovery evidence. The subsequent large-workload scenarios remain NOT_RUN.
+
+Raw JSON receipts plus **23,228 stage/RSS/kernel samples** are committed as `SCALE001_CGROUP_40213479233.json` and `SCALE001_CGROUP_40213479233_MEMORY.jsonl.gz`. Original [baseline artifact 12607135659](https://github.com/maninani12/ProjectTrace/actions/runs/40213479233/artifacts/12607135659) and [candidate artifact 12606589753](https://github.com/maninani12/ProjectTrace/actions/runs/40213479233/artifacts/12606589753) have seven-day retention; committed evidence preserves sanitized counts/counters, not source, databases or keys. **Verdict for 204e4481: BLOCKED.**
+
+The next correction losslessly compresses the coordinator's own bounded JSON spill envelopes before Fernet authentication. Native duplication tokens are retained completely, with original values, lines and order; durable parser-cache records and public schemas remain unchanged. This addresses the measured verbose metric-storage failure without increasing RAM, row, disk or parser budgets. Each row is decompressed only after authentication, with a hard original row-byte ceiling; truncated streams, trailing bytes, unknown framing and oversized decoded content are rejected. No compressed repository input is passed to this trusted decoder: its inputs are exclusively authenticated envelopes emitted by the owned row store. This decoder/JSON codec is part of the coordinator's trusted computing base, not an extension of the SEC-002 untrusted-parser claim. Temporary stores never survive as durable receipt formats, so no persisted format migration is needed.
+
+Local compression/storage/index/quality-ownership/comparison tests: **65 passed** on owned input in explicit development mode; Ruff/compilation/diff checks passed. An initial required-mode invocation produced **64 passed / 1 failed**, because the local kernel rejected LANDLOCK_ABI_3_REQUIRED before the fixture could be captured; that invocation is not an enforcement pass. The required-mode CI/security gates remain unchanged. Compression benefit on an owned token row and complete round-trip are tested; only another full constrained run can establish its real-workload effect. Complete bounded quality/output/correlation/graph/receipt architecture, application recovery, full output equivalence and production qualification remain open.
+
+Standard [CI 40213479256](https://github.com/maninani12/ProjectTrace/actions/runs/40213479256) subsequently succeeded for **204e4481**: **743 backend passed / 2 Windows skips**, **77 required Linux cases**, **4 real broker cases**, **18 full browser passed / 10 preserved skips** plus **4 focused**, **49 frontend units / 12 files**, **33 analyzer cases**. Ruff/compilation, TypeScript/build, fresh migration cycle/seed and preservation tests, both audits (no known Python / zero npm vulnerabilities) and both Docker images passed. These results precede the compressed-envelope follow-up and do not qualify it. The completed regression workflow does not override the failed constrained workflow.
+
+Compression follow-up publication/cache/generation/authentication/Engineering Changes selection: **113 passed / 1 Windows extended-path skip** in 208.97 s (development mode on owned fixtures). Two integrity-gate tests also passed. A separate 20-file invocation of the older owned benchmark script reported completion but produced malformed local SQLite files on **both unchanged 243513ee and the compressed candidate** (Python 3.12.14 / SQLite 3.53.1 / overlay filesystem). Those new timing/equivalence measurements are rejected; private fixture files are preserved for diagnosis, not uploaded. No compression causality or production database defect has been established. The benchmark now requires post-run SQLite integrity and foreign-key validation before writing MEASURED_SYNTHETIC_LOCAL. Raw sanitized statuses are retained in SCALE001_COMPRESSED_FOLLOWUP_LOCAL.json. Earlier valid equivalence measurements remain explicitly scoped to their earlier commits.
+
+Fresh sequential guarded 8-file and 20-file benchmark runs complete with post-run SQLite integrity ok and zero FK violations, independently rechecked after process exit. They use one-function owned files, cold/eight-file HEAD, development mode and a per-process guard, not the declared cgroup workload or the earlier ten-function equivalence fixture. The initial malformed local files were not repaired/deleted or used as baselines, and their cause remains unresolved; successful fresh fixtures do not prove that intermittent integrity issue corrected.
+
+### Previous constrained attempt: run 40961124902 at head 0d9a52e
+
+The pinned input and manifest succeeded in both runners. The full cold attempt remains **BLOCKED** on both revisions; neither completed analysis or published a generation/public pointer. Warm, incremental, exhaustion/recovery, cancellation, fresh-worker recovery and concurrent-tenant scenarios were **NOT_RUN**.
+
+| Counter | Baseline 243513ee | Candidate 0d9a52e |
+|---|---:|---:|
+| Enforced cgroup `memory.peak` | 768,000,000 bytes | 768,000,000 bytes |
+| Swap limit / observed use | 0 / 0 bytes | 0 / 0 bytes |
+| Sampled coordinator RSS peak | 702,382,080 bytes | 510,230,528 bytes |
+| Sampled child RSS peak | 126,083,072 bytes | 143,257,600 bytes |
+| Sampled namespace RSS peak | 744,685,568 bytes | 646,496,256 bytes |
+| Retained parser artifacts after exit | 3,747 | 10,999 |
+| Exit status | 137 | 1 |
+| Stage/outcome | ANALYZING / interrupted | ANALYZING / `ANALYSIS_TIME_BUDGET` |
+| Experiment duration recorded | No complete receipt | 2,071.177 seconds |
+| Published pointers / generations | 0 / 0 | 0 / 0 |
+| SQLite integrity / FK violations | ok / 0 | ok / 0 |
+
+**OOM evidence discrepancy:** Docker inspect reports `OOMKilled=true` for the baseline container, but *all 7,667 sampled cgroup-kernel rows* report `oom=0`, `oom_kill=0`, and `oom_group_kill=0`; the largest observed cgroup `max` counter is 2,320. The candidate reports `OOMKilled=false` and zero cgroup OOM counters as well, while `memory.max` events reach 8,141. Exit 137 by itself does not establish a kernel OOM kill, so the baseline classification remains unresolved pending reconciliation of Docker state and cgroup evidence. No OOM cause is inferred from these records alone.
+
+The common input is the authorized OpenMetadata commit `b1fab2bc21c63335dead4daaaa28194c9878e9bf`, archive 158,981,993 bytes / SHA-256 `95747f22ebf3d01232b1592551bc2bc1866b9bbe7322dd3bf1a97028b0592257`. The full manifest digest is `081071ce099d103270175ab53ef12842586d7b0f1ee0c58dadbc3654a2246a89`: 21,636 entries, 21,269 retained text entries, and 330,420,155 declared bytes. This is an explicitly recovered alternative, not the unavailable historical archive `027615f8…`. The baseline and candidate never produced complete outputs, so counts, RSS and timing cannot be treated as a valid completed-workload performance or output-equivalence comparison.
+
+- [Baseline artifact (ID 12935363866)](https://github.com/maninani12/ProjectTrace/actions/runs/40961124902/artifacts/12935363866), digest `sha256:f29fe7e74c01e873f7da93cc851d4e16cee942e8f52c90096cb53fc6fcfd8d94`.
+- [Candidate artifact (ID 12937342992)](https://github.com/maninani12/ProjectTrace/actions/runs/40961124902/artifacts/12937342992), digest `sha256:88328209fd8f8a1629d0b7c8f6842c939439e9eebd4ad63e81eda3a809828625`.
+- Permanent sanitized counters and outcome metadata: `docs/evidence/SCALE001_CGROUP_40961124902.json`. Seven-day artifacts are transient; the permanent file excludes source bytes, database contents and keys.
+
+Regression workflow [40961124908](https://github.com/maninani12/ProjectTrace/actions/runs/40961124908) passed validation, browser, parser-isolation and broker-recovery jobs for head 0d9a52e. It does not override the constrained-workload failure.
+
+A follow-up optimization removes a redundant second decrypt/decompress scan of encrypted metric rows. Quality aggregation now records source-row offsets while deriving the token-free metrics in one pass, then passes those offsets to a lazy selected-row view for duplication analysis. An output-parity regression compares full quality findings/results against the list-backed control and rejects a second predicate scan. This targets CPU/I/O cost only; it does not close the global-memory architecture gap, and no time, RAM, parser or spill budget is raised.
+
+### Bounded JSON serialization fast path — follow-up implementation
+
+The encrypted row append path now computes a conservative upper bound for small ASCII-escaped JSON envelopes. When the bound is at most 4,000,000 bytes and within the unchanged per-row quota, it uses the C-backed `json.dumps` encoder. Unknown or larger structures retain the original incremental `JSONEncoder.iterencode` path, which enforces the exact `row_bytes` limit before appending each fragment. The same compressed-and-authenticated framing remains in place; no row is discarded, and neither the per-row ceiling nor the 512,000,000-byte collection experiment allowance is increased.
+
+A local synthetic microbenchmark of a representative 39,726-byte metric envelope (Fernet + zlib level 1 included) measured 395 rows/s for the original fragment loop and 653 rows/s for the bounded preflight/C-encoder path, approximately 1.65× faster. This is an illustrative microbenchmark, **not** full-workload evidence; the new CI test checks byte-for-byte serialization parity for both the small fast path and the larger streaming fallback, plus preservation of the row budget.
+
+The previous constrained failure occurred during `parse_partition`, before the later whole-repository quality aggregation. This serialization improvement targets work performed as encrypted observations are appended during parsing; full constrained qualification remains required to establish whether the improvement is sufficient.
+
+### Previous constrained attempt: run 41021421757 at head fe61753
+
+The full cold workload remains **BLOCKED**. The pinned archive and full inventory manifest succeeded, but the baseline container exited 137 at 3,747 parser artifacts and the candidate reached `ANALYZING / ANALYSIS_TIME_BUDGET` at 11,597 parser artifacts. Neither produced a complete analysis or published a generation/pointer. Warm, incremental, cancellation, fresh-worker recovery, exhaustion recovery, concurrent-tenant and complete output-equivalence scenarios were **NOT_RUN**.
+
+| Counter | Baseline 243513ee | Candidate fe61753 |
+|---|---:|---:|
+| Enforced `memory.max` / `memory.peak` | 768,000,000 / 768,000,000 bytes | 768,000,000 / 768,000,000 bytes |
+| Swap limit / observed use | 0 / 0 bytes | 0 / 0 bytes |
+| Sampled coordinator RSS peak | 693,837,824 bytes | 536,010,752 bytes |
+| Sampled child RSS peak | 126,152,704 bytes | 143,360,000 bytes |
+| Sampled namespace RSS peak | 748,519,424 bytes | 671,895,552 bytes |
+| Main-workload cgroup `memory.events.max` | 2,332 | 8,649 |
+| Main-workload `oom` / `oom_kill` maxima | 0 / 0 | 0 / 0 |
+| Parser artifacts after exit | 3,747 | 11,597 |
+| Exit / container `OOMKilled` | 137 / true | 1 / false |
+| Failure stage / outcome | ANALYZING / interrupted | ANALYZING / `ANALYSIS_TIME_BUDGET` |
+| Recorded full attempt duration | Not available (main process was terminated) | 2,065.013 seconds |
+| Published pointers / generations | 0 / 0 | 0 / 0 |
+| Post-exit SQLite integrity / FK violations | ok / 0 | ok / 0 |
+
+**Baseline OOM classification is unresolved:** Docker reports `OOMKilled=true` and exit 137, yet all 1,653 main-workload cgroup samples have `oom=0`, `oom_kill=0`, and `oom_group_kill=0`. This disagrees with the container state and cannot be called a kernel-counter-confirmed OOM from this evidence alone. The separate owned-child resource probe did record kernel OOM events, showing that probe is distinct from the baseline workload. Keep the baseline classification as an explicit discrepancy.
+
+The candidate ran for about 1,814 seconds in `ANALYZING` after capture, then failed its existing 1,800-second analysis budget. The candidate has 598 more parser artifacts than the previous candidate attempt (10,999), but the runs did not complete and this is not sufficient to claim a causal speedup or whole-workload improvement. The common workload remains the 158,981,993-byte authorized ZIP with SHA-256 `95747f22ebf3d01232b1592551bc2bc1866b9bbe7322dd3bf1a97028b0592257`; manifest SHA-256 `081071ce099d103270175ab53ef12842586d7b0f1ee0c58dadbc3654a2246a89`; 21,636 entries, 21,269 retained text entries, and 330,420,155 declared bytes. It is not the unavailable historical archive input.
+
+- [Baseline artifact (ID 12962211821)](https://github.com/maninani12/ProjectTrace/actions/runs/41021421757/artifacts/12962211821), digest `sha256:f2a71fe52d27b56372724241ac0e4c2eb06d6b027f6faa383959367387a6c262`.
+- [Candidate artifact (ID 12963157729)](https://github.com/maninani12/ProjectTrace/actions/runs/41021421757/artifacts/12963157729), digest `sha256:2b37856d904a367c64cdfdf74e618e7b27c5d1d6585216d995ed1845b0d51c1c`.
+- Permanent sanitized receipt: `docs/evidence/SCALE001_CGROUP_41021421757.json`. Original GitHub workflow artifacts have seven-day retention; this committed summary excludes source bytes, database contents and encryption keys.
+
+Regression workflow [41021421697](https://github.com/maninani12/ProjectTrace/actions/runs/41021421697) passed all four jobs. The backend suite reported **755 tests, 0 failures, 0 errors, 2 skips**; compileall/Ruff, browser acceptance, required Linux parser isolation and broker recovery passed. These regressions do not qualify the constrained workload.
+
+### Next diagnostic increment
+
+The native parser loop redundantly reevaluated the same path/source IaC predicate between candidate collection, per-file analysis and final IaC attachment. A new regression asserts one classification per source dictionary path while preserving existing behavior for metadata-backed inventories. The qualification driver now records periodic aggregate `Performance` snapshots and a final post-failure snapshot in sanitized receipts; file paths and slowest-file details are excluded. This should expose component counts/durations on a timeout or capture progress before an externally terminated baseline. It is diagnostic/incremental work, not a substitute for full constrained pass, output equivalence or recovery gates.
+
+
+
+### Latest constrained attempt: run 41026991220 at head f50fb0c
+
+The run remains **BLOCKED**. Both jobs used the same recovered, pinned OpenMetadata archive and full manifest, but the historical archive hash was not reproduced. The baseline ended at 3,747 parser artifacts after a cgroup memory kill; unlike the earlier run's unresolved discrepancy, this run's final kernel cgroup sample records `oom=2` and `oom_kill=2`, consistent with Docker's `OOMKilled=true`. The candidate did not record an OOM event: it reached the existing `ANALYSIS_TIME_BUDGET` after about 1,803 seconds in `ANALYZING`, with 14,287 parser artifacts retained. SQLite integrity was `ok`, foreign-key violations were zero, and neither side published a generation or pointer.
+
+| Counter | Baseline | Candidate |
+|---|---:|---:|
+| Enforced cgroup memory max / swap max | 768,000,000 / 0 bytes | 768,000,000 / 0 bytes |
+| Sampled coordinator RSS peak | 694,325,248 bytes | 501,989,376 bytes |
+| Sampled child RSS peak | 125,992,960 bytes | 143,368,192 bytes |
+| Sampled namespace RSS peak | 751,857,664 bytes | 638,144,512 bytes |
+| Sampled cgroup memory peak | 768,000,000 bytes | 768,000,000 bytes |
+| Final kernel cgroup `oom` / `oom_kill` | 2 / 2 | 0 / 0 |
+| Parser artifacts after exit | 3,747 | 14,287 |
+| Analysis-stage time before failure | about 521 seconds | about 1,803 seconds |
+| Outcome | exit 137; Docker `OOMKilled=true` | exit 1; `ANALYSIS_TIME_BUDGET` |
+| Published pointers / generations | 0 / 0 | 0 / 0 |
+| Post-exit SQLite integrity / FK violations | ok / 0 | ok / 0 |
+
+The candidate completed 14,287 artifacts during approximately 1,803 analysis seconds, versus 11,597 over about 1,814 analysis seconds in the previous candidate attempt. This is roughly 23% more artifacts per analysis-second in a non-completing run; it is a directional observation, not a completed end-to-end speedup proof. The aggregate timings overlap: `PARTITION_PARSE` accumulated about 1,745.6 seconds over 153 calls, while `CONTAINED_NATIVE` accumulated about 809.5 seconds. This leaves enough time outside that native worker boundary to justify separate timings for the language, IaC and lexical-description helper boundaries before selecting a production optimization. Do not sum component wall times as if they were independent.
+
+The workload was 21,636 archive entries, 21,269 retained text entries and 330,420,155 declared bytes; manifest SHA-256 remains `081071ce099d103270175ab53ef12842586d7b0f1ee0c58dadbc3654a2246a89`. The separate manifest-only run passed, but full cold equivalence, warm, incremental, exhaustion-recovery, cancellation, fresh-worker recovery and concurrent-tenant scenarios remain **NOT_RUN**.
+
+- [Baseline artifact (ID 12964438467)](https://github.com/maninani12/ProjectTrace/actions/runs/41026991220/artifacts/12964438467), digest `sha256:fd352ed375b4d18771f45c4a02d850e19b66bf7cfc34822785eac8265a0201e3`.
+- [Candidate artifact (ID 12965731557)](https://github.com/maninani12/ProjectTrace/actions/runs/41026991220/artifacts/12965731557), digest `sha256:f05913cb37a568280f0f35a1064767fa35093094fa0aa0c9bd79609ef32bad7c`.
+- Permanent sanitized receipt: `docs/evidence/SCALE001_CGROUP_41026991220.json`. Source contents, database contents, source paths in slow-file records and encryption keys are excluded.
+
+### Next diagnostic increment: measure non-native helper boundaries
+
+The qualification driver now records aggregate wall duration and count for the contained `languages`, `iac` and `lexical_describe` sandbox calls under `SANDBOX_BOUNDARY_*` components. `CONTAINED_NATIVE` already measures the native boundary. The wrapper is limited to the qualification driver, is restored in `finally`, and adds no payloads or file paths to receipts; a regression protects the aggregate-only sanitization. Next run will reveal which helper boundary consumes the previously unaccounted portion of `PARTITION_PARSE`. Keep the cgroup and analysis-time limits unchanged until the measurements support a specific, compatibility-preserving optimization.

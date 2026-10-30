@@ -1,0 +1,4483 @@
+{
+  "scope": "OWNED_INERT_20_FILE_COLD_WARM_INCREMENTAL; no memory enforcement; development isolation",
+  "baseline_commit": "243513ee9acb6e4ed66cd3582ba79dc5a787b084",
+  "before": {
+    "fixture": "NON_EXECUTING_PYTHON_FUNCTIONS",
+    "archive_sha256": null,
+    "component": null,
+    "files": 20,
+    "functions_per_file": 10,
+    "source_bytes": 9200,
+    "analysis_limit_seconds": 900,
+    "cold_scope": "EMPTY_APPLICATION_CACHE; OS_CACHE_UNCONTROLLED",
+    "runs": [
+      {
+        "mode": "cold",
+        "wall_seconds": 9.508813,
+        "parent_cpu_seconds": 9.409731,
+        "helper_cpu_seconds": 0.0,
+        "helper_cpu_scope": "Owned descendants discovered during 100 ms samples; short-lived undiscovered descendants can be missed.",
+        "sampled_process_tree_peak_rss_bytes": 125341696,
+        "parent_lifetime_peak_rss_bytes": null,
+        "helper_concurrency_observed": 0,
+        "helper_calls": 0,
+        "helper_wall_seconds_overlapping": 0.0,
+        "rss_sample_interval_seconds": 0.1,
+        "database": {
+          "queries": 6161,
+          "seconds": 0.20391283797926008,
+          "flushes": 382,
+          "max_flush_rows": 208
+        },
+        "state": "COMPLETED",
+        "job_duration_ms": 9037.64,
+        "performance": {
+          "schema": "projecttrace-performance-v1",
+          "clock": "WALL_PERF_COUNTER",
+          "stage_seconds": {
+            "VALIDATING": 0.010377,
+            "PARSING": 0.006574,
+            "ANALYZING": 0.128778,
+            "EXTRACTING_CLAIMS": 0.004237,
+            "VERIFYING": 0.545745,
+            "BUILDING_EVIDENCE": 2.223329,
+            "CORRELATING": 4.937327,
+            "FINALIZING": 1.178549,
+            "COMPLETED": 0.000176
+          },
+          "components": {
+            "CACHE_LOOKUP": {
+              "count": 1,
+              "seconds": 0.001699,
+              "max_seconds": 0.001699
+            },
+            "PYTHON_NATIVE": {
+              "count": 20,
+              "seconds": 0.067026,
+              "max_seconds": 0.004025
+            },
+            "FILE_POSTPROCESS": {
+              "count": 20,
+              "seconds": 0.012325,
+              "max_seconds": 0.000971
+            },
+            "PARTITION_IDENTITY": {
+              "count": 1,
+              "seconds": 0.022447,
+              "max_seconds": 0.022447
+            },
+            "PARTITION_PARSE": {
+              "count": 1,
+              "seconds": 0.106794,
+              "max_seconds": 0.106794
+            },
+            "CACHE_WRITE": {
+              "count": 1,
+              "seconds": 0.004872,
+              "max_seconds": 0.004872
+            },
+            "DEPENDENCIES": {
+              "count": 1,
+              "seconds": 0.000153,
+              "max_seconds": 0.000153
+            },
+            "CLAIM_EXTRACTION": {
+              "count": 1,
+              "seconds": 1.7e-05,
+              "max_seconds": 1.7e-05
+            },
+            "CLAIM_VERIFICATION": {
+              "count": 1,
+              "seconds": 2e-06,
+              "max_seconds": 2e-06
+            },
+            "QUALITY_AGGREGATION": {
+              "count": 1,
+              "seconds": 0.001694,
+              "max_seconds": 0.001694
+            },
+            "FINAL_IDENTITY": {
+              "count": 1,
+              "seconds": 0.000214,
+              "max_seconds": 0.000214
+            },
+            "EVIDENCE_FILE": {
+              "count": 20,
+              "seconds": 0.051017,
+              "max_seconds": 0.003674
+            },
+            "EVIDENCE_FILES": {
+              "count": 1,
+              "seconds": 0.051437,
+              "max_seconds": 0.051437
+            },
+            "PUBLISH_CLAIMS": {
+              "count": 1,
+              "seconds": 0.003764,
+              "max_seconds": 0.003764
+            },
+            "PUBLISH_FINDINGS": {
+              "count": 1,
+              "seconds": 0.381809,
+              "max_seconds": 0.381809
+            },
+            "PUBLISH_DEPENDENCIES": {
+              "count": 1,
+              "seconds": 0.003319,
+              "max_seconds": 0.003319
+            },
+            "FINDING_CORRELATION": {
+              "count": 1,
+              "seconds": 1.463509,
+              "max_seconds": 1.463509
+            },
+            "FINDING_HISTORY": {
+              "count": 1,
+              "seconds": 0.659156,
+              "max_seconds": 0.659156
+            },
+            "ARTIFACT_GRAPH": {
+              "count": 1,
+              "seconds": 0.294142,
+              "max_seconds": 0.294142
+            },
+            "CONFIGURATION_GRAPH": {
+              "count": 1,
+              "seconds": 0.135868,
+              "max_seconds": 0.135868
+            },
+            "FUNCTION_GRAPH": {
+              "count": 1,
+              "seconds": 0.692472,
+              "max_seconds": 0.692472
+            },
+            "OWNERSHIP_GRAPH": {
+              "count": 1,
+              "seconds": 0.14674,
+              "max_seconds": 0.14674
+            },
+            "POLICY_PROJECTION": {
+              "count": 1,
+              "seconds": 0.606025,
+              "max_seconds": 0.606025
+            },
+            "IMPACT_GRAPH": {
+              "count": 1,
+              "seconds": 0.182668,
+              "max_seconds": 0.182668
+            }
+          },
+          "counters": {
+            "source_blob_reads": 20,
+            "source_cache_hits": 20,
+            "parser_cache_hits": 0,
+            "parser_cache_misses": 20,
+            "global_analysis_checkpoints_saved": 1,
+            "publication_units_reused": 0,
+            "publication_units_completed": 42,
+            "generation_staging_batches": 59,
+            "generation_inserted_records": 1312,
+            "generation_maximum_batch_records": 250
+          },
+          "slowest_file_operations": [
+            {
+              "path": "component/app0001.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.004025,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0008.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.003878,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0007.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.003818,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0006.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.003677,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0019.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.003674,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0012.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.003674,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0018.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.003655,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0014.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.00365,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0009.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.003643,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0017.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.003532,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0005.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.003519,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0013.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.003313,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0011.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.003275,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0010.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.00325,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0000.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.003231,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0015.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.003186,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0013.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.003162,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0012.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.003041,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0000.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.002969,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0016.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.002886,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0002.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002816,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0019.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002757,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0002.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.002752,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0001.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002698,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0003.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.00269,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0005.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002634,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0004.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.002594,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0004.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002572,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0008.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.00257,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0007.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002563,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0018.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002524,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0017.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002487,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0010.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002471,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0003.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002454,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0006.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002376,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0009.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002335,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0011.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002093,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0016.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001973,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0014.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.00183,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0015.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001794,
+              "state": "MEASURED"
+            }
+          ],
+          "helper_concurrency_max": 2,
+          "source_cache_bytes_max": 2000000,
+          "timing_scope": "Current attempt; component/helper time overlaps and is not summed as wall runtime."
+        },
+        "coverage": {
+          "files_discovered": 20,
+          "files_with_native_scan": 20,
+          "source_files": 20,
+          "source_files_parsed": 20,
+          "source_analysis_percent": 100.0,
+          "states": {
+            "PARTIAL": 20
+          }
+        },
+        "source_storage": {
+          "kind": "TENANT_ENCRYPTED_CONTENT_ADDRESSED",
+          "inventory_id": "038e199f-3e30-43ed-b985-808d1d0e7e6c",
+          "partitions": 1,
+          "partition_model": "DECLARED_COMPONENT_THEN_FILE_AND_BYTE_BUDGET",
+          "max_partition_files": 20,
+          "max_partition_bytes": 9200,
+          "parser_cache_hits": 0,
+          "parser_cache_misses": 20,
+          "parser_cache_scope": "TENANT_CONTENT_PATH_PARSER_RULE_VERSION",
+          "quality_thresholds_recomputed": true,
+          "global_correlations_recomputed": true,
+          "analysis_ms": 145.27,
+          "large_repository_performance": "UNMEASURED",
+          "performance": {
+            "schema": "projecttrace-performance-v1",
+            "clock": "WALL_PERF_COUNTER",
+            "stage_seconds": {
+              "VALIDATING": 0.010377,
+              "PARSING": 0.006574,
+              "ANALYZING": 0.128778,
+              "EXTRACTING_CLAIMS": 0.004237,
+              "VERIFYING": 0.011046
+            },
+            "components": {
+              "CACHE_LOOKUP": {
+                "count": 1,
+                "seconds": 0.001699,
+                "max_seconds": 0.001699
+              },
+              "PYTHON_NATIVE": {
+                "count": 20,
+                "seconds": 0.067026,
+                "max_seconds": 0.004025
+              },
+              "FILE_POSTPROCESS": {
+                "count": 20,
+                "seconds": 0.012325,
+                "max_seconds": 0.000971
+              },
+              "PARTITION_IDENTITY": {
+                "count": 1,
+                "seconds": 0.022447,
+                "max_seconds": 0.022447
+              },
+              "PARTITION_PARSE": {
+                "count": 1,
+                "seconds": 0.106794,
+                "max_seconds": 0.106794
+              },
+              "CACHE_WRITE": {
+                "count": 1,
+                "seconds": 0.004872,
+                "max_seconds": 0.004872
+              },
+              "DEPENDENCIES": {
+                "count": 1,
+                "seconds": 0.000153,
+                "max_seconds": 0.000153
+              },
+              "CLAIM_EXTRACTION": {
+                "count": 1,
+                "seconds": 1.7e-05,
+                "max_seconds": 1.7e-05
+              },
+              "CLAIM_VERIFICATION": {
+                "count": 1,
+                "seconds": 2e-06,
+                "max_seconds": 2e-06
+              },
+              "QUALITY_AGGREGATION": {
+                "count": 1,
+                "seconds": 0.001694,
+                "max_seconds": 0.001694
+              },
+              "FINAL_IDENTITY": {
+                "count": 1,
+                "seconds": 0.000214,
+                "max_seconds": 0.000214
+              }
+            },
+            "counters": {
+              "source_blob_reads": 20,
+              "source_cache_hits": 20,
+              "parser_cache_hits": 0,
+              "parser_cache_misses": 20
+            },
+            "slowest_file_operations": [
+              {
+                "path": "component/app0001.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.004025,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0008.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.003878,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0007.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.003818,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0006.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.003677,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0019.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.003674,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0018.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.003655,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0014.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.00365,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0009.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.003643,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0017.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.003532,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0005.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.003519,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0013.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.003313,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0011.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.003275,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0010.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.00325,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0015.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.003186,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0012.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.003041,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0000.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.002969,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0016.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.002886,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0002.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.002752,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0003.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.00269,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0004.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.002594,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0011.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.000971,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0012.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.000789,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0010.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.000746,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0007.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.00074,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0008.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.000735,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0000.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.00072,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0006.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.000707,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0019.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.000657,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0009.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.000639,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0017.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.000594,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0015.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.000591,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0014.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.000567,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0001.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.00053,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0013.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.000498,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0005.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.000493,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0002.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.000489,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0016.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.000481,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0004.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.000472,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0018.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.000463,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0003.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.000446,
+                "state": "MEASURED"
+              }
+            ],
+            "helper_concurrency_max": 2,
+            "source_cache_bytes_max": 2000000,
+            "timing_scope": "Current attempt; component/helper time overlaps and is not summed as wall runtime."
+          }
+        },
+        "findings": 200,
+        "graph_nodes": 428
+      },
+      {
+        "mode": "warm",
+        "wall_seconds": 8.576031,
+        "parent_cpu_seconds": 8.480786,
+        "helper_cpu_seconds": 0.0,
+        "helper_cpu_scope": "Owned descendants discovered during 100 ms samples; short-lived undiscovered descendants can be missed.",
+        "sampled_process_tree_peak_rss_bytes": 140480512,
+        "parent_lifetime_peak_rss_bytes": null,
+        "helper_concurrency_observed": 0,
+        "helper_calls": 0,
+        "helper_wall_seconds_overlapping": 0.0,
+        "rss_sample_interval_seconds": 0.1,
+        "database": {
+          "queries": 6115,
+          "seconds": 0.18693046700491323,
+          "flushes": 381,
+          "max_flush_rows": 208
+        },
+        "state": "COMPLETED",
+        "job_duration_ms": 8468.87,
+        "performance": {
+          "schema": "projecttrace-performance-v1",
+          "clock": "WALL_PERF_COUNTER",
+          "stage_seconds": {
+            "VALIDATING": 0.00808,
+            "PARSING": 0.00591,
+            "ANALYZING": 0.026768,
+            "EXTRACTING_CLAIMS": 0.004022,
+            "VERIFYING": 0.596112,
+            "BUILDING_EVIDENCE": 1.784202,
+            "CORRELATING": 4.848562,
+            "FINALIZING": 1.193407,
+            "COMPLETED": 0.000161
+          },
+          "components": {
+            "CACHE_LOOKUP": {
+              "count": 1,
+              "seconds": 0.006361,
+              "max_seconds": 0.006361
+            },
+            "CACHE_REUSE": {
+              "count": 20,
+              "seconds": 0.007307,
+              "max_seconds": 0.000445
+            },
+            "PARTITION_IDENTITY": {
+              "count": 1,
+              "seconds": 0.000372,
+              "max_seconds": 0.000372
+            },
+            "PARTITION_PARSE": {
+              "count": 1,
+              "seconds": 0.008023,
+              "max_seconds": 0.008023
+            },
+            "CACHE_WRITE": {
+              "count": 1,
+              "seconds": 0.000301,
+              "max_seconds": 0.000301
+            },
+            "DEPENDENCIES": {
+              "count": 1,
+              "seconds": 0.000125,
+              "max_seconds": 0.000125
+            },
+            "CLAIM_EXTRACTION": {
+              "count": 1,
+              "seconds": 1.6e-05,
+              "max_seconds": 1.6e-05
+            },
+            "CLAIM_VERIFICATION": {
+              "count": 1,
+              "seconds": 2e-06,
+              "max_seconds": 2e-06
+            },
+            "QUALITY_AGGREGATION": {
+              "count": 1,
+              "seconds": 0.003391,
+              "max_seconds": 0.003391
+            },
+            "FINAL_IDENTITY": {
+              "count": 1,
+              "seconds": 0.000206,
+              "max_seconds": 0.000206
+            },
+            "EVIDENCE_FILE": {
+              "count": 20,
+              "seconds": 0.03961,
+              "max_seconds": 0.002211
+            },
+            "EVIDENCE_FILES": {
+              "count": 1,
+              "seconds": 0.03992,
+              "max_seconds": 0.03992
+            },
+            "PUBLISH_CLAIMS": {
+              "count": 1,
+              "seconds": 0.004532,
+              "max_seconds": 0.004532
+            },
+            "PUBLISH_FINDINGS": {
+              "count": 1,
+              "seconds": 0.274672,
+              "max_seconds": 0.274672
+            },
+            "PUBLISH_DEPENDENCIES": {
+              "count": 1,
+              "seconds": 0.003335,
+              "max_seconds": 0.003335
+            },
+            "FINDING_CORRELATION": {
+              "count": 1,
+              "seconds": 1.563659,
+              "max_seconds": 1.563659
+            },
+            "FINDING_HISTORY": {
+              "count": 1,
+              "seconds": 0.693493,
+              "max_seconds": 0.693493
+            },
+            "ARTIFACT_GRAPH": {
+              "count": 1,
+              "seconds": 0.290469,
+              "max_seconds": 0.290469
+            },
+            "CONFIGURATION_GRAPH": {
+              "count": 1,
+              "seconds": 0.151659,
+              "max_seconds": 0.151659
+            },
+            "FUNCTION_GRAPH": {
+              "count": 1,
+              "seconds": 0.532168,
+              "max_seconds": 0.532168
+            },
+            "OWNERSHIP_GRAPH": {
+              "count": 1,
+              "seconds": 0.178133,
+              "max_seconds": 0.178133
+            },
+            "POLICY_PROJECTION": {
+              "count": 1,
+              "seconds": 0.554834,
+              "max_seconds": 0.554834
+            },
+            "IMPACT_GRAPH": {
+              "count": 1,
+              "seconds": 0.16472,
+              "max_seconds": 0.16472
+            }
+          },
+          "counters": {
+            "source_blob_reads": 0,
+            "source_cache_hits": 0,
+            "parser_cache_hits": 20,
+            "parser_cache_misses": 0,
+            "global_analysis_checkpoints_saved": 1,
+            "publication_units_reused": 0,
+            "publication_units_completed": 42,
+            "generation_staging_batches": 58,
+            "generation_inserted_records": 1312,
+            "generation_maximum_batch_records": 250
+          },
+          "slowest_file_operations": [
+            {
+              "path": "component/app0014.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002211,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0017.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002207,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0005.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002203,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0009.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002159,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0003.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002155,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0001.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002128,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0000.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002094,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0018.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002057,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0002.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002049,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0008.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002021,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0010.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001978,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0006.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001952,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0012.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001923,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0015.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001899,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0016.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001881,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0011.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001837,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0013.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001804,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0007.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001707,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0004.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001686,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0019.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001658,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0003.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000445,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0010.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000418,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0013.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000409,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0000.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000399,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0001.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000394,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0008.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000392,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0018.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000367,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0019.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000367,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0017.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000364,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0011.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.00036,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0005.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000355,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0016.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000355,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0009.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000353,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0012.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000351,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0004.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000341,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0002.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000338,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0014.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000336,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0015.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000332,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0007.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000323,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0006.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000307,
+              "state": "REUSED"
+            }
+          ],
+          "helper_concurrency_max": 2,
+          "source_cache_bytes_max": 2000000,
+          "timing_scope": "Current attempt; component/helper time overlaps and is not summed as wall runtime."
+        },
+        "coverage": {
+          "files_discovered": 20,
+          "files_with_native_scan": 20,
+          "source_files": 20,
+          "source_files_parsed": 20,
+          "source_analysis_percent": 100.0,
+          "states": {
+            "PARTIAL": 20
+          }
+        },
+        "source_storage": {
+          "kind": "TENANT_ENCRYPTED_CONTENT_ADDRESSED",
+          "inventory_id": "038e199f-3e30-43ed-b985-808d1d0e7e6c",
+          "partitions": 1,
+          "partition_model": "DECLARED_COMPONENT_THEN_FILE_AND_BYTE_BUDGET",
+          "max_partition_files": 20,
+          "max_partition_bytes": 9200,
+          "parser_cache_hits": 20,
+          "parser_cache_misses": 0,
+          "parser_cache_scope": "TENANT_CONTENT_PATH_PARSER_RULE_VERSION",
+          "quality_thresholds_recomputed": true,
+          "global_correlations_recomputed": true,
+          "analysis_ms": 49.09,
+          "large_repository_performance": "UNMEASURED",
+          "performance": {
+            "schema": "projecttrace-performance-v1",
+            "clock": "WALL_PERF_COUNTER",
+            "stage_seconds": {
+              "VALIDATING": 0.00808,
+              "PARSING": 0.00591,
+              "ANALYZING": 0.026768,
+              "EXTRACTING_CLAIMS": 0.004022,
+              "VERIFYING": 0.016755
+            },
+            "components": {
+              "CACHE_LOOKUP": {
+                "count": 1,
+                "seconds": 0.006361,
+                "max_seconds": 0.006361
+              },
+              "CACHE_REUSE": {
+                "count": 20,
+                "seconds": 0.007307,
+                "max_seconds": 0.000445
+              },
+              "PARTITION_IDENTITY": {
+                "count": 1,
+                "seconds": 0.000372,
+                "max_seconds": 0.000372
+              },
+              "PARTITION_PARSE": {
+                "count": 1,
+                "seconds": 0.008023,
+                "max_seconds": 0.008023
+              },
+              "CACHE_WRITE": {
+                "count": 1,
+                "seconds": 0.000301,
+                "max_seconds": 0.000301
+              },
+              "DEPENDENCIES": {
+                "count": 1,
+                "seconds": 0.000125,
+                "max_seconds": 0.000125
+              },
+              "CLAIM_EXTRACTION": {
+                "count": 1,
+                "seconds": 1.6e-05,
+                "max_seconds": 1.6e-05
+              },
+              "CLAIM_VERIFICATION": {
+                "count": 1,
+                "seconds": 2e-06,
+                "max_seconds": 2e-06
+              },
+              "QUALITY_AGGREGATION": {
+                "count": 1,
+                "seconds": 0.003391,
+                "max_seconds": 0.003391
+              },
+              "FINAL_IDENTITY": {
+                "count": 1,
+                "seconds": 0.000206,
+                "max_seconds": 0.000206
+              }
+            },
+            "counters": {
+              "source_blob_reads": 0,
+              "source_cache_hits": 0,
+              "parser_cache_hits": 20,
+              "parser_cache_misses": 0
+            },
+            "slowest_file_operations": [
+              {
+                "path": "component/app0003.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000445,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0010.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000418,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0013.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000409,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0000.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000399,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0001.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000394,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0008.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000392,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0018.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000367,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0019.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000367,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0017.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000364,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0011.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.00036,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0005.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000355,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0016.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000355,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0009.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000353,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0012.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000351,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0004.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000341,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0002.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000338,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0014.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000336,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0015.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000332,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0007.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000323,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0006.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000307,
+                "state": "REUSED"
+              }
+            ],
+            "helper_concurrency_max": 2,
+            "source_cache_bytes_max": 2000000,
+            "timing_scope": "Current attempt; component/helper time overlaps and is not summed as wall runtime."
+          }
+        },
+        "findings": 200,
+        "graph_nodes": 428
+      },
+      {
+        "mode": "one_file_change",
+        "wall_seconds": 9.251694,
+        "parent_cpu_seconds": 9.15454,
+        "helper_cpu_seconds": 0.0,
+        "helper_cpu_scope": "Owned descendants discovered during 100 ms samples; short-lived undiscovered descendants can be missed.",
+        "sampled_process_tree_peak_rss_bytes": 156663808,
+        "parent_lifetime_peak_rss_bytes": null,
+        "helper_concurrency_observed": 0,
+        "helper_calls": 0,
+        "helper_wall_seconds_overlapping": 0.0,
+        "rss_sample_interval_seconds": 0.1,
+        "database": {
+          "queries": 6240,
+          "seconds": 0.2411152789723019,
+          "flushes": 387,
+          "max_flush_rows": 208
+        },
+        "state": "COMPLETED",
+        "job_duration_ms": 9154.2,
+        "performance": {
+          "schema": "projecttrace-performance-v1",
+          "clock": "WALL_PERF_COUNTER",
+          "stage_seconds": {
+            "VALIDATING": 0.016694,
+            "PARSING": 0.004031,
+            "ANALYZING": 0.024439,
+            "EXTRACTING_CLAIMS": 0.001817,
+            "VERIFYING": 0.37229,
+            "BUILDING_EVIDENCE": 2.056328,
+            "CORRELATING": 5.392541,
+            "FINALIZING": 1.284589,
+            "COMPLETED": 0.000162
+          },
+          "components": {
+            "CACHE_LOOKUP": {
+              "count": 1,
+              "seconds": 0.003817,
+              "max_seconds": 0.003817
+            },
+            "PYTHON_NATIVE": {
+              "count": 1,
+              "seconds": 0.003945,
+              "max_seconds": 0.003945
+            },
+            "FILE_POSTPROCESS": {
+              "count": 1,
+              "seconds": 0.000466,
+              "max_seconds": 0.000466
+            },
+            "CACHE_REUSE": {
+              "count": 19,
+              "seconds": 0.003994,
+              "max_seconds": 0.000247
+            },
+            "PARTITION_IDENTITY": {
+              "count": 1,
+              "seconds": 0.001075,
+              "max_seconds": 0.001075
+            },
+            "PARTITION_PARSE": {
+              "count": 1,
+              "seconds": 0.009893,
+              "max_seconds": 0.009893
+            },
+            "CACHE_WRITE": {
+              "count": 1,
+              "seconds": 0.001048,
+              "max_seconds": 0.001048
+            },
+            "DEPENDENCIES": {
+              "count": 1,
+              "seconds": 7.8e-05,
+              "max_seconds": 7.8e-05
+            },
+            "CLAIM_EXTRACTION": {
+              "count": 1,
+              "seconds": 1.4e-05,
+              "max_seconds": 1.4e-05
+            },
+            "CLAIM_VERIFICATION": {
+              "count": 1,
+              "seconds": 2e-06,
+              "max_seconds": 2e-06
+            },
+            "QUALITY_AGGREGATION": {
+              "count": 1,
+              "seconds": 0.001008,
+              "max_seconds": 0.001008
+            },
+            "FINAL_IDENTITY": {
+              "count": 1,
+              "seconds": 0.000166,
+              "max_seconds": 0.000166
+            },
+            "EVIDENCE_FILE": {
+              "count": 20,
+              "seconds": 0.048654,
+              "max_seconds": 0.002749
+            },
+            "EVIDENCE_FILES": {
+              "count": 1,
+              "seconds": 0.048968,
+              "max_seconds": 0.048968
+            },
+            "PUBLISH_CLAIMS": {
+              "count": 1,
+              "seconds": 0.002424,
+              "max_seconds": 0.002424
+            },
+            "PUBLISH_FINDINGS": {
+              "count": 1,
+              "seconds": 0.30073,
+              "max_seconds": 0.30073
+            },
+            "PUBLISH_DEPENDENCIES": {
+              "count": 1,
+              "seconds": 0.004466,
+              "max_seconds": 0.004466
+            },
+            "FINDING_CORRELATION": {
+              "count": 1,
+              "seconds": 1.731184,
+              "max_seconds": 1.731184
+            },
+            "FINDING_HISTORY": {
+              "count": 1,
+              "seconds": 0.77083,
+              "max_seconds": 0.77083
+            },
+            "ARTIFACT_GRAPH": {
+              "count": 1,
+              "seconds": 0.29538,
+              "max_seconds": 0.29538
+            },
+            "CONFIGURATION_GRAPH": {
+              "count": 1,
+              "seconds": 0.154358,
+              "max_seconds": 0.154358
+            },
+            "FUNCTION_GRAPH": {
+              "count": 1,
+              "seconds": 0.526879,
+              "max_seconds": 0.526879
+            },
+            "OWNERSHIP_GRAPH": {
+              "count": 1,
+              "seconds": 0.167342,
+              "max_seconds": 0.167342
+            },
+            "POLICY_PROJECTION": {
+              "count": 1,
+              "seconds": 0.622215,
+              "max_seconds": 0.622215
+            },
+            "IMPACT_GRAPH": {
+              "count": 1,
+              "seconds": 0.237178,
+              "max_seconds": 0.237178
+            }
+          },
+          "counters": {
+            "source_blob_reads": 1,
+            "source_cache_hits": 1,
+            "parser_cache_hits": 19,
+            "parser_cache_misses": 1,
+            "global_analysis_checkpoints_saved": 1,
+            "publication_units_reused": 0,
+            "publication_units_completed": 42,
+            "generation_staging_batches": 60,
+            "generation_inserted_records": 1312,
+            "generation_maximum_batch_records": 250
+          },
+          "slowest_file_operations": [
+            {
+              "path": "component/app0000.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.003945,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0001.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002749,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0018.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002702,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0012.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002698,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0017.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002643,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0015.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002601,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0019.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002575,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0010.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002572,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0014.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002498,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0016.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002437,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0007.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002389,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0013.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002369,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0005.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002361,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0004.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002355,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0011.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002352,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0006.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002323,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0002.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002265,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0000.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.00225,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0003.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002199,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0008.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002177,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0009.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002139,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0000.py",
+              "component": "FILE_POSTPROCESS",
+              "seconds": 0.000466,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0005.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000247,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0011.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000238,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0013.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.00023,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0019.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000225,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0002.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000224,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0003.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000216,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0004.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000212,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0014.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000212,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0006.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.00021,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0016.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000207,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0008.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000205,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0001.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000202,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0009.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000202,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0015.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000202,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0017.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.0002,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0007.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000197,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0010.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000197,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0018.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000194,
+              "state": "REUSED"
+            }
+          ],
+          "helper_concurrency_max": 2,
+          "source_cache_bytes_max": 2000000,
+          "timing_scope": "Current attempt; component/helper time overlaps and is not summed as wall runtime."
+        },
+        "coverage": {
+          "files_discovered": 20,
+          "files_with_native_scan": 20,
+          "source_files": 20,
+          "source_files_parsed": 20,
+          "source_analysis_percent": 100.0,
+          "states": {
+            "PARTIAL": 20
+          }
+        },
+        "source_storage": {
+          "kind": "TENANT_ENCRYPTED_CONTENT_ADDRESSED",
+          "inventory_id": "69681e51-4f34-4f68-b880-38ba29198f20",
+          "partitions": 1,
+          "partition_model": "DECLARED_COMPONENT_THEN_FILE_AND_BYTE_BUDGET",
+          "max_partition_files": 20,
+          "max_partition_bytes": 9233,
+          "parser_cache_hits": 19,
+          "parser_cache_misses": 1,
+          "parser_cache_scope": "TENANT_CONTENT_PATH_PARSER_RULE_VERSION",
+          "quality_thresholds_recomputed": true,
+          "global_correlations_recomputed": true,
+          "analysis_ms": 34.21,
+          "large_repository_performance": "UNMEASURED",
+          "performance": {
+            "schema": "projecttrace-performance-v1",
+            "clock": "WALL_PERF_COUNTER",
+            "stage_seconds": {
+              "VALIDATING": 0.016694,
+              "PARSING": 0.004031,
+              "ANALYZING": 0.024439,
+              "EXTRACTING_CLAIMS": 0.001817,
+              "VERIFYING": 0.007024
+            },
+            "components": {
+              "CACHE_LOOKUP": {
+                "count": 1,
+                "seconds": 0.003817,
+                "max_seconds": 0.003817
+              },
+              "PYTHON_NATIVE": {
+                "count": 1,
+                "seconds": 0.003945,
+                "max_seconds": 0.003945
+              },
+              "FILE_POSTPROCESS": {
+                "count": 1,
+                "seconds": 0.000466,
+                "max_seconds": 0.000466
+              },
+              "CACHE_REUSE": {
+                "count": 19,
+                "seconds": 0.003994,
+                "max_seconds": 0.000247
+              },
+              "PARTITION_IDENTITY": {
+                "count": 1,
+                "seconds": 0.001075,
+                "max_seconds": 0.001075
+              },
+              "PARTITION_PARSE": {
+                "count": 1,
+                "seconds": 0.009893,
+                "max_seconds": 0.009893
+              },
+              "CACHE_WRITE": {
+                "count": 1,
+                "seconds": 0.001048,
+                "max_seconds": 0.001048
+              },
+              "DEPENDENCIES": {
+                "count": 1,
+                "seconds": 7.8e-05,
+                "max_seconds": 7.8e-05
+              },
+              "CLAIM_EXTRACTION": {
+                "count": 1,
+                "seconds": 1.4e-05,
+                "max_seconds": 1.4e-05
+              },
+              "CLAIM_VERIFICATION": {
+                "count": 1,
+                "seconds": 2e-06,
+                "max_seconds": 2e-06
+              },
+              "QUALITY_AGGREGATION": {
+                "count": 1,
+                "seconds": 0.001008,
+                "max_seconds": 0.001008
+              },
+              "FINAL_IDENTITY": {
+                "count": 1,
+                "seconds": 0.000166,
+                "max_seconds": 0.000166
+              }
+            },
+            "counters": {
+              "source_blob_reads": 1,
+              "source_cache_hits": 1,
+              "parser_cache_hits": 19,
+              "parser_cache_misses": 1
+            },
+            "slowest_file_operations": [
+              {
+                "path": "component/app0000.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.003945,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0000.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.000466,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0005.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000247,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0011.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000238,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0013.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.00023,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0019.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000225,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0002.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000224,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0003.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000216,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0004.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000212,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0014.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000212,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0006.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.00021,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0016.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000207,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0008.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000205,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0001.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000202,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0009.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000202,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0015.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000202,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0017.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.0002,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0007.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000197,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0010.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000197,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0018.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000194,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0012.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000176,
+                "state": "REUSED"
+              }
+            ],
+            "helper_concurrency_max": 2,
+            "source_cache_bytes_max": 2000000,
+            "timing_scope": "Current attempt; component/helper time overlaps and is not summed as wall runtime."
+          }
+        },
+        "findings": 200,
+        "graph_nodes": 427
+      }
+    ]
+  },
+  "after": {
+    "fixture": "NON_EXECUTING_PYTHON_FUNCTIONS",
+    "archive_sha256": null,
+    "component": null,
+    "files": 20,
+    "functions_per_file": 10,
+    "source_bytes": 9200,
+    "analysis_limit_seconds": 900,
+    "cold_scope": "EMPTY_APPLICATION_CACHE; OS_CACHE_UNCONTROLLED",
+    "runs": [
+      {
+        "mode": "cold",
+        "wall_seconds": 9.892284,
+        "parent_cpu_seconds": 9.789746,
+        "helper_cpu_seconds": 0.0,
+        "helper_cpu_scope": "Owned descendants discovered during 100 ms samples; short-lived undiscovered descendants can be missed.",
+        "sampled_process_tree_peak_rss_bytes": 125812736,
+        "parent_lifetime_peak_rss_bytes": null,
+        "helper_concurrency_observed": 0,
+        "helper_calls": 0,
+        "helper_wall_seconds_overlapping": 0.0,
+        "rss_sample_interval_seconds": 0.1,
+        "database": {
+          "queries": 6161,
+          "seconds": 0.19919563999701495,
+          "flushes": 382,
+          "max_flush_rows": 208
+        },
+        "state": "COMPLETED",
+        "job_duration_ms": 9404.16,
+        "performance": {
+          "schema": "projecttrace-performance-v1",
+          "clock": "WALL_PERF_COUNTER",
+          "stage_seconds": {
+            "VALIDATING": 0.0125,
+            "PARSING": 0.006709,
+            "ANALYZING": 0.161981,
+            "EXTRACTING_CLAIMS": 0.003782,
+            "VERIFYING": 0.645341,
+            "BUILDING_EVIDENCE": 2.326609,
+            "CORRELATING": 4.953714,
+            "FINALIZING": 1.290482,
+            "COMPLETED": 0.000166
+          },
+          "components": {
+            "CACHE_LOOKUP": {
+              "count": 1,
+              "seconds": 0.003739,
+              "max_seconds": 0.003739
+            },
+            "PYTHON_NATIVE": {
+              "count": 20,
+              "seconds": 0.056645,
+              "max_seconds": 0.003534
+            },
+            "FILE_POSTPROCESS": {
+              "count": 20,
+              "seconds": 0.011856,
+              "max_seconds": 0.001029
+            },
+            "PARTITION_IDENTITY": {
+              "count": 1,
+              "seconds": 0.021434,
+              "max_seconds": 0.021434
+            },
+            "PARTITION_PARSE": {
+              "count": 1,
+              "seconds": 0.094318,
+              "max_seconds": 0.094318
+            },
+            "CACHE_WRITE": {
+              "count": 1,
+              "seconds": 0.004725,
+              "max_seconds": 0.004725
+            },
+            "DEPENDENCIES": {
+              "count": 1,
+              "seconds": 0.00013,
+              "max_seconds": 0.00013
+            },
+            "CLAIM_EXTRACTION": {
+              "count": 1,
+              "seconds": 1.9e-05,
+              "max_seconds": 1.9e-05
+            },
+            "CLAIM_VERIFICATION": {
+              "count": 1,
+              "seconds": 3e-06,
+              "max_seconds": 3e-06
+            },
+            "QUALITY_AGGREGATION": {
+              "count": 1,
+              "seconds": 0.051268,
+              "max_seconds": 0.051268
+            },
+            "FINAL_IDENTITY": {
+              "count": 1,
+              "seconds": 0.007305,
+              "max_seconds": 0.007305
+            },
+            "EVIDENCE_FILE": {
+              "count": 20,
+              "seconds": 0.060368,
+              "max_seconds": 0.005949
+            },
+            "EVIDENCE_FILES": {
+              "count": 1,
+              "seconds": 0.060933,
+              "max_seconds": 0.060933
+            },
+            "PUBLISH_CLAIMS": {
+              "count": 1,
+              "seconds": 0.00433,
+              "max_seconds": 0.00433
+            },
+            "PUBLISH_FINDINGS": {
+              "count": 1,
+              "seconds": 0.42151,
+              "max_seconds": 0.42151
+            },
+            "PUBLISH_DEPENDENCIES": {
+              "count": 1,
+              "seconds": 0.002406,
+              "max_seconds": 0.002406
+            },
+            "FINDING_CORRELATION": {
+              "count": 1,
+              "seconds": 1.516489,
+              "max_seconds": 1.516489
+            },
+            "FINDING_HISTORY": {
+              "count": 1,
+              "seconds": 0.637904,
+              "max_seconds": 0.637904
+            },
+            "ARTIFACT_GRAPH": {
+              "count": 1,
+              "seconds": 0.285273,
+              "max_seconds": 0.285273
+            },
+            "CONFIGURATION_GRAPH": {
+              "count": 1,
+              "seconds": 0.160602,
+              "max_seconds": 0.160602
+            },
+            "FUNCTION_GRAPH": {
+              "count": 1,
+              "seconds": 0.630359,
+              "max_seconds": 0.630359
+            },
+            "OWNERSHIP_GRAPH": {
+              "count": 1,
+              "seconds": 0.17474,
+              "max_seconds": 0.17474
+            },
+            "POLICY_PROJECTION": {
+              "count": 1,
+              "seconds": 0.615488,
+              "max_seconds": 0.615488
+            },
+            "IMPACT_GRAPH": {
+              "count": 1,
+              "seconds": 0.148082,
+              "max_seconds": 0.148082
+            }
+          },
+          "counters": {
+            "source_blob_reads": 20,
+            "source_cache_hits": 20,
+            "parser_cache_hits": 0,
+            "parser_cache_misses": 20,
+            "global_analysis_checkpoints_saved": 1,
+            "publication_units_reused": 0,
+            "publication_units_completed": 42,
+            "generation_staging_batches": 59,
+            "generation_inserted_records": 1312,
+            "generation_maximum_batch_records": 250
+          },
+          "slowest_file_operations": [
+            {
+              "path": "component/app0000.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.005949,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0007.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.005881,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0001.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.00438,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0016.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.003534,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0007.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.003443,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0002.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.003326,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0012.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.00329,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0017.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.003087,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0008.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.003047,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0010.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002961,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0019.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.002932,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0005.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.002904,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0011.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.002844,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0013.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.002844,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0003.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002817,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0006.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.002814,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0004.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.002794,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0011.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002744,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0008.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.002743,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0000.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.00273,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0014.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.002697,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0018.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.002696,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0002.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.002683,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0005.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002657,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0014.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002617,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0003.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.002601,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0001.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.002599,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0017.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002563,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0006.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002545,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0019.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002523,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0009.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.002512,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0010.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.002506,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0016.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002492,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0015.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002474,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0012.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002455,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0015.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.002395,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0009.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002388,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0013.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002366,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0018.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002232,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0004.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001952,
+              "state": "MEASURED"
+            }
+          ],
+          "helper_concurrency_max": 2,
+          "source_cache_bytes_max": 2000000,
+          "timing_scope": "Current attempt; component/helper time overlaps and is not summed as wall runtime."
+        },
+        "coverage": {
+          "files_discovered": 20,
+          "files_with_native_scan": 20,
+          "source_files": 20,
+          "source_files_parsed": 20,
+          "source_analysis_percent": 100.0,
+          "states": {
+            "PARTIAL": 20
+          }
+        },
+        "source_storage": {
+          "kind": "TENANT_ENCRYPTED_CONTENT_ADDRESSED",
+          "inventory_id": "0a9e8195-3bed-494a-bba3-fc8933f639cd",
+          "partitions": 1,
+          "partition_model": "DECLARED_COMPONENT_THEN_FILE_AND_BYTE_BUDGET",
+          "max_partition_files": 20,
+          "max_partition_bytes": 9200,
+          "parser_cache_hits": 0,
+          "parser_cache_misses": 20,
+          "parser_cache_scope": "TENANT_CONTENT_PATH_PARSER_RULE_VERSION",
+          "quality_thresholds_recomputed": true,
+          "global_correlations_recomputed": true,
+          "analysis_ms": 263.44,
+          "large_repository_performance": "UNMEASURED",
+          "performance": {
+            "schema": "projecttrace-performance-v1",
+            "clock": "WALL_PERF_COUNTER",
+            "stage_seconds": {
+              "VALIDATING": 0.0125,
+              "PARSING": 0.006709,
+              "ANALYZING": 0.161981,
+              "EXTRACTING_CLAIMS": 0.003782,
+              "VERIFYING": 0.096558
+            },
+            "components": {
+              "CACHE_LOOKUP": {
+                "count": 1,
+                "seconds": 0.003739,
+                "max_seconds": 0.003739
+              },
+              "PYTHON_NATIVE": {
+                "count": 20,
+                "seconds": 0.056645,
+                "max_seconds": 0.003534
+              },
+              "FILE_POSTPROCESS": {
+                "count": 20,
+                "seconds": 0.011856,
+                "max_seconds": 0.001029
+              },
+              "PARTITION_IDENTITY": {
+                "count": 1,
+                "seconds": 0.021434,
+                "max_seconds": 0.021434
+              },
+              "PARTITION_PARSE": {
+                "count": 1,
+                "seconds": 0.094318,
+                "max_seconds": 0.094318
+              },
+              "CACHE_WRITE": {
+                "count": 1,
+                "seconds": 0.004725,
+                "max_seconds": 0.004725
+              },
+              "DEPENDENCIES": {
+                "count": 1,
+                "seconds": 0.00013,
+                "max_seconds": 0.00013
+              },
+              "CLAIM_EXTRACTION": {
+                "count": 1,
+                "seconds": 1.9e-05,
+                "max_seconds": 1.9e-05
+              },
+              "CLAIM_VERIFICATION": {
+                "count": 1,
+                "seconds": 3e-06,
+                "max_seconds": 3e-06
+              },
+              "QUALITY_AGGREGATION": {
+                "count": 1,
+                "seconds": 0.051268,
+                "max_seconds": 0.051268
+              },
+              "FINAL_IDENTITY": {
+                "count": 1,
+                "seconds": 0.007305,
+                "max_seconds": 0.007305
+              }
+            },
+            "counters": {
+              "source_blob_reads": 20,
+              "source_cache_hits": 20,
+              "parser_cache_hits": 0,
+              "parser_cache_misses": 20
+            },
+            "slowest_file_operations": [
+              {
+                "path": "component/app0016.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.003534,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0007.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.003443,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0012.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.00329,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0017.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.003087,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0019.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.002932,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0005.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.002904,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0011.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.002844,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0013.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.002844,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0006.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.002814,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0004.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.002794,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0008.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.002743,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0000.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.00273,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0014.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.002697,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0018.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.002696,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0002.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.002683,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0003.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.002601,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0001.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.002599,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0009.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.002512,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0010.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.002506,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0015.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.002395,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0018.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.001029,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0002.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.001021,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0017.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.000786,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0005.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.000678,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0006.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.000642,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0019.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.000627,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0016.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.000591,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0000.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.000576,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0004.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.000576,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0001.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.000548,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0008.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.000546,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0013.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.000529,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0007.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.0005,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0015.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.000487,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0011.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.000479,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0012.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.000461,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0009.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.00045,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0003.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.000448,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0014.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.000448,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0010.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.000434,
+                "state": "MEASURED"
+              }
+            ],
+            "helper_concurrency_max": 2,
+            "source_cache_bytes_max": 2000000,
+            "timing_scope": "Current attempt; component/helper time overlaps and is not summed as wall runtime."
+          },
+          "observation_spill": {
+            "scope": "ATTEMPT_PRIVATE_ENCRYPTED_TYPED_ROWS",
+            "signal_rows": 220,
+            "metric_rows": 200,
+            "pre_quality_finding_rows": 200,
+            "ciphertext_bytes": 748660,
+            "resident_sqlite_cache_bytes_per_collection": 1048576,
+            "maximum_ciphertext_bytes_per_collection": 256000000,
+            "global_memory_qualification": "NOT_QUALIFIED"
+          }
+        },
+        "findings": 200,
+        "graph_nodes": 428
+      },
+      {
+        "mode": "warm",
+        "wall_seconds": 8.968435,
+        "parent_cpu_seconds": 8.866774,
+        "helper_cpu_seconds": 0.0,
+        "helper_cpu_scope": "Owned descendants discovered during 100 ms samples; short-lived undiscovered descendants can be missed.",
+        "sampled_process_tree_peak_rss_bytes": 142815232,
+        "parent_lifetime_peak_rss_bytes": null,
+        "helper_concurrency_observed": 0,
+        "helper_calls": 0,
+        "helper_wall_seconds_overlapping": 0.0,
+        "rss_sample_interval_seconds": 0.1,
+        "database": {
+          "queries": 6115,
+          "seconds": 0.19202865598344943,
+          "flushes": 381,
+          "max_flush_rows": 208
+        },
+        "state": "COMPLETED",
+        "job_duration_ms": 8869.01,
+        "performance": {
+          "schema": "projecttrace-performance-v1",
+          "clock": "WALL_PERF_COUNTER",
+          "stage_seconds": {
+            "VALIDATING": 0.00633,
+            "PARSING": 0.005703,
+            "ANALYZING": 0.066957,
+            "EXTRACTING_CLAIMS": 0.002593,
+            "VERIFYING": 0.655134,
+            "BUILDING_EVIDENCE": 2.103328,
+            "CORRELATING": 4.836591,
+            "FINALIZING": 1.190847,
+            "COMPLETED": 0.00016
+          },
+          "components": {
+            "CACHE_LOOKUP": {
+              "count": 1,
+              "seconds": 0.005541,
+              "max_seconds": 0.005541
+            },
+            "CACHE_REUSE": {
+              "count": 20,
+              "seconds": 0.006265,
+              "max_seconds": 0.000365
+            },
+            "PARTITION_IDENTITY": {
+              "count": 1,
+              "seconds": 0.000354,
+              "max_seconds": 0.000354
+            },
+            "PARTITION_PARSE": {
+              "count": 1,
+              "seconds": 0.006934,
+              "max_seconds": 0.006934
+            },
+            "CACHE_WRITE": {
+              "count": 1,
+              "seconds": 0.000335,
+              "max_seconds": 0.000335
+            },
+            "DEPENDENCIES": {
+              "count": 1,
+              "seconds": 0.000109,
+              "max_seconds": 0.000109
+            },
+            "CLAIM_EXTRACTION": {
+              "count": 1,
+              "seconds": 2e-05,
+              "max_seconds": 2e-05
+            },
+            "CLAIM_VERIFICATION": {
+              "count": 1,
+              "seconds": 3e-06,
+              "max_seconds": 3e-06
+            },
+            "QUALITY_AGGREGATION": {
+              "count": 1,
+              "seconds": 0.042752,
+              "max_seconds": 0.042752
+            },
+            "FINAL_IDENTITY": {
+              "count": 1,
+              "seconds": 0.011749,
+              "max_seconds": 0.011749
+            },
+            "EVIDENCE_FILE": {
+              "count": 20,
+              "seconds": 0.03852,
+              "max_seconds": 0.002777
+            },
+            "EVIDENCE_FILES": {
+              "count": 1,
+              "seconds": 0.038779,
+              "max_seconds": 0.038779
+            },
+            "PUBLISH_CLAIMS": {
+              "count": 1,
+              "seconds": 0.003278,
+              "max_seconds": 0.003278
+            },
+            "PUBLISH_FINDINGS": {
+              "count": 1,
+              "seconds": 0.352191,
+              "max_seconds": 0.352191
+            },
+            "PUBLISH_DEPENDENCIES": {
+              "count": 1,
+              "seconds": 0.003621,
+              "max_seconds": 0.003621
+            },
+            "FINDING_CORRELATION": {
+              "count": 1,
+              "seconds": 1.470143,
+              "max_seconds": 1.470143
+            },
+            "FINDING_HISTORY": {
+              "count": 1,
+              "seconds": 0.688651,
+              "max_seconds": 0.688651
+            },
+            "ARTIFACT_GRAPH": {
+              "count": 1,
+              "seconds": 0.297271,
+              "max_seconds": 0.297271
+            },
+            "CONFIGURATION_GRAPH": {
+              "count": 1,
+              "seconds": 0.162209,
+              "max_seconds": 0.162209
+            },
+            "FUNCTION_GRAPH": {
+              "count": 1,
+              "seconds": 0.522574,
+              "max_seconds": 0.522574
+            },
+            "OWNERSHIP_GRAPH": {
+              "count": 1,
+              "seconds": 0.181901,
+              "max_seconds": 0.181901
+            },
+            "POLICY_PROJECTION": {
+              "count": 1,
+              "seconds": 0.520489,
+              "max_seconds": 0.520489
+            },
+            "IMPACT_GRAPH": {
+              "count": 1,
+              "seconds": 0.138315,
+              "max_seconds": 0.138315
+            }
+          },
+          "counters": {
+            "source_blob_reads": 0,
+            "source_cache_hits": 0,
+            "parser_cache_hits": 20,
+            "parser_cache_misses": 0,
+            "global_analysis_checkpoints_saved": 1,
+            "publication_units_reused": 0,
+            "publication_units_completed": 42,
+            "generation_staging_batches": 58,
+            "generation_inserted_records": 1312,
+            "generation_maximum_batch_records": 250
+          },
+          "slowest_file_operations": [
+            {
+              "path": "component/app0009.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002777,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0015.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002651,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0003.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002173,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0001.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002118,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0005.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.0021,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0016.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.002084,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0004.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001997,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0002.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001995,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0014.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001826,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0000.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001815,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0007.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001811,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0008.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001805,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0019.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001775,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0006.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001743,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0018.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001713,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0017.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001694,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0012.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001673,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0011.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001649,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0010.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001577,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0013.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001542,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0002.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000365,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0016.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000359,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0019.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000341,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0017.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000338,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0009.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000335,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0013.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000329,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0000.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000324,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0005.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000322,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0014.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000311,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0007.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000309,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0015.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000308,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0010.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000307,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0011.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000305,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0018.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000301,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0003.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000294,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0008.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000293,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0004.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.00029,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0012.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000284,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0001.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000281,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0006.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000268,
+              "state": "REUSED"
+            }
+          ],
+          "helper_concurrency_max": 2,
+          "source_cache_bytes_max": 2000000,
+          "timing_scope": "Current attempt; component/helper time overlaps and is not summed as wall runtime."
+        },
+        "coverage": {
+          "files_discovered": 20,
+          "files_with_native_scan": 20,
+          "source_files": 20,
+          "source_files_parsed": 20,
+          "source_analysis_percent": 100.0,
+          "states": {
+            "PARTIAL": 20
+          }
+        },
+        "source_storage": {
+          "kind": "TENANT_ENCRYPTED_CONTENT_ADDRESSED",
+          "inventory_id": "0a9e8195-3bed-494a-bba3-fc8933f639cd",
+          "partitions": 1,
+          "partition_model": "DECLARED_COMPONENT_THEN_FILE_AND_BYTE_BUDGET",
+          "max_partition_files": 20,
+          "max_partition_bytes": 9200,
+          "parser_cache_hits": 20,
+          "parser_cache_misses": 0,
+          "parser_cache_scope": "TENANT_CONTENT_PATH_PARSER_RULE_VERSION",
+          "quality_thresholds_recomputed": true,
+          "global_correlations_recomputed": true,
+          "analysis_ms": 299.91,
+          "large_repository_performance": "UNMEASURED",
+          "performance": {
+            "schema": "projecttrace-performance-v1",
+            "clock": "WALL_PERF_COUNTER",
+            "stage_seconds": {
+              "VALIDATING": 0.00633,
+              "PARSING": 0.005703,
+              "ANALYZING": 0.066957,
+              "EXTRACTING_CLAIMS": 0.002593,
+              "VERIFYING": 0.229081
+            },
+            "components": {
+              "CACHE_LOOKUP": {
+                "count": 1,
+                "seconds": 0.005541,
+                "max_seconds": 0.005541
+              },
+              "CACHE_REUSE": {
+                "count": 20,
+                "seconds": 0.006265,
+                "max_seconds": 0.000365
+              },
+              "PARTITION_IDENTITY": {
+                "count": 1,
+                "seconds": 0.000354,
+                "max_seconds": 0.000354
+              },
+              "PARTITION_PARSE": {
+                "count": 1,
+                "seconds": 0.006934,
+                "max_seconds": 0.006934
+              },
+              "CACHE_WRITE": {
+                "count": 1,
+                "seconds": 0.000335,
+                "max_seconds": 0.000335
+              },
+              "DEPENDENCIES": {
+                "count": 1,
+                "seconds": 0.000109,
+                "max_seconds": 0.000109
+              },
+              "CLAIM_EXTRACTION": {
+                "count": 1,
+                "seconds": 2e-05,
+                "max_seconds": 2e-05
+              },
+              "CLAIM_VERIFICATION": {
+                "count": 1,
+                "seconds": 3e-06,
+                "max_seconds": 3e-06
+              },
+              "QUALITY_AGGREGATION": {
+                "count": 1,
+                "seconds": 0.042752,
+                "max_seconds": 0.042752
+              },
+              "FINAL_IDENTITY": {
+                "count": 1,
+                "seconds": 0.011749,
+                "max_seconds": 0.011749
+              }
+            },
+            "counters": {
+              "source_blob_reads": 0,
+              "source_cache_hits": 0,
+              "parser_cache_hits": 20,
+              "parser_cache_misses": 0
+            },
+            "slowest_file_operations": [
+              {
+                "path": "component/app0002.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000365,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0016.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000359,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0019.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000341,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0017.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000338,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0009.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000335,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0013.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000329,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0000.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000324,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0005.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000322,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0014.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000311,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0007.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000309,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0015.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000308,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0010.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000307,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0011.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000305,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0018.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000301,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0003.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000294,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0008.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000293,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0004.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.00029,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0012.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000284,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0001.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000281,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0006.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000268,
+                "state": "REUSED"
+              }
+            ],
+            "helper_concurrency_max": 2,
+            "source_cache_bytes_max": 2000000,
+            "timing_scope": "Current attempt; component/helper time overlaps and is not summed as wall runtime."
+          },
+          "observation_spill": {
+            "scope": "ATTEMPT_PRIVATE_ENCRYPTED_TYPED_ROWS",
+            "signal_rows": 220,
+            "metric_rows": 200,
+            "pre_quality_finding_rows": 200,
+            "ciphertext_bytes": 748660,
+            "resident_sqlite_cache_bytes_per_collection": 1048576,
+            "maximum_ciphertext_bytes_per_collection": 256000000,
+            "global_memory_qualification": "NOT_QUALIFIED"
+          }
+        },
+        "findings": 200,
+        "graph_nodes": 428
+      },
+      {
+        "mode": "one_file_change",
+        "wall_seconds": 9.503233,
+        "parent_cpu_seconds": 9.406293,
+        "helper_cpu_seconds": 0.0,
+        "helper_cpu_scope": "Owned descendants discovered during 100 ms samples; short-lived undiscovered descendants can be missed.",
+        "sampled_process_tree_peak_rss_bytes": 159084544,
+        "parent_lifetime_peak_rss_bytes": null,
+        "helper_concurrency_observed": 0,
+        "helper_calls": 0,
+        "helper_wall_seconds_overlapping": 0.0,
+        "rss_sample_interval_seconds": 0.1,
+        "database": {
+          "queries": 6240,
+          "seconds": 0.2419271060189203,
+          "flushes": 387,
+          "max_flush_rows": 208
+        },
+        "state": "COMPLETED",
+        "job_duration_ms": 9426.92,
+        "performance": {
+          "schema": "projecttrace-performance-v1",
+          "clock": "WALL_PERF_COUNTER",
+          "stage_seconds": {
+            "VALIDATING": 0.024195,
+            "PARSING": 0.006159,
+            "ANALYZING": 0.088898,
+            "EXTRACTING_CLAIMS": 0.002709,
+            "VERIFYING": 0.434682,
+            "BUILDING_EVIDENCE": 2.251375,
+            "CORRELATING": 5.447929,
+            "FINALIZING": 1.169082,
+            "COMPLETED": 0.000119
+          },
+          "components": {
+            "CACHE_LOOKUP": {
+              "count": 1,
+              "seconds": 0.006067,
+              "max_seconds": 0.006067
+            },
+            "PYTHON_NATIVE": {
+              "count": 1,
+              "seconds": 0.006335,
+              "max_seconds": 0.006335
+            },
+            "FILE_POSTPROCESS": {
+              "count": 1,
+              "seconds": 0.000817,
+              "max_seconds": 0.000817
+            },
+            "CACHE_REUSE": {
+              "count": 19,
+              "seconds": 0.007407,
+              "max_seconds": 0.00046
+            },
+            "PARTITION_IDENTITY": {
+              "count": 1,
+              "seconds": 0.001755,
+              "max_seconds": 0.001755
+            },
+            "PARTITION_PARSE": {
+              "count": 1,
+              "seconds": 0.016915,
+              "max_seconds": 0.016915
+            },
+            "CACHE_WRITE": {
+              "count": 1,
+              "seconds": 0.001465,
+              "max_seconds": 0.001465
+            },
+            "DEPENDENCIES": {
+              "count": 1,
+              "seconds": 0.000101,
+              "max_seconds": 0.000101
+            },
+            "CLAIM_EXTRACTION": {
+              "count": 1,
+              "seconds": 4.6e-05,
+              "max_seconds": 4.6e-05
+            },
+            "CLAIM_VERIFICATION": {
+              "count": 1,
+              "seconds": 3e-06,
+              "max_seconds": 3e-06
+            },
+            "QUALITY_AGGREGATION": {
+              "count": 1,
+              "seconds": 0.04336,
+              "max_seconds": 0.04336
+            },
+            "FINAL_IDENTITY": {
+              "count": 1,
+              "seconds": 0.006727,
+              "max_seconds": 0.006727
+            },
+            "EVIDENCE_FILE": {
+              "count": 20,
+              "seconds": 0.187004,
+              "max_seconds": 0.152068
+            },
+            "EVIDENCE_FILES": {
+              "count": 1,
+              "seconds": 0.187502,
+              "max_seconds": 0.187502
+            },
+            "PUBLISH_CLAIMS": {
+              "count": 1,
+              "seconds": 0.003719,
+              "max_seconds": 0.003719
+            },
+            "PUBLISH_FINDINGS": {
+              "count": 1,
+              "seconds": 0.414629,
+              "max_seconds": 0.414629
+            },
+            "PUBLISH_DEPENDENCIES": {
+              "count": 1,
+              "seconds": 0.002313,
+              "max_seconds": 0.002313
+            },
+            "FINDING_CORRELATION": {
+              "count": 1,
+              "seconds": 1.714609,
+              "max_seconds": 1.714609
+            },
+            "FINDING_HISTORY": {
+              "count": 1,
+              "seconds": 0.600795,
+              "max_seconds": 0.600795
+            },
+            "ARTIFACT_GRAPH": {
+              "count": 1,
+              "seconds": 0.458005,
+              "max_seconds": 0.458005
+            },
+            "CONFIGURATION_GRAPH": {
+              "count": 1,
+              "seconds": 0.166962,
+              "max_seconds": 0.166962
+            },
+            "FUNCTION_GRAPH": {
+              "count": 1,
+              "seconds": 0.553897,
+              "max_seconds": 0.553897
+            },
+            "OWNERSHIP_GRAPH": {
+              "count": 1,
+              "seconds": 0.190231,
+              "max_seconds": 0.190231
+            },
+            "POLICY_PROJECTION": {
+              "count": 1,
+              "seconds": 0.621117,
+              "max_seconds": 0.621117
+            },
+            "IMPACT_GRAPH": {
+              "count": 1,
+              "seconds": 0.227467,
+              "max_seconds": 0.227467
+            }
+          },
+          "counters": {
+            "source_blob_reads": 1,
+            "source_cache_hits": 1,
+            "parser_cache_hits": 19,
+            "parser_cache_misses": 1,
+            "global_analysis_checkpoints_saved": 1,
+            "publication_units_reused": 0,
+            "publication_units_completed": 42,
+            "generation_staging_batches": 60,
+            "generation_inserted_records": 1312,
+            "generation_maximum_batch_records": 250
+          },
+          "slowest_file_operations": [
+            {
+              "path": "component/app0015.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.152068,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0000.py",
+              "component": "PYTHON_NATIVE",
+              "seconds": 0.006335,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0012.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.003609,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0017.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001978,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0013.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001916,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0018.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001907,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0016.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001883,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0002.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001868,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0001.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001864,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0014.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001833,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0019.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001822,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0004.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001746,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0003.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001702,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0009.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001693,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0008.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001672,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0006.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.00164,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0005.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001592,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0007.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001561,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0011.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001554,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0000.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001553,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0010.py",
+              "component": "EVIDENCE_FILE",
+              "seconds": 0.001544,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0000.py",
+              "component": "FILE_POSTPROCESS",
+              "seconds": 0.000817,
+              "state": "MEASURED"
+            },
+            {
+              "path": "component/app0004.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.00046,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0013.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000422,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0003.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000411,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0008.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000409,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0010.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000403,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0011.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000402,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0001.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000396,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0014.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000395,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0012.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000391,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0015.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.00039,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0016.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000383,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0002.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000379,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0009.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000378,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0019.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000377,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0005.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000372,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0007.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000372,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0017.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.00036,
+              "state": "REUSED"
+            },
+            {
+              "path": "component/app0018.py",
+              "component": "CACHE_REUSE",
+              "seconds": 0.000358,
+              "state": "REUSED"
+            }
+          ],
+          "helper_concurrency_max": 2,
+          "source_cache_bytes_max": 2000000,
+          "timing_scope": "Current attempt; component/helper time overlaps and is not summed as wall runtime."
+        },
+        "coverage": {
+          "files_discovered": 20,
+          "files_with_native_scan": 20,
+          "source_files": 20,
+          "source_files_parsed": 20,
+          "source_analysis_percent": 100.0,
+          "states": {
+            "PARTIAL": 20
+          }
+        },
+        "source_storage": {
+          "kind": "TENANT_ENCRYPTED_CONTENT_ADDRESSED",
+          "inventory_id": "bfb6a182-75da-44e3-b7a5-264323cb4f4c",
+          "partitions": 1,
+          "partition_model": "DECLARED_COMPONENT_THEN_FILE_AND_BYTE_BUDGET",
+          "max_partition_files": 20,
+          "max_partition_bytes": 9233,
+          "parser_cache_hits": 19,
+          "parser_cache_misses": 1,
+          "parser_cache_scope": "TENANT_CONTENT_PATH_PARSER_RULE_VERSION",
+          "quality_thresholds_recomputed": true,
+          "global_correlations_recomputed": true,
+          "analysis_ms": 174.54,
+          "large_repository_performance": "UNMEASURED",
+          "performance": {
+            "schema": "projecttrace-performance-v1",
+            "clock": "WALL_PERF_COUNTER",
+            "stage_seconds": {
+              "VALIDATING": 0.024195,
+              "PARSING": 0.006159,
+              "ANALYZING": 0.088898,
+              "EXTRACTING_CLAIMS": 0.002709,
+              "VERIFYING": 0.081693
+            },
+            "components": {
+              "CACHE_LOOKUP": {
+                "count": 1,
+                "seconds": 0.006067,
+                "max_seconds": 0.006067
+              },
+              "PYTHON_NATIVE": {
+                "count": 1,
+                "seconds": 0.006335,
+                "max_seconds": 0.006335
+              },
+              "FILE_POSTPROCESS": {
+                "count": 1,
+                "seconds": 0.000817,
+                "max_seconds": 0.000817
+              },
+              "CACHE_REUSE": {
+                "count": 19,
+                "seconds": 0.007407,
+                "max_seconds": 0.00046
+              },
+              "PARTITION_IDENTITY": {
+                "count": 1,
+                "seconds": 0.001755,
+                "max_seconds": 0.001755
+              },
+              "PARTITION_PARSE": {
+                "count": 1,
+                "seconds": 0.016915,
+                "max_seconds": 0.016915
+              },
+              "CACHE_WRITE": {
+                "count": 1,
+                "seconds": 0.001465,
+                "max_seconds": 0.001465
+              },
+              "DEPENDENCIES": {
+                "count": 1,
+                "seconds": 0.000101,
+                "max_seconds": 0.000101
+              },
+              "CLAIM_EXTRACTION": {
+                "count": 1,
+                "seconds": 4.6e-05,
+                "max_seconds": 4.6e-05
+              },
+              "CLAIM_VERIFICATION": {
+                "count": 1,
+                "seconds": 3e-06,
+                "max_seconds": 3e-06
+              },
+              "QUALITY_AGGREGATION": {
+                "count": 1,
+                "seconds": 0.04336,
+                "max_seconds": 0.04336
+              },
+              "FINAL_IDENTITY": {
+                "count": 1,
+                "seconds": 0.006727,
+                "max_seconds": 0.006727
+              }
+            },
+            "counters": {
+              "source_blob_reads": 1,
+              "source_cache_hits": 1,
+              "parser_cache_hits": 19,
+              "parser_cache_misses": 1
+            },
+            "slowest_file_operations": [
+              {
+                "path": "component/app0000.py",
+                "component": "PYTHON_NATIVE",
+                "seconds": 0.006335,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0000.py",
+                "component": "FILE_POSTPROCESS",
+                "seconds": 0.000817,
+                "state": "MEASURED"
+              },
+              {
+                "path": "component/app0004.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.00046,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0013.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000422,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0003.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000411,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0008.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000409,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0010.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000403,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0011.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000402,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0001.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000396,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0014.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000395,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0012.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000391,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0015.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.00039,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0016.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000383,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0002.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000379,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0009.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000378,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0019.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000377,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0005.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000372,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0007.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000372,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0017.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.00036,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0018.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000358,
+                "state": "REUSED"
+              },
+              {
+                "path": "component/app0006.py",
+                "component": "CACHE_REUSE",
+                "seconds": 0.000349,
+                "state": "REUSED"
+              }
+            ],
+            "helper_concurrency_max": 2,
+            "source_cache_bytes_max": 2000000,
+            "timing_scope": "Current attempt; component/helper time overlaps and is not summed as wall runtime."
+          },
+          "observation_spill": {
+            "scope": "ATTEMPT_PRIVATE_ENCRYPTED_TYPED_ROWS",
+            "signal_rows": 220,
+            "metric_rows": 200,
+            "pre_quality_finding_rows": 200,
+            "ciphertext_bytes": 748660,
+            "resident_sqlite_cache_bytes_per_collection": 1048576,
+            "maximum_ciphertext_bytes_per_collection": 256000000,
+            "global_memory_qualification": "NOT_QUALIFIED"
+          }
+        },
+        "findings": 200,
+        "graph_nodes": 427
+      }
+    ]
+  },
+  "complete_semantic_fingerprints": {
+    "equal": true,
+    "before": {
+      "snapshots": {
+        "snapshot:e13173ea051ac7df6c622c11a85d47e539d73987904366e25762546875f415f3": {
+          "claim": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "dependency": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "drift": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "edge": {
+            "count": 663,
+            "sha256": "7846043f7900a2abd459c3b7a00098959a21d883e1c968c50329b964958aad29"
+          },
+          "evidence": {
+            "count": 20,
+            "sha256": "0f0c6ed1357ff93d7a1b72998bfa6fb34df069ad2d877160a8427e4dfb6e1ccb"
+          },
+          "finding": {
+            "count": 200,
+            "sha256": "f5944d9fa41db1bfed8a53a7c61e5327dc25e2c41566178c036554b96c100b1f"
+          },
+          "graph_node": {
+            "count": 428,
+            "sha256": "345771b583274f2775d921c7708c1450099ddae7f1b3cac20baf996e0d048b02"
+          },
+          "quality_projection": {
+            "count": 1,
+            "sha256": "09231fab1239d25b7b378e27d54adeb9b0cc90770db6a4a4603ac75f597c9607"
+          },
+          "risk_path": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "snapshot": {
+            "count": 1,
+            "sha256": "ca86a0c430efde9eacd89c8906e2666e7601c41abb3c6d14bb80f9adea7be20f"
+          }
+        },
+        "snapshot:f9349d1185794a0496b1eb820a378b054f27d3033fc5476cadfebe0259c53722": {
+          "claim": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "dependency": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "drift": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "edge": {
+            "count": 663,
+            "sha256": "392a6cdf7ea533bde224160592ff4d32007c9452b0f0361268108355a62bb066"
+          },
+          "evidence": {
+            "count": 20,
+            "sha256": "70044a52a44ce0ef71e135842b66582f4be60b14174e8805ef0f433f70472cf6"
+          },
+          "finding": {
+            "count": 200,
+            "sha256": "4ec251bd68f7feeb5eb38a36404fcf3c8f1868c520b3678c9936397c061ff270"
+          },
+          "graph_node": {
+            "count": 428,
+            "sha256": "98d58546e34828d8151c9e834c933b07c130f2618a146873968f643d4cf5c5bd"
+          },
+          "quality_projection": {
+            "count": 1,
+            "sha256": "09231fab1239d25b7b378e27d54adeb9b0cc90770db6a4a4603ac75f597c9607"
+          },
+          "risk_path": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "snapshot": {
+            "count": 1,
+            "sha256": "e301cc8568c297198af48f3c396b9978ded199637b906c48830f7d6a6d9875a1"
+          }
+        },
+        "snapshot:f35826da21170c876d9031b64d6cc84076e51401160ff2bd11a99e23f6ceb639": {
+          "claim": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "dependency": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "drift": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "edge": {
+            "count": 663,
+            "sha256": "3483b6e5232fc5efae6ab19237e79aee56cb0781606d54b6adacc419b6067a0b"
+          },
+          "evidence": {
+            "count": 20,
+            "sha256": "e5f9572e57f3ee2327356b2ac7f35071c9d75b78b3ac2a934e727505daa53817"
+          },
+          "finding": {
+            "count": 200,
+            "sha256": "aa21a159ebd5f6e3146e13cd1e33a54f27b64e90faab2806d7bbc03f5c85893a"
+          },
+          "graph_node": {
+            "count": 427,
+            "sha256": "9e3416b15e8c6b585fc8be689f9cd8ce2fa8020a7a898489caa582beec655f5e"
+          },
+          "quality_projection": {
+            "count": 1,
+            "sha256": "597e3c381304b09a7194e2bd55700f4f27d6ebce377d05a92fd4c2d98dff08f5"
+          },
+          "risk_path": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "snapshot": {
+            "count": 1,
+            "sha256": "10d14ea5d6b8b326b7c9b8f6ee8b73f727019449bf53bb4f78c89830e0a463fb"
+          }
+        }
+      },
+      "source_inventories": {
+        "inventory:da515789c51472d34dd685913048ed096391be86b0c3cfa4583fb164257c16cc": {
+          "count": 20,
+          "sha256": "da515789c51472d34dd685913048ed096391be86b0c3cfa4583fb164257c16cc"
+        },
+        "inventory:fb4655911e4baec4350526afe223789d5d06ace4ac163d56f1f7f1becf85e34a": {
+          "count": 20,
+          "sha256": "fb4655911e4baec4350526afe223789d5d06ace4ac163d56f1f7f1becf85e34a"
+        }
+      },
+      "parser_artifacts": {
+        "count": 21,
+        "sha256": "f034973358b75fb32e862e099659071c191d78ae55ed8ea9e4ae02cbf2e7b0e8"
+      },
+      "sqlite_integrity": "ok",
+      "foreign_key_violations": 0
+    },
+    "after": {
+      "snapshots": {
+        "snapshot:e13173ea051ac7df6c622c11a85d47e539d73987904366e25762546875f415f3": {
+          "claim": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "dependency": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "drift": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "edge": {
+            "count": 663,
+            "sha256": "7846043f7900a2abd459c3b7a00098959a21d883e1c968c50329b964958aad29"
+          },
+          "evidence": {
+            "count": 20,
+            "sha256": "0f0c6ed1357ff93d7a1b72998bfa6fb34df069ad2d877160a8427e4dfb6e1ccb"
+          },
+          "finding": {
+            "count": 200,
+            "sha256": "f5944d9fa41db1bfed8a53a7c61e5327dc25e2c41566178c036554b96c100b1f"
+          },
+          "graph_node": {
+            "count": 428,
+            "sha256": "345771b583274f2775d921c7708c1450099ddae7f1b3cac20baf996e0d048b02"
+          },
+          "quality_projection": {
+            "count": 1,
+            "sha256": "09231fab1239d25b7b378e27d54adeb9b0cc90770db6a4a4603ac75f597c9607"
+          },
+          "risk_path": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "snapshot": {
+            "count": 1,
+            "sha256": "ca86a0c430efde9eacd89c8906e2666e7601c41abb3c6d14bb80f9adea7be20f"
+          }
+        },
+        "snapshot:f9349d1185794a0496b1eb820a378b054f27d3033fc5476cadfebe0259c53722": {
+          "claim": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "dependency": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "drift": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "edge": {
+            "count": 663,
+            "sha256": "392a6cdf7ea533bde224160592ff4d32007c9452b0f0361268108355a62bb066"
+          },
+          "evidence": {
+            "count": 20,
+            "sha256": "70044a52a44ce0ef71e135842b66582f4be60b14174e8805ef0f433f70472cf6"
+          },
+          "finding": {
+            "count": 200,
+            "sha256": "4ec251bd68f7feeb5eb38a36404fcf3c8f1868c520b3678c9936397c061ff270"
+          },
+          "graph_node": {
+            "count": 428,
+            "sha256": "98d58546e34828d8151c9e834c933b07c130f2618a146873968f643d4cf5c5bd"
+          },
+          "quality_projection": {
+            "count": 1,
+            "sha256": "09231fab1239d25b7b378e27d54adeb9b0cc90770db6a4a4603ac75f597c9607"
+          },
+          "risk_path": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "snapshot": {
+            "count": 1,
+            "sha256": "e301cc8568c297198af48f3c396b9978ded199637b906c48830f7d6a6d9875a1"
+          }
+        },
+        "snapshot:f35826da21170c876d9031b64d6cc84076e51401160ff2bd11a99e23f6ceb639": {
+          "claim": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "dependency": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "drift": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "edge": {
+            "count": 663,
+            "sha256": "3483b6e5232fc5efae6ab19237e79aee56cb0781606d54b6adacc419b6067a0b"
+          },
+          "evidence": {
+            "count": 20,
+            "sha256": "e5f9572e57f3ee2327356b2ac7f35071c9d75b78b3ac2a934e727505daa53817"
+          },
+          "finding": {
+            "count": 200,
+            "sha256": "aa21a159ebd5f6e3146e13cd1e33a54f27b64e90faab2806d7bbc03f5c85893a"
+          },
+          "graph_node": {
+            "count": 427,
+            "sha256": "9e3416b15e8c6b585fc8be689f9cd8ce2fa8020a7a898489caa582beec655f5e"
+          },
+          "quality_projection": {
+            "count": 1,
+            "sha256": "597e3c381304b09a7194e2bd55700f4f27d6ebce377d05a92fd4c2d98dff08f5"
+          },
+          "risk_path": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "snapshot": {
+            "count": 1,
+            "sha256": "10d14ea5d6b8b326b7c9b8f6ee8b73f727019449bf53bb4f78c89830e0a463fb"
+          }
+        }
+      },
+      "source_inventories": {
+        "inventory:da515789c51472d34dd685913048ed096391be86b0c3cfa4583fb164257c16cc": {
+          "count": 20,
+          "sha256": "da515789c51472d34dd685913048ed096391be86b0c3cfa4583fb164257c16cc"
+        },
+        "inventory:fb4655911e4baec4350526afe223789d5d06ace4ac163d56f1f7f1becf85e34a": {
+          "count": 20,
+          "sha256": "fb4655911e4baec4350526afe223789d5d06ace4ac163d56f1f7f1becf85e34a"
+        }
+      },
+      "parser_artifacts": {
+        "count": 21,
+        "sha256": "f034973358b75fb32e862e099659071c191d78ae55ed8ea9e4ae02cbf2e7b0e8"
+      },
+      "sqlite_integrity": "ok",
+      "foreign_key_violations": 0
+    },
+    "normalization": {
+      "timestamps": [
+        "analysis_at",
+        "created_at",
+        "finished_at",
+        "first_seen",
+        "last_seen",
+        "reviewed_at",
+        "updated_at"
+      ],
+      "durations": [
+        "analysis_ms",
+        "analysis_seconds",
+        "duration_ms",
+        "quality_ms"
+      ],
+      "id_sets": [
+        "affected_api",
+        "affected_architecture",
+        "affected_claims",
+        "affected_dependencies",
+        "affected_documentation",
+        "affected_findings",
+        "affected_nodes",
+        "affected_policies",
+        "removed_claims",
+        "via"
+      ],
+      "operational_fields": "Generated performance/spill diagnostics only; unknown fields retained",
+      "ids": "Known job/snapshot/inventory/scoped record/graph identities replaced by semantic references"
+    }
+  },
+  "large_workload_qualification": "NOT_QUALIFIED"
+}

@@ -1,0 +1,116 @@
+{
+  "scope": "Owned local tests; not Linux isolation or large-workload qualification",
+  "compression_tests": {
+    "passed": 65,
+    "skipped": 0,
+    "seconds": 4.25,
+    "mode": "development"
+  },
+  "publication_regressions": {
+    "passed": 113,
+    "skipped": 1,
+    "seconds": 208.97,
+    "mode": "development",
+    "postgresql": "not available locally",
+    "skip_reason": "Windows extended-length path regression"
+  },
+  "additional_benchmark": {
+    "before": {
+      "script_report": "MEASURED_SYNTHETIC_LOCAL",
+      "phases": [
+        {
+          "phase": "INITIAL",
+          "state": "COMPLETED_NO_FINDINGS",
+          "wall_seconds": 3.927
+        },
+        {
+          "phase": "EIGHT_FILE_HEAD",
+          "state": "COMPLETED_NO_FINDINGS",
+          "wall_seconds": 3.53
+        }
+      ],
+      "post_exit_sqlite_integrity": "FAILED",
+      "database_exported": false
+    },
+    "after": {
+      "script_report": "MEASURED_SYNTHETIC_LOCAL",
+      "phases": [
+        {
+          "phase": "INITIAL",
+          "state": "COMPLETED_NO_FINDINGS",
+          "wall_seconds": 4.004
+        },
+        {
+          "phase": "EIGHT_FILE_HEAD",
+          "state": "COMPLETED_NO_FINDINGS",
+          "wall_seconds": 3.838
+        }
+      ],
+      "post_exit_sqlite_integrity": "FAILED",
+      "database_exported": false
+    }
+  },
+  "benchmark_verdict": "INVALID: both independently executed baseline and candidate produced malformed post-exit SQLite files; no equivalence or memory improvement claim",
+  "environment": {
+    "python": "3.12.14",
+    "sqlite": "3.53.1",
+    "filesystem": "overlay",
+    "baseline": "243513ee9acb6e4ed66cd3582ba79dc5a787b084"
+  },
+  "required_mode_local": "64 passed / 1 failed at LANDLOCK_ABI_3_REQUIRED before fixture capture; not an enforcement pass",
+  "next": "Preserve private fixture databases locally; reproduce on CI before attributing to production or compression. Earlier valid 20-/100-file equivalence remains commit-specific.",
+  "integrity_gate_tests": {
+    "passed": 2,
+    "skipped": 0
+  },
+  "fresh_guarded_benchmarks": {
+    "8": {
+      "state": "MEASURED_SYNTHETIC_LOCAL",
+      "database_integrity": {
+        "sqlite_integrity": "ok",
+        "foreign_key_violations": 0
+      },
+      "phases": [
+        {
+          "phase": "INITIAL",
+          "state": "COMPLETED_NO_FINDINGS",
+          "wall_seconds": 3.485,
+          "peak_working_set_bytes": 96415744,
+          "changed_files": 8
+        },
+        {
+          "phase": "EIGHT_FILE_HEAD",
+          "state": "COMPLETED_NO_FINDINGS",
+          "wall_seconds": 3.401,
+          "peak_working_set_bytes": 99823616,
+          "changed_files": 7
+        }
+      ],
+      "scope": "Owned one-function files; cold/eight-file HEAD, no complete before/after equivalence; no cgroup; development mode"
+    },
+    "20": {
+      "state": "MEASURED_SYNTHETIC_LOCAL",
+      "database_integrity": {
+        "sqlite_integrity": "ok",
+        "foreign_key_violations": 0
+      },
+      "phases": [
+        {
+          "phase": "INITIAL",
+          "state": "COMPLETED_NO_FINDINGS",
+          "wall_seconds": 3.962,
+          "peak_working_set_bytes": 97312768,
+          "changed_files": 20
+        },
+        {
+          "phase": "EIGHT_FILE_HEAD",
+          "state": "COMPLETED_NO_FINDINGS",
+          "wall_seconds": 3.576,
+          "peak_working_set_bytes": 101638144,
+          "changed_files": 8
+        }
+      ],
+      "scope": "Owned one-function files; cold/eight-file HEAD, no complete before/after equivalence; no cgroup; development mode"
+    }
+  }
+}

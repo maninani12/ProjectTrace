@@ -1,0 +1,305 @@
+{
+  "schema": "projecttrace-scale-cgroup-evidence-summary-v1",
+  "run_id": 41026991220,
+  "run_url": "https://github.com/maninani12/ProjectTrace/actions/runs/41026991220",
+  "tested_head": "f50fb0cb5139623a873a51c6f55b9f2c09a5b00b",
+  "verdict": "BLOCKED",
+  "source": {
+    "repository": "maninani12/OpenMetadata",
+    "commit": "b1fab2bc21c63335dead4daaaa28194c9878e9bf",
+    "archive_bytes": 158981993,
+    "archive_sha256": "95747f22ebf3d01232b1592551bc2bc1866b9bbe7322dd3bf1a97028b0592257",
+    "historical_archive_sha256": "027615f80245c4534f4af0270951ad7dc0418928440c5332522b46103ddfa914",
+    "historical_archive_reproduced": false,
+    "manifest_sha256": "081071ce099d103270175ab53ef12842586d7b0f1ee0c58dadbc3654a2246a89",
+    "inventory_entries": 21636,
+    "retained_text_entries": 21269,
+    "declared_bytes": 330420155,
+    "intake_replay_ciphertext_bytes": {
+      "baseline": 128281836,
+      "candidate": 128326640
+    },
+    "intake_replay_ciphertext_limit_bytes": 512000000,
+    "plaintext_source_on_disk": false
+  },
+  "enforced_envelope": {
+    "kernel_cgroup_verified": true,
+    "memory_max_bytes": 768000000,
+    "swap_max_bytes": 0,
+    "network": "none",
+    "pids_limit": 64,
+    "non_root_container": true,
+    "parser_isolation": "required"
+  },
+  "baseline": {
+    "verdict": "BLOCKED",
+    "exit_status": 137,
+    "docker_inspect_oom_killed": true,
+    "kernel_sample_count": 7692,
+    "kernel_event_maxima": {
+      "memory_max_events": 2409,
+      "oom": 2,
+      "oom_kill": 2,
+      "oom_group_kill": 0
+    },
+    "oom_classification": "KERNEL_CGROUP_COUNTER_CONFIRMED",
+    "oom_note": "The live memory sampler ended before terminal OOM counters appeared; the final kernel cgroup sample records oom=2 and oom_kill=2, consistent with Docker OOMKilled=true.",
+    "failed_stage": "ANALYZING",
+    "analysis_stage_first_elapsed_seconds": 247.703,
+    "analysis_stage_last_elapsed_seconds": 770.633,
+    "analysis_stage_seconds": 520.706368,
+    "parser_artifacts_after_exit": 3747,
+    "sampled_maxima": {
+      "coordinator_rss_bytes": 694325248,
+      "child_rss_bytes": 125992960,
+      "namespace_rss_bytes": 751857664,
+      "cgroup_memory_current_bytes": 768000000,
+      "cgroup_memory_peak_bytes": 768000000,
+      "swap_current_bytes": 0
+    },
+    "intake_replay_ciphertext_bytes": 128281836,
+    "performance_progress_samples": 31,
+    "performance_progress": {
+      "schema": "projecttrace-performance-v1",
+      "clock": "WALL_PERF_COUNTER",
+      "stage_seconds": {
+        "VALIDATING": 0.030254,
+        "PARSING": 0.120495,
+        "ANALYZING": 520.706368
+      },
+      "components": {
+        "CACHE_LOOKUP": {
+          "count": 42,
+          "seconds": 0.089604,
+          "max_seconds": 0.00265
+        },
+        "TREE_SITTER": {
+          "count": 281,
+          "seconds": 8.089951,
+          "max_seconds": 0.527364
+        },
+        "IAC": {
+          "count": 329,
+          "seconds": 1.420193,
+          "max_seconds": 0.086754
+        },
+        "FILE_POSTPROCESS": {
+          "count": 3831,
+          "seconds": 18.88355,
+          "max_seconds": 0.20041
+        },
+        "PARTITION_IDENTITY": {
+          "count": 3831,
+          "seconds": 11.925507,
+          "max_seconds": 0.205133
+        },
+        "PYTHON_NATIVE": {
+          "count": 3011,
+          "seconds": 60.777809,
+          "max_seconds": 0.632232
+        },
+        "CONTAINED_NATIVE": {
+          "count": 41,
+          "seconds": 293.325471,
+          "max_seconds": 17.038583
+        },
+        "PARTITION_PARSE": {
+          "count": 41,
+          "seconds": 504.357233,
+          "max_seconds": 28.230987
+        },
+        "CACHE_WRITE": {
+          "count": 41,
+          "seconds": 1.600208,
+          "max_seconds": 0.094691
+        }
+      },
+      "counters": {
+        "source_blob_reads": 3873,
+        "source_cache_hits": 0,
+        "parser_cache_hits": 0,
+        "parser_cache_misses": 3873,
+        "persisted_parser_diagnostic_files": 126
+      },
+      "helper_concurrency_max": 2,
+      "source_cache_bytes_max": 2000000,
+      "timing_scope": "Current attempt; component/helper time overlaps and is not summed as wall runtime."
+    },
+    "post_exit": {
+      "sqlite_integrity": "ok",
+      "foreign_key_violations": 0,
+      "published_pointers": 0,
+      "published_generations": 0,
+      "parser_artifacts": 3747,
+      "job_state": "ANALYZING",
+      "job_stage": "ANALYZING"
+    },
+    "artifact": {
+      "id": 12964438467,
+      "url": "https://github.com/maninani12/ProjectTrace/actions/runs/41026991220/artifacts/12964438467",
+      "size_bytes": 1285262,
+      "digest": "sha256:fd352ed375b4d18771f45c4a02d850e19b66bf7cfc34822785eac8265a0201e3"
+    }
+  },
+  "candidate": {
+    "verdict": "BLOCKED",
+    "exit_status": 1,
+    "docker_inspect_oom_killed": false,
+    "kernel_sample_count": 20035,
+    "kernel_event_maxima": {
+      "memory_max_events": 10774,
+      "oom": 0,
+      "oom_kill": 0,
+      "oom_group_kill": 0
+    },
+    "failed_stage": "ANALYZING",
+    "error_type": "TimeoutError",
+    "timeout_error_code": "ANALYSIS_TIME_BUDGET",
+    "attempt_duration_seconds": 2010.396,
+    "analysis_stage_first_elapsed_seconds": 199.09,
+    "analysis_stage_last_elapsed_seconds": 2010.214,
+    "analysis_stage_seconds": 1802.806029,
+    "parser_artifacts_after_exit": 14287,
+    "sampled_maxima": {
+      "coordinator_rss_bytes": 501989376,
+      "child_rss_bytes": 143368192,
+      "namespace_rss_bytes": 638144512,
+      "cgroup_memory_current_bytes": 768000000,
+      "cgroup_memory_peak_bytes": 768000000,
+      "swap_current_bytes": 0
+    },
+    "source_blob_reads": 14829,
+    "source_cache_hits": 0,
+    "parser_cache_hits": 0,
+    "parser_cache_misses": 14829,
+    "persisted_parser_diagnostic_files": 542,
+    "performance_progress_samples": 394,
+    "performance_after_failure": {
+      "schema": "projecttrace-performance-v1",
+      "clock": "WALL_PERF_COUNTER",
+      "stage_seconds": {
+        "VALIDATING": 0.026342,
+        "PARSING": 0.091919,
+        "ANALYZING": 1802.806029
+      },
+      "components": {
+        "CACHE_LOOKUP": {
+          "count": 153,
+          "seconds": 0.3483,
+          "max_seconds": 0.035465
+        },
+        "TREE_SITTER": {
+          "count": 8877,
+          "seconds": 124.269176,
+          "max_seconds": 0.607646
+        },
+        "IAC": {
+          "count": 373,
+          "seconds": 1.09622,
+          "max_seconds": 0.058842
+        },
+        "FILE_POSTPROCESS": {
+          "count": 14386,
+          "seconds": 62.028263,
+          "max_seconds": 0.136029
+        },
+        "PARTITION_IDENTITY": {
+          "count": 14386,
+          "seconds": 8.020811,
+          "max_seconds": 0.145811
+        },
+        "PYTHON_NATIVE": {
+          "count": 3011,
+          "seconds": 42.94928,
+          "max_seconds": 0.460348
+        },
+        "CONTAINED_NATIVE": {
+          "count": 153,
+          "seconds": 809.492074,
+          "max_seconds": 12.623302
+        },
+        "PARTITION_PARSE": {
+          "count": 153,
+          "seconds": 1745.576016,
+          "max_seconds": 24.071751
+        },
+        "CACHE_WRITE": {
+          "count": 153,
+          "seconds": 6.589573,
+          "max_seconds": 0.135404
+        }
+      },
+      "counters": {
+        "source_blob_reads": 14829,
+        "source_cache_hits": 0,
+        "parser_cache_hits": 0,
+        "parser_cache_misses": 14829,
+        "persisted_parser_diagnostic_files": 542
+      },
+      "helper_concurrency_max": 2,
+      "source_cache_bytes_max": 2000000,
+      "timing_scope": "Current attempt; component/helper time overlaps and is not summed as wall runtime."
+    },
+    "final_memory_events": {
+      "max": 10774,
+      "oom": 0,
+      "oom_kill": 0,
+      "oom_group_kill": 0
+    },
+    "post_exit": {
+      "sqlite_integrity": "ok",
+      "foreign_key_violations": 0,
+      "published_pointers": 0,
+      "published_generations": 0,
+      "parser_artifacts": 14287,
+      "job_state": "FAILED",
+      "job_stage": "ANALYZING",
+      "error_code": "ANALYSIS_TIME_BUDGET"
+    },
+    "artifact": {
+      "id": 12965731557,
+      "url": "https://github.com/maninani12/ProjectTrace/actions/runs/41026991220/artifacts/12965731557",
+      "size_bytes": 1494916,
+      "digest": "sha256:f05913cb37a568280f0f35a1064767fa35093094fa0aa0c9bd79609ef32bad7c"
+    }
+  },
+  "manifest_only_run": {
+    "passed": true,
+    "scope": "MANIFEST_ONLY",
+    "baseline_duration_seconds": 13.18,
+    "candidate_duration_seconds": 8.381,
+    "files": 21636,
+    "expanded_bytes": 330420155,
+    "sha256": "081071ce099d103270175ab53ef12842586d7b0f1ee0c58dadbc3654a2246a89",
+    "note": "Manifest-only success does not qualify full workload."
+  },
+  "scenarios": {
+    "cold": "did_not_complete",
+    "warm": "NOT_RUN",
+    "one_file_change": "NOT_RUN",
+    "multi_file_change": "NOT_RUN",
+    "exhaustion_recovery": "NOT_RUN",
+    "cancellation": "NOT_RUN",
+    "fresh_worker_recovery": "NOT_RUN",
+    "concurrent_tenants": "NOT_RUN"
+  },
+  "equivalence": "NOT_ESTABLISHED: neither revision completed a published output",
+  "standard_regression_run": {
+    "run_id": 41026991246,
+    "url": "https://github.com/maninani12/ProjectTrace/actions/runs/41026991246",
+    "verdict": "SUCCESS",
+    "jobs": {
+      "validate": "SUCCESS",
+      "browser": "SUCCESS",
+      "parser_isolation": "SUCCESS",
+      "broker_recovery": "SUCCESS"
+    }
+  },
+  "retention": {
+    "artifact_retention_days": 7,
+    "permanent_summary_contains_source_bytes": false,
+    "permanent_summary_contains_database_contents": false,
+    "permanent_summary_contains_keys": false,
+    "permanent_summary_contains_slowest_file_paths": false
+  }
+}

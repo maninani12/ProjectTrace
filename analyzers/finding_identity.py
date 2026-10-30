@@ -14,8 +14,8 @@ def digest(value):
     return hashlib.sha256(json.dumps(value, sort_keys=True, ensure_ascii=True).encode()).hexdigest()
 
 
-def python_index(source):
-    tree = ast.parse(source)
+def python_index(source, tree=None):
+    tree = ast.parse(source) if tree is None else tree
     nodes = list(ast.walk(tree))
     if len(nodes) > 40000:
         raise ValueError("Structural identity syntax budget exceeded")
@@ -33,7 +33,7 @@ def python_index(source):
     return tree, nodes, parents, bindings
 
 
-def annotate(files, findings, metrics):
+def annotate(files, findings, metrics, *, trees=None):
     if sandbox.required():
         from analyzers.isolated_analysis import identity
         return identity(files, findings, metrics)
@@ -46,7 +46,7 @@ def annotate(files, findings, metrics):
         if f["path"].endswith(".py") and not (f.get("structural_key") and f.get("identity_confidence") == "HIGH")
     }:
         try:
-            indexes[path] = python_index(files[path])
+            indexes[path] = python_index(files[path], (trees or {}).get(path))
         except (SyntaxError, ValueError, RecursionError, KeyError):
             pass
     for item in findings:

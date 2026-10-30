@@ -30,11 +30,11 @@ def name(node):
     return ""
 
 
-def python_flows(path, source, make_finding):
+def python_flows(path, source, make_finding, tree=None):
     if sandbox.required():
         result = sandbox.call("flows", {"path": path, "source": source})
         return [{**make_finding(item["rule"], path, item["line"], item["explanation"]), **item} for item in result]
-    tree = ast.parse(source)
+    tree = ast.parse(source) if tree is None else tree
     helpers = {node.name: node for node in tree.body if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))}
     results = {}
     aliases = {}

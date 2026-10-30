@@ -854,16 +854,23 @@ def _native_observations(files, cached_analysis, infrastructure_settings, perfor
     findings, signals, warnings = [], [], []
     assets, quality_metrics = [], []
     failures = set()
+    python_trees = {}
     cache = {}
     reused = 0
     language_results = parsed_inputs.get("languages", {}) if parsed_inputs is not None else None
     iac_results = parsed_inputs.get("iac", {}) if parsed_inputs is not None else None
     language_pending, iac_pending = {}, {}
+    iac_candidates, iac_content_candidates = {}, {}
     for path in files:
         prior = (cached_analysis or {}).get(path, {})
         meta = files.metadata_for(path) if hasattr(files, "metadata_for") else None
         content_hash = files.hash_for(path) if meta else hash_text(files[path])
         iac = meta.get("iac_candidate", bool(meta.get("infrastructure_format")) or path.endswith((".yaml", ".yml", ".json"))) if meta else is_iac_source(path, files[path])
+        iac_candidates[path] = iac
+        # For ordinary owned source dictionaries, the source/path predicate above
+        # is also the final IaC predicate. Reuse it in later native passes.
+        source_iac = iac if meta is None else None
+        iac_content_candidates[path] = source_iac
         if (prior.get("hash") == content_hash and prior.get("version") == VERSION
             and prior.get("parser_signature") == PARSER_SIGNATURE and not prior.get("warnings")
             and not any(f.get("rule") == "PT-PARSE-001" for f in prior.get("findings", []))
@@ -873,7 +880,10 @@ def _native_observations(files, cached_analysis, infrastructure_settings, perfor
             language_pending[path] = files[path]
         if iac:
             source = files[path]
-            if is_iac_source(path, source):
+            if source_iac is None:
+                source_iac = is_iac_source(path, source)
+                iac_content_candidates[path] = source_iac
+            if source_iac:
                 iac_pending[path] = source
     language_future = pool.submit(analyze_languages, language_pending, performance=performance) if language_pending and pool else None
     iac_future = pool.submit(structured_iac_batch, iac_pending, finding, infrastructure_settings, performance=performance) if iac_pending and pool else None
@@ -883,14 +893,7 @@ def _native_observations(files, cached_analysis, infrastructure_settings, perfor
         source = None if metadata else files[path]
         previous = (cached_analysis or {}).get(path)
         content_hash = files.hash_for(path) if metadata else hash_text(source)
-        iac = (
-            metadata.get(
-                "iac_candidate",
-                bool(metadata.get("infrastructure_format")) or path.endswith((".yaml", ".yml", ".json")),
-            )
-            if metadata
-            else is_iac_source(path, source)
-        )
+        iac = iac_candidates[path]
         if (
             previous
             and previous.get("hash") == content_hash
@@ -952,9 +955,13 @@ def _native_observations(files, cached_analysis, infrastructure_settings, perfor
                         for metric in measured
                         if metric["cyclomatic"] > 10
                     )
-                    flows = python_flows(path, source, finding)
+                    flows = python_flows(path, source, finding, tree=parsed_tree)
                     proven = {(item["rule"], item["line"]) for item in flows}
                     f = [item for item in f if (item["rule"], item["line"]) not in proven] + flows
+                # Retain the tree through identity only when this file produced
+                # findings that can use it. Empty files release the AST promptly.
+                if parsed_tree is not None and f:
+                    python_trees[path] = parsed_tree
                 findings.extend(f)
                 signals.extend(s)
             except Exception as error:
@@ -1017,7 +1024,11 @@ def _native_observations(files, cached_analysis, infrastructure_settings, perfor
             if context in {"TEST_FIXTURE", "EXAMPLE_CREDENTIAL"}:
                 result["severity"] = "MEDIUM"
             findings.append(result)
-        if is_iac_source(path, source):
+        source_iac = iac_content_candidates[path]
+        if source_iac is None:
+            source_iac = is_iac_source(path, source)
+            iac_content_candidates[path] = source_iac
+        if source_iac:
             if iac_results is None:
                 iac_results = iac_future.result() if iac_future else {}
             if path not in iac_results:
@@ -1085,7 +1096,7 @@ def _native_observations(files, cached_analysis, infrastructure_settings, perfor
         if performance:
             performance.record("FILE_POSTPROCESS", time.perf_counter() - post_started, path)
     identity_started = time.perf_counter()
-    annotate_finding_identity(files, findings, quality_metrics)
+    annotate_finding_identity(files, findings, quality_metrics, trees=python_trees)
     if performance:
         performance.record("PARTITION_IDENTITY", time.perf_counter() - identity_started)
     return findings, signals, warnings, assets, quality_metrics, failures, cache, reused
@@ -1100,7 +1111,10 @@ def analyze(
     *,
     observations=None,
     input_files=None,
+    consume_metrics=False,
 ):
+    if consume_metrics and not observations:
+        raise ValueError("Metric ownership transfer requires explicit observations.")
     if sandbox.required():
         sandbox.require_runtime()
     input_files = input_files if input_files is not None else validate_files(files, keep_excluded=True)
@@ -1276,7 +1290,7 @@ def analyze(
     duplicates = {}
     for metric in quality_metrics:
         if metric["token_count"] >= 30:
-            duplicates.setdefault(metric["body_hash"], []).append(metric)
+            duplicates.setdefault(metric["body_hash"], []).append({"path": metric["path"], "line": metric["line"]})
     for group in duplicates.values():
         if len(group) > 1:
             for metric in group[1:]:
@@ -1291,6 +1305,7 @@ def analyze(
                         + str(group[0]["line"]),
                     )
                 )
+    del duplicates  # Exact-body index has no consumers after its findings are emitted.
     findings.extend(link_local_declarations(files, assets, warnings, finding, infrastructure_settings))
     for resource in assets:
         resource["environment"] = (
@@ -1299,7 +1314,8 @@ def analyze(
             else resource.get("environment", "UNKNOWN")
         )
     component_started = time.perf_counter()
-    quality_findings, quality = quality_build(input_files, quality_metrics, signals, findings, warnings, profile)
+    quality_findings, quality = quality_build(input_files, quality_metrics, signals, findings, warnings, profile,
+                                             consume_metrics=consume_metrics)
     if performance:
         performance.record("QUALITY_AGGREGATION", time.perf_counter() - component_started)
     findings = [f for f in findings if f["category"] != "QUALITY"] + quality_findings

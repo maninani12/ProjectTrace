@@ -7,9 +7,9 @@ from pathlib import PurePosixPath
 
 from sqlalchemy import select, text
 
-from analyzers.compact_tokens import CompactTokens
 from analyzers.engine import PARSER_SIGNATURE, VERSION, analyze, native_observations
 from analyzers.infrastructure_deep import config
+from analyzers.observation_store import EncryptedRows, SignalRows
 from analyzers.performance import Performance
 from backend.db import ParserArtifact
 from backend.domain import add
@@ -30,12 +30,27 @@ def artifact_key(files, path, settings):
 def analyze_inventory(db, files, *, progress=None, verification_context=None, profile=None):
     if not isinstance(files, RepositoryFiles) or files.native_only:
         raise ValueError("Analysis requires an authorized complete inventory.")
+    scope = (files.organization_id, files.repository_id, files.inventory_id)
+    signals, metrics, findings = SignalRows(scope), EncryptedRows(scope), EncryptedRows(scope)
+    signals.label, metrics.label, findings.label = "NATIVE_SIGNALS", "NATIVE_METRICS", "NATIVE_FINDINGS"
+    try:
+        return _analyze_inventory(db, files, signals, metrics, findings, progress=progress,
+                                  verification_context=verification_context, profile=profile)
+    except BaseException:
+        signals.close()
+        raise
+    finally:
+        metrics.close()
+        findings.close()
+
+
+def _analyze_inventory(db, files, signals, metrics, findings, *, progress, verification_context, profile):
     started = time.perf_counter()
     performance = getattr(progress, "performance", None) or Performance()
     native = files.view(native_only=True)
     quota, settings = limits(), config((profile or {}).get("infrastructure"))
     # Source is bounded by a partition. Aggregate collections contain observations only.
-    findings, signals, warnings, assets, metrics, failures, cache, reused = [], [], [], [], [], set(), {}, 0
+    warnings, assets, failures, cache, reused = [], [], set(), {}, 0
     batch, size, partitions, max_files, max_bytes, hits, misses = [], 0, 0, 0, 0, 0, 0
 
     def parse_partition():
@@ -67,9 +82,9 @@ def analyze_inventory(db, files, *, progress=None, verification_context=None, pr
         signals.extend(s)
         warnings.extend(w)
         assets.extend(a)
-        # Avoid retaining millions of per-token dictionaries across the full
-        # repository. Cache rows keep their original lossless JSON format.
-        metrics.extend({**item, "duplicate_tokens": CompactTokens(item.get("duplicate_tokens", []))} for item in m)
+        # Immutable typed rows spill encrypted per attempt. Parser artifacts
+        # keep their independent lossless JSON; retries never depend on this file.
+        metrics.extend(m)
         failures.update(failed)
         reused += count
         hits += count
@@ -153,6 +168,7 @@ def analyze_inventory(db, files, *, progress=None, verification_context=None, pr
         profile=profile,
         observations=observations,
         input_files=files,
+        consume_metrics=True,
     )
     result["source_storage"] = {
         "kind": "TENANT_ENCRYPTED_CONTENT_ADDRESSED",
@@ -169,5 +185,16 @@ def analyze_inventory(db, files, *, progress=None, verification_context=None, pr
         "analysis_ms": round(1000 * (time.perf_counter() - started), 2),
         "large_repository_performance": "UNMEASURED",
         "performance": performance.snapshot(),
+    }
+    # Metrics have no consumers after quality/identity; signals remain a lazy
+    # JSON-compatible sequence through checkpointing and graph publication.
+    result["source_storage"]["observation_spill"] = {
+        "scope": "ATTEMPT_PRIVATE_ENCRYPTED_TYPED_ROWS",
+        "signal_rows": len(signals), "metric_rows": len(metrics),
+        "pre_quality_finding_rows": len(findings),
+        "ciphertext_bytes": signals.bytes + metrics.bytes + findings.bytes,
+        "resident_sqlite_cache_bytes_per_collection": 1_048_576,
+        "maximum_ciphertext_bytes_per_collection": signals.maximum_bytes,
+        "global_memory_qualification": "NOT_QUALIFIED",
     }
     return result

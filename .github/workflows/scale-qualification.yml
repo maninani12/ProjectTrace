@@ -1,0 +1,62 @@
+name: SCALE-001 constrained qualification
+on:
+  # Run this expensive qualification once per PR revision; push duplicates the PR event.
+  pull_request:
+    branches: [codex/linux-parser-isolation]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: scale-qualification-${{ github.event_name }}-${{ github.event.pull_request.head.ref || github.ref_name }}
+  cancel-in-progress: true
+jobs:
+  full-workload:
+    name: Full pinned workload (${{ matrix.revision }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        revision: [baseline, candidate]
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Preserve the exact integration baseline
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 243513ee9acb6e4ed66cd3582ba79dc5a787b084
+          path: baseline
+      - name: Download pinned authorized replacement (never execute its code)
+        run: |
+          curl --fail --location --retry 2 --max-time 180 -o "$RUNNER_TEMP/openmetadata.zip" https://codeload.github.com/maninani12/OpenMetadata/zip/b1fab2bc21c63335dead4daaaa28194c9878e9bf
+          echo '95747f22ebf3d01232b1592551bc2bc1866b9bbe7322dd3bf1a97028b0592257  '"$RUNNER_TEMP/openmetadata.zip" | sha256sum --check
+      - name: Build owned current runtime and full per-file manifest
+        run: |
+          docker build -t projecttrace-scale-candidate -f infrastructure/Dockerfile .
+          python3 -m scripts.run_scale_cgroup --image projecttrace-scale-candidate --archive "$RUNNER_TEMP/openmetadata.zip" --output "$RUNNER_TEMP/scale/envelope-probe" --resource-probe
+          python3 -m scripts.run_scale_cgroup --image projecttrace-scale-candidate --archive "$RUNNER_TEMP/openmetadata.zip" --output "$RUNNER_TEMP/scale/manifest" --manifest-only
+      - name: Prepare matching baseline harness without changing baseline production modules
+        if: matrix.revision == 'baseline'
+        run: |
+          cp scripts/qualify_scale_workload.py scripts/scale_linux_resources.py baseline/scripts/
+          cp analyzers/observation_store.py baseline/analyzers/
+          docker build -t projecttrace-scale-baseline -f baseline/infrastructure/Dockerfile baseline
+      - name: Full source capture, verification and publication under actual cgroup limit
+        env:
+          REVISION: ${{ matrix.revision }}
+        run: |
+          python3 -m scripts.run_scale_cgroup --image "projecttrace-scale-$REVISION" --archive "$RUNNER_TEMP/openmetadata.zip" --output "$RUNNER_TEMP/scale/$REVISION"
+      - name: Retain only sanitized receipts and resource evidence (no DB, source or keys)
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: scale-full-${{ matrix.revision }}-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/scale/**/qualification.json
+            ${{ runner.temp }}/scale/**/manifest.jsonl
+            ${{ runner.temp }}/scale/**/memory.jsonl
+            ${{ runner.temp }}/scale/**/kernel-cgroup.jsonl
+            ${{ runner.temp }}/scale/**/container-envelope.json
+            ${{ runner.temp }}/scale/**/post-exit-integrity.json
+            ${{ runner.temp }}/scale/**/resource-probe.json
+          if-no-files-found: error
+          retention-days: 7

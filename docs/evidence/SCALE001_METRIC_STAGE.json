@@ -1,0 +1,366 @@
+{
+  "qualification": "PARTIALLY_ADDRESSED_NOT_QUALIFIED",
+  "scope": "owned synthetic quality stage; not a repository or publication replay",
+  "comparisons": [
+    {
+      "runs": [
+        {
+          "scope": "SYNTHETIC_QUALITY_STAGE_ONLY",
+          "python": "3.12.14",
+          "mode": "copied",
+          "input_id": "owned-metrics-v1:1000",
+          "source_files": 1,
+          "parser_artifacts": 0,
+          "metrics": 1000,
+          "symbols": 1000,
+          "findings": 0,
+          "output_sha256": "b3a11c7cb4443c5727681ba3997a9f6a86c27929a702e52c9de873429299e882",
+          "output_bytes": 757983,
+          "seconds": 0.5124347199999875,
+          "stages": {
+            "imports": {
+              "python_current_bytes": 160,
+              "python_peak_bytes": 160,
+              "peak_rss_bytes": 13238272
+            },
+            "input": {
+              "python_current_bytes": 2119326,
+              "python_peak_bytes": 2120198,
+              "peak_rss_bytes": 17981440
+            },
+            "quality": {
+              "python_current_bytes": 3253054,
+              "python_peak_bytes": 3266419,
+              "peak_rss_bytes": 19816448
+            },
+            "serialized": {
+              "python_current_bytes": 3255574,
+              "python_peak_bytes": 3266419,
+              "peak_rss_bytes": 19816448
+            }
+          },
+          "limit": "768 MiB RLIMIT_AS; single worker; not general tree containment",
+          "publication": "NOT_EXERCISED"
+        },
+        {
+          "scope": "SYNTHETIC_QUALITY_STAGE_ONLY",
+          "python": "3.12.14",
+          "mode": "owned",
+          "input_id": "owned-metrics-v1:1000",
+          "source_files": 1,
+          "parser_artifacts": 0,
+          "metrics": 1000,
+          "symbols": 1000,
+          "findings": 0,
+          "output_sha256": "b3a11c7cb4443c5727681ba3997a9f6a86c27929a702e52c9de873429299e882",
+          "output_bytes": 757983,
+          "seconds": 0.45895886200003133,
+          "stages": {
+            "imports": {
+              "python_current_bytes": 160,
+              "python_peak_bytes": 160,
+              "peak_rss_bytes": 13238272
+            },
+            "input": {
+              "python_current_bytes": 2119326,
+              "python_peak_bytes": 2120198,
+              "peak_rss_bytes": 17985536
+            },
+            "quality": {
+              "python_current_bytes": 2368246,
+              "python_peak_bytes": 2381611,
+              "peak_rss_bytes": 18640896
+            },
+            "serialized": {
+              "python_current_bytes": 2370766,
+              "python_peak_bytes": 2381611,
+              "peak_rss_bytes": 18640896
+            }
+          },
+          "limit": "768 MiB RLIMIT_AS; single worker; not general tree containment",
+          "publication": "NOT_EXERCISED"
+        },
+        {
+          "scope": "SYNTHETIC_QUALITY_STAGE_ONLY",
+          "python": "3.12.14",
+          "mode": "owned",
+          "input_id": "owned-metrics-v1:1000",
+          "source_files": 1,
+          "parser_artifacts": 0,
+          "metrics": 1000,
+          "symbols": 1000,
+          "findings": 0,
+          "output_sha256": "b3a11c7cb4443c5727681ba3997a9f6a86c27929a702e52c9de873429299e882",
+          "output_bytes": 757983,
+          "seconds": 0.4109497479998936,
+          "stages": {
+            "imports": {
+              "python_current_bytes": 160,
+              "python_peak_bytes": 160,
+              "peak_rss_bytes": 13238272
+            },
+            "input": {
+              "python_current_bytes": 2119326,
+              "python_peak_bytes": 2120198,
+              "peak_rss_bytes": 17981440
+            },
+            "quality": {
+              "python_current_bytes": 2368246,
+              "python_peak_bytes": 2381611,
+              "peak_rss_bytes": 18636800
+            },
+            "serialized": {
+              "python_current_bytes": 2370766,
+              "python_peak_bytes": 2381611,
+              "peak_rss_bytes": 18636800
+            }
+          },
+          "limit": "768 MiB RLIMIT_AS; single worker; not general tree containment",
+          "publication": "NOT_EXERCISED"
+        }
+      ],
+      "deterministic_output": true,
+      "scale_001": "NOT_QUALIFIED"
+    },
+    {
+      "runs": [
+        {
+          "scope": "SYNTHETIC_QUALITY_STAGE_ONLY",
+          "python": "3.12.14",
+          "mode": "copied",
+          "input_id": "owned-metrics-v1:10000",
+          "source_files": 1,
+          "parser_artifacts": 0,
+          "metrics": 10000,
+          "symbols": 10000,
+          "findings": 0,
+          "output_sha256": "1817c0cf27572a455f0a0e14e49fead2c8c5e083675ffcdebecc49468a3e9885",
+          "output_bytes": 7615983,
+          "seconds": 4.311281835999921,
+          "stages": {
+            "imports": {
+              "python_current_bytes": 160,
+              "python_peak_bytes": 160,
+              "peak_rss_bytes": 13238272
+            },
+            "input": {
+              "python_current_bytes": 21230646,
+              "python_peak_bytes": 21231518,
+              "peak_rss_bytes": 61509632
+            },
+            "quality": {
+              "python_current_bytes": 32453014,
+              "python_peak_bytes": 32614699,
+              "peak_rss_bytes": 80777216
+            },
+            "serialized": {
+              "python_current_bytes": 32455534,
+              "python_peak_bytes": 32614699,
+              "peak_rss_bytes": 80777216
+            }
+          },
+          "limit": "768 MiB RLIMIT_AS; single worker; not general tree containment",
+          "publication": "NOT_EXERCISED"
+        },
+        {
+          "scope": "SYNTHETIC_QUALITY_STAGE_ONLY",
+          "python": "3.12.14",
+          "mode": "owned",
+          "input_id": "owned-metrics-v1:10000",
+          "source_files": 1,
+          "parser_artifacts": 0,
+          "metrics": 10000,
+          "symbols": 10000,
+          "findings": 0,
+          "output_sha256": "1817c0cf27572a455f0a0e14e49fead2c8c5e083675ffcdebecc49468a3e9885",
+          "output_bytes": 7615983,
+          "seconds": 4.088634415000001,
+          "stages": {
+            "imports": {
+              "python_current_bytes": 160,
+              "python_peak_bytes": 160,
+              "peak_rss_bytes": 13238272
+            },
+            "input": {
+              "python_current_bytes": 21230646,
+              "python_peak_bytes": 21231518,
+              "peak_rss_bytes": 61505536
+            },
+            "quality": {
+              "python_current_bytes": 23576206,
+              "python_peak_bytes": 23737891,
+              "peak_rss_bytes": 71860224
+            },
+            "serialized": {
+              "python_current_bytes": 23578726,
+              "python_peak_bytes": 23737891,
+              "peak_rss_bytes": 71860224
+            }
+          },
+          "limit": "768 MiB RLIMIT_AS; single worker; not general tree containment",
+          "publication": "NOT_EXERCISED"
+        },
+        {
+          "scope": "SYNTHETIC_QUALITY_STAGE_ONLY",
+          "python": "3.12.14",
+          "mode": "owned",
+          "input_id": "owned-metrics-v1:10000",
+          "source_files": 1,
+          "parser_artifacts": 0,
+          "metrics": 10000,
+          "symbols": 10000,
+          "findings": 0,
+          "output_sha256": "1817c0cf27572a455f0a0e14e49fead2c8c5e083675ffcdebecc49468a3e9885",
+          "output_bytes": 7615983,
+          "seconds": 4.044205010999917,
+          "stages": {
+            "imports": {
+              "python_current_bytes": 160,
+              "python_peak_bytes": 160,
+              "peak_rss_bytes": 13238272
+            },
+            "input": {
+              "python_current_bytes": 21230646,
+              "python_peak_bytes": 21231518,
+              "peak_rss_bytes": 61513728
+            },
+            "quality": {
+              "python_current_bytes": 23576206,
+              "python_peak_bytes": 23737891,
+              "peak_rss_bytes": 71868416
+            },
+            "serialized": {
+              "python_current_bytes": 23578726,
+              "python_peak_bytes": 23737891,
+              "peak_rss_bytes": 71868416
+            }
+          },
+          "limit": "768 MiB RLIMIT_AS; single worker; not general tree containment",
+          "publication": "NOT_EXERCISED"
+        }
+      ],
+      "deterministic_output": true,
+      "scale_001": "NOT_QUALIFIED"
+    },
+    {
+      "runs": [
+        {
+          "scope": "SYNTHETIC_QUALITY_STAGE_ONLY",
+          "python": "3.12.14",
+          "mode": "copied",
+          "input_id": "owned-metrics-v1:50000",
+          "source_files": 1,
+          "parser_artifacts": 0,
+          "metrics": 50000,
+          "symbols": 50000,
+          "findings": 0,
+          "output_sha256": "87746e709efed8da6da33978960ac7ff6afea207fab8103fc488242e3b6fac5a",
+          "output_bytes": 38335983,
+          "seconds": 22.433455885999933,
+          "stages": {
+            "imports": {
+              "python_current_bytes": 160,
+              "python_peak_bytes": 160,
+              "peak_rss_bytes": 13238272
+            },
+            "input": {
+              "python_current_bytes": 106309966,
+              "python_peak_bytes": 106310838,
+              "peak_rss_bytes": 268046336
+            },
+            "quality": {
+              "python_current_bytes": 162410982,
+              "python_peak_bytes": 163250283,
+              "peak_rss_bytes": 342495232
+            },
+            "serialized": {
+              "python_current_bytes": 162415710,
+              "python_peak_bytes": 163250283,
+              "peak_rss_bytes": 342495232
+            }
+          },
+          "limit": "768 MiB RLIMIT_AS; single worker; not general tree containment",
+          "publication": "NOT_EXERCISED"
+        },
+        {
+          "scope": "SYNTHETIC_QUALITY_STAGE_ONLY",
+          "python": "3.12.14",
+          "mode": "owned",
+          "input_id": "owned-metrics-v1:50000",
+          "source_files": 1,
+          "parser_artifacts": 0,
+          "metrics": 50000,
+          "symbols": 50000,
+          "findings": 0,
+          "output_sha256": "87746e709efed8da6da33978960ac7ff6afea207fab8103fc488242e3b6fac5a",
+          "output_bytes": 38335983,
+          "seconds": 21.20686015900003,
+          "stages": {
+            "imports": {
+              "python_current_bytes": 160,
+              "python_peak_bytes": 160,
+              "peak_rss_bytes": 13238272
+            },
+            "input": {
+              "python_current_bytes": 106309966,
+              "python_peak_bytes": 106310838,
+              "peak_rss_bytes": 268046336
+            },
+            "quality": {
+              "python_current_bytes": 118019294,
+              "python_peak_bytes": 118859779,
+              "peak_rss_bytes": 284823552
+            },
+            "serialized": {
+              "python_current_bytes": 118022174,
+              "python_peak_bytes": 118859779,
+              "peak_rss_bytes": 284823552
+            }
+          },
+          "limit": "768 MiB RLIMIT_AS; single worker; not general tree containment",
+          "publication": "NOT_EXERCISED"
+        },
+        {
+          "scope": "SYNTHETIC_QUALITY_STAGE_ONLY",
+          "python": "3.12.14",
+          "mode": "owned",
+          "input_id": "owned-metrics-v1:50000",
+          "source_files": 1,
+          "parser_artifacts": 0,
+          "metrics": 50000,
+          "symbols": 50000,
+          "findings": 0,
+          "output_sha256": "87746e709efed8da6da33978960ac7ff6afea207fab8103fc488242e3b6fac5a",
+          "output_bytes": 38335983,
+          "seconds": 21.43106479100004,
+          "stages": {
+            "imports": {
+              "python_current_bytes": 160,
+              "python_peak_bytes": 160,
+              "peak_rss_bytes": 13238272
+            },
+            "input": {
+              "python_current_bytes": 106309966,
+              "python_peak_bytes": 106310838,
+              "peak_rss_bytes": 268042240
+            },
+            "quality": {
+              "python_current_bytes": 118019294,
+              "python_peak_bytes": 118859779,
+              "peak_rss_bytes": 284819456
+            },
+            "serialized": {
+              "python_current_bytes": 118022174,
+              "python_peak_bytes": 118859779,
+              "peak_rss_bytes": 284819456
+            }
+          },
+          "limit": "768 MiB RLIMIT_AS; single worker; not general tree containment",
+          "publication": "NOT_EXERCISED"
+        }
+      ],
+      "deterministic_output": true,
+      "scale_001": "NOT_QUALIFIED"
+    }
+  ]
+}
