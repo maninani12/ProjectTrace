@@ -162,8 +162,12 @@ def main():
             # Observe actual production stage transitions without replacing any
             # analyzer, verifier, publication, fence or cancellation callbacks.
             from analyzers.performance import Performance
+            from analyzers import isolated_analysis
             original = Performance.switch
             original_record = Performance.record
+            original_invoke = sandbox.invoke
+            original_native = isolated_analysis.native
+            active_performance = [None]
             checkpoint_lock = threading.Lock()
             record_calls = [0]
 
@@ -186,8 +190,31 @@ def main():
                             pass
                 return result
 
+            def measured_native(files, cache, settings, *, performance=None):
+                previous = active_performance[0]
+                active_performance[0] = performance if performance is not None else previous
+                try:
+                    return original_native(files, cache, settings, performance=performance)
+                finally:
+                    active_performance[0] = previous
+
+            def measured_invoke(operation, value, **limits):
+                call_started = time.perf_counter()
+                try:
+                    return original_invoke(operation, value, **limits)
+                finally:
+                    owner = active_performance[0]
+                    # CONTAINED_NATIVE already measures the native worker boundary.
+                    # These three measurements expose work outside that native call,
+                    # without storing source, paths, helper payloads or tracebacks.
+                    if owner is not None and operation in {"languages", "iac", "lexical_describe"}:
+                        owner.record("SANDBOX_BOUNDARY_" + operation.upper(),
+                                     time.perf_counter() - call_started)
+
             Performance.switch = measured_switch
             Performance.record = measured_record
+            isolated_analysis.native = measured_native
+            sandbox.invoke = measured_invoke
             try:
                 for number, mode in enumerate(("cold", "warm")):
                     receipt["scenarios"][mode] = "RUNNING"
@@ -211,6 +238,9 @@ def main():
             finally:
                 Performance.switch = original
                 Performance.record = original_record
+                sandbox.invoke = original_invoke
+                isolated_analysis.native = original_native
+                active_performance[0] = None
             # Remaining scenarios must be implemented and verified before this
             # driver can ever award full qualification, even if cold/warm pass.
             receipt["verdict"] = "PARTIALLY QUALIFIED"

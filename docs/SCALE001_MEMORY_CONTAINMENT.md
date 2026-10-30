@@ -1,6 +1,6 @@
 # SCALE-001: metric ownership increment
 
-Verdict: **BLOCKED — NOT QUALIFIED**. Latest constrained attempt [41021421757](https://github.com/maninani12/ProjectTrace/actions/runs/41021421757) on head `fe61753e2c631562e911b0d0c1e74ee004bbd334` failed to complete the cold workload; details are appended below. Base PR #3 commit f655415f0971b86c2eddfb77ac98ae21f411d79c and CI 40178440270 were verified green. This separate branch targets codex/linux-parser-isolation; earlier PRs and main remain unchanged. SEC-002 controls and all existing CI jobs remain required.
+Verdict: **BLOCKED — NOT QUALIFIED**. Latest constrained attempt [41026991220](https://github.com/maninani12/ProjectTrace/actions/runs/41026991220) on head `f50fb0cb5139623a873a51c6f55b9f2c09a5b00b` failed before publishing a complete cold analysis: the baseline hit a kernel-confirmed cgroup OOM and the candidate reached its existing analysis-time budget. Standard validation [41026991246](https://github.com/maninani12/ProjectTrace/actions/runs/41026991246) passed all four jobs on this head. PR #4 remains a draft against `codex/linux-parser-isolation`; main remains unchanged. SEC-002 controls, full-workload equivalence and recovery gates remain required.
 
 ## Historical qualification target and recovery
 
@@ -206,7 +206,7 @@ A local synthetic microbenchmark of a representative 39,726-byte metric envelope
 
 The previous constrained failure occurred during `parse_partition`, before the later whole-repository quality aggregation. This serialization improvement targets work performed as encrypted observations are appended during parsing; full constrained qualification remains required to establish whether the improvement is sufficient.
 
-### Latest constrained attempt: run 41021421757 at head fe61753
+### Previous constrained attempt: run 41021421757 at head fe61753
 
 The full cold workload remains **BLOCKED**. The pinned archive and full inventory manifest succeeded, but the baseline container exited 137 at 3,747 parser artifacts and the candidate reached `ANALYZING / ANALYSIS_TIME_BUDGET` at 11,597 parser artifacts. Neither produced a complete analysis or published a generation/pointer. Warm, incremental, cancellation, fresh-worker recovery, exhaustion recovery, concurrent-tenant and complete output-equivalence scenarios were **NOT_RUN**.
 
@@ -240,3 +240,34 @@ Regression workflow [41021421697](https://github.com/maninani12/ProjectTrace/act
 
 The native parser loop redundantly reevaluated the same path/source IaC predicate between candidate collection, per-file analysis and final IaC attachment. A new regression asserts one classification per source dictionary path while preserving existing behavior for metadata-backed inventories. The qualification driver now records periodic aggregate `Performance` snapshots and a final post-failure snapshot in sanitized receipts; file paths and slowest-file details are excluded. This should expose component counts/durations on a timeout or capture progress before an externally terminated baseline. It is diagnostic/incremental work, not a substitute for full constrained pass, output equivalence or recovery gates.
 
+
+
+### Latest constrained attempt: run 41026991220 at head f50fb0c
+
+The run remains **BLOCKED**. Both jobs used the same recovered, pinned OpenMetadata archive and full manifest, but the historical archive hash was not reproduced. The baseline ended at 3,747 parser artifacts after a cgroup memory kill; unlike the earlier run's unresolved discrepancy, this run's final kernel cgroup sample records `oom=2` and `oom_kill=2`, consistent with Docker's `OOMKilled=true`. The candidate did not record an OOM event: it reached the existing `ANALYSIS_TIME_BUDGET` after about 1,803 seconds in `ANALYZING`, with 14,287 parser artifacts retained. SQLite integrity was `ok`, foreign-key violations were zero, and neither side published a generation or pointer.
+
+| Counter | Baseline | Candidate |
+|---|---:|---:|
+| Enforced cgroup memory max / swap max | 768,000,000 / 0 bytes | 768,000,000 / 0 bytes |
+| Sampled coordinator RSS peak | 694,325,248 bytes | 501,989,376 bytes |
+| Sampled child RSS peak | 125,992,960 bytes | 143,368,192 bytes |
+| Sampled namespace RSS peak | 751,857,664 bytes | 638,144,512 bytes |
+| Sampled cgroup memory peak | 768,000,000 bytes | 768,000,000 bytes |
+| Final kernel cgroup `oom` / `oom_kill` | 2 / 2 | 0 / 0 |
+| Parser artifacts after exit | 3,747 | 14,287 |
+| Analysis-stage time before failure | about 521 seconds | about 1,803 seconds |
+| Outcome | exit 137; Docker `OOMKilled=true` | exit 1; `ANALYSIS_TIME_BUDGET` |
+| Published pointers / generations | 0 / 0 | 0 / 0 |
+| Post-exit SQLite integrity / FK violations | ok / 0 | ok / 0 |
+
+The candidate completed 14,287 artifacts during approximately 1,803 analysis seconds, versus 11,597 over about 1,814 analysis seconds in the previous candidate attempt. This is roughly 23% more artifacts per analysis-second in a non-completing run; it is a directional observation, not a completed end-to-end speedup proof. The aggregate timings overlap: `PARTITION_PARSE` accumulated about 1,745.6 seconds over 153 calls, while `CONTAINED_NATIVE` accumulated about 809.5 seconds. This leaves enough time outside that native worker boundary to justify separate timings for the language, IaC and lexical-description helper boundaries before selecting a production optimization. Do not sum component wall times as if they were independent.
+
+The workload was 21,636 archive entries, 21,269 retained text entries and 330,420,155 declared bytes; manifest SHA-256 remains `081071ce099d103270175ab53ef12842586d7b0f1ee0c58dadbc3654a2246a89`. The separate manifest-only run passed, but full cold equivalence, warm, incremental, exhaustion-recovery, cancellation, fresh-worker recovery and concurrent-tenant scenarios remain **NOT_RUN**.
+
+- [Baseline artifact (ID 12964438467)](https://github.com/maninani12/ProjectTrace/actions/runs/41026991220/artifacts/12964438467), digest `sha256:fd352ed375b4d18771f45c4a02d850e19b66bf7cfc34822785eac8265a0201e3`.
+- [Candidate artifact (ID 12965731557)](https://github.com/maninani12/ProjectTrace/actions/runs/41026991220/artifacts/12965731557), digest `sha256:f05913cb37a568280f0f35a1064767fa35093094fa0aa0c9bd79609ef32bad7c`.
+- Permanent sanitized receipt: `docs/evidence/SCALE001_CGROUP_41026991220.json`. Source contents, database contents, source paths in slow-file records and encryption keys are excluded.
+
+### Next diagnostic increment: measure non-native helper boundaries
+
+The qualification driver now records aggregate wall duration and count for the contained `languages`, `iac` and `lexical_describe` sandbox calls under `SANDBOX_BOUNDARY_*` components. `CONTAINED_NATIVE` already measures the native boundary. The wrapper is limited to the qualification driver, is restored in `finally`, and adds no payloads or file paths to receipts; a regression protects the aggregate-only sanitization. Next run will reveal which helper boundary consumes the previously unaccounted portion of `PARTITION_PARSE`. Keep the cgroup and analysis-time limits unchanged until the measurements support a specific, compatibility-preserving optimization.
