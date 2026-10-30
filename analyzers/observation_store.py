@@ -16,7 +16,6 @@ from itertools import zip_longest
 
 from cryptography.fernet import Fernet
 
-
 _FAST_JSON_SERIALIZATION_BYTES = 4_000_000
 
 
