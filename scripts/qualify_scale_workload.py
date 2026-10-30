@@ -31,6 +31,17 @@ def write(path, value):
     temporary.replace(path)
 
 
+def safe_performance(value):
+    """Persist bounded aggregate timings without file paths or parser payloads."""
+    if not isinstance(value, dict):
+        return {}
+    allowed = (
+        "schema", "clock", "stage_seconds", "components", "counters",
+        "helper_concurrency_max", "source_cache_bytes_max", "timing_scope",
+    )
+    return {key: value[key] for key in allowed if key in value}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--archive", type=Path, required=True)
@@ -152,10 +163,31 @@ def main():
             # analyzer, verifier, publication, fence or cancellation callbacks.
             from analyzers.performance import Performance
             original = Performance.switch
+            original_record = Performance.record
+            checkpoint_lock = threading.Lock()
+            record_calls = [0]
+
             def measured_switch(owner, state):
                 stage[0] = state
                 return original(owner, state)
+
+            def measured_record(owner, component, seconds, path=None, *, state="MEASURED"):
+                result = original_record(owner, component, seconds, path, state=state)
+                with checkpoint_lock:
+                    record_calls[0] += 1
+                    if record_calls[0] % 25 == 0:
+                        # Aggregate metrics only. Source paths from slowest-file
+                        # diagnostics are deliberately excluded from receipts.
+                        receipt["performance_progress"] = safe_performance(owner.snapshot())
+                        receipt["performance_progress_samples"] = record_calls[0] // 25
+                        try:
+                            write(output / "qualification.json", receipt)
+                        except (OSError, TypeError, ValueError):
+                            pass
+                return result
+
             Performance.switch = measured_switch
+            Performance.record = measured_record
             try:
                 for number, mode in enumerate(("cold", "warm")):
                     receipt["scenarios"][mode] = "RUNNING"
@@ -178,6 +210,7 @@ def main():
                     user, repo = db.get(User, "scale-owned"), db.get(Repository, "scale-owned")
             finally:
                 Performance.switch = original
+                Performance.record = original_record
             # Remaining scenarios must be implemented and verified before this
             # driver can ever award full qualification, even if cold/warm pass.
             receipt["verdict"] = "PARTIALLY QUALIFIED"
@@ -199,15 +232,20 @@ def main():
         try:
             with Session() as db:
                 from backend.generation_models import AnalysisGeneration, PublishedGeneration
+                job_rows = list(db.scalars(select(Record).where(Record.kind == "job")))
                 receipt["failure_integrity"] = {
                     "published_pointers": db.scalar(select(func.count()).select_from(PublishedGeneration)),
                     "published_generations": db.scalar(select(func.count()).select_from(AnalysisGeneration).where(AnalysisGeneration.state == "PUBLISHED")),
                     "parser_artifacts": db.scalar(select(func.count()).select_from(ParserArtifact)),
                     "jobs": [{"state": r.data.get("state"), "stage": r.data.get("stage"),
-                              "error_code": r.data.get("error_code")} for r in db.scalars(select(Record).where(Record.kind == "job"))],
+                              "error_code": r.data.get("error_code")} for r in job_rows],
                     "sqlite_integrity": db.connection().exec_driver_sql("PRAGMA integrity_check").scalar(),
                     "foreign_key_violations": len(db.connection().exec_driver_sql("PRAGMA foreign_key_check").all()),
                 }
+                for failed_job in job_rows:
+                    performance = failed_job.data.get("performance")
+                    if isinstance(performance, dict):
+                        receipt["performance_after_failure"] = safe_performance(performance)
         except Exception:
             receipt["failure_integrity"] = "POST_FAILURE_READ_FAILED"
         raise

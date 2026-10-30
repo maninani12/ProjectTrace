@@ -860,11 +860,17 @@ def _native_observations(files, cached_analysis, infrastructure_settings, perfor
     language_results = parsed_inputs.get("languages", {}) if parsed_inputs is not None else None
     iac_results = parsed_inputs.get("iac", {}) if parsed_inputs is not None else None
     language_pending, iac_pending = {}, {}
+    iac_candidates, iac_content_candidates = {}, {}
     for path in files:
         prior = (cached_analysis or {}).get(path, {})
         meta = files.metadata_for(path) if hasattr(files, "metadata_for") else None
         content_hash = files.hash_for(path) if meta else hash_text(files[path])
         iac = meta.get("iac_candidate", bool(meta.get("infrastructure_format")) or path.endswith((".yaml", ".yml", ".json"))) if meta else is_iac_source(path, files[path])
+        iac_candidates[path] = iac
+        # For ordinary owned source dictionaries, the source/path predicate above
+        # is also the final IaC predicate. Reuse it in later native passes.
+        source_iac = iac if meta is None else None
+        iac_content_candidates[path] = source_iac
         if (prior.get("hash") == content_hash and prior.get("version") == VERSION
             and prior.get("parser_signature") == PARSER_SIGNATURE and not prior.get("warnings")
             and not any(f.get("rule") == "PT-PARSE-001" for f in prior.get("findings", []))
@@ -874,7 +880,10 @@ def _native_observations(files, cached_analysis, infrastructure_settings, perfor
             language_pending[path] = files[path]
         if iac:
             source = files[path]
-            if is_iac_source(path, source):
+            if source_iac is None:
+                source_iac = is_iac_source(path, source)
+                iac_content_candidates[path] = source_iac
+            if source_iac:
                 iac_pending[path] = source
     language_future = pool.submit(analyze_languages, language_pending, performance=performance) if language_pending and pool else None
     iac_future = pool.submit(structured_iac_batch, iac_pending, finding, infrastructure_settings, performance=performance) if iac_pending and pool else None
@@ -884,14 +893,7 @@ def _native_observations(files, cached_analysis, infrastructure_settings, perfor
         source = None if metadata else files[path]
         previous = (cached_analysis or {}).get(path)
         content_hash = files.hash_for(path) if metadata else hash_text(source)
-        iac = (
-            metadata.get(
-                "iac_candidate",
-                bool(metadata.get("infrastructure_format")) or path.endswith((".yaml", ".yml", ".json")),
-            )
-            if metadata
-            else is_iac_source(path, source)
-        )
+        iac = iac_candidates[path]
         if (
             previous
             and previous.get("hash") == content_hash
@@ -1022,7 +1024,11 @@ def _native_observations(files, cached_analysis, infrastructure_settings, perfor
             if context in {"TEST_FIXTURE", "EXAMPLE_CREDENTIAL"}:
                 result["severity"] = "MEDIUM"
             findings.append(result)
-        if is_iac_source(path, source):
+        source_iac = iac_content_candidates[path]
+        if source_iac is None:
+            source_iac = is_iac_source(path, source)
+            iac_content_candidates[path] = source_iac
+        if source_iac:
             if iac_results is None:
                 iac_results = iac_future.result() if iac_future else {}
             if path not in iac_results:

@@ -75,3 +75,22 @@ def test_spooled_quality_selection_avoids_a_second_metric_decode_pass(monkeypatc
     finally:
         rows.close()
 
+def test_native_observations_reuses_source_iac_classification(monkeypatch):
+    monkeypatch.setenv("PROJECTTRACE_PARSER_ISOLATION", "development")
+    import analyzers.engine as engine
+
+    original = engine.is_iac_source
+    seen = []
+
+    def count_classification(path, source):
+        seen.append(path)
+        return original(path, source)
+
+    monkeypatch.setattr(engine, "is_iac_source", count_classification)
+    files = {
+        "a.py": "def f(x):\n    return x + 1\n",
+        "b.py": "def g(y):\n    return y * 2\n",
+        "README.md": "Notes about a small project.\n",
+    }
+    engine.native_observations(files)
+    assert sorted(seen) == sorted(files)

@@ -101,7 +101,7 @@ SCALE-001 execution update: 9309c026 regression CI 40189259310 succeeded (692 ba
 
 204e4481 standard regression CI 40213479256 is verified green: 743 backend / 2 Windows skips, 77 Linux cases, 4 broker cases, 18 browser / 10 preserved skips plus 4 focused, 49 frontend units, 33 benchmarks, migrations/audits/types/builds/Ruff/compilation and both Docker images. This applies before the compressed-envelope follow-up, not automatically to later heads. It does not override the failed large-workload run.
 
-### Latest SCALE-001 execution update — 2026-10-30
+### Previous SCALE-001 execution update — run 40961124902 (2026-10-30)
 
 Constrained run [40961124902](https://github.com/maninani12/ProjectTrace/actions/runs/40961124902) on head `0d9a52e6e713c58612037575caeda66e6e423d4a` completed **BLOCKED**. Both baseline and candidate reached the cgroup ceiling of 768,000,000 bytes with swap disabled; the baseline exited 137 after 3,747 parser artifacts, and candidate failed `ANALYZING / ANALYSIS_TIME_BUDGET` after 2,071.177 seconds at 10,999 artifacts. Neither published a pointer or generation; post-exit SQLite integrity was `ok` with zero FK violations for both. All later cold/warm/incremental/recovery/concurrency/equivalence gates remain open.
 
@@ -112,4 +112,12 @@ Regression workflow [40961124908](https://github.com/maninani12/ProjectTrace/act
 ### Encrypted observation serialization optimization — 2026-10-30
 
 The prior large workload fails during `ANALYZING / parse_partition`, before repository-wide quality aggregation; therefore the one-pass quality projection alone cannot address the observed timeout. A new bounded serialization fast path uses a conservative upper bound and C-backed JSON encoding only for rows guaranteed to serialize below 4,000,000 bytes. Larger/unknown structures keep incremental streaming serialization, preserving the exact row-size gate. A regression checks byte-for-byte parity for the small path and large fallback, including row-budget errors. Local synthetic timing is illustrative only; the constrained workload must pass before making a qualification claim.
+
+### Latest SCALE-001 execution update — run 41021421757 (2026-10-30)
+
+Constrained [run 41021421757](https://github.com/maninani12/ProjectTrace/actions/runs/41021421757), candidate head `fe61753e2c631562e911b0d0c1e74ee004bbd334`, is **BLOCKED**. Standard [validation run 41021421697](https://github.com/maninani12/ProjectTrace/actions/runs/41021421697) passed: 755 backend tests, 0 failures/errors, 2 skips, plus compileall/Ruff, browser, parser-isolation and broker-recovery. These results are scoped to this commit and do not qualify SCALE-001.
+
+Baseline exited 137 at 3,747 parser artifacts; Docker reports `OOMKilled=true`, but all 1,653 sampled main-workload cgroup rows have zero `oom`/`oom_kill`/`oom_group_kill` counters. Classification stays unresolved. Candidate failed `ANALYZING / ANALYSIS_TIME_BUDGET` after 2,065.013 seconds total at 11,597 parser artifacts. Both reached `memory.peak=768000000`, swap remained zero, neither published a pointer/generation, and post-exit SQLite integrity was `ok` with zero FK violations. The run did not reach quality aggregation or any later recovery/equivalence scenario. A permanent sanitized record will be committed as `docs/evidence/SCALE001_CGROUP_41021421757.json`.
+
+The next revision caches source/path IaC classification within a native parsing batch and adds a count-based regression. The qualification driver also writes periodic aggregate performance counters/timing snapshots plus sanitized final failure counters without source paths, so the next attempt can guide a more targeted optimization.
 

@@ -1,6 +1,6 @@
 # SCALE-001: metric ownership increment
 
-Verdict: **BLOCKED — NOT QUALIFIED**. Latest constrained attempt [40961124902](https://github.com/maninani12/ProjectTrace/actions/runs/40961124902) on head `0d9a52e6e713c58612037575caeda66e6e423d4a` failed to complete the cold workload; details are appended below. Base PR #3 commit f655415f0971b86c2eddfb77ac98ae21f411d79c and CI 40178440270 were verified green. This separate branch targets codex/linux-parser-isolation; earlier PRs and main remain unchanged. SEC-002 controls and all existing CI jobs remain required.
+Verdict: **BLOCKED — NOT QUALIFIED**. Latest constrained attempt [41021421757](https://github.com/maninani12/ProjectTrace/actions/runs/41021421757) on head `fe61753e2c631562e911b0d0c1e74ee004bbd334` failed to complete the cold workload; details are appended below. Base PR #3 commit f655415f0971b86c2eddfb77ac98ae21f411d79c and CI 40178440270 were verified green. This separate branch targets codex/linux-parser-isolation; earlier PRs and main remain unchanged. SEC-002 controls and all existing CI jobs remain required.
 
 ## Historical qualification target and recovery
 
@@ -168,7 +168,7 @@ Compression follow-up publication/cache/generation/authentication/Engineering Ch
 
 Fresh sequential guarded 8-file and 20-file benchmark runs complete with post-run SQLite integrity ok and zero FK violations, independently rechecked after process exit. They use one-function owned files, cold/eight-file HEAD, development mode and a per-process guard, not the declared cgroup workload or the earlier ten-function equivalence fixture. The initial malformed local files were not repaired/deleted or used as baselines, and their cause remains unresolved; successful fresh fixtures do not prove that intermittent integrity issue corrected.
 
-### Latest constrained attempt: run 40961124902 at head 0d9a52e
+### Previous constrained attempt: run 40961124902 at head 0d9a52e
 
 The pinned input and manifest succeeded in both runners. The full cold attempt remains **BLOCKED** on both revisions; neither completed analysis or published a generation/public pointer. Warm, incremental, exhaustion/recovery, cancellation, fresh-worker recovery and concurrent-tenant scenarios were **NOT_RUN**.
 
@@ -205,4 +205,38 @@ The encrypted row append path now computes a conservative upper bound for small 
 A local synthetic microbenchmark of a representative 39,726-byte metric envelope (Fernet + zlib level 1 included) measured 395 rows/s for the original fragment loop and 653 rows/s for the bounded preflight/C-encoder path, approximately 1.65× faster. This is an illustrative microbenchmark, **not** full-workload evidence; the new CI test checks byte-for-byte serialization parity for both the small fast path and the larger streaming fallback, plus preservation of the row budget.
 
 The previous constrained failure occurred during `parse_partition`, before the later whole-repository quality aggregation. This serialization improvement targets work performed as encrypted observations are appended during parsing; full constrained qualification remains required to establish whether the improvement is sufficient.
+
+### Latest constrained attempt: run 41021421757 at head fe61753
+
+The full cold workload remains **BLOCKED**. The pinned archive and full inventory manifest succeeded, but the baseline container exited 137 at 3,747 parser artifacts and the candidate reached `ANALYZING / ANALYSIS_TIME_BUDGET` at 11,597 parser artifacts. Neither produced a complete analysis or published a generation/pointer. Warm, incremental, cancellation, fresh-worker recovery, exhaustion recovery, concurrent-tenant and complete output-equivalence scenarios were **NOT_RUN**.
+
+| Counter | Baseline 243513ee | Candidate fe61753 |
+|---|---:|---:|
+| Enforced `memory.max` / `memory.peak` | 768,000,000 / 768,000,000 bytes | 768,000,000 / 768,000,000 bytes |
+| Swap limit / observed use | 0 / 0 bytes | 0 / 0 bytes |
+| Sampled coordinator RSS peak | 693,837,824 bytes | 536,010,752 bytes |
+| Sampled child RSS peak | 126,152,704 bytes | 143,360,000 bytes |
+| Sampled namespace RSS peak | 748,519,424 bytes | 671,895,552 bytes |
+| Main-workload cgroup `memory.events.max` | 2,332 | 8,649 |
+| Main-workload `oom` / `oom_kill` maxima | 0 / 0 | 0 / 0 |
+| Parser artifacts after exit | 3,747 | 11,597 |
+| Exit / container `OOMKilled` | 137 / true | 1 / false |
+| Failure stage / outcome | ANALYZING / interrupted | ANALYZING / `ANALYSIS_TIME_BUDGET` |
+| Recorded full attempt duration | Not available (main process was terminated) | 2,065.013 seconds |
+| Published pointers / generations | 0 / 0 | 0 / 0 |
+| Post-exit SQLite integrity / FK violations | ok / 0 | ok / 0 |
+
+**Baseline OOM classification is unresolved:** Docker reports `OOMKilled=true` and exit 137, yet all 1,653 main-workload cgroup samples have `oom=0`, `oom_kill=0`, and `oom_group_kill=0`. This disagrees with the container state and cannot be called a kernel-counter-confirmed OOM from this evidence alone. The separate owned-child resource probe did record kernel OOM events, showing that probe is distinct from the baseline workload. Keep the baseline classification as an explicit discrepancy.
+
+The candidate ran for about 1,814 seconds in `ANALYZING` after capture, then failed its existing 1,800-second analysis budget. The candidate has 598 more parser artifacts than the previous candidate attempt (10,999), but the runs did not complete and this is not sufficient to claim a causal speedup or whole-workload improvement. The common workload remains the 158,981,993-byte authorized ZIP with SHA-256 `95747f22ebf3d01232b1592551bc2bc1866b9bbe7322dd3bf1a97028b0592257`; manifest SHA-256 `081071ce099d103270175ab53ef12842586d7b0f1ee0c58dadbc3654a2246a89`; 21,636 entries, 21,269 retained text entries, and 330,420,155 declared bytes. It is not the unavailable historical archive input.
+
+- [Baseline artifact (ID 12962211821)](https://github.com/maninani12/ProjectTrace/actions/runs/41021421757/artifacts/12962211821), digest `sha256:f2a71fe52d27b56372724241ac0e4c2eb06d6b027f6faa383959367387a6c262`.
+- [Candidate artifact (ID 12963157729)](https://github.com/maninani12/ProjectTrace/actions/runs/41021421757/artifacts/12963157729), digest `sha256:2b37856d904a367c64cdfdf74e618e7b27c5d1d6585216d995ed1845b0d51c1c`.
+- Permanent sanitized receipt: `docs/evidence/SCALE001_CGROUP_41021421757.json`. Original GitHub workflow artifacts have seven-day retention; this committed summary excludes source bytes, database contents and encryption keys.
+
+Regression workflow [41021421697](https://github.com/maninani12/ProjectTrace/actions/runs/41021421697) passed all four jobs. The backend suite reported **755 tests, 0 failures, 0 errors, 2 skips**; compileall/Ruff, browser acceptance, required Linux parser isolation and broker recovery passed. These regressions do not qualify the constrained workload.
+
+### Next diagnostic increment
+
+The native parser loop redundantly reevaluated the same path/source IaC predicate between candidate collection, per-file analysis and final IaC attachment. A new regression asserts one classification per source dictionary path while preserving existing behavior for metadata-backed inventories. The qualification driver now records periodic aggregate `Performance` snapshots and a final post-failure snapshot in sanitized receipts; file paths and slowest-file details are excluded. This should expose component counts/durations on a timeout or capture progress before an externally terminated baseline. It is diagnostic/incremental work, not a substitute for full constrained pass, output equivalence or recovery gates.
 
