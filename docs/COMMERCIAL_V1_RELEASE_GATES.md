@@ -2,7 +2,7 @@
 
 Overall: **DEVELOPMENT IN PROGRESS / NOT RELEASE QUALIFIED**.
 SCALE-001: **NOT QUALIFIED**. Branch `codex/scale-001-local-continuation`,
-HEAD `9e21509591bfa5457cc829ebd5637f95be68d573`; substantial uncommitted work.
+Source consolidation `effb91c209e3841a90683d20b1d8d9e726d4357b` (pre-backup base `9e21509591bfa5457cc829ebd5637f95be68d573`); final documentation tip is resolved by the handoff guide.
 The 2026-11-02 laptop-handoff authorization permits safe commits and normal pushes to this continuation only. Production migrations, PR actions, deployments and manual remote workflow dispatch remain unauthorized.
 
 Latest continuation: 2026-11-02 GitHub backup and new-laptop handoff (dated entry below). The earlier matrix and dated blocker entries are historical assessments. Linux/Docker passes remain scoped to source digest `e100b089ef6a5ddaa27327bed51097d94b81aa44d5cf2ff1484dfa27d857eb07`, before the subsequent public-import changes.
@@ -212,3 +212,5 @@ The owner authorized consolidation commits and normal pushes to the existing con
 [New-laptop handoff](PROJECTTRACE_NEW_LAPTOP_HANDOFF.md) records setup/clone/verification commands and local-only data/evidence locations. Portable historical WSL receipts retain their original tested source digest; none is attributed to the consolidated backup. The migration receipt records audit, secret-scan limitations, new checks and remote verification. Previously recorded 59 backend / 54 frontend / 2 browser results were not rerun for a documentation/backup operation. Fresh Ruff/compilation/whitespace and migration-head checks pass; `alembic heads` reports 0026 and executes no database upgrade.
 
 Existing application data and keys are deliberately excluded and require separate secure transfer if needed. Current-tree Linux/Docker, live GitHub-provider, PostgreSQL/broker and full SCALE-001 gates remain **NOT_RUN / NOT QUALIFIED** for this consolidated source. Normal push-triggered CI can run automatically; no manual workflow dispatch is performed. **Commercial V1 — DEVELOPMENT IN PROGRESS. SCALE-001 — NOT QUALIFIED.**
+
+Consolidated source commit for the laptop backup: `effb91c209e3841a90683d20b1d8d9e726d4357b`. The subsequent handoff-only documentation commit changes no application source. Remote publication is verified against the final branch tip in the migration receipt/chat; source-specific qualification remains unchanged.

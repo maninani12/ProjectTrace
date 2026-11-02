@@ -5,7 +5,7 @@
   "branch": "codex/scale-001-local-continuation",
   "pre_backup_head": "9e21509591bfa5457cc829ebd5637f95be68d573",
   "authorization": "Owner explicitly authorized safe project staging, consolidation commit(s), and normal push on this continuation branch for new-laptop handoff only. No force, merge, main/shared-branch update, PR, migration execution, deployment or manual workflow dispatch.",
-  "source_consolidation_commit": "Recorded by documentation-only follow-up after consolidation.",
+  "source_consolidation_commit": "effb91c209e3841a90683d20b1d8d9e726d4357b",
   "final_tip_command": "git ls-remote origin refs/heads/codex/scale-001-local-continuation",
   "final_tip_receipt": "Exact final local/remote tip is reported in the originating chat and local external audit receipt; a commit cannot embed its own hash.",
   "initial_inventory": {
@@ -171,5 +171,12 @@
     ],
     "original_bytes_retained": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\github-handoff-20261102\\pre-whitespace-originals",
     "final": "PASS: git diff --cached --check after formatting-only correction"
-  }
+  },
+  "commit_strategy": "Consolidation plus documentation-only SHA follow-up, pushed together once; final remote tip verified after push and reported in chat/external audit receipt.",
+  "aggregate_change_counts": {
+    "added": 113,
+    "modified": 27,
+    "deleted": 0
+  },
+  "expected_tracked_files": 695
 }

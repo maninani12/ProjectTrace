@@ -3,7 +3,7 @@
 Date: 2026-11-02. Repository: https://github.com/maninani12/ProjectTrace
 
 Development branch: `codex/scale-001-local-continuation`.
-Source consolidation commit: recorded in the documentation follow-up after consolidation.
+Source consolidation commit: `effb91c209e3841a90683d20b1d8d9e726d4357b`. This documentation-only follow-up records that stable source commit; resolve the final branch tip with the commands below.
 Pre-backup HEAD: `9e21509591bfa5457cc829ebd5637f95be68d573`.
 
 **Commercial V1 — DEVELOPMENT IN PROGRESS. SCALE-001 — NOT QUALIFIED.**
