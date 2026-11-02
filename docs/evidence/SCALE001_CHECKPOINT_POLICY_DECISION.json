@@ -1,0 +1,57 @@
+{
+  "schema": "projecttrace-scale001-checkpoint-policy-decision-v1",
+  "assessment_date": "2026-10-29",
+  "scope": "Checkpoint format/admission only; sanitizer supported-input is separate.",
+  "checkpoint_policy_state": "PENDING_PRODUCT_OWNER_APPROVAL",
+  "explicit_approval_found": false,
+  "approver": null,
+  "decision_date": null,
+  "owner_selection": null,
+  "choices": {
+    "CP-A": {
+      "title": "Retain v1 checkpoint semantics",
+      "selected": false,
+      "user_impact": "Oversized results remain unsupported through this path and may fail before publication.",
+      "compatibility": "Keep v1 read compatibility, restore types, files normalization, ordering, independent decoded lists, and full raw JSON admission at 64,000,000 bytes.",
+      "resource_security": "Preserve encryption/HMAC/digest, scope/tenant, expiry, cancellation, atomicity, spill and recovery safeguards.",
+      "remaining_evidence": [
+        "Source-matched result attribution",
+        "Exact restoration and retry equivalence",
+        "Linux cgroup cold/warm/incremental/recovery",
+        "Cancellation/exhaustion, database/broker, tenant concurrency and publication"
+      ],
+      "assessment": "Least disruptive technically; does not solve observed failure and requires owner decision."
+    },
+    "CP-B": {
+      "title": "Authorize formal checkpoint-format policy investigation",
+      "selected": false,
+      "authorization_scope": "Investigation only; no implementation, migration, deployment, changed limit, or qualification.",
+      "user_impact": "May inform future behavior; no support promise before policy and acceptance evidence.",
+      "compatibility": "Versioned format, v1 reads, rollout plan, persisted-checkpoint compatibility, migration and rollback analysis.",
+      "resource_security": "Define aggregate logical and encrypted-storage budgets separately; prove memory/disk/CPU/time bounds and retain all existing crypto, tenant, integrity, expiry, cancellation, atomicity and recovery guarantees.",
+      "remaining_evidence": [
+        "Source-matched complete result size",
+        "Exact restore type/order/alias/mutation behavior",
+        "Cold/warm/incremental output equality",
+        "Quota/interruption cleanup",
+        "Fresh-worker/duplicate delivery/tenant concurrency",
+        "PostgreSQL/Redis-Celery/Linux cgroup acceptance"
+      ],
+      "assessment": "Candidate has unresolved restore/quota differences; result unavailable; evidence does not justify adoption."
+    }
+  },
+  "sanitizer_policy": {
+    "state": "PENDING_PRODUCT_OWNER_APPROVAL",
+    "separate_decision": true,
+    "limit_nodes": 1000000,
+    "admission_changed": false
+  },
+  "release_status": {
+    "scale_001": "NOT QUALIFIED",
+    "commercial_v1": "DEVELOPMENT IN PROGRESS",
+    "checkpoint_limit_bytes": 64000000,
+    "owned_50k_node_count": 1115947,
+    "historical_actual_bytes": null
+  },
+  "record_is_approval": false
+}

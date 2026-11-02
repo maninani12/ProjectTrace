@@ -1,0 +1,311 @@
+{
+  "schema": "projecttrace-scale001-policy-linux-readiness-v1",
+  "assessment_date": "2026-10-29",
+  "status": {
+    "scale_001": "NOT QUALIFIED",
+    "commercial_v1": "DEVELOPMENT IN PROGRESS",
+    "readiness": "BLOCKED"
+  },
+  "repository": {
+    "root": "C:\\Users\\sai krishna\\Projects\\ProjectTrace-local",
+    "branch": "codex/scale-001-local-continuation",
+    "head": "9e21509591bfa5457cc829ebd5637f95be68d573",
+    "pre_assessment_status_lines": 101,
+    "tracked_modified_count": 11,
+    "untracked_count": 90,
+    "status_sha256": "60c3b0f9b91d8ddbebe0895947eeeec6da1956de7470e526f7ff6d13aa9f65fd",
+    "full_status_reference": "docs/evidence/SCALE001_CHECKPOINT_SOURCE_MATCH.json:repository_state.current_git_status_short",
+    "source_manifest_sha256": "257ff929a7d6b382fab90e8b501b21ea9b1ff14d88e36eee8edadfd0d61b00bf",
+    "preservation": "All pre-existing work preserved; no branch or product-code changes."
+  },
+  "original_databases": [
+    {
+      "name": "10000",
+      "sha256": "465441f1dfd2c7d6ca3d7427c79dd55e57c350bee451b60a66b8e0e92f5a1d1b",
+      "integrity": "ok",
+      "foreign_key_violations": 0,
+      "read_only": true
+    },
+    {
+      "name": "147",
+      "sha256": "97aeda34f1cb1b1d67784926c2140c3c27063585ae135fbb39e22643edce94d6",
+      "integrity": "ok",
+      "foreign_key_violations": 0,
+      "read_only": true
+    },
+    {
+      "name": "30000",
+      "sha256": "c7313fd66baa9e23ec5f5a7e9bdb8003554d086796c101be14f8d02d6ee5e9a4",
+      "integrity": "ok",
+      "foreign_key_violations": 0,
+      "read_only": true
+    },
+    {
+      "name": "prior",
+      "sha256": "14a15885488462c687ce2581807ea56ecb2145b98bc58d67f6e2aad3ba9a5627",
+      "integrity": "ok",
+      "foreign_key_violations": 0,
+      "read_only": true
+    }
+  ],
+  "owner_policy": {
+    "explicit_decision_found": false,
+    "checkpoint": {
+      "status": "PENDING_PRODUCT_OWNER_APPROVAL",
+      "limit_bytes": 64000000,
+      "CP-A": "Keep v1 semantics; results over cap remain unsupported.",
+      "CP-B": "Investigate versioned format only; no implementation/migration/deployment/limit change.",
+      "owner_must_select": "CP-A or CP-B"
+    },
+    "sanitizer": {
+      "status": "PENDING_PRODUCT_OWNER_APPROVAL",
+      "limit_nodes": 1000000,
+      "owned_50k_nodes": 1115947,
+      "SP-A": "Keep aggregate cap; over-limit full snapshots unsupported.",
+      "SP-B": "Investigate a different bounded policy only; no admission change.",
+      "owner_must_select": "SP-A or SP-B; confirm whether 50k is required"
+    },
+    "separate_decisions": true
+  },
+  "source_match": {
+    "status_counts": {
+      "VERIFIED_MATCH": 9,
+      "VERIFIED_MISMATCH": 4,
+      "NOT_AVAILABLE": 9
+    },
+    "input": {
+      "repository": "OpenMetadata",
+      "commit": "b1fab2bc21c63335dead4daaaa28194c9878e9bf",
+      "archive_sha256": "95747f22ebf3d01232b1592551bc2bc1866b9bbe7322dd3bf1a97028b0592257",
+      "archive_bytes": 158981993,
+      "historical_archive_sha256": "027615f80245c4534f4af0270951ad7dc0418928440c5332522b46103ddfa914",
+      "historical_input_reproduced": false,
+      "candidate_manifest_sha256": "081071ce099d103270175ab53ef12842586d7b0f1ee0c58dadbc3654a2246a89",
+      "baseline_manifest_sha256": "081071ce099d103270175ab53ef12842586d7b0f1ee0c58dadbc3654a2246a89",
+      "manifest_rows": 21636,
+      "expanded_bytes": 330420155
+    },
+    "manifest": "docs/evidence/SCALE001_CHECKPOINT_SOURCE_MATCH.json",
+    "failed_result_recoverable": false,
+    "exact_v1_raw_bytes": null,
+    "receipt_actual": null,
+    "missing_result_db_ciphertext_and_source_zip": true,
+    "runtime_gaps": {
+      "apt_snapshot": "VERIFIED_MISMATCH: not pinned",
+      "final_app_image_digest": "NOT_AVAILABLE: not retained",
+      "analyzer_parser_signatures": "NOT_AVAILABLE",
+      "effective_quality_profile": "NOT_AVAILABLE",
+      "requirements_lock_as_seen_by_runner": "NOT_AVAILABLE",
+      "python_base_digest": "NOT_AVAILABLE in downloaded artifact"
+    },
+    "github_run": {
+      "id": 40280429009,
+      "url": "https://github.com/maninani12/ProjectTrace/actions/runs/40280429009",
+      "status": "completed",
+      "conclusion": "failure",
+      "candidate_artifact_id": 12633028505,
+      "baseline_artifact_id": 12631224908,
+      "only_existing_artifacts_listed": true
+    },
+    "candidate": {
+      "duration_seconds": 1875.465,
+      "stage": "VERIFYING",
+      "code": "GLOBAL_CHECKPOINT_BUDGET",
+      "maximum_bytes": 64000000,
+      "actual": null,
+      "cgroup_peak_bytes": 768000000,
+      "swap_max": 0,
+      "oom_kill": 0,
+      "coordinator_peak_rss": 582090752,
+      "child_peak_rss": 165163008,
+      "namespace_peak_rss": 661950464,
+      "last_sample_anon": 492396544,
+      "file": 226136064,
+      "kernel": 49414144,
+      "published_pointers": 0,
+      "published_generations": 0,
+      "sqlite_integrity": "ok",
+      "fk_violations": 0
+    },
+    "synthetic_only_bytes": {
+      "small": 825,
+      "representative": 320873,
+      "result": 320630,
+      "safe_field_removal": false
+    }
+  },
+  "environment": {
+    "host": "Windows",
+    "python": "3.14.3",
+    "run_python": "3.14.9",
+    "locked_packages": {
+      "SQLAlchemy": "2.1.3",
+      "cryptography": "50.0.2",
+      "pytest": "9.1.1",
+      "celery": "5.6.3",
+      "redis": "7.4.1",
+      "psycopg": "3.3.6",
+      "alembic": "1.20.0"
+    },
+    "docker_client": "29.8.2",
+    "docker_context": "desktop-linux",
+    "docker_server": false,
+    "docker_info_exit": 1,
+    "wsl2_distributions": [
+      "docker-desktop"
+    ],
+    "cgroup_v2_visible": false,
+    "service_endpoints_set": false,
+    "ready": false,
+    "checks": [
+      "Docker named pipe unavailable",
+      "Only docker-desktop WSL distribution",
+      "No /sys/fs/cgroup/cgroup.controllers",
+      "DB/PG/Redis/Celery environment URLs unset"
+    ]
+  },
+  "workflow": {
+    "path": ".github/workflows/scale-qualification.yml",
+    "sha256": "1d356f87878eeda058e076c24b1c7eaa88789dc6777065fbbf66fb9ab4d0a3b9",
+    "runner": "ubuntu-latest",
+    "dockerfile_sha256": "caad258aac6d7dd9058691027cdc950d9f35b0c6f9ae3defe4176026ad87fdc1",
+    "base_image": "python:3.14-slim tag, not digest pinned",
+    "apt": "unversioned apt-get update/libseccomp2",
+    "requirements_lock_sha256": "0331753af6ba66329bbb3be218c94da7e0634b8013b91d83ecbcb5f27c5b95aa",
+    "head_lock_git_blob": "110d51584e0997d9c4021d17d90c5ba6c608accd",
+    "lock_has_hashes": false,
+    "runner_lock_digest": "NOT_RETAINED",
+    "compose_tags": [
+      "postgres:17-alpine",
+      "redis:7-alpine"
+    ],
+    "limits": {
+      "memory": 768000000,
+      "memory_swap": 768000000,
+      "effective_swap": 0,
+      "cpus": 2,
+      "pids": 64,
+      "private_cgroup": true,
+      "network": "none",
+      "cap_drop_all": true,
+      "no_new_privileges": true
+    },
+    "runner_verifies_cgroup_controls": true,
+    "fresh_sqlite_and_read_only_archive": true,
+    "upload_excludes_source_db_key_ciphertext_payload": true,
+    "driver_remaining_scenarios": "NOT_RUN; PARTIALLY QUALIFIED only"
+  },
+  "missing_prerequisites": [
+    "CP and separate SP decisions; clarify 50k support.",
+    "Approved Linux/Docker/cgroup-v2 host enforcing 768000000 memory and zero swap with descendant containment.",
+    "Pinned/captured runner, Python, base/app/service image, OS-package, lock, analyzer/parser, profile/config identity.",
+    "Fresh isolated storage/database and separate disposable PG/Redis/Celery services.",
+    "Fixture-validated payload-free full v1 byte counter preserving defaults and the 64MB cap.",
+    "Complete cold/warm/incremental/determinism/cancellation/exhaustion/worker recovery/idempotency/tenant/publication/service matrix."
+  ],
+  "safe_procedure": [
+    "Obtain CP/SP decisions and resolve 50k target.",
+    "Establish runtime/config identity on approved Linux.",
+    "After explicit approval and runtime pinning, use the existing codeload hash-check, docker build, resource-probe, and manifest-only commands recorded in the readiness Markdown; these are preflight only and must run on the approved Linux host.",
+    "Run only resource-probe and manifest-only preflight; verify cgroup memory.max and memory.swap.max.",
+    "Verify exact input archive commit/hash; never execute imported source; use fresh disposable storage.",
+    "Validate test-only v1 JSONEncoder(sort_keys=True) UTF-8 counting with default settings and files=list normalization; retain counts only.",
+    "After separate authorization, one controlled run may collect sanitized aggregates; if cold completes, run the remaining acceptance matrix."
+  ],
+  "context7": {
+    "available": false,
+    "tool_count": 0,
+    "libraries": {
+      "Python json": "3.14.3 local; official 3.14.10 series docs",
+      "SQLAlchemy": "2.1.3 local; official 2.1.6 series docs",
+      "cryptography": "50.0.2 exact docs"
+    },
+    "urls": [
+      "https://docs.python.org/3.14/library/json.html",
+      "https://docs.sqlalchemy.org/en/21/orm/session_basics.html",
+      "https://cryptography.io/en/50.0.2/fernet/"
+    ],
+    "project_data_sent": false
+  },
+  "historical_tests": {
+    "focused": {
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "warnings": 1,
+      "seconds": 5.04,
+      "not_rerun": true
+    },
+    "checkpoint_attribution": 40,
+    "related_regression": {
+      "passed": 195,
+      "skipped": 1,
+      "seconds": 829.4
+    },
+    "older_separate_regression": {
+      "passed": 233,
+      "skipped": 1,
+      "count_difference_unresolved": true
+    },
+    "setup_errors": {
+      "count": 38,
+      "corrected_rerun_exists": true
+    },
+    "tests_run_now": []
+  },
+  "recommendation": "Keep both decisions pending. No architecture implementation or full pinned run until owner decisions and approved Linux/runtime identity gates are complete.",
+  "generated_artifacts": {
+    "report_path": "docs/SCALE001_POLICY_AND_LINUX_READINESS.md",
+    "report_sha256": "57b9c8b3089ddd52cb1bd7f25ae5ac9dd832a50a8a0e1d09b2d7f170019b2f17",
+    "self_hash": "Stored in the integrated gate and final response."
+  },
+  "historical_disagreements": {
+    "integrated_json_legacy_hash_fields": {
+      "final_report_sha256": {
+        "recorded": "808af67f53f90785918cab78e1a25c86a6d099d49dff4b2fb945f3b0839163b7",
+        "matches_current_markdown_file": false,
+        "path_mapping": "not recorded"
+      },
+      "final_regression_report_sha256": {
+        "recorded": "105ce42f9e457db32d76bce2dd79bab93c57c66b21dc7613c6dac655b31136b6",
+        "current_report_sha256": "673497e717c52966272221969cc87a002aea8763c21f69188f5f704baf93a134",
+        "matches": false
+      },
+      "final_progress_sha256": {
+        "recorded": "cd23d217586e9853a5fd5b2a180458a265283522493af1f0269d23711bb1afff",
+        "current_progress_sha256": "312f3be6a9879b0228234f4781884da54dda62aaf9ce726278d557a9ebdab3da",
+        "matches": false
+      },
+      "handling": "Legacy top-level fields preserved; current hashes are in evidence_sha256 and the readiness record."
+    },
+    "regression_test_count_difference": {
+      "recorded_runs": [
+        195,
+        233
+      ],
+      "resolved": false,
+      "handling": "Both historical counts preserved separately."
+    }
+  },
+  "reviewed_pre_assessment_artifact_sha256": {
+    "docs/SCALE001_CHECKPOINT_FIELD_ATTRIBUTION.md": "8a2cc94674ca75163b321d5829dce97871f22c3684665946366a9fb42d1c4031",
+    "docs/evidence/SCALE001_CHECKPOINT_FIELD_ATTRIBUTION.json": "6f447226d8a6077424f54dd961cdd90a90221b7522630d589dafdaf87cbca56c",
+    "docs/evidence/SCALE001_CHECKPOINT_SOURCE_MATCH.json": "257ff929a7d6b382fab90e8b501b21ea9b1ff14d88e36eee8edadfd0d61b00bf",
+    "docs/SCALE001_INTEGRATED_QUALIFICATION_GATE.md": "5db8d4b02e4c7f4c7233543370dbabc4513ee902fd023811cafc9d57f4f58166",
+    "docs/evidence/SCALE001_INTEGRATED_QUALIFICATION_GATE.json": "de741a862580a4ae2374f7ffd9f2b40474d43be2c0e31faf158657e5a65e1f9c",
+    "docs/SCALE001_SUPPORTED_INPUT_BOUNDARY_PROPOSAL.md": "a4602efd9d91e0668ea4b274e599d8524405dc32b8adf6d8869b4cb38b7bdb2a",
+    "docs/adr/0007-bounded-published-snapshot-segments.md": "d38f27bf16882d7095b03407966d5479bc8fb8c100e9fa684b33354f414ac45a",
+    "docs/COMMERCIAL_V1_RELEASE_GATES.md": "1608016634ef1309579a3398717ddcb9e84e02cc8321be94ffbeabd5c4745b30",
+    "docs/SCALE001_CHECKPOINT_POLICY_DECISION.md": "94c956742636f45c3476b698131fe1e3b206fad7a3ae6f406118a8210ba757c6",
+    "docs/evidence/SCALE001_CHECKPOINT_POLICY_DECISION.json": "ef786b1a9bb8fca0eafb3cee50d4c8386bbf8c1ac63df22a6bfafa0fa71d9d69",
+    "docs/evidence/SCALE001_CGROUP_40280429009.json": "fbf39ccb8579d5b73f30bc5109e50dcf3d8e558135788e562d79b04645e079ad",
+    "docs/evidence/SCALE001_CGROUP_40280429009_MEMORY.jsonl.gz": "c16bf8e898bd15917d48e2ac9685242d88571d6ea34aa1bb285754f223d5231f",
+    ".github/workflows/scale-qualification.yml": "1d356f87878eeda058e076c24b1c7eaa88789dc6777065fbbf66fb9ab4d0a3b9",
+    "infrastructure/Dockerfile": "caad258aac6d7dd9058691027cdc950d9f35b0c6f9ae3defe4176026ad87fdc1",
+    "requirements.lock": "0331753af6ba66329bbb3be218c94da7e0634b8013b91d83ecbcb5f27c5b95aa",
+    "compose.yaml": "3c9ad2e83cb310fdb159b9105e109ee79f0027af6051bcd309032e8d1572c605",
+    "scripts/run_scale_cgroup.py": "f1acc5866500a6210b9d261bfd27a78e7cccdddaa47635111252d407e8c1be5f",
+    "scripts/scale_linux_resources.py": "fa809fe96216e3772148eb4f68b6d496e958d2bd70233a30142e1659361232ac",
+    "scripts/qualify_scale_workload.py": "a035dcaf34c253ec72d280e9a9f64c247c8dc8da5e752e40f96446444e647ee3"
+  }
+}

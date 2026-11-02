@@ -1,0 +1,1578 @@
+{
+  "date": "2026-10-27",
+  "status": "NOT_QUALIFIED",
+  "candidate_decision": "REJECTED",
+  "head": "9e21509591bfa5457cc829ebd5637f95be68d573",
+  "branch": "codex/scale-001-local-continuation",
+  "scope": "DISPOSABLE_OWNED_WINDOWS_SQLITE_PROTOTYPE_ONLY",
+  "production_source_changed_this_task": false,
+  "graph_index_definitions": {
+    "ix_records_graph_class": "CREATE INDEX ix_records_graph_class ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"class\"') AS VARCHAR), id)",
+    "ix_records_graph_snapshot": "CREATE INDEX ix_records_graph_snapshot ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR))",
+    "ix_records_graph_source": "CREATE INDEX ix_records_graph_source ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"source\"') AS VARCHAR))",
+    "ix_records_graph_target": "CREATE INDEX ix_records_graph_target ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"target\"') AS VARCHAR))"
+  },
+  "micro_measurements": [
+    {
+      "metrics": 147,
+      "mode": "baseline",
+      "fresh_processes": 3,
+      "update_seconds_median": 0.013537500009988435,
+      "process_peak_rss_max": 50425856,
+      "sqlite_malloc_peak_max": 24607120,
+      "index_rebuild_seconds_median": 0.00018790000467561185,
+      "database_bytes": 30457856,
+      "size_receipts": [
+        {
+          "page_size": 4096,
+          "page_count": 7436,
+          "freelist_count": 79,
+          "dbstat_unavailable": "no such table: dbstat"
+        },
+        {
+          "page_size": 4096,
+          "page_count": 7436,
+          "freelist_count": 79,
+          "dbstat_unavailable": "no such table: dbstat"
+        },
+        {
+          "page_size": 4096,
+          "page_count": 7436,
+          "freelist_count": 79,
+          "dbstat_unavailable": "no such table: dbstat"
+        }
+      ]
+    },
+    {
+      "metrics": 147,
+      "mode": "rebuilt",
+      "fresh_processes": 3,
+      "update_seconds_median": 0.014355499995872378,
+      "process_peak_rss_max": 64458752,
+      "sqlite_malloc_peak_max": 36845800,
+      "index_rebuild_seconds_median": 0.1723926999984542,
+      "database_bytes": 30457856,
+      "size_receipts": [
+        {
+          "page_size": 4096,
+          "page_count": 7436,
+          "freelist_count": 140,
+          "dbstat_unavailable": "no such table: dbstat"
+        },
+        {
+          "page_size": 4096,
+          "page_count": 7436,
+          "freelist_count": 140,
+          "dbstat_unavailable": "no such table: dbstat"
+        },
+        {
+          "page_size": 4096,
+          "page_count": 7436,
+          "freelist_count": 140,
+          "dbstat_unavailable": "no such table: dbstat"
+        }
+      ]
+    },
+    {
+      "metrics": 147,
+      "mode": "partial",
+      "fresh_processes": 3,
+      "update_seconds_median": 0.0014751999988220632,
+      "process_peak_rss_max": 55410688,
+      "sqlite_malloc_peak_max": 20937544,
+      "index_rebuild_seconds_median": 0.0913416999974288,
+      "database_bytes": 30457856,
+      "size_receipts": [
+        {
+          "page_size": 4096,
+          "page_count": 7436,
+          "freelist_count": 140,
+          "dbstat_unavailable": "no such table: dbstat"
+        },
+        {
+          "page_size": 4096,
+          "page_count": 7436,
+          "freelist_count": 140,
+          "dbstat_unavailable": "no such table: dbstat"
+        },
+        {
+          "page_size": 4096,
+          "page_count": 7436,
+          "freelist_count": 140,
+          "dbstat_unavailable": "no such table: dbstat"
+        }
+      ]
+    },
+    {
+      "metrics": 147,
+      "mode": "validated_partial",
+      "fresh_processes": 3,
+      "update_seconds_median": 0.015357900003436953,
+      "process_peak_rss_max": 55255040,
+      "sqlite_malloc_peak_max": 24132128,
+      "index_rebuild_seconds_median": 0.10000320000108331,
+      "database_bytes": 30457856,
+      "size_receipts": [
+        {
+          "page_size": 4096,
+          "page_count": 7436,
+          "freelist_count": 140,
+          "dbstat_unavailable": "no such table: dbstat"
+        },
+        {
+          "page_size": 4096,
+          "page_count": 7436,
+          "freelist_count": 140,
+          "dbstat_unavailable": "no such table: dbstat"
+        },
+        {
+          "page_size": 4096,
+          "page_count": 7436,
+          "freelist_count": 140,
+          "dbstat_unavailable": "no such table: dbstat"
+        }
+      ]
+    },
+    {
+      "metrics": 147,
+      "mode": "guarded",
+      "fresh_processes": 3,
+      "update_seconds_median": 0.0021844999864697456,
+      "process_peak_rss_max": 55459840,
+      "sqlite_malloc_peak_max": 20949328,
+      "index_rebuild_seconds_median": 0.09475640000891872,
+      "database_bytes": 30457856,
+      "size_receipts": [
+        {
+          "page_size": 4096,
+          "page_count": 7436,
+          "freelist_count": 140,
+          "dbstat_unavailable": "no such table: dbstat"
+        },
+        {
+          "page_size": 4096,
+          "page_count": 7436,
+          "freelist_count": 140,
+          "dbstat_unavailable": "no such table: dbstat"
+        },
+        {
+          "page_size": 4096,
+          "page_count": 7436,
+          "freelist_count": 140,
+          "dbstat_unavailable": "no such table: dbstat"
+        }
+      ]
+    },
+    {
+      "metrics": 10000,
+      "mode": "baseline",
+      "fresh_processes": 3,
+      "update_seconds_median": 0.06193379999604076,
+      "process_peak_rss_max": 161615872,
+      "sqlite_malloc_peak_max": 127122696,
+      "index_rebuild_seconds_median": 0.00022739999985788018,
+      "database_bytes": 29220864,
+      "size_receipts": [
+        {
+          "page_size": 4096,
+          "page_count": 7134,
+          "freelist_count": 147,
+          "dbstat_unavailable": "no such table: dbstat"
+        },
+        {
+          "page_size": 4096,
+          "page_count": 7134,
+          "freelist_count": 147,
+          "dbstat_unavailable": "no such table: dbstat"
+        },
+        {
+          "page_size": 4096,
+          "page_count": 7134,
+          "freelist_count": 147,
+          "dbstat_unavailable": "no such table: dbstat"
+        }
+      ]
+    },
+    {
+      "metrics": 10000,
+      "mode": "rebuilt",
+      "fresh_processes": 3,
+      "update_seconds_median": 0.07272260000172537,
+      "process_peak_rss_max": 165937152,
+      "sqlite_malloc_peak_max": 131338176,
+      "index_rebuild_seconds_median": 0.107446499998332,
+      "database_bytes": 29220864,
+      "size_receipts": [
+        {
+          "page_size": 4096,
+          "page_count": 7134,
+          "freelist_count": 164,
+          "dbstat_unavailable": "no such table: dbstat"
+        },
+        {
+          "page_size": 4096,
+          "page_count": 7134,
+          "freelist_count": 164,
+          "dbstat_unavailable": "no such table: dbstat"
+        },
+        {
+          "page_size": 4096,
+          "page_count": 7134,
+          "freelist_count": 164,
+          "dbstat_unavailable": "no such table: dbstat"
+        }
+      ]
+    },
+    {
+      "metrics": 10000,
+      "mode": "partial",
+      "fresh_processes": 3,
+      "update_seconds_median": 0.00672199999098666,
+      "process_peak_rss_max": 85028864,
+      "sqlite_malloc_peak_max": 34359688,
+      "index_rebuild_seconds_median": 0.03710030000365805,
+      "database_bytes": 29220864,
+      "size_receipts": [
+        {
+          "page_size": 4096,
+          "page_count": 7134,
+          "freelist_count": 164,
+          "dbstat_unavailable": "no such table: dbstat"
+        },
+        {
+          "page_size": 4096,
+          "page_count": 7134,
+          "freelist_count": 164,
+          "dbstat_unavailable": "no such table: dbstat"
+        },
+        {
+          "page_size": 4096,
+          "page_count": 7134,
+          "freelist_count": 164,
+          "dbstat_unavailable": "no such table: dbstat"
+        }
+      ]
+    },
+    {
+      "metrics": 10000,
+      "mode": "validated_partial",
+      "fresh_processes": 3,
+      "update_seconds_median": 0.020114899991312996,
+      "process_peak_rss_max": 88748032,
+      "sqlite_malloc_peak_max": 53769200,
+      "index_rebuild_seconds_median": 0.03430590000061784,
+      "database_bytes": 29220864,
+      "size_receipts": [
+        {
+          "page_size": 4096,
+          "page_count": 7134,
+          "freelist_count": 164,
+          "dbstat_unavailable": "no such table: dbstat"
+        },
+        {
+          "page_size": 4096,
+          "page_count": 7134,
+          "freelist_count": 164,
+          "dbstat_unavailable": "no such table: dbstat"
+        },
+        {
+          "page_size": 4096,
+          "page_count": 7134,
+          "freelist_count": 164,
+          "dbstat_unavailable": "no such table: dbstat"
+        }
+      ]
+    },
+    {
+      "metrics": 10000,
+      "mode": "guarded",
+      "fresh_processes": 3,
+      "update_seconds_median": 0.010954700002912432,
+      "process_peak_rss_max": 84942848,
+      "sqlite_malloc_peak_max": 34367136,
+      "index_rebuild_seconds_median": 0.031410600000526756,
+      "database_bytes": 29220864,
+      "size_receipts": [
+        {
+          "page_size": 4096,
+          "page_count": 7134,
+          "freelist_count": 164,
+          "dbstat_unavailable": "no such table: dbstat"
+        },
+        {
+          "page_size": 4096,
+          "page_count": 7134,
+          "freelist_count": 164,
+          "dbstat_unavailable": "no such table: dbstat"
+        },
+        {
+          "page_size": 4096,
+          "page_count": 7134,
+          "freelist_count": 164,
+          "dbstat_unavailable": "no such table: dbstat"
+        }
+      ]
+    },
+    {
+      "metrics": 30000,
+      "mode": "baseline",
+      "fresh_processes": 3,
+      "update_seconds_median": 0.1623086999898078,
+      "process_peak_rss_max": 393166848,
+      "sqlite_malloc_peak_max": 342798648,
+      "index_rebuild_seconds_median": 0.00017590000061318278,
+      "database_bytes": 64987136,
+      "size_receipts": [
+        {
+          "page_size": 4096,
+          "page_count": 15866,
+          "freelist_count": 285,
+          "dbstat_unavailable": "no such table: dbstat"
+        },
+        {
+          "page_size": 4096,
+          "page_count": 15866,
+          "freelist_count": 285,
+          "dbstat_unavailable": "no such table: dbstat"
+        },
+        {
+          "page_size": 4096,
+          "page_count": 15866,
+          "freelist_count": 285,
+          "dbstat_unavailable": "no such table: dbstat"
+        }
+      ]
+    },
+    {
+      "metrics": 30000,
+      "mode": "rebuilt",
+      "fresh_processes": 3,
+      "update_seconds_median": 0.1726286000048276,
+      "process_peak_rss_max": 397656064,
+      "sqlite_malloc_peak_max": 347028336,
+      "index_rebuild_seconds_median": 0.25498070000321604,
+      "database_bytes": 64987136,
+      "size_receipts": [
+        {
+          "page_size": 4096,
+          "page_count": 15866,
+          "freelist_count": 304,
+          "dbstat_unavailable": "no such table: dbstat"
+        },
+        {
+          "page_size": 4096,
+          "page_count": 15866,
+          "freelist_count": 304,
+          "dbstat_unavailable": "no such table: dbstat"
+        },
+        {
+          "page_size": 4096,
+          "page_count": 15866,
+          "freelist_count": 304,
+          "dbstat_unavailable": "no such table: dbstat"
+        }
+      ]
+    },
+    {
+      "metrics": 30000,
+      "mode": "partial",
+      "fresh_processes": 3,
+      "update_seconds_median": 0.02200210001319647,
+      "process_peak_rss_max": 169697280,
+      "sqlite_malloc_peak_max": 85049920,
+      "index_rebuild_seconds_median": 0.04769389999273699,
+      "database_bytes": 64987136,
+      "size_receipts": [
+        {
+          "page_size": 4096,
+          "page_count": 15866,
+          "freelist_count": 304,
+          "dbstat_unavailable": "no such table: dbstat"
+        },
+        {
+          "page_size": 4096,
+          "page_count": 15866,
+          "freelist_count": 304,
+          "dbstat_unavailable": "no such table: dbstat"
+        },
+        {
+          "page_size": 4096,
+          "page_count": 15866,
+          "freelist_count": 304,
+          "dbstat_unavailable": "no such table: dbstat"
+        }
+      ]
+    },
+    {
+      "metrics": 30000,
+      "mode": "validated_partial",
+      "fresh_processes": 3,
+      "update_seconds_median": 0.06147729999793228,
+      "process_peak_rss_max": 188215296,
+      "sqlite_malloc_peak_max": 137459424,
+      "index_rebuild_seconds_median": 0.052333900006487966,
+      "database_bytes": 64987136,
+      "size_receipts": [
+        {
+          "page_size": 4096,
+          "page_count": 15866,
+          "freelist_count": 304,
+          "dbstat_unavailable": "no such table: dbstat"
+        },
+        {
+          "page_size": 4096,
+          "page_count": 15866,
+          "freelist_count": 304,
+          "dbstat_unavailable": "no such table: dbstat"
+        },
+        {
+          "page_size": 4096,
+          "page_count": 15866,
+          "freelist_count": 304,
+          "dbstat_unavailable": "no such table: dbstat"
+        }
+      ]
+    },
+    {
+      "metrics": 30000,
+      "mode": "guarded",
+      "fresh_processes": 3,
+      "update_seconds_median": 0.02405949999229051,
+      "process_peak_rss_max": 169910272,
+      "sqlite_malloc_peak_max": 85057368,
+      "index_rebuild_seconds_median": 0.04768829999375157,
+      "database_bytes": 64987136,
+      "size_receipts": [
+        {
+          "page_size": 4096,
+          "page_count": 15866,
+          "freelist_count": 304,
+          "dbstat_unavailable": "no such table: dbstat"
+        },
+        {
+          "page_size": 4096,
+          "page_count": 15866,
+          "freelist_count": 304,
+          "dbstat_unavailable": "no such table: dbstat"
+        },
+        {
+          "page_size": 4096,
+          "page_count": 15866,
+          "freelist_count": 304,
+          "dbstat_unavailable": "no such table: dbstat"
+        }
+      ]
+    }
+  ],
+  "publication_measurements": [
+    {
+      "metrics": 147,
+      "mode": "baseline",
+      "fresh_processes": 1,
+      "snapshot_update_seconds_median": 0.013830900003085844,
+      "sqlite_update_malloc_peak_max": 31941328,
+      "cold_publication_boundary_rss_peak_max": 167034880,
+      "whole_process_rss_peak_max": 204980224,
+      "cold_final_path_seconds_median": 4.73199569999997,
+      "cold_analysis_seconds_median": 64.19849209999666
+    },
+    {
+      "metrics": 147,
+      "mode": "validated_partial",
+      "fresh_processes": 1,
+      "snapshot_update_seconds_median": 0.015361099998699501,
+      "sqlite_update_malloc_peak_max": 19300792,
+      "cold_publication_boundary_rss_peak_max": 158621696,
+      "whole_process_rss_peak_max": 195145728,
+      "cold_final_path_seconds_median": 5.563730800000485,
+      "cold_analysis_seconds_median": 52.719074299995555
+    },
+    {
+      "metrics": 10000,
+      "mode": "baseline",
+      "fresh_processes": 1,
+      "snapshot_update_seconds_median": 0.2581313999980921,
+      "sqlite_update_malloc_peak_max": 149171584,
+      "cold_publication_boundary_rss_peak_max": 295825408,
+      "whole_process_rss_peak_max": 295825408,
+      "cold_final_path_seconds_median": 15.821690099997795,
+      "cold_analysis_seconds_median": 151.26160379999783
+    },
+    {
+      "metrics": 10000,
+      "mode": "validated_partial",
+      "fresh_processes": 1,
+      "snapshot_update_seconds_median": 0.03320700000040233,
+      "sqlite_update_malloc_peak_max": 71667568,
+      "cold_publication_boundary_rss_peak_max": 219480064,
+      "whole_process_rss_peak_max": 219480064,
+      "cold_final_path_seconds_median": 6.830293099992559,
+      "cold_analysis_seconds_median": 127.2035493000003
+    },
+    {
+      "metrics": 30000,
+      "mode": "baseline",
+      "fresh_processes": 3,
+      "snapshot_update_seconds_median": 0.21886670000094455,
+      "sqlite_update_malloc_peak_max": 350662000,
+      "cold_publication_boundary_rss_peak_max": 523722752,
+      "whole_process_rss_peak_max": 523722752,
+      "cold_final_path_seconds_median": 11.528690499995719,
+      "cold_analysis_seconds_median": 114.44065429999318
+    },
+    {
+      "metrics": 30000,
+      "mode": "validated_partial",
+      "fresh_processes": 3,
+      "snapshot_update_seconds_median": 0.09524930000770837,
+      "sqlite_update_malloc_peak_max": 167289392,
+      "cold_publication_boundary_rss_peak_max": 342511616,
+      "whole_process_rss_peak_max": 342511616,
+      "cold_final_path_seconds_median": 12.603514300004463,
+      "cold_analysis_seconds_median": 117.4406932000129
+    }
+  ],
+  "compatibility": {
+    "partial": {
+      "queries": 62,
+      "writes": 229,
+      "differences": {
+        "query_differences": [
+          {
+            "name": "existing_mixed_implicit_order",
+            "ordered_contract": false,
+            "baseline_sha256": "e8bc1be8bbce71eb2e0cb87964e1fb8c761ede4ca9f214c2986ec3821eea7fd6",
+            "candidate_sha256": "af795c91c43dc23693ff758f28ec3ca9e2d6a7c545db1b5655b8c27be79e3d6d",
+            "same_row_set": true
+          }
+        ],
+        "write_differences": [
+          {
+            "case": "snapshot:1",
+            "input": "",
+            "baseline": {
+              "outcome": "ERROR",
+              "class": "OperationalError",
+              "message": "malformed JSON",
+              "code": 1,
+              "name": "SQLITE_ERROR",
+              "in_transaction": true
+            },
+            "candidate": {
+              "outcome": "OK",
+              "row": {
+                "storage_type": "text",
+                "value_type": "str",
+                "value": ""
+              },
+              "in_transaction": true
+            }
+          },
+          {
+            "case": "snapshot:2",
+            "input": "{",
+            "baseline": {
+              "outcome": "ERROR",
+              "class": "OperationalError",
+              "message": "malformed JSON",
+              "code": 1,
+              "name": "SQLITE_ERROR",
+              "in_transaction": true
+            },
+            "candidate": {
+              "outcome": "OK",
+              "row": {
+                "storage_type": "text",
+                "value_type": "str",
+                "value": "{"
+              },
+              "in_transaction": true
+            }
+          },
+          {
+            "case": "snapshot:3",
+            "input": "{\"scope\":",
+            "baseline": {
+              "outcome": "ERROR",
+              "class": "OperationalError",
+              "message": "malformed JSON",
+              "code": 1,
+              "name": "SQLITE_ERROR",
+              "in_transaction": true
+            },
+            "candidate": {
+              "outcome": "OK",
+              "row": {
+                "storage_type": "text",
+                "value_type": "str",
+                "value": "{\"scope\":"
+              },
+              "in_transaction": true
+            }
+          },
+          {
+            "case": "snapshot:4",
+            "input": "not-json",
+            "baseline": {
+              "outcome": "ERROR",
+              "class": "OperationalError",
+              "message": "malformed JSON",
+              "code": 1,
+              "name": "SQLITE_ERROR",
+              "in_transaction": true
+            },
+            "candidate": {
+              "outcome": "OK",
+              "row": {
+                "storage_type": "text",
+                "value_type": "str",
+                "value": "not-json"
+              },
+              "in_transaction": true
+            }
+          },
+          {
+            "case": "snapshot:18",
+            "input": "8fff",
+            "baseline": {
+              "outcome": "ERROR",
+              "class": "OperationalError",
+              "message": "malformed JSON",
+              "code": 1,
+              "name": "SQLITE_ERROR",
+              "in_transaction": true
+            },
+            "candidate": {
+              "outcome": "OK",
+              "row": {
+                "storage_type": "blob",
+                "value_type": "bytes",
+                "value": "8fff"
+              },
+              "in_transaction": true
+            }
+          },
+          {
+            "case": "snapshot:20",
+            "input": "ff345773636f7065cc15b7736e617073686f745f696487636f6d7061742d6167736f757263651778576f746865727c37626164276f6b",
+            "baseline": {
+              "outcome": "ERROR",
+              "class": "OperationalError",
+              "message": "malformed JSON",
+              "code": 1,
+              "name": "SQLITE_ERROR",
+              "in_transaction": true
+            },
+            "candidate": {
+              "outcome": "OK",
+              "row": {
+                "storage_type": "blob",
+                "value_type": "bytes",
+                "value": "ff345773636f7065cc15b7736e617073686f745f696487636f6d7061742d6167736f757263651778576f746865727c37626164276f6b"
+              },
+              "in_transaction": true
+            }
+          },
+          {
+            "case": "snapshot:21",
+            "input": "ccff5773636f7065cc15b7736e617073686f745f696487636f6d7061742d6167736f757263651778576f746865727c37626164276f6b",
+            "baseline": {
+              "outcome": "ERROR",
+              "class": "OperationalError",
+              "message": "malformed JSON",
+              "code": 1,
+              "name": "SQLITE_ERROR",
+              "in_transaction": true
+            },
+            "candidate": {
+              "outcome": "OK",
+              "row": {
+                "storage_type": "blob",
+                "value_type": "bytes",
+                "value": "ccff5773636f7065cc15b7736e617073686f745f696487636f6d7061742d6167736f757263651778576f746865727c37626164276f6b"
+              },
+              "in_transaction": true
+            }
+          },
+          {
+            "case": "snapshot:22",
+            "input": "cc34ff73636f7065cc15b7736e617073686f745f696487636f6d7061742d6167736f757263651778576f746865727c37626164276f6b",
+            "baseline": {
+              "outcome": "ERROR",
+              "class": "OperationalError",
+              "message": "malformed JSON",
+              "code": 1,
+              "name": "SQLITE_ERROR",
+              "in_transaction": true
+            },
+            "candidate": {
+              "outcome": "OK",
+              "row": {
+                "storage_type": "blob",
+                "value_type": "bytes",
+                "value": "cc34ff73636f7065cc15b7736e617073686f745f696487636f6d7061742d6167736f757263651778576f746865727c37626164276f6b"
+              },
+              "in_transaction": true
+            }
+          },
+          {
+            "case": "snapshot:28",
+            "input": "cc345773636f7065ff15b7736e617073686f745f696487636f6d7061742d6167736f757263651778576f746865727c37626164276f6b",
+            "baseline": {
+              "outcome": "ERROR",
+              "class": "OperationalError",
+              "message": "malformed JSON",
+              "code": 1,
+              "name": "SQLITE_ERROR",
+              "in_transaction": true
+            },
+            "candidate": {
+              "outcome": "OK",
+              "row": {
+                "storage_type": "blob",
+                "value_type": "bytes",
+                "value": "cc345773636f7065ff15b7736e617073686f745f696487636f6d7061742d6167736f757263651778576f746865727c37626164276f6b"
+              },
+              "in_transaction": true
+            }
+          },
+          {
+            "case": "snapshot:29",
+            "input": "cc345773636f7065ccffb7736e617073686f745f696487636f6d7061742d6167736f757263651778576f746865727c37626164276f6b",
+            "baseline": {
+              "outcome": "ERROR",
+              "class": "OperationalError",
+              "message": "malformed JSON",
+              "code": 1,
+              "name": "SQLITE_ERROR",
+              "in_transaction": true
+            },
+            "candidate": {
+              "outcome": "OK",
+              "row": {
+                "storage_type": "blob",
+                "value_type": "bytes",
+                "value": "cc345773636f7065ccffb7736e617073686f745f696487636f6d7061742d6167736f757263651778576f746865727c37626164276f6b"
+              },
+              "in_transaction": true
+            }
+          },
+          {
+            "case": "snapshot:30",
+            "input": "cc345773636f7065cc15ff736e617073686f745f696487636f6d7061742d6167736f757263651778576f746865727c37626164276f6b",
+            "baseline": {
+              "outcome": "ERROR",
+              "class": "OperationalError",
+              "message": "malformed JSON",
+              "code": 1,
+              "name": "SQLITE_ERROR",
+              "in_transaction": true
+            },
+            "candidate": {
+              "outcome": "OK",
+              "row": {
+                "storage_type": "blob",
+                "value_type": "bytes",
+                "value": "cc345773636f7065cc15ff736e617073686f745f696487636f6d7061742d6167736f757263651778576f746865727c37626164276f6b"
+              },
+              "in_transaction": true
+            }
+          },
+          {
+            "case": "snapshot:42",
+            "input": "cc345773636f7065cc15b7736e617073686f745f6964ff636f6d7061742d6167736f757263651778576f746865727c37626164276f6b",
+            "baseline": {
+              "outcome": "ERROR",
+              "class": "OperationalError",
+              "message": "malformed JSON",
+              "code": 1,
+              "name": "SQLITE_ERROR",
+              "in_transaction": true
+            },
+            "candidate": {
+              "outcome": "OK",
+              "row": {
+                "storage_type": "blob",
+                "value_type": "bytes",
+                "value": "cc345773636f7065cc15b7736e617073686f745f6964ff636f6d7061742d6167736f757263651778576f746865727c37626164276f6b"
+              },
+              "in_transaction": true
+            }
+          },
+          {
+            "case": "snapshot:51",
+            "input": "cc345773636f7065cc15b7736e617073686f745f696487636f6d7061742d61ff736f757263651778576f746865727c37626164276f6b",
+            "baseline": {
+              "outcome": "ERROR",
+              "class": "OperationalError",
+              "message": "malformed JSON",
+              "code": 1,
+              "name": "SQLITE_ERROR",
+              "in_transaction": true
+            },
+            "candidate": {
+              "outcome": "OK",
+              "row": {
+                "storage_type": "blob",
+                "value_type": "bytes",
+                "value": "cc345773636f7065cc15b7736e617073686f745f696487636f6d7061742d61ff736f757263651778576f746865727c37626164276f6b"
+              },
+              "in_transaction": true
+            }
+          },
+          {
+            "case": "snapshot:58",
+            "input": "cc345773636f7065cc15b7736e617073686f745f696487636f6d7061742d6167736f75726365ff78576f746865727c37626164276f6b",
+            "baseline": {
+              "outcome": "ERROR",
+              "class": "OperationalError",
+              "message": "malformed JSON",
+              "code": 1,
+              "name": "SQLITE_ERROR",
+              "in_transaction": true
+            },
+            "candidate": {
+              "outcome": "OK",
+              "row": {
+                "storage_type": "blob",
+                "value_type": "bytes",
+                "value": "cc345773636f7065cc15b7736e617073686f745f696487636f6d7061742d6167736f75726365ff78576f746865727c37626164276f6b"
+              },
+              "in_transaction": true
+            }
+          },
+          {
+            "case": "snapshot:60",
+            "input": "cc345773636f7065cc15b7736e617073686f745f696487636f6d7061742d6167736f757263651778ff6f746865727c37626164276f6b",
+            "baseline": {
+              "outcome": "ERROR",
+              "class": "OperationalError",
+              "message": "malformed JSON",
+              "code": 1,
+              "name": "SQLITE_ERROR",
+              "in_transaction": true
+            },
+            "candidate": {
+              "outcome": "OK",
+              "row": {
+                "storage_type": "blob",
+                "value_type": "bytes",
+                "value": "cc345773636f7065cc15b7736e617073686f745f696487636f6d7061742d6167736f757263651778ff6f746865727c37626164276f6b"
+              },
+              "in_transaction": true
+            }
+          },
+          {
+            "case": "snapshot:66",
+            "input": "cc345773636f7065cc15b7736e617073686f745f696487636f6d7061742d6167736f757263651778576f74686572ff37626164276f6b",
+            "baseline": {
+              "outcome": "ERROR",
+              "class": "OperationalError",
+              "message": "malformed JSON",
+              "code": 1,
+              "name": "SQLITE_ERROR",
+              "in_transaction": true
+            },
+            "candidate": {
+              "outcome": "OK",
+              "row": {
+                "storage_type": "blob",
+                "value_type": "bytes",
+                "value": "cc345773636f7065cc15b7736e617073686f745f696487636f6d7061742d6167736f757263651778576f74686572ff37626164276f6b"
+              },
+              "in_transaction": true
+            }
+          },
+          {
+            "case": "update_bad_snapshot",
+            "input": null,
+            "baseline": {
+              "outcome": "ERROR",
+              "class": "OperationalError",
+              "message": "malformed JSON",
+              "code": 1,
+              "name": "SQLITE_ERROR"
+            },
+            "candidate": {
+              "outcome": "OK"
+            }
+          },
+          {
+            "case": "duplicate_id_valid_natural_bad_json",
+            "input": null,
+            "baseline": {
+              "outcome": "ERROR",
+              "class": "OperationalError",
+              "message": "malformed JSON",
+              "code": 1,
+              "name": "SQLITE_ERROR"
+            },
+            "candidate": {
+              "outcome": "ERROR",
+              "class": "IntegrityError",
+              "message": "UNIQUE constraint failed: records.id, records.organization_id, records.repository_id",
+              "code": 2067,
+              "name": "SQLITE_CONSTRAINT_UNIQUE"
+            }
+          }
+        ]
+      }
+    },
+    "validated_partial": {
+      "queries": 62,
+      "writes": 229,
+      "differences": {
+        "query_differences": [
+          {
+            "name": "existing_mixed_implicit_order",
+            "ordered_contract": false,
+            "baseline_sha256": "e8bc1be8bbce71eb2e0cb87964e1fb8c761ede4ca9f214c2986ec3821eea7fd6",
+            "candidate_sha256": "af795c91c43dc23693ff758f28ec3ca9e2d6a7c545db1b5655b8c27be79e3d6d",
+            "same_row_set": true
+          }
+        ],
+        "write_differences": []
+      }
+    },
+    "guarded": {
+      "queries": 62,
+      "writes": 229,
+      "differences": {
+        "query_differences": [
+          {
+            "name": "existing_mixed_implicit_order",
+            "ordered_contract": false,
+            "baseline_sha256": "e8bc1be8bbce71eb2e0cb87964e1fb8c761ede4ca9f214c2986ec3821eea7fd6",
+            "candidate_sha256": "9d9d8c7dec6efb4908a13c01fad4b0238622f9fad6c5d7a329147d0a3d7f0263",
+            "same_row_set": true
+          }
+        ],
+        "write_differences": [
+          {
+            "case": "snapshot:1",
+            "input": "",
+            "baseline": {
+              "outcome": "ERROR",
+              "class": "OperationalError",
+              "message": "malformed JSON",
+              "code": 1,
+              "name": "SQLITE_ERROR",
+              "in_transaction": true
+            },
+            "candidate": {
+              "outcome": "OK",
+              "row": {
+                "storage_type": "text",
+                "value_type": "str",
+                "value": ""
+              },
+              "in_transaction": true
+            }
+          },
+          {
+            "case": "snapshot:2",
+            "input": "{",
+            "baseline": {
+              "outcome": "ERROR",
+              "class": "OperationalError",
+              "message": "malformed JSON",
+              "code": 1,
+              "name": "SQLITE_ERROR",
+              "in_transaction": true
+            },
+            "candidate": {
+              "outcome": "OK",
+              "row": {
+                "storage_type": "text",
+                "value_type": "str",
+                "value": "{"
+              },
+              "in_transaction": true
+            }
+          },
+          {
+            "case": "snapshot:3",
+            "input": "{\"scope\":",
+            "baseline": {
+              "outcome": "ERROR",
+              "class": "OperationalError",
+              "message": "malformed JSON",
+              "code": 1,
+              "name": "SQLITE_ERROR",
+              "in_transaction": true
+            },
+            "candidate": {
+              "outcome": "OK",
+              "row": {
+                "storage_type": "text",
+                "value_type": "str",
+                "value": "{\"scope\":"
+              },
+              "in_transaction": true
+            }
+          },
+          {
+            "case": "snapshot:4",
+            "input": "not-json",
+            "baseline": {
+              "outcome": "ERROR",
+              "class": "OperationalError",
+              "message": "malformed JSON",
+              "code": 1,
+              "name": "SQLITE_ERROR",
+              "in_transaction": true
+            },
+            "candidate": {
+              "outcome": "OK",
+              "row": {
+                "storage_type": "text",
+                "value_type": "str",
+                "value": "not-json"
+              },
+              "in_transaction": true
+            }
+          },
+          {
+            "case": "snapshot:18",
+            "input": "8fff",
+            "baseline": {
+              "outcome": "ERROR",
+              "class": "OperationalError",
+              "message": "malformed JSON",
+              "code": 1,
+              "name": "SQLITE_ERROR",
+              "in_transaction": true
+            },
+            "candidate": {
+              "outcome": "OK",
+              "row": {
+                "storage_type": "blob",
+                "value_type": "bytes",
+                "value": "8fff"
+              },
+              "in_transaction": true
+            }
+          },
+          {
+            "case": "snapshot:20",
+            "input": "ff345773636f7065cc15b7736e617073686f745f696487636f6d7061742d6167736f757263651778576f746865727c37626164276f6b",
+            "baseline": {
+              "outcome": "ERROR",
+              "class": "OperationalError",
+              "message": "malformed JSON",
+              "code": 1,
+              "name": "SQLITE_ERROR",
+              "in_transaction": true
+            },
+            "candidate": {
+              "outcome": "OK",
+              "row": {
+                "storage_type": "blob",
+                "value_type": "bytes",
+                "value": "ff345773636f7065cc15b7736e617073686f745f696487636f6d7061742d6167736f757263651778576f746865727c37626164276f6b"
+              },
+              "in_transaction": true
+            }
+          },
+          {
+            "case": "snapshot:21",
+            "input": "ccff5773636f7065cc15b7736e617073686f745f696487636f6d7061742d6167736f757263651778576f746865727c37626164276f6b",
+            "baseline": {
+              "outcome": "ERROR",
+              "class": "OperationalError",
+              "message": "malformed JSON",
+              "code": 1,
+              "name": "SQLITE_ERROR",
+              "in_transaction": true
+            },
+            "candidate": {
+              "outcome": "OK",
+              "row": {
+                "storage_type": "blob",
+                "value_type": "bytes",
+                "value": "ccff5773636f7065cc15b7736e617073686f745f696487636f6d7061742d6167736f757263651778576f746865727c37626164276f6b"
+              },
+              "in_transaction": true
+            }
+          },
+          {
+            "case": "snapshot:22",
+            "input": "cc34ff73636f7065cc15b7736e617073686f745f696487636f6d7061742d6167736f757263651778576f746865727c37626164276f6b",
+            "baseline": {
+              "outcome": "ERROR",
+              "class": "OperationalError",
+              "message": "malformed JSON",
+              "code": 1,
+              "name": "SQLITE_ERROR",
+              "in_transaction": true
+            },
+            "candidate": {
+              "outcome": "OK",
+              "row": {
+                "storage_type": "blob",
+                "value_type": "bytes",
+                "value": "cc34ff73636f7065cc15b7736e617073686f745f696487636f6d7061742d6167736f757263651778576f746865727c37626164276f6b"
+              },
+              "in_transaction": true
+            }
+          },
+          {
+            "case": "snapshot:28",
+            "input": "cc345773636f7065ff15b7736e617073686f745f696487636f6d7061742d6167736f757263651778576f746865727c37626164276f6b",
+            "baseline": {
+              "outcome": "ERROR",
+              "class": "OperationalError",
+              "message": "malformed JSON",
+              "code": 1,
+              "name": "SQLITE_ERROR",
+              "in_transaction": true
+            },
+            "candidate": {
+              "outcome": "OK",
+              "row": {
+                "storage_type": "blob",
+                "value_type": "bytes",
+                "value": "cc345773636f7065ff15b7736e617073686f745f696487636f6d7061742d6167736f757263651778576f746865727c37626164276f6b"
+              },
+              "in_transaction": true
+            }
+          },
+          {
+            "case": "snapshot:29",
+            "input": "cc345773636f7065ccffb7736e617073686f745f696487636f6d7061742d6167736f757263651778576f746865727c37626164276f6b",
+            "baseline": {
+              "outcome": "ERROR",
+              "class": "OperationalError",
+              "message": "malformed JSON",
+              "code": 1,
+              "name": "SQLITE_ERROR",
+              "in_transaction": true
+            },
+            "candidate": {
+              "outcome": "OK",
+              "row": {
+                "storage_type": "blob",
+                "value_type": "bytes",
+                "value": "cc345773636f7065ccffb7736e617073686f745f696487636f6d7061742d6167736f757263651778576f746865727c37626164276f6b"
+              },
+              "in_transaction": true
+            }
+          },
+          {
+            "case": "snapshot:30",
+            "input": "cc345773636f7065cc15ff736e617073686f745f696487636f6d7061742d6167736f757263651778576f746865727c37626164276f6b",
+            "baseline": {
+              "outcome": "ERROR",
+              "class": "OperationalError",
+              "message": "malformed JSON",
+              "code": 1,
+              "name": "SQLITE_ERROR",
+              "in_transaction": true
+            },
+            "candidate": {
+              "outcome": "OK",
+              "row": {
+                "storage_type": "blob",
+                "value_type": "bytes",
+                "value": "cc345773636f7065cc15ff736e617073686f745f696487636f6d7061742d6167736f757263651778576f746865727c37626164276f6b"
+              },
+              "in_transaction": true
+            }
+          },
+          {
+            "case": "snapshot:42",
+            "input": "cc345773636f7065cc15b7736e617073686f745f6964ff636f6d7061742d6167736f757263651778576f746865727c37626164276f6b",
+            "baseline": {
+              "outcome": "ERROR",
+              "class": "OperationalError",
+              "message": "malformed JSON",
+              "code": 1,
+              "name": "SQLITE_ERROR",
+              "in_transaction": true
+            },
+            "candidate": {
+              "outcome": "OK",
+              "row": {
+                "storage_type": "blob",
+                "value_type": "bytes",
+                "value": "cc345773636f7065cc15b7736e617073686f745f6964ff636f6d7061742d6167736f757263651778576f746865727c37626164276f6b"
+              },
+              "in_transaction": true
+            }
+          },
+          {
+            "case": "snapshot:51",
+            "input": "cc345773636f7065cc15b7736e617073686f745f696487636f6d7061742d61ff736f757263651778576f746865727c37626164276f6b",
+            "baseline": {
+              "outcome": "ERROR",
+              "class": "OperationalError",
+              "message": "malformed JSON",
+              "code": 1,
+              "name": "SQLITE_ERROR",
+              "in_transaction": true
+            },
+            "candidate": {
+              "outcome": "OK",
+              "row": {
+                "storage_type": "blob",
+                "value_type": "bytes",
+                "value": "cc345773636f7065cc15b7736e617073686f745f696487636f6d7061742d61ff736f757263651778576f746865727c37626164276f6b"
+              },
+              "in_transaction": true
+            }
+          },
+          {
+            "case": "snapshot:58",
+            "input": "cc345773636f7065cc15b7736e617073686f745f696487636f6d7061742d6167736f75726365ff78576f746865727c37626164276f6b",
+            "baseline": {
+              "outcome": "ERROR",
+              "class": "OperationalError",
+              "message": "malformed JSON",
+              "code": 1,
+              "name": "SQLITE_ERROR",
+              "in_transaction": true
+            },
+            "candidate": {
+              "outcome": "OK",
+              "row": {
+                "storage_type": "blob",
+                "value_type": "bytes",
+                "value": "cc345773636f7065cc15b7736e617073686f745f696487636f6d7061742d6167736f75726365ff78576f746865727c37626164276f6b"
+              },
+              "in_transaction": true
+            }
+          },
+          {
+            "case": "snapshot:60",
+            "input": "cc345773636f7065cc15b7736e617073686f745f696487636f6d7061742d6167736f757263651778ff6f746865727c37626164276f6b",
+            "baseline": {
+              "outcome": "ERROR",
+              "class": "OperationalError",
+              "message": "malformed JSON",
+              "code": 1,
+              "name": "SQLITE_ERROR",
+              "in_transaction": true
+            },
+            "candidate": {
+              "outcome": "OK",
+              "row": {
+                "storage_type": "blob",
+                "value_type": "bytes",
+                "value": "cc345773636f7065cc15b7736e617073686f745f696487636f6d7061742d6167736f757263651778ff6f746865727c37626164276f6b"
+              },
+              "in_transaction": true
+            }
+          },
+          {
+            "case": "snapshot:66",
+            "input": "cc345773636f7065cc15b7736e617073686f745f696487636f6d7061742d6167736f757263651778576f74686572ff37626164276f6b",
+            "baseline": {
+              "outcome": "ERROR",
+              "class": "OperationalError",
+              "message": "malformed JSON",
+              "code": 1,
+              "name": "SQLITE_ERROR",
+              "in_transaction": true
+            },
+            "candidate": {
+              "outcome": "OK",
+              "row": {
+                "storage_type": "blob",
+                "value_type": "bytes",
+                "value": "cc345773636f7065cc15b7736e617073686f745f696487636f6d7061742d6167736f757263651778576f74686572ff37626164276f6b"
+              },
+              "in_transaction": true
+            }
+          },
+          {
+            "case": "update_bad_snapshot",
+            "input": null,
+            "baseline": {
+              "outcome": "ERROR",
+              "class": "OperationalError",
+              "message": "malformed JSON",
+              "code": 1,
+              "name": "SQLITE_ERROR"
+            },
+            "candidate": {
+              "outcome": "OK"
+            }
+          },
+          {
+            "case": "duplicate_id_valid_natural_bad_json",
+            "input": null,
+            "baseline": {
+              "outcome": "ERROR",
+              "class": "OperationalError",
+              "message": "malformed JSON",
+              "code": 1,
+              "name": "SQLITE_ERROR"
+            },
+            "candidate": {
+              "outcome": "ERROR",
+              "class": "IntegrityError",
+              "message": "UNIQUE constraint failed: records.id, records.organization_id, records.repository_id",
+              "code": 2067,
+              "name": "SQLITE_CONSTRAINT_UNIQUE"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "api_requests_per_mode": 20,
+  "api_exact_response_differences": 0,
+  "full_owned_fingerprint_comparisons": 5,
+  "all_equal": true,
+  "additional_fingerprint_normalization": false,
+  "tests": [
+    {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-prototype-20261027\\candidate-contract-current.xml",
+      "sha256": "6a85c65e8e33b315b78fe0ae06d1673db67ec05083395ddfc555eafb49c58a75",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "5",
+          "skipped": "0",
+          "tests": "22",
+          "time": "15.321",
+          "timestamp": "2026-10-27T09:51:33.449513+05:30",
+          "hostname": "LAPTOP-I8MJR81P"
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-prototype-20261027\\candidate-regressions.xml",
+      "sha256": "eaa6723f81bd556dccd7628e821fec0f9aeb707c5646c2adac423ec579574544",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "27",
+          "time": "178.947",
+          "timestamp": "2026-10-27T09:29:59.371017+05:30",
+          "hostname": "LAPTOP-I8MJR81P"
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-prototype-20261027\\baseline-regressions.xml",
+      "sha256": "ef2b0489bd1c8939fc83e66204c4c80977fa9576f2ef517f34d1df79d8d8391d",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "27",
+          "time": "90.618",
+          "timestamp": "2026-10-27T09:49:30.437127+05:30",
+          "hostname": "LAPTOP-I8MJR81P"
+        }
+      ]
+    }
+  ],
+  "static_checks": [
+    {
+      "command": [
+        "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+        "-m",
+        "ruff",
+        "format",
+        "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-prototype-20261027\\run_compatibility.py"
+      ],
+      "exit_code": 0,
+      "stdout": "1 file reformatted\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+        "-m",
+        "ruff",
+        "check",
+        "backend",
+        "analyzers",
+        "tests",
+        "scripts"
+      ],
+      "exit_code": 0,
+      "stdout": "All checks passed!\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+        "-m",
+        "ruff",
+        "check",
+        "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-prototype-20261027"
+      ],
+      "exit_code": 0,
+      "stdout": "All checks passed!\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+        "-m",
+        "ruff",
+        "format",
+        "--check",
+        "C:\\Users\\sai krishna\\Projects\\ProjectTrace-local\\tests\\graph_index_api_probe.py",
+        "C:\\Users\\sai krishna\\Projects\\ProjectTrace-local\\tests\\graph_index_compatibility.py",
+        "C:\\Users\\sai krishna\\Projects\\ProjectTrace-local\\tests\\graph_index_measure.py",
+        "C:\\Users\\sai krishna\\Projects\\ProjectTrace-local\\tests\\graph_index_prototype.py",
+        "C:\\Users\\sai krishna\\Projects\\ProjectTrace-local\\tests\\graph_index_publication_probe.py",
+        "C:\\Users\\sai krishna\\Projects\\ProjectTrace-local\\tests\\graph_index_pytest_plugin.py",
+        "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-prototype-20261027"
+      ],
+      "exit_code": 0,
+      "stdout": "12 files already formatted\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+        "-m",
+        "compileall",
+        "-q",
+        "backend",
+        "analyzers",
+        "tests",
+        "scripts",
+        "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-prototype-20261027"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "preservation": {
+    "frozen_source_files": 229,
+    "all_frozen_source_hashes_unchanged": true,
+    "all_four_original_database_byte_hashes_unchanged": true,
+    "original_databases": {
+      "10000": {
+        "integrity": "ok",
+        "foreign_key_violations": 0,
+        "audit_links_verified": 9,
+        "audit_event_ids_sha256": "c961602bcc3ff10be4bde88926efe949d362e7942fa8a24a9bca3225656f1f63",
+        "edges_verified": 1230,
+        "unresolved_cross_tenant_cross_generation_or_duplicate_edges": 0,
+        "generation_states": [
+          [
+            "PUBLISHED",
+            1
+          ]
+        ],
+        "pointers": 1,
+        "graph_indexes": {
+          "ix_records_graph_class": "CREATE INDEX ix_records_graph_class ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"class\"') AS VARCHAR), id)",
+          "ix_records_graph_snapshot": "CREATE INDEX ix_records_graph_snapshot ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR))",
+          "ix_records_graph_source": "CREATE INDEX ix_records_graph_source ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"source\"') AS VARCHAR))",
+          "ix_records_graph_target": "CREATE INDEX ix_records_graph_target ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"target\"') AS VARCHAR))"
+        }
+      },
+      "147": {
+        "integrity": "ok",
+        "foreign_key_violations": 0,
+        "audit_links_verified": 28,
+        "audit_event_ids_sha256": "9d3b6055fd44c269c2d9a967ac6e6a12b3d64fbbae3f64cf259ad8452b0963ed",
+        "edges_verified": 3694,
+        "unresolved_cross_tenant_cross_generation_or_duplicate_edges": 0,
+        "generation_states": [
+          [
+            "PUBLISHED",
+            3
+          ]
+        ],
+        "pointers": 2,
+        "graph_indexes": {
+          "ix_records_graph_class": "CREATE INDEX ix_records_graph_class ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"class\"') AS VARCHAR), id)",
+          "ix_records_graph_snapshot": "CREATE INDEX ix_records_graph_snapshot ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR))",
+          "ix_records_graph_source": "CREATE INDEX ix_records_graph_source ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"source\"') AS VARCHAR))",
+          "ix_records_graph_target": "CREATE INDEX ix_records_graph_target ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"target\"') AS VARCHAR))"
+        }
+      },
+      "30000": {
+        "integrity": "ok",
+        "foreign_key_violations": 0,
+        "audit_links_verified": 9,
+        "audit_event_ids_sha256": "c961602bcc3ff10be4bde88926efe949d362e7942fa8a24a9bca3225656f1f63",
+        "edges_verified": 1230,
+        "unresolved_cross_tenant_cross_generation_or_duplicate_edges": 0,
+        "generation_states": [
+          [
+            "PUBLISHED",
+            1
+          ]
+        ],
+        "pointers": 1,
+        "graph_indexes": {
+          "ix_records_graph_class": "CREATE INDEX ix_records_graph_class ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"class\"') AS VARCHAR), id)",
+          "ix_records_graph_snapshot": "CREATE INDEX ix_records_graph_snapshot ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR))",
+          "ix_records_graph_source": "CREATE INDEX ix_records_graph_source ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"source\"') AS VARCHAR))",
+          "ix_records_graph_target": "CREATE INDEX ix_records_graph_target ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"target\"') AS VARCHAR))"
+        }
+      },
+      "prior": {
+        "integrity": "ok",
+        "foreign_key_violations": 0,
+        "audit_links_verified": 28,
+        "audit_event_ids_sha256": "9d3b6055fd44c269c2d9a967ac6e6a12b3d64fbbae3f64cf259ad8452b0963ed",
+        "edges_verified": 3694,
+        "unresolved_cross_tenant_cross_generation_or_duplicate_edges": 0,
+        "generation_states": [
+          [
+            "PUBLISHED",
+            3
+          ]
+        ],
+        "pointers": 2,
+        "graph_indexes": {
+          "ix_records_graph_class": "CREATE INDEX ix_records_graph_class ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"class\"') AS VARCHAR), id)",
+          "ix_records_graph_snapshot": "CREATE INDEX ix_records_graph_snapshot ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR))",
+          "ix_records_graph_source": "CREATE INDEX ix_records_graph_source ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"source\"') AS VARCHAR))",
+          "ix_records_graph_target": "CREATE INDEX ix_records_graph_target ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"target\"') AS VARCHAR))"
+        }
+      }
+    }
+  },
+  "raw_archive": {
+    "path": "docs\\evidence\\SCALE001_GRAPH_INDEX_PROTOTYPE_RAW.json.gz",
+    "bytes": 495786,
+    "sha256": "3ce985000d3e140910a55549bf9cdfc3908512d0a0ab13684362979e1a72e35b"
+  },
+  "artifact_source_sha256": {
+    "tests\\graph_index_api_probe.py": "85c4fba2fa7160e6e83200a62b5753579561a4d77776fcf6dec96ba789aab5ab",
+    "tests\\graph_index_compatibility.py": "18d1e5c540b3e1baa75263c366a2fe2553b4d9fe6a881623e2e7f2e83750bee5",
+    "tests\\graph_index_measure.py": "d324bf32776184086708c40a775126f7fcb8d287c1d4a7036b940ab5276bece4",
+    "tests\\graph_index_prototype.py": "035b95826e5a3082dac851430f8943f3be203522d55e12c753187e917ce0658b",
+    "tests\\graph_index_publication_probe.py": "2989b3f6d7f54af67b582cf2bad843627f6ab05c86b687904fdddd76175bcb75",
+    "tests\\graph_index_pytest_plugin.py": "2d6aa7eda415a91a7febd02e82a4d62223e6ea6209d14144674761ccd41f24e0"
+  },
+  "prototype_root": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-prototype-20261027",
+  "blockers": [
+    "All three candidates change the complete sequence of an existing mixed-kind snapshot query.",
+    "Plain partial and CASE-guarded variants change 18 tested malformed snapshot write/error cases.",
+    "Root-only query adaptation does not restore expression seeks in UNION/subquery neighborhood branches.",
+    "dbstat unavailable; exact per-index byte attribution is unmeasured. Total database size is measured and unchanged.",
+    "Inline 50k snapshot sanitizer structural refusal, final snapshot copies and downgrade/expiry remain separate.",
+    "Production migration/reversal, SQLite version matrix, full pinned Linux cgroup/zero swap and release acceptance are NOT_RUN."
+  ],
+  "next_task": "Protect the existing mixed-kind query result sequence in a disposable follow-up and cover its consumers, before any migration proposal; then close nested query partial-index eligibility gaps."
+}

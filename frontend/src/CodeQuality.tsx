@@ -67,6 +67,7 @@ type Overview = {
   coverage: Row;
   duplication: Row;
   gate: { status: string; scope: string; results: Row[] };
+  comparison_identity_unresolved?: boolean;
 };
 const tabs = [
   "Overview",
@@ -287,6 +288,12 @@ export default function CodeQuality({
             <p className="context-note">
               Partial analysis: inspect language coverage and file diagnostics
               before using this result as a gate.
+            </p>
+          )}
+          {data?.comparison_identity_unresolved && (
+            <p role="alert" className="context-note">
+              Snapshot identity comparison is unresolved. Finding introductions
+              and resolutions are unverified; inspect captured provenance and history.
             </p>
           )}
           {tab === "Overview" && data?.summary && (

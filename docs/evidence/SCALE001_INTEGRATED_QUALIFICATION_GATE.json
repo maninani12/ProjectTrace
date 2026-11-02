@@ -1,0 +1,2108 @@
+{
+  "schema": "projecttrace-scale001-integrated-qualification-gate-v1",
+  "assessment_date": "2026-10-29",
+  "release_status": {
+    "scale_001": "NOT QUALIFIED",
+    "commercial_v1": "DEVELOPMENT IN PROGRESS"
+  },
+  "repository": {
+    "root": "C:\\Users\\sai krishna\\Projects\\ProjectTrace-local",
+    "origin": "https://github.com/maninani12/ProjectTrace.git",
+    "branch": "codex/scale-001-local-continuation",
+    "head": "9e21509591bfa5457cc829ebd5637f95be68d573",
+    "dirty_at_review_start": true,
+    "modified_paths": [
+      "backend/analysis_checkpoints.py",
+      "backend/db.py",
+      "backend/domain.py",
+      "backend/generation_models.py",
+      "backend/generations.py",
+      "backend/jobs.py",
+      "backend/publication_units.py",
+      "backend/quality_api.py",
+      "backend/queue.py",
+      "tests/test_migrations.py",
+      "tests/test_parser_sandbox.py"
+    ],
+    "untracked_paths": [
+      "PROJECTTRACE_PROGRESS.md",
+      "backend/checkpoint_pages.py",
+      "backend/context_json.py",
+      "backend/context_maps.py",
+      "backend/generation_context.py",
+      "backend/json_export.py",
+      "backend/migrations/versions/0026_checkpoint_parts.py",
+      "backend/retention.py",
+      "docs/CHECKPOINT_RETENTION_AND_ROLLBACK.md",
+      "docs/COMMERCIAL_V1_RELEASE_GATES.md",
+      "docs/PROJECTTRACE_POST_SERIALIZATION_REGRESSION_REPORT.md",
+      "docs/SCALE001_AGGREGATE_GUARD_INVESTIGATION.md",
+      "docs/SCALE001_CHECKPOINT_ARCHITECTURE.md",
+      "docs/SCALE001_GENERATION_MAPS_LOCAL_TECHNICAL_REPORT.md",
+      "docs/SCALE001_GRAPH_ORDERING_CONTRACT.md",
+      "docs/SCALE001_POLICY_DECISION_READINESS.md",
+      "docs/SCALE001_SUPPORTED_INPUT_BOUNDARY_PROPOSAL.md",
+      "docs/adr/0007-bounded-published-snapshot-segments.md",
+      "docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29.json",
+      "docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_FINAL.json",
+      "docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_FINAL_RAW.tar.gz",
+      "docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_RAW.tar.gz",
+      "docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_REVIEWED.json",
+      "docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_REVIEWED_RAW.tar.gz",
+      "docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_REVIEWED_V2.json",
+      "docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_REVIEWED_V2_RAW.tar.gz",
+      "docs/evidence/PROJECTTRACE_POST_SERIALIZATION_REGRESSION.json",
+      "docs/evidence/PROJECTTRACE_POST_SERIALIZATION_REGRESSION_RAW_20261029.tar.gz",
+      "docs/evidence/SCALE001_AGGREGATE_GUARD_INVESTIGATION.json",
+      "docs/evidence/SCALE001_CGROUP_40280429009.json",
+      "docs/evidence/SCALE001_CGROUP_40280429009_MEMORY.jsonl.gz",
+      "docs/evidence/SCALE001_CHECKPOINT_PAGES_EQUIVALENCE.json",
+      "docs/evidence/SCALE001_CHECKPOINT_PAGES_OWNED.json",
+      "docs/evidence/SCALE001_DETERMINISM_AND_POLICY_GATE.json",
+      "docs/evidence/SCALE001_FINAL_SNAPSHOT_PROFILE.json",
+      "docs/evidence/SCALE001_FINAL_SNAPSHOT_PROFILE_RAW.json.gz",
+      "docs/evidence/SCALE001_GENERATION_JSON_EXPORT.json",
+      "docs/evidence/SCALE001_GENERATION_MAPS_OWNED.json",
+      "docs/evidence/SCALE001_GENERATION_MAP_ITERATION.json",
+      "docs/evidence/SCALE001_GRAPH_INDEX_PROTOTYPE.json",
+      "docs/evidence/SCALE001_GRAPH_INDEX_PROTOTYPE_RAW.json.gz",
+      "docs/evidence/SCALE001_GRAPH_INDEX_RECOVERY.json",
+      "docs/evidence/SCALE001_GRAPH_INDEX_RECOVERY_RAW.json.gz",
+      "docs/evidence/SCALE001_GRAPH_SCALAR_PROTOTYPE.json",
+      "docs/evidence/SCALE001_GRAPH_SCALAR_PROTOTYPE_RAW.json.gz",
+      "docs/evidence/SCALE001_POLICY_DECISION_READINESS.json",
+      "frontend/e2e/configuration-drift.spec.ts",
+      "samples/configuration-drift.json",
+      "tests/commercial_snapshot_profile.py",
+      "tests/generation_json_export_probe.py",
+      "tests/generation_map_iteration_probe.py",
+      "tests/graph_index_api_probe.py",
+      "tests/graph_index_compatibility.py",
+      "tests/graph_index_measure.py",
+      "tests/graph_index_prototype.py",
+      "tests/graph_index_publication_probe.py",
+      "tests/graph_index_pytest_plugin.py",
+      "tests/graph_index_recovery.py",
+      "tests/graph_index_recovery_plugin.py",
+      "tests/graph_index_recovery_probe.py",
+      "tests/graph_scalar_plugin.py",
+      "tests/graph_scalar_probe.py",
+      "tests/graph_scalar_prototype.py",
+      "tests/snapshot_component_probe.py",
+      "tests/snapshot_materialization_probe.py",
+      "tests/sqlite_memory_probe.py",
+      "tests/test_checkpoint_pages.py",
+      "tests/test_configuration_drift.py",
+      "tests/test_generation_context.py",
+      "tests/test_generation_map_iteration.py",
+      "tests/test_generation_maps.py",
+      "tests/test_graph_index_recovery.py",
+      "tests/test_graph_scalar_projection.py",
+      "tests/test_graph_scalar_reading.py",
+      "tests/test_json_export.py",
+      "tests/test_retention_downgrade.py",
+      "tests/test_retention_postgresql.py",
+      "tests/test_retention_recovery.py",
+      "tests/test_sanitization_aggregate_guard.py",
+      "tests/test_snapshot_materialization_profile.py"
+    ],
+    "starting_status": [
+      {
+        "xy": "M ",
+        "path": "backend/analysis_checkpoints.py"
+      },
+      {
+        "xy": " M",
+        "path": "backend/db.py"
+      },
+      {
+        "xy": " M",
+        "path": "backend/domain.py"
+      },
+      {
+        "xy": " M",
+        "path": "backend/generation_models.py"
+      },
+      {
+        "xy": " M",
+        "path": "backend/generations.py"
+      },
+      {
+        "xy": " M",
+        "path": "backend/jobs.py"
+      },
+      {
+        "xy": " M",
+        "path": "backend/publication_units.py"
+      },
+      {
+        "xy": " M",
+        "path": "backend/quality_api.py"
+      },
+      {
+        "xy": " M",
+        "path": "backend/queue.py"
+      },
+      {
+        "xy": " M",
+        "path": "tests/test_migrations.py"
+      },
+      {
+        "xy": " M",
+        "path": "tests/test_parser_sandbox.py"
+      },
+      {
+        "xy": "??",
+        "path": "PROJECTTRACE_PROGRESS.md"
+      },
+      {
+        "xy": "??",
+        "path": "backend/checkpoint_pages.py"
+      },
+      {
+        "xy": "??",
+        "path": "backend/context_json.py"
+      },
+      {
+        "xy": "??",
+        "path": "backend/context_maps.py"
+      },
+      {
+        "xy": "??",
+        "path": "backend/generation_context.py"
+      },
+      {
+        "xy": "??",
+        "path": "backend/json_export.py"
+      },
+      {
+        "xy": "??",
+        "path": "backend/migrations/versions/0026_checkpoint_parts.py"
+      },
+      {
+        "xy": "??",
+        "path": "backend/retention.py"
+      },
+      {
+        "xy": "??",
+        "path": "docs/CHECKPOINT_RETENTION_AND_ROLLBACK.md"
+      },
+      {
+        "xy": "??",
+        "path": "docs/COMMERCIAL_V1_RELEASE_GATES.md"
+      },
+      {
+        "xy": "??",
+        "path": "docs/PROJECTTRACE_POST_SERIALIZATION_REGRESSION_REPORT.md"
+      },
+      {
+        "xy": "??",
+        "path": "docs/SCALE001_AGGREGATE_GUARD_INVESTIGATION.md"
+      },
+      {
+        "xy": "??",
+        "path": "docs/SCALE001_CHECKPOINT_ARCHITECTURE.md"
+      },
+      {
+        "xy": "??",
+        "path": "docs/SCALE001_GENERATION_MAPS_LOCAL_TECHNICAL_REPORT.md"
+      },
+      {
+        "xy": "??",
+        "path": "docs/SCALE001_GRAPH_ORDERING_CONTRACT.md"
+      },
+      {
+        "xy": "??",
+        "path": "docs/SCALE001_POLICY_DECISION_READINESS.md"
+      },
+      {
+        "xy": "??",
+        "path": "docs/SCALE001_SUPPORTED_INPUT_BOUNDARY_PROPOSAL.md"
+      },
+      {
+        "xy": "??",
+        "path": "docs/adr/0007-bounded-published-snapshot-segments.md"
+      },
+      {
+        "xy": "??",
+        "path": "docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29.json"
+      },
+      {
+        "xy": "??",
+        "path": "docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_FINAL.json"
+      },
+      {
+        "xy": "??",
+        "path": "docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_FINAL_RAW.tar.gz"
+      },
+      {
+        "xy": "??",
+        "path": "docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_RAW.tar.gz"
+      },
+      {
+        "xy": "??",
+        "path": "docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_REVIEWED.json"
+      },
+      {
+        "xy": "??",
+        "path": "docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_REVIEWED_RAW.tar.gz"
+      },
+      {
+        "xy": "??",
+        "path": "docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_REVIEWED_V2.json"
+      },
+      {
+        "xy": "??",
+        "path": "docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_REVIEWED_V2_RAW.tar.gz"
+      },
+      {
+        "xy": "??",
+        "path": "docs/evidence/PROJECTTRACE_POST_SERIALIZATION_REGRESSION.json"
+      },
+      {
+        "xy": "??",
+        "path": "docs/evidence/PROJECTTRACE_POST_SERIALIZATION_REGRESSION_RAW_20261029.tar.gz"
+      },
+      {
+        "xy": "??",
+        "path": "docs/evidence/SCALE001_AGGREGATE_GUARD_INVESTIGATION.json"
+      },
+      {
+        "xy": "??",
+        "path": "docs/evidence/SCALE001_CGROUP_40280429009.json"
+      },
+      {
+        "xy": "??",
+        "path": "docs/evidence/SCALE001_CGROUP_40280429009_MEMORY.jsonl.gz"
+      },
+      {
+        "xy": "??",
+        "path": "docs/evidence/SCALE001_CHECKPOINT_PAGES_EQUIVALENCE.json"
+      },
+      {
+        "xy": "??",
+        "path": "docs/evidence/SCALE001_CHECKPOINT_PAGES_OWNED.json"
+      },
+      {
+        "xy": "??",
+        "path": "docs/evidence/SCALE001_DETERMINISM_AND_POLICY_GATE.json"
+      },
+      {
+        "xy": "??",
+        "path": "docs/evidence/SCALE001_FINAL_SNAPSHOT_PROFILE.json"
+      },
+      {
+        "xy": "??",
+        "path": "docs/evidence/SCALE001_FINAL_SNAPSHOT_PROFILE_RAW.json.gz"
+      },
+      {
+        "xy": "??",
+        "path": "docs/evidence/SCALE001_GENERATION_JSON_EXPORT.json"
+      },
+      {
+        "xy": "??",
+        "path": "docs/evidence/SCALE001_GENERATION_MAPS_OWNED.json"
+      },
+      {
+        "xy": "??",
+        "path": "docs/evidence/SCALE001_GENERATION_MAP_ITERATION.json"
+      },
+      {
+        "xy": "??",
+        "path": "docs/evidence/SCALE001_GRAPH_INDEX_PROTOTYPE.json"
+      },
+      {
+        "xy": "??",
+        "path": "docs/evidence/SCALE001_GRAPH_INDEX_PROTOTYPE_RAW.json.gz"
+      },
+      {
+        "xy": "??",
+        "path": "docs/evidence/SCALE001_GRAPH_INDEX_RECOVERY.json"
+      },
+      {
+        "xy": "??",
+        "path": "docs/evidence/SCALE001_GRAPH_INDEX_RECOVERY_RAW.json.gz"
+      },
+      {
+        "xy": "??",
+        "path": "docs/evidence/SCALE001_GRAPH_SCALAR_PROTOTYPE.json"
+      },
+      {
+        "xy": "??",
+        "path": "docs/evidence/SCALE001_GRAPH_SCALAR_PROTOTYPE_RAW.json.gz"
+      },
+      {
+        "xy": "??",
+        "path": "docs/evidence/SCALE001_POLICY_DECISION_READINESS.json"
+      },
+      {
+        "xy": "??",
+        "path": "frontend/e2e/configuration-drift.spec.ts"
+      },
+      {
+        "xy": "??",
+        "path": "samples/configuration-drift.json"
+      },
+      {
+        "xy": "??",
+        "path": "tests/commercial_snapshot_profile.py"
+      },
+      {
+        "xy": "??",
+        "path": "tests/generation_json_export_probe.py"
+      },
+      {
+        "xy": "??",
+        "path": "tests/generation_map_iteration_probe.py"
+      },
+      {
+        "xy": "??",
+        "path": "tests/graph_index_api_probe.py"
+      },
+      {
+        "xy": "??",
+        "path": "tests/graph_index_compatibility.py"
+      },
+      {
+        "xy": "??",
+        "path": "tests/graph_index_measure.py"
+      },
+      {
+        "xy": "??",
+        "path": "tests/graph_index_prototype.py"
+      },
+      {
+        "xy": "??",
+        "path": "tests/graph_index_publication_probe.py"
+      },
+      {
+        "xy": "??",
+        "path": "tests/graph_index_pytest_plugin.py"
+      },
+      {
+        "xy": "??",
+        "path": "tests/graph_index_recovery.py"
+      },
+      {
+        "xy": "??",
+        "path": "tests/graph_index_recovery_plugin.py"
+      },
+      {
+        "xy": "??",
+        "path": "tests/graph_index_recovery_probe.py"
+      },
+      {
+        "xy": "??",
+        "path": "tests/graph_scalar_plugin.py"
+      },
+      {
+        "xy": "??",
+        "path": "tests/graph_scalar_probe.py"
+      },
+      {
+        "xy": "??",
+        "path": "tests/graph_scalar_prototype.py"
+      },
+      {
+        "xy": "??",
+        "path": "tests/snapshot_component_probe.py"
+      },
+      {
+        "xy": "??",
+        "path": "tests/snapshot_materialization_probe.py"
+      },
+      {
+        "xy": "??",
+        "path": "tests/sqlite_memory_probe.py"
+      },
+      {
+        "xy": "??",
+        "path": "tests/test_checkpoint_pages.py"
+      },
+      {
+        "xy": "??",
+        "path": "tests/test_configuration_drift.py"
+      },
+      {
+        "xy": "??",
+        "path": "tests/test_generation_context.py"
+      },
+      {
+        "xy": "??",
+        "path": "tests/test_generation_map_iteration.py"
+      },
+      {
+        "xy": "??",
+        "path": "tests/test_generation_maps.py"
+      },
+      {
+        "xy": "??",
+        "path": "tests/test_graph_index_recovery.py"
+      },
+      {
+        "xy": "??",
+        "path": "tests/test_graph_scalar_projection.py"
+      },
+      {
+        "xy": "??",
+        "path": "tests/test_graph_scalar_reading.py"
+      },
+      {
+        "xy": "??",
+        "path": "tests/test_json_export.py"
+      },
+      {
+        "xy": "??",
+        "path": "tests/test_retention_downgrade.py"
+      },
+      {
+        "xy": "??",
+        "path": "tests/test_retention_postgresql.py"
+      },
+      {
+        "xy": "??",
+        "path": "tests/test_retention_recovery.py"
+      },
+      {
+        "xy": "??",
+        "path": "tests/test_sanitization_aggregate_guard.py"
+      },
+      {
+        "xy": "??",
+        "path": "tests/test_snapshot_materialization_profile.py"
+      }
+    ],
+    "destructive_git_operations": false,
+    "commit_push_merge_pr_or_workflow_dispatch": false
+  },
+  "previous_artifact_hashes_at_review_start": {
+    "docs/PROJECTTRACE_POST_SERIALIZATION_REGRESSION_REPORT.md": "abc9be35b2942961651c6963d1b4a165b7579c06054309e7c20eee6a9a03a6a5",
+    "docs/evidence/PROJECTTRACE_POST_SERIALIZATION_REGRESSION.json": "7e012325a21e62538457fb45f1e5f8fc8fe3b8ea07114799193a1cf26e585b09",
+    "docs/evidence/PROJECTTRACE_POST_SERIALIZATION_REGRESSION_RAW_20261029.tar.gz": "32773275b70e22b6568adc04b46e53dcdd7cd43fd7e705ce932245ea7d2dbaff",
+    "docs/SCALE001_SUPPORTED_INPUT_BOUNDARY_PROPOSAL.md": "a4602efd9d91e0668ea4b274e599d8524405dc32b8adf6d8869b4cb38b7bdb2a",
+    "docs/adr/0007-bounded-published-snapshot-segments.md": "d38f27bf16882d7095b03407966d5479bc8fb8c100e9fa684b33354f414ac45a",
+    "PROJECTTRACE_PROGRESS.md": "2993565b85e5526e88ae88e2b7bb65815344071dff4bf446d2e2bfd55161ada3",
+    "docs/COMMERCIAL_V1_RELEASE_GATES.md": "1608016634ef1309579a3398717ddcb9e84e02cc8321be94ffbeabd5c4745b30"
+  },
+  "final_report_sha256": "808af67f53f90785918cab78e1a25c86a6d099d49dff4b2fb945f3b0839163b7",
+  "final_regression_report_sha256": "105ce42f9e457db32d76bce2dd79bab93c57c66b21dc7613c6dac655b31136b6",
+  "final_progress_sha256": "cd23d217586e9853a5fd5b2a180458a265283522493af1f0269d23711bb1afff",
+  "evidence_sha256": {
+    "docs/PROJECTTRACE_POST_SERIALIZATION_REGRESSION_REPORT.md": "673497e717c52966272221969cc87a002aea8763c21f69188f5f704baf93a134",
+    "docs/evidence/PROJECTTRACE_POST_SERIALIZATION_REGRESSION.json": "7e012325a21e62538457fb45f1e5f8fc8fe3b8ea07114799193a1cf26e585b09",
+    "docs/evidence/PROJECTTRACE_POST_SERIALIZATION_REGRESSION_RAW_20261029.tar.gz": "32773275b70e22b6568adc04b46e53dcdd7cd43fd7e705ce932245ea7d2dbaff",
+    "docs/SCALE001_SUPPORTED_INPUT_BOUNDARY_PROPOSAL.md": "a4602efd9d91e0668ea4b274e599d8524405dc32b8adf6d8869b4cb38b7bdb2a",
+    "docs/adr/0007-bounded-published-snapshot-segments.md": "d38f27bf16882d7095b03407966d5479bc8fb8c100e9fa684b33354f414ac45a",
+    "PROJECTTRACE_PROGRESS.md": "312f3be6a9879b0228234f4781884da54dda62aaf9ce726278d557a9ebdab3da",
+    "docs/COMMERCIAL_V1_RELEASE_GATES.md": "1608016634ef1309579a3398717ddcb9e84e02cc8321be94ffbeabd5c4745b30",
+    "docs/evidence/SCALE001_CGROUP_40280429009.json": "fbf39ccb8579d5b73f30bc5109e50dcf3d8e558135788e562d79b04645e079ad",
+    "docs/evidence/SCALE001_CGROUP_40280429009_MEMORY.jsonl.gz": "c16bf8e898bd15917d48e2ac9685242d88571d6ea34aa1bb285754f223d5231f",
+    "docs/evidence/SCALE001_POLICY_DECISION_READINESS.json": "2c396f78c922a59f371528dd101b25b95305a7ef62d6ee705f1a8d47b2babbbc",
+    "docs/evidence/SCALE001_DETERMINISM_AND_POLICY_GATE.json": "6c15af54dd0be45eb674f9d180f527c101d4decbf87c60c447fd2f45565d157d",
+    "docs/evidence/SCALE001_GRAPH_INDEX_RECOVERY.json": "4078415d6c64e686b150a56a30130a9323df754060667d465a73b24b88794288",
+    "docs/evidence/SCALE001_GRAPH_SCALAR_PROTOTYPE.json": "093190aa2d928860f81d48d9f348c5e038e3f511bc9cb1dd13f6705b29adce90",
+    "docs/evidence/SCALE001_AGGREGATE_GUARD_INVESTIGATION.json": "e63f22214bf1b1b146a4930b93fb0595e03478b33b9aab6e7a11e2ca7264e64b",
+    "docs/SCALE001_POLICY_AND_LINUX_READINESS.md": "57b9c8b3089ddd52cb1bd7f25ae5ac9dd832a50a8a0e1d09b2d7f170019b2f17",
+    "docs/evidence/SCALE001_POLICY_AND_LINUX_READINESS.json": "934e7d3db3d536110dc6706d5d687dade630b0301eddf5be5f1dd02857e0e2aa",
+    "docs/SCALE001_INTEGRATED_QUALIFICATION_GATE.md": "a7e4bff5ad479cbebcb44436652aa04ee9adfb92977826b7959a1561d26783fa"
+  },
+  "preservation": {
+    "original_databases_read_only": true,
+    "databases": {
+      "10000": {
+        "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\p74\\test_owned_final_snapshot_prof1\\owned\\benchmark.db",
+        "captured_sha256": "465441f1dfd2c7d6ca3d7427c79dd55e57c350bee451b60a66b8e0e92f5a1d1b",
+        "current_sha256": "465441f1dfd2c7d6ca3d7427c79dd55e57c350bee451b60a66b8e0e92f5a1d1b",
+        "hash_matches": true,
+        "integrity": "ok",
+        "foreign_key_violations": 0
+      },
+      "147": {
+        "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\p74\\test_owned_final_snapshot_prof0\\owned\\benchmark.db",
+        "captured_sha256": "97aeda34f1cb1b1d67784926c2140c3c27063585ae135fbb39e22643edce94d6",
+        "current_sha256": "97aeda34f1cb1b1d67784926c2140c3c27063585ae135fbb39e22643edce94d6",
+        "hash_matches": true,
+        "integrity": "ok",
+        "foreign_key_violations": 0
+      },
+      "30000": {
+        "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\p77\\test_owned_final_snapshot_prof0\\owned\\benchmark.db",
+        "captured_sha256": "c7313fd66baa9e23ec5f5a7e9bdb8003554d086796c101be14f8d02d6ee5e9a4",
+        "current_sha256": "c7313fd66baa9e23ec5f5a7e9bdb8003554d086796c101be14f8d02d6ee5e9a4",
+        "hash_matches": true,
+        "integrity": "ok",
+        "foreign_key_violations": 0
+      },
+      "prior": {
+        "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\vp-json-export-final\\benchmark.db",
+        "captured_sha256": "14a15885488462c687ce2581807ea56ecb2145b98bc58d67f6e2aad3ba9a5627",
+        "current_sha256": "14a15885488462c687ce2581807ea56ecb2145b98bc58d67f6e2aad3ba9a5627",
+        "hash_matches": true,
+        "integrity": "ok",
+        "foreign_key_violations": 0
+      }
+    },
+    "deterministic_set_serialization_sources": {
+      "backend/generations.py": {
+        "sha256": "9be789e551064d085c95f50b1b1273994db5b6f4f2fce5689c9ed1546a9d4594",
+        "matches_recorded_hash": true
+      },
+      "tests/test_json_export.py": {
+        "sha256": "46a2291ebccf9a3d75a41c38d44ffae29c2a9e6f5039648eb86f6f44a4c9fe2",
+        "matches_recorded_hash": true
+      }
+    }
+  },
+  "policy_gate": {
+    "aggregate_sanitizer_limit_nodes": 1000000,
+    "owned_50k_nodes": 1115947,
+    "excess_nodes": 115947,
+    "state": "PENDING_PRODUCT_OWNER_APPROVAL",
+    "explicit_owner_decision_found": false,
+    "recommendation": "Option A provisionally; recommendation is not approval.",
+    "option_a": "Keep 1,000,000 aggregate nodes and after approval document larger logical snapshots as unsupported. Does not qualify the demonstrated 50k fixture.",
+    "option_b": "Only investigate amendment after explicit approval, target definition, threat/resource review, and successful post-admission measurements; no cap selected.",
+    "cap_changed": false,
+    "segmented_format_implemented": false,
+    "approval_search": [
+      "supported-input proposal",
+      "ADR 0007",
+      "policy readiness report and receipts",
+      "progress history",
+      "release gates",
+      "relevant evidence"
+    ]
+  },
+  "owned_50k_historical_evidence": {
+    "scope": "Constructed owned Windows final-snapshot failure, not pinned OpenMetadata Linux workload",
+    "rerun_this_review": false,
+    "fixture_method": "Complete 30k snapshot fields preserved, complete metric rows cycled to 50,000.",
+    "metric_rows": 50000,
+    "logical_nodes": 1115947,
+    "cap": 1000000,
+    "serialized_snapshot_bytes": 42856474,
+    "serialized_snapshot_sha256": "3e1b2bf8e88da00ca33c9789f751cf2861d0aba3a3cfc7ab896dd3ec7fbd3909",
+    "profile": {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\scale001-test-run\\basetemp-50k\\test_owned_final_snapshot_prof0\\owned\\profile.json",
+      "sha256": "7b2d6612699a819b563ba9f26e390c2bac4144dfe4937af59a69ff8fa215641a",
+      "scope": "OWNED_WINDOWS_FINAL_SNAPSHOT_PROFILE_ONLY",
+      "profile_test": {
+        "xml": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\scale001-test-run\\snapshot-50k.xml",
+        "xml_sha256": "eabc5edb06d12ea8dbbd715156e5e6b64fbdf31197da8387b3800dbac42a5561",
+        "tests": 1,
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "duration_seconds": 455.638,
+        "failure_details": [],
+        "skip_details": []
+      },
+      "analysis_seconds": 451.56706959999974,
+      "analysis_sampled_peak_rss_bytes": 303468544,
+      "final_sanitize_seconds": 17.25002929999937,
+      "final_sanitize_sampled_peak_rss_bytes": 238129152,
+      "metric_spill": {
+        "rows": 50000,
+        "ciphertext_bytes": 51820828,
+        "cache_size": -1024
+      },
+      "job": {
+        "state": "FAILED",
+        "stage": "CORRELATING",
+        "error_type": "ValueError",
+        "error_code": null,
+        "snapshot_id": null
+      },
+      "generation_states": [
+        [
+          "STAGING",
+          1
+        ]
+      ],
+      "published_pointers": 0,
+      "sqlite_integrity": {
+        "sqlite_integrity": "ok",
+        "foreign_key_violations": 0
+      },
+      "failure": "ValueError: Sanitization structure budget exceeded",
+      "downstream_sql_write_validation_comparison": "NOT REACHED"
+    },
+    "generation_disposition": "One STAGING AnalysisGeneration row; no snapshot ID and no published pointer."
+  },
+  "graph_candidates": {
+    "decision": "REJECTED",
+    "application_imports_found": false,
+    "production_graph_index_or_query_changed": false,
+    "broad_run_failed": 6,
+    "graph_only_rerun_failed": 6,
+    "count_graph_rerun_twice": false,
+    "partial_receipt_62_queries_229_write_cases_equal": true,
+    "ordering_contract": "snapshot_record_query has no explicit ORDER BY. The frozen sequence is strict candidate compatibility evidence, not a complete SQL ordering guarantee; do not alter expected rows.",
+    "failures": [
+      {
+        "test": "tests/test_graph_index_recovery.py::test_extra_version_filter_preserves_complete_baseline_sequence[partial]",
+        "candidate": "partial indexes where kind != snapshot",
+        "first_difference_row": 49,
+        "classification": "Rejected test-only candidate sequence compatibility failure."
+      },
+      {
+        "test": "tests/test_graph_index_recovery.py::test_extra_version_filter_preserves_complete_baseline_sequence[validated_partial]",
+        "candidate": "validated partial indexes plus write guards",
+        "first_difference_row": 49,
+        "classification": "Rejected test-only candidate sequence compatibility failure."
+      },
+      {
+        "test": "tests/test_graph_index_recovery.py::test_extra_version_filter_preserves_complete_baseline_sequence[guarded]",
+        "candidate": "CASE-wrapped graph expression indexes",
+        "first_difference_row": 170,
+        "classification": "Rejected test-only candidate sequence compatibility failure."
+      },
+      {
+        "test": "tests/test_graph_scalar_projection.py::test_natural_key_only_update_preserves_projection_metadata",
+        "candidate": "scalar projection maintenance trigger",
+        "first_difference_row": null,
+        "classification": "Prototype defect: UPDATE OF omits natural_key."
+      },
+      {
+        "test": "tests/test_graph_scalar_reading.py::test_filtered_mixed_sequences_match_complete_baseline[version]",
+        "candidate": "ScalarCompiler join to scalar-key table",
+        "first_difference_row": 49,
+        "classification": "Rejected test-only candidate sequence compatibility failure."
+      },
+      {
+        "test": "tests/test_graph_scalar_reading.py::test_rowid_read_namespace_is_preserved",
+        "candidate": "joined records/projection relation aliased as records",
+        "first_difference_row": null,
+        "classification": "Prototype defect: records.rowid is hidden."
+      }
+    ]
+  },
+  "github_runs": {
+    "regression": {
+      "id": 40280428892,
+      "url": "https://github.com/maninani12/ProjectTrace/actions/runs/40280428892",
+      "head_sha": "9e21509591bfa5457cc829ebd5637f95be68d573",
+      "status": "completed_success",
+      "jobs": {
+        "parser-isolation": "success",
+        "broker-recovery": "success",
+        "browser": "success",
+        "validate": "success"
+      },
+      "scope": "Published head only."
+    },
+    "constrained": {
+      "id": 40280429009,
+      "url": "https://github.com/maninani12/ProjectTrace/actions/runs/40280429009",
+      "workflow_head": "9e21509591bfa5457cc829ebd5637f95be68d573",
+      "baseline_project_head": "243513ee9acb6e4ed66cd3582ba79dc5a787b084",
+      "candidate_project_head": "9e21509591bfa5457cc829ebd5637f95be68d573",
+      "status": "both_matrix_jobs_failed",
+      "workload": {
+        "repo": "https://github.com/maninani12/OpenMetadata",
+        "commit": "b1fab2bc21c63335dead4daaaa28194c9878e9bf",
+        "archive_sha256": "95747f22ebf3d01232b1592551bc2bc1866b9bbe7322dd3bf1a97028b0592257",
+        "archive_bytes": 158981993,
+        "historical_archive_reproduced": false,
+        "manifest_sha256": "081071ce099d103270175ab53ef12842586d7b0f1ee0c58dadbc3654a2246a89",
+        "manifest_rows": 21636
+      },
+      "environment": {
+        "runner_image": "ubuntu-26.04",
+        "runner_release": "ubuntu26/20261012.163",
+        "actions_runner": "2.338.0",
+        "python": "3.14.9",
+        "platform": "Linux-7.0.0-1017-azure-x86_64-with-glibc2.41",
+        "docker_engine": "29.4.2",
+        "kernel": "7.0.0-1017-azure",
+        "python_base_digest": "sha256:35caba83af2fe6da9a5d922f9b0156f21d1246a48278c58a08bd253303ba42e8",
+        "requirements_lock_sha256": "0331753af6ba66329bbb3be218c94da7e0634b8013b91d83ecbcb5f27c5b95aa",
+        "workflow_runner_selector": "ubuntu-latest",
+        "final_app_image_digest_retained": false,
+        "apt_snapshot_pinned": false
+      },
+      "container_bounds": {
+        "memory_max": 768000000,
+        "swap_max": 0,
+        "cpus": 2,
+        "pids": 64,
+        "network": "none",
+        "sec002": "required",
+        "all_descendants_same_cgroup": true,
+        "kernel_enforcement_verified": true
+      },
+      "baseline": {
+        "artifact_id": 12631224908,
+        "artifact_zip_sha256": "b66221363c7cca3608eed5c81420e4ff7929758f4f40a64c12bb67b2e8ce5df5",
+        "exit_status": 137,
+        "docker_oom_killed": true,
+        "stage": "ANALYZING",
+        "inner_last_elapsed_seconds": 767.449,
+        "rss_peaks": {
+          "coordinator_rss_bytes": 694599680,
+          "child_rss_bytes": 126205952,
+          "namespace_rss_bytes": 748523520,
+          "memory.current": 768000000,
+          "memory.peak": 768000000
+        },
+        "host_final_memory_events": {
+          "max": 2470,
+          "oom": 5,
+          "oom_kill": 2,
+          "oom_group_kill": 0
+        },
+        "post_exit": {
+          "sqlite_integrity": "ok",
+          "fk_violations": 0,
+          "generation_states": [],
+          "published_generations": 0,
+          "published_pointers": 0,
+          "job_states": [
+            [
+              "ANALYZING",
+              "ANALYZING",
+              1
+            ]
+          ],
+          "parser_artifacts": 3747
+        },
+        "recovery_tested": false
+      },
+      "candidate": {
+        "artifact_id": 12633028505,
+        "artifact_zip_sha256": "3b61c5dd4cfe863f82241c99fc648db06f50b30b1e6f5e0c810090c8ab4ae411",
+        "exit_status": 1,
+        "docker_oom_killed": false,
+        "failure_type": "IntakeError",
+        "failure_code": "GLOBAL_CHECKPOINT_BUDGET",
+        "failed_stage": "VERIFYING",
+        "duration_seconds": 1875.465,
+        "stage_seconds": {
+          "VALIDATING": 0.021591,
+          "PARSING": 0.075049,
+          "ANALYZING": 1173.218985,
+          "EXTRACTING_CLAIMS": 25.07788,
+          "VERIFYING": 513.64296
+        },
+        "checkpoint_budget_bytes": 64000000,
+        "checkpoint_actual_bytes": null,
+        "coordinator_peak_rss_bytes": 582090752,
+        "child_peak_rss_bytes": 165163008,
+        "namespace_peak_rss_bytes": 661950464,
+        "cgroup_memory_peak_bytes": 768000000,
+        "memory_events": {
+          "low": 0,
+          "high": 0,
+          "max": 75528,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0,
+          "sock_throttled": 0
+        },
+        "swap_current": 0,
+        "final_stat_anon_file_kernel": {
+          "anon": 492396544,
+          "file": 226136064,
+          "kernel": 49414144
+        },
+        "independent_stat_peaks": {
+          "anon": 615325696,
+          "file": 436928512,
+          "kernel": 59015168
+        },
+        "counters": {
+          "native_metric_rows": 195982,
+          "native_duplicate_tokens": 12435603,
+          "native_symbol_rows": 53467,
+          "observation_spill_ciphertext_bytes": 457995276,
+          "openapi_submitted_files": 2275,
+          "openapi_consumed_files": 2275,
+          "global_analysis_checkpoints_oversize": 1
+        },
+        "post_exit": {
+          "sqlite_integrity": "ok",
+          "fk_violations": 0,
+          "generation_states": [],
+          "published_generations": 0,
+          "published_pointers": 0,
+          "job_states": [
+            [
+              "FAILED",
+              "VERIFYING",
+              1
+            ]
+          ],
+          "parser_artifacts": 18756
+        },
+        "scenarios": {
+          "cold": "FAILED",
+          "warm": "NOT_RUN",
+          "one_file_change": "NOT_RUN",
+          "multi_file_change": "NOT_RUN",
+          "exhaustion_recovery": "NOT_RUN",
+          "cancellation": "NOT_RUN",
+          "fresh_worker_recovery": "NOT_RUN",
+          "concurrent_tenants": "NOT_RUN"
+        },
+        "recovery_tested": false
+      }
+    },
+    "probe_kills": {
+      "scope": "Separate deliberate envelope-probe container",
+      "child_exit_statuses": [
+        -9,
+        -9
+      ],
+      "allocation_each_bytes": 600000000
+    }
+  },
+  "checkpoint_failure": {
+    "tested_project_head": "9e21509591bfa5457cc829ebd5637f95be68d573",
+    "call_path": [
+      "backend/jobs.py::save_checkpoint",
+      "backend/analysis_checkpoints.py::save",
+      "backend/domain.py::persist_analysis"
+    ],
+    "budget": "ANALYSIS_CHECKPOINT_MAX_BYTES",
+    "maximum_bytes": 64000000,
+    "actual_encoded_bytes": "UNKNOWN; receipt has null",
+    "oversize_returns_without_truncation_or_commit": true,
+    "called_before_publication_preparation": true,
+    "stage": "VERIFYING",
+    "operation_seconds": {
+      "QUALITY_AGGREGATION": 183.295558,
+      "FINAL_IDENTITY": 301.930217
+    },
+    "memory_pressure_distinct_from_byte_budget_failure": true
+  },
+  "post_exit_recovery": {
+    "zero_generations_and_pointers_confirmed": true,
+    "sqlite_integrity_ok": true,
+    "fk_violations_zero": true,
+    "snapshot_row_counts_recorded": false,
+    "lease_counts_recorded": false,
+    "blob_cleanup_verified": false,
+    "subsequent_valid_operation_tested": false,
+    "fresh_worker_recovery_tested": false,
+    "database_in_artifact": false
+  },
+  "prior_local_results": {
+    "broad_backend": {
+      "passed": 1059,
+      "failed": 6,
+      "skipped": 21,
+      "deselected": 1,
+      "errors": 0,
+      "environment": "Windows Python 3.14.3 / pytest 9.1.1",
+      "command": "python -m pytest -q tests --deselect tests/test_snapshot_materialization_profile.py::test_owned_final_snapshot_profile[50000] --basetemp=<owned scratch> --junitxml=<scratch>/full-suite.xml -o cache_dir=<scratch>/pytest-cache"
+    },
+    "graph_only": {
+      "passed": 64,
+      "failed": 6,
+      "skipped": 0,
+      "duration_seconds": 141.6,
+      "duplicates_broad_failures": true
+    },
+    "json_export": {
+      "passed": 69,
+      "failed": 0
+    },
+    "serialization_seed_runs": {
+      "processes": 8,
+      "tests_each": 4,
+      "seeds": [
+        "default",
+        "0",
+        "1",
+        "2",
+        "3",
+        "7",
+        "17",
+        "42"
+      ],
+      "current_source_hashes_match": true
+    },
+    "frontend": {
+      "files": 12,
+      "tests_passed": 49
+    },
+    "ruff": "passed in prior run",
+    "compileall": "passed in prior run",
+    "broad_skips": {
+      "postgresql": 16,
+      "linux_transport_lifecycle": 5
+    },
+    "integration_attempt": {
+      "setup_errors": 58,
+      "skipped": 4,
+      "reason": "Linux-only fixture on Windows; Redis/PostgreSQL services absent."
+    }
+  },
+  "review_execution": {
+    "tests_run_this_review": false,
+    "workload_run_this_review": false,
+    "workflow_dispatched": false,
+    "read_only_checks": [
+      "git root/branch/head/status",
+      "authenticated gh run view and failed logs",
+      "read-only database SHA-256, SQLite integrity, and FK checks"
+    ],
+    "exit_status": "all checks completed successfully"
+  },
+  "qualification_plan": {
+    "policy_decision_first": true,
+    "resource_bounds": {
+      "memory_max": 768000000,
+      "swap_max": 0,
+      "cpus": 2,
+      "pids": 64,
+      "checkpoint_max": 64000000,
+      "spill_max": 512000000,
+      "analysis_time_seconds": 1800,
+      "workflow_timeout_minutes": 60
+    },
+    "environment_requirements": [
+      "record/pin runner identity",
+      "pin Python base image digest",
+      "record final application image digest",
+      "pin/record apt snapshot",
+      "record lockfile hash",
+      "keep exact workload commit/archive/manifest"
+    ],
+    "snapshot_node_boundaries": [
+      999999,
+      1000000,
+      1000001,
+      1115947
+    ],
+    "scenarios": [
+      "cold publication",
+      "warm/repeat",
+      "one-file incremental",
+      "multi-file incremental",
+      "complete output hash equality",
+      "cancellation",
+      "timeout",
+      "malformed input",
+      "checkpoint/spill/disk exhaustion",
+      "worker restart",
+      "duplicate delivery/idempotency",
+      "subsequent valid operation",
+      "tenant concurrency",
+      "PostgreSQL disposable service",
+      "Redis/Celery recovery"
+    ],
+    "pass_conditions": [
+      "kernel cgroup ceiling verified exactly",
+      "swap max/current zero",
+      "no OOM or OOM kill",
+      "no process outside cgroup",
+      "all existing limits unchanged",
+      "complete deterministic outputs and publication",
+      "rollback/no partial publication",
+      "SQLite/FK integrity clean",
+      "fresh-worker subsequent retry succeeds"
+    ],
+    "policy_decisions_needed": [
+      "Option A or B",
+      "whether 50k remains supported/release target",
+      "numeric disk/CPU/additional wall-time SLO if required",
+      "required run repetition count if mandated"
+    ],
+    "repeat_recommendation": "Three independent fresh-process cold runs; count is a recommendation, not approved threshold."
+  },
+  "gate_ledger": {
+    "verified": [
+      "checkout and starting evidence hashes",
+      "four original database hashes/integrity/FK checks",
+      "published-base regression jobs pass",
+      "cgroup hard limit and zero-swap enforcement",
+      "candidate post-exit integrity and zero published output",
+      "deterministic serialization sources match test receipts"
+    ],
+    "failed": [
+      "baseline constrained cold OOM-kill",
+      "candidate constrained cold checkpoint budget",
+      "six rejected graph candidate assertions in local broad run"
+    ],
+    "not_run": [
+      "successful cold publication",
+      "warm/incremental full output equality",
+      "worker recovery and subsequent retry",
+      "cancellation/exhaustion matrix",
+      "concurrent tenant qualification",
+      "current-diff Linux/PostgreSQL/Redis/Celery qualification",
+      "successful 50k final snapshot"
+    ],
+    "needs_policy_decision": [
+      "supported-input policy",
+      "50k support status",
+      "unapproved resource SLOs and repetition count"
+    ]
+  },
+  "decision": "NEEDS POLICY DECISION; SCALE-001 NOT QUALIFIED.",
+  "checkpoint_budget_followup": {
+    "record_version": 1,
+    "review_date": "2026-10-29",
+    "prior_json_sha256_before_append": "69c3e758004aad10cd6be9ff4e04239670a28d9735a546443ca674f22dc8b504",
+    "artifact_sha256_after_markdown_append": {
+      "docs/SCALE001_INTEGRATED_QUALIFICATION_GATE.md": "5f2cda1c317edb9f0a8f60135f324bf86242fda9c687b41257a106006bf90d93",
+      "docs/PROJECTTRACE_POST_SERIALIZATION_REGRESSION_REPORT.md": "6a5ae504ddb60e14b9718e499edc8324b2c9786da40d3658c1825f9890ba0d8d",
+      "PROJECTTRACE_PROGRESS.md": "68ab49695b0608ee5727fd139f53fabfec6679d4bab2e0aeebeab4d6c74b3b2b"
+    },
+    "source_sha256_reviewed": {
+      "backend/analysis_checkpoints.py": "7bed5a0360c4b1fe9ab1b16091c4f5370380958ffa4afe028a9a0b813f799000",
+      "backend/checkpoint_pages.py": "e433aac19c4c592cd6513013d8a3c2984b3e93afe7f4a321084daf4f089f7562",
+      "backend/jobs.py": "3b267014a0caf42743ee4c554732e05a713b6d155f7f2ab7e8f59c49424a0da0",
+      "backend/domain.py": "7d319405487b4b148b53249ea564967e18e8b7633b001ffaaa13ffb8b9c02dd2",
+      "backend/db.py": "947ed5a72f5a5c020afecf9526f9e0a1c048c4f26ceacff4acd109e6e6d767e2",
+      "backend/migrations/versions/0026_checkpoint_parts.py": "26cd8e5d554d9ba452f75f6cf4422cae32dcf36e6a5ef329a7578335c08fa937",
+      "tests/test_checkpoint_pages.py": "f7c7ec2f882c03736a2f85bb6b215eb0e89d921cd72a5327b8e37449d738eced",
+      "tests/test_analysis_checkpoints.py": "fbd795d0fa1f8abb631d0163780999ac0e217ff679426a55a24405ef09734d10"
+    },
+    "checkout": {
+      "root": "C:\\Users\\sai krishna\\Projects\\ProjectTrace-local",
+      "branch": "codex/scale-001-local-continuation",
+      "head": "9e21509591bfa5457cc829ebd5637f95be68d573",
+      "head_unchanged": true,
+      "existing_dirty_work_preserved": true,
+      "production_source_or_migration_changed_in_followup": false,
+      "new_test": "tests/test_checkpoint_pages.py::test_checkpoint_budget_failure_keeps_inventory_for_subsequent_valid_analysis",
+      "new_test_sha256": "f7c7ec2f882c03736a2f85bb6b215eb0e89d921cd72a5327b8e37449d738eced"
+    },
+    "github_evidence": {
+      "regression_run": {
+        "id": 40280428892,
+        "url": "https://github.com/maninani12/ProjectTrace/actions/runs/40280428892",
+        "head": "9e21509591bfa5457cc829ebd5637f95be68d573",
+        "result": "success; parser-isolation, broker-recovery, browser, validate passed",
+        "scope": "published commit only; not the dirty worktree"
+      },
+      "constrained_run": {
+        "id": 40280429009,
+        "url": "https://github.com/maninani12/ProjectTrace/actions/runs/40280429009",
+        "head": "9e21509591bfa5457cc829ebd5637f95be68d573",
+        "candidate_result": "failed with IntakeError / GLOBAL_CHECKPOINT_BUDGET at VERIFYING; exit 1; no OOM kill",
+        "baseline_result": "exit 137; Docker/cgroup OOM kill at ANALYZING",
+        "scope": "published commit only; not the dirty worktree"
+      }
+    },
+    "v1_checkpoint_failure": {
+      "tested_source": "published HEAD backend/analysis_checkpoints.py",
+      "tested_source_sha256": "52d6bf8ac730a25103c0d9b727319d5671a505141e662f2ba6f2806578bafdaf",
+      "call_path": [
+        "backend/jobs.py::save_checkpoint",
+        "backend/analysis_checkpoints.py::save",
+        "backend/domain.py::persist_analysis"
+      ],
+      "limit_bytes": 64000000,
+      "serialization": "complete sorted JSON envelope accumulated into one bytearray; stops on first chunk that crosses cap; encryption/durable receipt occurs only after complete serialization",
+      "measured_encoded_size": null,
+      "safe_receipt_fields": {
+        "actual": null,
+        "rows": null,
+        "collection": null
+      },
+      "conclusion": "complete v1 plaintext JSON exceeded cap; exact size and per-collection contribution unknown",
+      "redundant_projection_observed": "quality_metrics also appears under code_quality.metrics; contribution to overflow was not measured",
+      "failure_precedes_publication_preparation_and_generation_admission": true,
+      "separate_from_aggregate_sanitizer_admission": true
+    },
+    "cgroup_timeline": {
+      "memory_max_bytes": 768000000,
+      "swap_max_bytes": 0,
+      "candidate_memory_peak_bytes": 768000000,
+      "peak_already_reached_at_claim_verifier_start_elapsed_seconds": 1351.417,
+      "checkpoint_start_elapsed_seconds": 1862.988,
+      "checkpoint_start": {
+        "memory_current": 765235200,
+        "anon": 492417024,
+        "file": 220585984,
+        "kernel": 52162560
+      },
+      "checkpoint_end_elapsed_seconds": 1865.057,
+      "checkpoint_end": {
+        "memory_current": 703918080,
+        "oom": 0,
+        "oom_kill": 0
+      },
+      "final_sample": {
+        "anon": 492396544,
+        "file": 226136064,
+        "kernel": 49414144
+      },
+      "interpretation": "cgroup peak predates checkpoint operation; do not attribute peak to serialization"
+    },
+    "synthetic_budget_probe": {
+      "scope": "Windows disposable SQLite spill probe; not pinned workload or Linux/cgroup qualification",
+      "script_path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\checkpoint-budget64m-20261029\\test_checkpoint_64m.py",
+      "script_sha256": "a62814a332dadcd749906f026dfa96005a570be06ebcd20f33d2736fc7d0a5b9",
+      "limit_bytes": 64000000,
+      "below_limit": {
+        "rows": 1200,
+        "payload_bytes": 32001600,
+        "encrypted_bytes_stored": 42676028,
+        "result": "admitted"
+      },
+      "over_limit": {
+        "rows": 3000,
+        "payload_bytes": 80004000,
+        "encrypted_bytes_attempted_until_first_over_budget_page": 64109740,
+        "durable_manifest_or_page_bytes_after_rejection": 0,
+        "result": "rejected"
+      },
+      "integrity": "ok",
+      "foreign_key_violations": 0,
+      "runtime_seconds": 17.93
+    },
+    "local_test_results_recorded_from_completed_runs": {
+      "checkpoint_focus": {
+        "command": "python -m pytest -q tests/test_analysis_checkpoints.py tests/test_checkpoint_pages.py --basetemp=<dedicated scratch>",
+        "passed": 37,
+        "failed": 0,
+        "result": "passed"
+      },
+      "recovery_case": {
+        "test": "test_checkpoint_budget_failure_keeps_inventory_for_subsequent_valid_analysis",
+        "independent_runs_passed": 2,
+        "result": "passed"
+      },
+      "related_regressions": {
+        "command": "python -m pytest -q tests/test_generations.py tests/test_publication_units.py tests/test_quality_spill.py tests/test_sanitization_aggregate_guard.py tests/test_generation_context.py tests/test_generation_maps.py tests/test_migrations.py tests/test_retention_recovery.py tests/test_recovery_boundaries.py tests/test_analysis_performance.py tests/test_repository_store.py tests/test_observation_store.py tests/test_timeout_recovery.py tests/test_queue.py tests/test_worker_failure.py --basetemp=<dedicated scratch>",
+        "passed": 195,
+        "failed": 0,
+        "skipped": 1,
+        "skip_reason": "Linux-only unnamed-SQLite lifecycle case",
+        "duration_seconds": 672.23
+      },
+      "full_backend": {
+        "passed": 995,
+        "failed": 0,
+        "skipped": 91,
+        "deselected": 1,
+        "warnings": 9,
+        "duration_seconds": 1299.87,
+        "scope_note": "run preceded the new recovery-test addition; opt-in graph candidates were skipped; prohibited 50k profile was the only deselection"
+      },
+      "64mb_probe": {
+        "command": "python -m pytest -s -q <scratch>\\test_checkpoint_64m.py --rootdir=<repository> --basetemp=<dedicated scratch>",
+        "passed": 1,
+        "failed": 0,
+        "duration_seconds": 17.93
+      },
+      "ruff": {
+        "result": "passed in recorded run on current source hashes"
+      },
+      "compileall": {
+        "result": "passed in recorded run on current source hashes"
+      },
+      "first_temp_setup_attempt": {
+        "setup_errors": 36,
+        "test_bodies_started": false,
+        "reason": "Windows denied pytest temp-root enumeration; rerun used dedicated scratch"
+      },
+      "graph_candidate_failures": {
+        "count": 6,
+        "classification": "previously documented rejected opt-in graph-candidate failures; not failures in active production graph path"
+      }
+    },
+    "additional_runtime_check_2026_10_29": {
+      "default_python": "Python 3.14.3",
+      "pytest_recheck": "not run: current default interpreter does not have pytest installed (exit 1)",
+      "ruff_recheck": "not run: ruff executable/module not available on current PATH (exit 1)",
+      "compileall_recheck": "passed with current default Python",
+      "interpretation": "does not replace or invalidate the prior completed test results; no source changed after their recorded hashes",
+      "alternate_python": "Python 3.11.0; pytest and ruff modules unavailable"
+    },
+    "original_database_readonly_recheck": {
+      "10000": {
+        "sha256": "465441f1dfd2c7d6ca3d7427c79dd55e57c350bee451b60a66b8e0e92f5a1d1b",
+        "matches_captured_receipt": true,
+        "integrity": "ok",
+        "foreign_key_violations": 0
+      },
+      "147": {
+        "sha256": "97aeda34f1cb1b1d67784926c2140c3c27063585ae135fbb39e22643edce94d6",
+        "matches_captured_receipt": true,
+        "integrity": "ok",
+        "foreign_key_violations": 0
+      },
+      "30000": {
+        "sha256": "c7313fd66baa9e23ec5f5a7e9bdb8003554d086796c101be14f8d02d6ee5e9a4",
+        "matches_captured_receipt": true,
+        "integrity": "ok",
+        "foreign_key_violations": 0
+      },
+      "prior": {
+        "sha256": "14a15885488462c687ce2581807ea56ecb2145b98bc58d67f6e2aad3ba9a5627",
+        "matches_captured_receipt": true,
+        "integrity": "ok",
+        "foreign_key_violations": 0
+      }
+    },
+    "local_linux_and_services": {
+      "docker_linux_daemon": "unavailable; Docker Desktop Linux engine named pipe absent; docker-desktop WSL distro stopped",
+      "postgresql_disposable_url": "not configured",
+      "redis_or_celery_broker_url": "not configured",
+      "cgroup_qualification": "NOT RUN against dirty local source"
+    },
+    "policy_and_release": {
+      "option_a_state": "PENDING_PRODUCT_OWNER_APPROVAL",
+      "aggregate_sanitizer_limit_nodes": 1000000,
+      "owned_50k_fixture_nodes": 1115947,
+      "50k_status": "blocked at final sanitizer; no successful persistence/validation/comparison; not rerun",
+      "scale_001": "NOT QUALIFIED",
+      "commercial_v1": "DEVELOPMENT IN PROGRESS",
+      "commit_push_merge_pr_or_workflow_dispatch": "none"
+    }
+  },
+  "checkpoint_field_attribution_followup": {
+    "date": "2026-10-29",
+    "result": "MEASURED; NO PRODUCTION CHANGE; SCALE-001 NOT QUALIFIED",
+    "checkout": {
+      "branch": "codex/scale-001-local-continuation",
+      "head": "9e21509591bfa5457cc829ebd5637f95be68d573",
+      "dirty_work_preserved": true
+    },
+    "v1_contract": {
+      "schema": "projecttrace-analysis-checkpoint-v1",
+      "envelope_fields": [
+        "schema",
+        "job_id",
+        "organization_id",
+        "repository_id",
+        "signature",
+        "result"
+      ],
+      "serializer": "json.JSONEncoder(sort_keys=True), default ensure_ascii and default separators; UTF-8 encoding of serialized chunks.",
+      "files_normalization": "shallow copy and list(result['files']) when present",
+      "admission_unit": "Complete raw JSON envelope bytes before encryption/persistence",
+      "default_maximum_bytes": 64000000,
+      "over_budget": "Fail closed, no truncation or durable checkpoint write.",
+      "loader": "Decrypt; validate digest and envelope scope/signature; return decoded result.",
+      "historical_source_sha256": "52d6bf8ac730a25103c0d9b727319d5671a505141e662f2ba6f2806578bafdaf",
+      "current_dirty_source_sha256": "7bed5a0360c4b1fe9ab1b16091c4f5370380958ffa4afe028a9a0b813f799000"
+    },
+    "measurements": {
+      "small": {
+        "raw_json_bytes": 825,
+        "result_object_bytes": 582,
+        "member_sum": 548,
+        "punctuation": 34,
+        "reconciled": true
+      },
+      "representative": {
+        "raw_json_bytes": 320873,
+        "result_object_bytes": 320630,
+        "member_sum": 320596,
+        "punctuation": 34,
+        "fields": [
+          {
+            "field": "analysis_cache",
+            "member_bytes": 1280,
+            "value_bytes": 1262,
+            "value_type": "object",
+            "collection_entries": 24,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.399214
+          },
+          {
+            "field": "analysis_coverage",
+            "member_bytes": 81,
+            "value_bytes": 60,
+            "value_type": "object",
+            "collection_entries": 2,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.025263
+          },
+          {
+            "field": "claims",
+            "member_bytes": 10220,
+            "value_bytes": 10210,
+            "value_type": "list",
+            "collection_entries": 240,
+            "nested_fields": null,
+            "percent_of_result_bytes": 3.187475
+          },
+          {
+            "field": "cloud_assets",
+            "member_bytes": 2502,
+            "value_bytes": 2486,
+            "value_type": "list",
+            "collection_entries": 64,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.780339
+          },
+          {
+            "field": "code_quality",
+            "member_bytes": 144509,
+            "value_bytes": 144493,
+            "value_type": "object",
+            "collection_entries": 3,
+            "nested_fields": [
+              {
+                "field": "inventory",
+                "member_bytes": 17823,
+                "value_bytes": 17810,
+                "value_type": "list",
+                "collection_entries": 256
+              },
+              {
+                "field": "metrics",
+                "member_bytes": 126603,
+                "value_bytes": 126592,
+                "value_type": "list",
+                "collection_entries": 800
+              },
+              {
+                "field": "summary",
+                "member_bytes": 61,
+                "value_bytes": 50,
+                "value_type": "object",
+                "collection_entries": 3
+              }
+            ],
+            "percent_of_result_bytes": 45.07033
+          },
+          {
+            "field": "dependencies",
+            "member_bytes": 4406,
+            "value_bytes": 4390,
+            "value_type": "list",
+            "collection_entries": 100,
+            "nested_fields": null,
+            "percent_of_result_bytes": 1.37417
+          },
+          {
+            "field": "documentation_files",
+            "member_bytes": 24,
+            "value_bytes": 1,
+            "value_type": "number",
+            "collection_entries": null,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.007485
+          },
+          {
+            "field": "engines",
+            "member_bytes": 35,
+            "value_bytes": 24,
+            "value_type": "object",
+            "collection_entries": 1,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.010916
+          },
+          {
+            "field": "files",
+            "member_bytes": 10761,
+            "value_bytes": 10752,
+            "value_type": "list",
+            "collection_entries": 512,
+            "nested_fields": null,
+            "percent_of_result_bytes": 3.356205
+          },
+          {
+            "field": "findings",
+            "member_bytes": 8822,
+            "value_bytes": 8810,
+            "value_type": "list",
+            "collection_entries": 160,
+            "nested_fields": null,
+            "percent_of_result_bytes": 2.751458
+          },
+          {
+            "field": "quality_metrics",
+            "member_bytes": 126611,
+            "value_bytes": 126592,
+            "value_type": "list",
+            "collection_entries": 800,
+            "nested_fields": null,
+            "percent_of_result_bytes": 39.488195
+          },
+          {
+            "field": "reused_files",
+            "member_bytes": 17,
+            "value_bytes": 1,
+            "value_type": "number",
+            "collection_entries": null,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.005302
+          },
+          {
+            "field": "reused_verifications",
+            "member_bytes": 25,
+            "value_bytes": 1,
+            "value_type": "number",
+            "collection_entries": null,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.007797
+          },
+          {
+            "field": "reverified_claims",
+            "member_bytes": 22,
+            "value_bytes": 1,
+            "value_type": "number",
+            "collection_entries": null,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.006861
+          },
+          {
+            "field": "signals",
+            "member_bytes": 8303,
+            "value_bytes": 8292,
+            "value_type": "list",
+            "collection_entries": 240,
+            "nested_fields": null,
+            "percent_of_result_bytes": 2.589589
+          },
+          {
+            "field": "verification_cache",
+            "member_bytes": 2646,
+            "value_bytes": 2624,
+            "value_type": "object",
+            "collection_entries": 2,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.82525
+          },
+          {
+            "field": "warnings",
+            "member_bytes": 332,
+            "value_bytes": 320,
+            "value_type": "list",
+            "collection_entries": 16,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.103546
+          }
+        ],
+        "nested_metric_projection": {
+          "same_input_object": true,
+          "quality_metrics_value_bytes": 126592,
+          "code_quality_metrics_value_bytes": 126592,
+          "v1_serializes_both_values": true
+        },
+        "reconciled": true
+      },
+      "boundary_1mb": {
+        "999999": {
+          "raw_json_bytes": 999999,
+          "save_result": true,
+          "ciphertext_bytes": 1333412,
+          "warnings_member_bytes": 999219,
+          "reconciled": true
+        },
+        "1000000": {
+          "raw_json_bytes": 1000000,
+          "save_result": true,
+          "ciphertext_bytes": 1333432,
+          "warnings_member_bytes": 999220,
+          "reconciled": true
+        },
+        "1000001": {
+          "raw_json_bytes": 1000001,
+          "save_result": false,
+          "ciphertext_bytes": 0,
+          "warnings_member_bytes": 999221,
+          "reconciled": true
+        }
+      }
+    },
+    "candidate_comparison": {
+      "materialized_values_equal": true,
+      "exact_v1_restore_equivalence": false,
+      "differences": [
+        {
+          "property": "files container",
+          "v1": "list",
+          "candidate": "ReplayRows"
+        },
+        {
+          "property": "metric projection alias",
+          "v1": "independent decoded lists",
+          "candidate": "shared alias"
+        },
+        {
+          "property": "mutation propagation",
+          "v1": false,
+          "candidate": true
+        }
+      ],
+      "admission_unit_equivalent": false,
+      "candidate_budget_unit": "Aggregate encrypted page and manifest bytes; differs from v1 raw JSON byte admission.",
+      "candidate_qualified": false,
+      "measurements": {
+        "logical_values_equal_after_materialization": true,
+        "v1_raw_json_bytes": 320876,
+        "v1_ciphertext_bytes": 427916,
+        "candidate_logical_v1_json_bytes": 320876,
+        "candidate_manifest_ciphertext_bytes": 16740,
+        "candidate_page_ciphertext_bytes": 26764,
+        "candidate_aggregate_ciphertext_bytes": 43504,
+        "candidate_page_count": 9,
+        "v1_files_container_type": "list",
+        "candidate_files_container_type": "ReplayRows",
+        "v1_metric_projection_alias": false,
+        "candidate_metric_projection_alias": true,
+        "mutation_semantics": {
+          "v1_mutating_quality_metrics_changes_code_quality_metrics": false,
+          "candidate_mutating_quality_metrics_changes_code_quality_metrics": true
+        },
+        "semantic_note": "Values compare equal after materialization; v1 JSON decode returns independent lists while candidate replay preserves shared collection aliases and lazy container types, changing identity and mutation propagation."
+      }
+    },
+    "prior_owned_candidate_profile": {
+      "evidence": "docs/evidence/SCALE001_CHECKPOINT_PAGES_OWNED.json",
+      "evidence_sha256": "194afced1379d3b308a5e4fd4a8e58806e8ff8936210d2c52598f7e1035762b3",
+      "scope": "Synthetic repeated-text Windows owned checkpoint profile; not pinned workload or Linux qualification.",
+      "logical_raw_json_bytes": 161787896,
+      "v1_saved": false,
+      "candidate_saved": true,
+      "candidate_encrypted_bytes": 1568540,
+      "candidate_pages": 322,
+      "v1_writer_peak_rss_bytes": 208044032,
+      "candidate_writer_peak_rss_bytes": 99979264,
+      "candidate_replay_peak_rss_bytes": 98533376,
+      "v1_attempt_seconds": 1.4286698,
+      "candidate_write_seconds": 9.6941717,
+      "limit_changed": false,
+      "payload_hash_included": false
+    },
+    "database_recheck": {
+      "10000": {
+        "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\p74\\test_owned_final_snapshot_prof1\\owned\\benchmark.db",
+        "captured_sha256": "465441f1dfd2c7d6ca3d7427c79dd55e57c350bee451b60a66b8e0e92f5a1d1b",
+        "current_sha256": "465441f1dfd2c7d6ca3d7427c79dd55e57c350bee451b60a66b8e0e92f5a1d1b",
+        "hash_matches": true,
+        "integrity": "ok",
+        "foreign_key_violations": 0
+      },
+      "147": {
+        "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\p74\\test_owned_final_snapshot_prof0\\owned\\benchmark.db",
+        "captured_sha256": "97aeda34f1cb1b1d67784926c2140c3c27063585ae135fbb39e22643edce94d6",
+        "current_sha256": "97aeda34f1cb1b1d67784926c2140c3c27063585ae135fbb39e22643edce94d6",
+        "hash_matches": true,
+        "integrity": "ok",
+        "foreign_key_violations": 0
+      },
+      "30000": {
+        "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\p77\\test_owned_final_snapshot_prof0\\owned\\benchmark.db",
+        "captured_sha256": "c7313fd66baa9e23ec5f5a7e9bdb8003554d086796c101be14f8d02d6ee5e9a4",
+        "current_sha256": "c7313fd66baa9e23ec5f5a7e9bdb8003554d086796c101be14f8d02d6ee5e9a4",
+        "hash_matches": true,
+        "integrity": "ok",
+        "foreign_key_violations": 0
+      },
+      "prior": {
+        "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\vp-json-export-final\\benchmark.db",
+        "captured_sha256": "14a15885488462c687ce2581807ea56ecb2145b98bc58d67f6e2aad3ba9a5627",
+        "current_sha256": "14a15885488462c687ce2581807ea56ecb2145b98bc58d67f6e2aad3ba9a5627",
+        "hash_matches": true,
+        "integrity": "ok",
+        "foreign_key_violations": 0
+      },
+      "all_hashes_match_integrity_ok_fk_zero": true
+    },
+    "source_hashes_reviewed": {
+      "backend/analysis_checkpoints.py": "7bed5a0360c4b1fe9ab1b16091c4f5370380958ffa4afe028a9a0b813f799000",
+      "backend/checkpoint_pages.py": "e433aac19c4c592cd6513013d8a3c2984b3e93afe7f4a321084daf4f089f7562",
+      "backend/jobs.py": "3b267014a0caf42743ee4c554732e05a713b6d155f7f2ab7e8f59c49424a0da0",
+      "backend/domain.py": "7d319405487b4b148b53249ea564967e18e8b7633b001ffaaa13ffb8b9c02dd2",
+      "backend/generations.py": "9be789e551064d085c95f50b1b1273994db5b6f4f2fce5689c9ed1546a9d4594",
+      "backend/generation_models.py": "00cb29396e66f5ce50afef9e1f2a6886f54352006b6a216f737cfe1723508fa2",
+      "backend/db.py": "947ed5a72f5a5c020afecf9526f9e0a1c048c4f26ceacff4acd109e6e6d767e2",
+      "tests/test_analysis_checkpoints.py": "fbd795d0fa1f8abb631d0163780999ac0e217ff679426a55a24405ef09734d10",
+      "tests/test_checkpoint_pages.py": "f7c7ec2f882c03736a2f85bb6b215eb0e89d921cd72a5327b8e37449d738eced",
+      "tests/test_checkpoint_field_attribution.py": "0f43a9fdb44adaeafeb51cc2388234ceaa1a428010d02a313a35fa7ba9fad125",
+      "docs/COMMERCIAL_V1_RELEASE_GATES.md": "1608016634ef1309579a3398717ddcb9e84e02cc8321be94ffbeabd5c4745b30",
+      "docs/adr/0007-bounded-published-snapshot-segments.md": "d38f27bf16882d7095b03407966d5479bc8fb8c100e9fa684b33354f414ac45a",
+      "docs/SCALE001_SUPPORTED_INPUT_BOUNDARY_PROPOSAL.md": "a4602efd9d91e0668ea4b274e599d8524405dc32b8adf6d8869b4cb38b7bdb2a"
+    },
+    "tests_and_checks": {
+      "environment": {
+        "python": "3.14.3",
+        "pytest": "9.1.1",
+        "ruff": "0.16.10",
+        "platform": "Windows"
+      },
+      "runs": [
+        {
+          "command": "& 'C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe' -m pytest -q -s tests/test_checkpoint_field_attribution.py --basetemp='<dedicated scratch>'",
+          "exit_code": 0,
+          "passed": 1,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 1,
+          "status": "PASS; earlier standalone run."
+        },
+        {
+          "command": "& 'C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe' -m pytest -q -s tests/test_analysis_checkpoints.py tests/test_checkpoint_pages.py tests/test_checkpoint_field_attribution.py --basetemp 'C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\checkpoint-attribution-final-verify-20261029\\pytest'",
+          "exit_code": 0,
+          "passed": 38,
+          "failed": 0,
+          "skipped": 0,
+          "warnings": 1,
+          "duration_seconds": 23.25,
+          "status": "PASS; rerun during this follow-up."
+        },
+        {
+          "command": "& 'C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe' -m pytest -q tests/test_generations.py tests/test_publication_units.py tests/test_quality_spill.py tests/test_sanitization_aggregate_guard.py tests/test_generation_context.py tests/test_generation_maps.py tests/test_migrations.py tests/test_retention_recovery.py tests/test_recovery_boundaries.py tests/test_analysis_performance.py tests/test_repository_store.py tests/test_observation_store.py tests/test_timeout_recovery.py tests/test_queue.py tests/test_worker_failure.py --basetemp 'C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\checkpoint-attribution-regressions-20261029' --junitxml 'C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\checkpoint-attribution-regressions-20261029\\results.xml'",
+          "exit_code": 0,
+          "passed": 233,
+          "failed": 0,
+          "skipped": 1,
+          "warnings": 1,
+          "duration_seconds": 387.12,
+          "skip_reason": "Linux unnamed SQLite lifecycle only; prior run on unchanged sources."
+        },
+        {
+          "command": "& 'C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\ruff.exe' check backend/analysis_checkpoints.py backend/checkpoint_pages.py backend/jobs.py backend/domain.py backend/db.py backend/migrations/versions/0026_checkpoint_parts.py tests/test_analysis_checkpoints.py tests/test_checkpoint_pages.py tests/test_checkpoint_field_attribution.py",
+          "exit_code": 0,
+          "status": "PASS; rerun during this follow-up."
+        },
+        {
+          "command": "& 'C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe' -m compileall -q backend tests",
+          "exit_code": 0,
+          "status": "PASS; rerun during this follow-up."
+        },
+        {
+          "command": "git diff --check",
+          "exit_code": 0,
+          "status": "PASS; rerun during this follow-up."
+        }
+      ],
+      "corrected_attempts": [
+        {
+          "issue": "First boundary diagnostic iteration failed because placeholder envelope IDs had serialized lengths different from stored fixture IDs; test now uses exact persisted IDs. Final boundaries pass."
+        },
+        {
+          "issue": "Initial Ruff pass found import ordering and one unused import in new diagnostic; corrected before final pass."
+        }
+      ],
+      "services": {
+        "docker_info_exit_code": 1,
+        "docker_error": "Docker Desktop Linux engine named pipe unavailable",
+        "postgres_test_urls": "unset",
+        "redis_or_celery_urls": "unset",
+        "local_linux_cgroup": "NOT RUN",
+        "postgresql_redis_celery": "NOT RUN",
+        "full_pinned_workload": "NOT RUN by instruction"
+      }
+    },
+    "prior_artifact_hashes_at_followup_start": {
+      "docs/SCALE001_INTEGRATED_QUALIFICATION_GATE.md": "5f2cda1c317edb9f0a8f60135f324bf86242fda9c687b41257a106006bf90d93",
+      "docs/evidence/SCALE001_INTEGRATED_QUALIFICATION_GATE.json": "0e03d118599d3ad6be0ccfd8826bb8751e1b75be7bf5f1f33daeb26a2cabe2f1",
+      "docs/PROJECTTRACE_POST_SERIALIZATION_REGRESSION_REPORT.md": "6a5ae504ddb60e14b9718e499edc8324b2c9786da40d3658c1825f9890ba0d8d",
+      "PROJECTTRACE_PROGRESS.md": "68ab49695b0608ee5727fd139f53fabfec6679d4bab2e0aeebeab4d6c74b3b2b",
+      "docs/evidence/PROJECTTRACE_POST_SERIALIZATION_REGRESSION.json": "7e012325a21e62538457fb45f1e5f8fc8fe3b8ea07114799193a1cf26e585b09",
+      "docs/evidence/PROJECTTRACE_POST_SERIALIZATION_REGRESSION_RAW_20261029.tar.gz": "32773275b70e22b6568adc04b46e53dcdd7cd43fd7e705ce932245ea7d2dbaff",
+      "docs/evidence/SCALE001_CGROUP_40280429009.json": "fbf39ccb8579d5b73f30bc5109e50dcf3d8e558135788e562d79b04645e079ad",
+      "docs/evidence/SCALE001_CGROUP_40280429009_MEMORY.jsonl.gz": "c16bf8e898bd15917d48e2ac9685242d88571d6ea34aa1bb285754f223d5231f"
+    },
+    "updated_artifact_sha256": {
+      "docs/SCALE001_CHECKPOINT_FIELD_ATTRIBUTION.md": "937d2a5014e5692585ae969b7b7612aef83aef2464cb3cb35846769d81b920a7",
+      "docs/evidence/SCALE001_CHECKPOINT_FIELD_ATTRIBUTION.json": "747647d11912656145d3b482d5c1d0737644ae227d67382447458ef63bf5f55d",
+      "docs/SCALE001_INTEGRATED_QUALIFICATION_GATE.md": "651d53fe42335f4e6c7c136cb34963c346f78ce05c3255c8387e2eda7597cd8f",
+      "docs/PROJECTTRACE_POST_SERIALIZATION_REGRESSION_REPORT.md": "746845b9694886d8301e7e4b6e2d9e0bdeb0f1a32c154821029ddd02c1ebf202",
+      "PROJECTTRACE_PROGRESS.md": "fae538891f26a510af17fdb82666e899f8c6917aa221f962f8cef8d33c694904"
+    },
+    "historical_constrained_run": {
+      "id": 40280429009,
+      "head": "9e21509591bfa5457cc829ebd5637f95be68d573",
+      "failure": "GLOBAL_CHECKPOINT_BUDGET in VERIFYING; no OOM kill; actual checkpoint bytes null",
+      "published_generation_and_pointer_count": 0
+    },
+    "release_status": {
+      "production_change": "NONE; no field is proven safe to remove.",
+      "checkpoint_maximum_bytes": 64000000,
+      "sanitizer_aggregate_nodes": 1000000,
+      "owned_50k_nodes": 1115947,
+      "option_a": "PENDING_PRODUCT_OWNER_APPROVAL",
+      "scale_001": "NOT QUALIFIED",
+      "commercial_v1": "DEVELOPMENT IN PROGRESS",
+      "next_task": "Obtain owner-approved checkpoint admission/format policy and a source-matched privacy-safe pinned-result measurement; establish exact v1 restore type/alias/mutation and downstream retry equivalence before proposing any encoding change."
+    },
+    "self_hash_note": "Final SHA-256 of this integrated JSON is returned externally because self-hashing within the same file is circular.",
+    "final_reverification": {
+      "date": "2026-10-29",
+      "source_evidence": "docs/evidence/SCALE001_CHECKPOINT_FIELD_ATTRIBUTION.json",
+      "source_evidence_sha256": "700f57456b31a79884958641e5aaa5f060332361d6931c692ac5d3507aff4a93",
+      "focused_tests": {
+        "command": "& 'C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe' -m pytest -q -s tests/test_analysis_checkpoints.py tests/test_checkpoint_pages.py tests/test_checkpoint_field_attribution.py tests/test_checkpoint_source_match_manifest.py --basetemp 'C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\checkpoint-final-confirm-20261029\\pytest'",
+        "exit_code": 0,
+        "passed": 40,
+        "failed": 0,
+        "skipped": 0,
+        "warnings": 1,
+        "duration_seconds": 98.29
+      },
+      "related_regressions": {
+        "command": "& 'C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe' -m pytest -q tests/test_generations.py tests/test_publication_units.py tests/test_quality_spill.py tests/test_sanitization_aggregate_guard.py tests/test_generation_context.py tests/test_generation_maps.py tests/test_migrations.py tests/test_retention_recovery.py tests/test_recovery_boundaries.py tests/test_analysis_performance.py tests/test_repository_store.py tests/test_observation_store.py tests/test_timeout_recovery.py tests/test_queue.py tests/test_worker_failure.py --basetemp 'C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\checkpoint-final-confirm-20261029\\regressions' --junitxml 'C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\checkpoint-final-confirm-20261029\\regressions\\results.xml'",
+        "exit_code": 0,
+        "passed": 195,
+        "failed": 0,
+        "skipped": 1,
+        "warnings": 1,
+        "duration_seconds": 829.4,
+        "skip": "tests/test_observation_store.py::test_linux_spill_is_unlinked_and_reclaimed_on_worker_death: Linux unnamed SQLite lifecycle only",
+        "prior_recorded_run": {
+          "passed": 233,
+          "skipped": 1,
+          "status": "historical separate run; count difference unresolved; do not merge"
+        }
+      },
+      "initial_test_setup_attempt": {
+        "exit_code": 1,
+        "passed": 2,
+        "setup_errors": 38,
+        "warnings": 1,
+        "cause": "The external pytest basetemp parent directory did not exist; no test assertion failure.",
+        "corrected_rerun": "Same selection passed after creating the external scratch directory."
+      },
+      "static_checks": {
+        "ruff": {
+          "exit_code": 0,
+          "status": "PASS"
+        },
+        "compileall_backend_tests": {
+          "command": "python -m compileall -q backend tests",
+          "exit_code": 0,
+          "status": "PASS"
+        },
+        "git_diff_check": {
+          "exit_code": 0,
+          "status": "PASS"
+        },
+        "qualification_json_parse": {
+          "exit_code": 0,
+          "status": "PASS"
+        }
+      },
+      "database_recheck": {
+        "10000": {
+          "sha256": "465441f1dfd2c7d6ca3d7427c79dd55e57c350bee451b60a66b8e0e92f5a1d1b",
+          "matches_captured": true,
+          "integrity": "ok",
+          "foreign_key_violations": 0
+        },
+        "147": {
+          "sha256": "97aeda34f1cb1b1d67784926c2140c3c27063585ae135fbb39e22643edce94d6",
+          "matches_captured": true,
+          "integrity": "ok",
+          "foreign_key_violations": 0
+        },
+        "30000": {
+          "sha256": "c7313fd66baa9e23ec5f5a7e9bdb8003554d086796c101be14f8d02d6ee5e9a4",
+          "matches_captured": true,
+          "integrity": "ok",
+          "foreign_key_violations": 0
+        },
+        "prior": {
+          "sha256": "14a15885488462c687ce2581807ea56ecb2145b98bc58d67f6e2aad3ba9a5627",
+          "matches_captured": true,
+          "integrity": "ok",
+          "foreign_key_violations": 0
+        }
+      },
+      "production_or_limit_change": false,
+      "full_pinned_workload": "NOT RUN",
+      "release_status": {
+        "scale_001": "NOT QUALIFIED",
+        "commercial_v1": "DEVELOPMENT IN PROGRESS",
+        "historical_checkpoint_bytes": null
+      }
+    },
+    "latest_artifacts_sha256": {
+      "docs/SCALE001_CHECKPOINT_FIELD_ATTRIBUTION.md": "5392c297bb35e4ac994e3e55b506108c4e4420c1bc0c2090baa8781961d618aa",
+      "docs/SCALE001_INTEGRATED_QUALIFICATION_GATE.md": "74ac2ba3570b108ab517795043980dedbb92577b77f4a56e6da279fa81d2c1a8",
+      "docs/PROJECTTRACE_POST_SERIALIZATION_REGRESSION_REPORT.md": "0aa42fa6826733f9a075d26ef4e3eb34d8b4763f4368c7ab127cc15cad165abc",
+      "PROJECTTRACE_PROGRESS.md": "b1a5cf2421733a0c7b432de001377eccc369fd3383b22c2b11c0a7dc22bc7d51",
+      "docs/SCALE001_CHECKPOINT_POLICY_DECISION.md": "94c956742636f45c3476b698131fe1e3b206fad7a3ae6f406118a8210ba757c6",
+      "docs/evidence/SCALE001_CHECKPOINT_POLICY_DECISION.json": "ef786b1a9bb8fca0eafb3cee50d4c8386bbf8c1ac63df22a6bfafa0fa71d9d69",
+      "docs/evidence/SCALE001_CHECKPOINT_SOURCE_MATCH.json": "257ff929a7d6b382fab90e8b501b21ea9b1ff14d88e36eee8edadfd0d61b00bf",
+      "tests/test_checkpoint_source_match_manifest.py": "ae6a13b9a8f03ebd638d444e56a6625ed2572cd7187321699c5e17439c41f94d"
+    }
+  },
+  "source_matched_checkpoint_followup": {
+    "date": "2026-10-29",
+    "source_match_manifest": "docs/evidence/SCALE001_CHECKPOINT_SOURCE_MATCH_MANIFEST_40280429009.json",
+    "source_match_manifest_sha256": "24f07a189cd52a90a40c9caf05533b5555ff672a9d65390686db21361ecf1c6f",
+    "decision_record": "docs/SCALE001_CHECKPOINT_POLICY_DECISION.md",
+    "decision_record_sha256": "94c956742636f45c3476b698131fe1e3b206fad7a3ae6f406118a8210ba757c6",
+    "decision_json": "docs/evidence/SCALE001_CHECKPOINT_POLICY_DECISION.json",
+    "decision_json_sha256": "ef786b1a9bb8fca0eafb3cee50d4c8386bbf8c1ac63df22a6bfafa0fa71d9d69",
+    "source_match_summary": {
+      "run_projecttrace_head": "9e21509591bfa5457cc829ebd5637f95be68d573",
+      "input_commit": "b1fab2bc21c63335dead4daaaa28194c9878e9bf",
+      "archive_sha256": "95747f22ebf3d01232b1592551bc2bc1866b9bbe7322dd3bf1a97028b0592257",
+      "archive_bytes": 158981993,
+      "historical_archive_sha256": "027615f80245c4534f4af0270951ad7dc0418928440c5332522b46103ddfa914",
+      "historical_input_reproduced": false,
+      "manifest_sha256": "081071ce099d103270175ab53ef12842586d7b0f1ee0c58dadbc3654a2246a89",
+      "manifest_rows": 21636,
+      "candidate_and_baseline_manifest_equal": true
+    },
+    "result_measurement": {
+      "checkpoint_result_object_available": false,
+      "actual": null,
+      "v1_raw_json_bytes": null,
+      "source_matched_measurement_ready": false,
+      "workload_rerun": false
+    },
+    "candidate_compatibility": {
+      "value_equality_after_materialization_on_owned_fixture": true,
+      "v1_container_alias_equivalence": false,
+      "aggregate_admission_unit_equivalence": false,
+      "production_change": false
+    },
+    "owner_policy": {
+      "checkpoint": "PENDING_PRODUCT_OWNER_APPROVAL",
+      "sanitizer": "PENDING_PRODUCT_OWNER_APPROVAL",
+      "separate_decisions": true,
+      "explicit_approval_found": false
+    },
+    "test_results": {
+      "combined_checkpoint_and_source_manifest_attempt": {
+        "exit_code": 1,
+        "passed": 39,
+        "failed": 1,
+        "warning": 1,
+        "failure": "Test-only manifest key assertion typo; corrected module passed. All 38 existing checkpoint tests and the other new test in that invocation passed.",
+        "command": "& 'C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe' -m pytest -q -s tests/test_analysis_checkpoints.py tests/test_checkpoint_pages.py tests/test_checkpoint_field_attribution.py tests/test_checkpoint_source_match_manifest.py --basetemp 'C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\source-match-focused-20261029\\pytest'",
+        "duration_seconds": 100.78
+      },
+      "corrected_source_manifest_module": {
+        "command": "& 'C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe' -m pytest -q tests/test_checkpoint_source_match_manifest.py --basetemp 'C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\source-match-manifest-test-final-20261029'",
+        "exit_code": 0,
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "warnings": 1
+      },
+      "ruff": "passed",
+      "compileall": "passed",
+      "git_diff_check": "passed",
+      "related_regressions_same_product_sources": {
+        "passed": 233,
+        "failed": 0,
+        "skipped": 1,
+        "skip": "Linux unnamed SQLite lifecycle only"
+      }
+    },
+    "environment_gaps": {
+      "linux_cgroup": "NOT RUN; local Docker Linux unavailable",
+      "postgresql": "NOT RUN; no disposable endpoint",
+      "redis_celery": "NOT RUN; no disposable endpoint",
+      "analyzer_parser_config_signatures": "NOT AVAILABLE",
+      "final_app_image_digest": "NOT AVAILABLE",
+      "local_docker_info_exit": 1,
+      "local_docker_client": "29.8.2; desktop-linux context; Linux server pipe unavailable",
+      "python_base_digest": "NOT_AVAILABLE in raw GitHub artifact; prior normalized value is not independently attributable"
+    },
+    "database_preservation": {
+      "four_original_databases": "hashes match captured receipts; integrity ok; FK violations 0"
+    },
+    "release_status": {
+      "scale_001": "NOT QUALIFIED",
+      "commercial_v1": "DEVELOPMENT IN PROGRESS",
+      "checkpoint_limit_bytes": 64000000,
+      "sanitizer_limit_nodes": 1000000,
+      "owned_50k_nodes": 1115947
+    },
+    "append_only_existing_records": {
+      "docs/SCALE001_INTEGRATED_QUALIFICATION_GATE.md": "74ac2ba3570b108ab517795043980dedbb92577b77f4a56e6da279fa81d2c1a8",
+      "docs/PROJECTTRACE_POST_SERIALIZATION_REGRESSION_REPORT.md": "0aa42fa6826733f9a075d26ef4e3eb34d8b4763f4368c7ab127cc15cad165abc",
+      "PROJECTTRACE_PROGRESS.md": "b1a5cf2421733a0c7b432de001377eccc369fd3383b22c2b11c0a7dc22bc7d51"
+    },
+    "self_hash_note": "Final SHA-256 of this integrated JSON is returned externally; it cannot stably contain its own digest.",
+    "source_match_status_counts": {
+      "VERIFIED_MATCH": 8,
+      "VERIFIED_MISMATCH": 3,
+      "NOT_AVAILABLE": 9
+    },
+    "source_match_test_sha256": "e136fa37c6ea28e2b12d71fd13fe1743b5009e5043632da095f9cbeb68348aea",
+    "new_artifacts_sha256": {
+      "docs/evidence/SCALE001_CHECKPOINT_SOURCE_MATCH_MANIFEST_40280429009.json": "24f07a189cd52a90a40c9caf05533b5555ff672a9d65390686db21361ecf1c6f",
+      "docs/SCALE001_CHECKPOINT_POLICY_DECISION.md": "94c956742636f45c3476b698131fe1e3b206fad7a3ae6f406118a8210ba757c6",
+      "docs/evidence/SCALE001_CHECKPOINT_POLICY_DECISION.json": "ef786b1a9bb8fca0eafb3cee50d4c8386bbf8c1ac63df22a6bfafa0fa71d9d69",
+      "tests/test_checkpoint_source_match_manifest.py": "e136fa37c6ea28e2b12d71fd13fe1743b5009e5043632da095f9cbeb68348aea"
+    },
+    "historical_failure_context": {
+      "memory_max_bytes": 768000000,
+      "swap_max_bytes": 0,
+      "candidate_oom_killed": false,
+      "memory_peak_preceded_checkpoint": true,
+      "checkpoint_actual_bytes": null
+    },
+    "readiness": "Source and inventory identity for the actual attempt are verified, but exact result and runtime/config identities are incomplete; no source-matched byte measurement."
+  },
+  "canonical_checkpoint_source_match_followup": {
+    "date": "2026-10-29",
+    "manifest": "docs/evidence/SCALE001_CHECKPOINT_SOURCE_MATCH.json",
+    "manifest_sha256": "257ff929a7d6b382fab90e8b501b21ea9b1ff14d88e36eee8edadfd0d61b00bf",
+    "source_match_status_counts": {
+      "VERIFIED_MATCH": 9,
+      "VERIFIED_MISMATCH": 4,
+      "NOT_AVAILABLE": 9
+    },
+    "run": {
+      "id": 40280429009,
+      "projecttrace_head": "9e21509591bfa5457cc829ebd5637f95be68d573",
+      "input_commit": "b1fab2bc21c63335dead4daaaa28194c9878e9bf",
+      "input_archive_sha256": "95747f22ebf3d01232b1592551bc2bc1866b9bbe7322dd3bf1a97028b0592257",
+      "input_archive_bytes": 158981993,
+      "historical_input_archive_sha256": "027615f80245c4534f4af0270951ad7dc0418928440c5332522b46103ddfa914",
+      "historical_input_reproduced": false,
+      "inventory_rows": 21636,
+      "inventory_sha256": "081071ce099d103270175ab53ef12842586d7b0f1ee0c58dadbc3654a2246a89"
+    },
+    "failed_result": {
+      "exact_result_available": false,
+      "checkpoint_database_or_ciphertext_available": false,
+      "actual_v1_raw_bytes": null,
+      "budget_bytes": 64000000,
+      "candidate_failure": "GLOBAL_CHECKPOINT_BUDGET in VERIFYING; no kernel OOM kill",
+      "peak_cgroup_bytes": 768000000,
+      "zero_swap": true,
+      "peak_preceded_checkpoint_serialization": true
+    },
+    "execution_preflight": {
+      "docker_client": "29.8.2",
+      "docker_info_exit_code": 1,
+      "linux_engine_available": false,
+      "wsl_distributions": [
+        "docker-desktop"
+      ],
+      "cgroup_v2_visible": false,
+      "postgresql_endpoint_configured": false,
+      "redis_celery_endpoint_configured": false,
+      "full_pinned_workload_run": false
+    },
+    "local_versions": {
+      "python": "3.14.3",
+      "run_python": "3.14.9",
+      "SQLAlchemy": "2.1.3",
+      "cryptography": "50.0.2",
+      "pytest": "9.1.1",
+      "ruff": "0.16.10",
+      "requirements_lock_git_blob": "110d51584e0997d9c4021d17d90c5ba6c608accd",
+      "requirements_lock_runner_digest": null
+    },
+    "context7": {
+      "available": false,
+      "library_ids": "Not available; Context7 tools are not exposed in this session.",
+      "official_docs_fallback_record": "docs/evidence/SCALE001_CHECKPOINT_SOURCE_MATCH.json",
+      "docs": {
+        "Python JSON": "https://docs.python.org/3.14/library/json.html",
+        "SQLAlchemy 2.1 Session": "https://docs.sqlalchemy.org/en/21/orm/session_basics.html",
+        "cryptography Fernet 50.0.2": "https://cryptography.io/en/50.0.2/fernet/"
+      }
+    },
+    "policy": {
+      "checkpoint": "PENDING_PRODUCT_OWNER_APPROVAL",
+      "sanitizer": "PENDING_PRODUCT_OWNER_APPROVAL",
+      "decisions_separate": true,
+      "explicit_approval_found": false
+    },
+    "test": {
+      "command": "& 'C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe' -m pytest -q -s tests/test_checkpoint_source_match_manifest.py tests/test_checkpoint_field_attribution.py --basetemp 'C:\\Users\\sai krishna\\Projects\\ProjectTrace-local\\work\\checkpoint-source-match-20261029-final\\pytest'",
+      "exit_code": 0,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "warnings": 1,
+      "duration_seconds": 5.71
+    },
+    "release_status": {
+      "scale_001": "NOT QUALIFIED",
+      "commercial_v1": "DEVELOPMENT IN PROGRESS"
+    },
+    "final_artifact_sha256": {
+      "docs/SCALE001_CHECKPOINT_FIELD_ATTRIBUTION.md": "8a2cc94674ca75163b321d5829dce97871f22c3684665946366a9fb42d1c4031",
+      "docs/SCALE001_INTEGRATED_QUALIFICATION_GATE.md": "5db8d4b02e4c7f4c7233543370dbabc4513ee902fd023811cafc9d57f4f58166",
+      "docs/PROJECTTRACE_POST_SERIALIZATION_REGRESSION_REPORT.md": "673497e717c52966272221969cc87a002aea8763c21f69188f5f704baf93a134",
+      "PROJECTTRACE_PROGRESS.md": "55983446d7fc0a48c60cf9ba9ed74c4a764123bc5a5bc54dbaa03e87eaae93ce",
+      "docs/SCALE001_CHECKPOINT_POLICY_DECISION.md": "94c956742636f45c3476b698131fe1e3b206fad7a3ae6f406118a8210ba757c6",
+      "docs/evidence/SCALE001_CHECKPOINT_POLICY_DECISION.json": "ef786b1a9bb8fca0eafb3cee50d4c8386bbf8c1ac63df22a6bfafa0fa71d9d69",
+      "docs/evidence/SCALE001_CHECKPOINT_SOURCE_MATCH.json": "257ff929a7d6b382fab90e8b501b21ea9b1ff14d88e36eee8edadfd0d61b00bf",
+      "tests/test_checkpoint_source_match_manifest.py": "ae6a13b9a8f03ebd638d444e56a6625ed2572cd7187321699c5e17439c41f94d"
+    },
+    "self_hash_note": "The integrated evidence JSON final SHA-256 is reported externally to avoid a self-referential hash.",
+    "field_evidence_sha256": "9ed188beb7e94f4f7dbc5ea69518c76706c1a96ecbc3e6deae0e787f6b66dcc1",
+    "final_local_revalidation": {
+      "date": "2026-10-29",
+      "command": "& 'C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe' -m pytest -q -s tests/test_checkpoint_source_match_manifest.py tests/test_checkpoint_field_attribution.py --basetemp 'C:\\Users\\sai krishna\\Projects\\ProjectTrace-local\\work\\checkpoint-source-match-20261029-final-2\\pytest'",
+      "exit_code": 0,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "warnings": 1,
+      "duration_seconds": 5.17,
+      "setup_attempt_note": "An initial invocation failed during setup because --basetemp parent was absent; four tests passed before one setup error. The corrected invocation passed.",
+      "ruff": "PASS",
+      "compileall": "PASS",
+      "git_diff_check": "PASS",
+      "stale_hashes_found_and_corrected": [
+        "docs/PROJECTTRACE_POST_SERIALIZATION_REGRESSION_REPORT.md",
+        "PROJECTTRACE_PROGRESS.md"
+      ],
+      "full_workload_run": false,
+      "production_source_changed": false
+    },
+    "post_reconciliation_test_rerun": {
+      "date": "2026-10-29",
+      "exit_code": 0,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "warnings": 1,
+      "duration_seconds": 5.41,
+      "full_workload_run": false
+    },
+    "final_evidence_validation_run": {
+      "date": "2026-10-29",
+      "command": "& 'C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe' -m pytest -q -s tests/test_checkpoint_source_match_manifest.py tests/test_checkpoint_field_attribution.py --basetemp 'C:\\Users\\sai krishna\\Projects\\ProjectTrace-local\\work\\checkpoint-source-match-20261029-final-4\\pytest'",
+      "exit_code": 0,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "warnings": 1,
+      "duration_seconds": 5.04,
+      "warning": "Starlette deprecation: httpx with starlette.testclient is deprecated; install httpx2 instead.",
+      "ruff_exit_code": 0,
+      "compileall_exit_code": 0,
+      "git_diff_check_exit_code": 0,
+      "hash_validation_exit_code": 0,
+      "original_databases_hash_and_integrity": "4/4 match; SQLite integrity ok; FK violations 0",
+      "git_status_snapshot_match": true,
+      "full_workload_run": false,
+      "production_source_changed": false,
+      "actual_failed_checkpoint_bytes": null
+    }
+  },
+  "field_evidence_sha256": "6f447226d8a6077424f54dd961cdd90a90221b7522630d589dafdaf87cbca56c",
+  "policy_and_linux_readiness": {
+    "date": "2026-10-29",
+    "status": "BLOCKED_PENDING_OWNER_DECISIONS_AND_LINUX_ENVIRONMENT",
+    "report": "docs/SCALE001_POLICY_AND_LINUX_READINESS.md",
+    "report_sha256": "57b9c8b3089ddd52cb1bd7f25ae5ac9dd832a50a8a0e1d09b2d7f170019b2f17",
+    "evidence": "docs/evidence/SCALE001_POLICY_AND_LINUX_READINESS.json",
+    "evidence_sha256": "934e7d3db3d536110dc6706d5d687dade630b0301eddf5be5f1dd02857e0e2aa",
+    "source_match_sha256": "257ff929a7d6b382fab90e8b501b21ea9b1ff14d88e36eee8edadfd0d61b00bf",
+    "checkpoint_policy": "PENDING_PRODUCT_OWNER_APPROVAL",
+    "sanitizer_policy": "PENDING_PRODUCT_OWNER_APPROVAL",
+    "full_workload_run": false,
+    "test_suite_run": false,
+    "database_hashes_and_integrity": "4/4 unchanged; SQLite integrity ok; FK violations zero",
+    "git_status_lines_before": 101,
+    "git_status_lines_after": 103,
+    "new_untracked_paths": [
+      "?? docs/SCALE001_POLICY_AND_LINUX_READINESS.md",
+      "?? docs/evidence/SCALE001_POLICY_AND_LINUX_READINESS.json"
+    ],
+    "final_artifact_sha256": {
+      "docs/SCALE001_POLICY_AND_LINUX_READINESS.md": "57b9c8b3089ddd52cb1bd7f25ae5ac9dd832a50a8a0e1d09b2d7f170019b2f17",
+      "docs/evidence/SCALE001_POLICY_AND_LINUX_READINESS.json": "934e7d3db3d536110dc6706d5d687dade630b0301eddf5be5f1dd02857e0e2aa",
+      "PROJECTTRACE_PROGRESS.md": "312f3be6a9879b0228234f4781884da54dda62aaf9ce726278d557a9ebdab3da",
+      "docs/SCALE001_INTEGRATED_QUALIFICATION_GATE.md": "a7e4bff5ad479cbebcb44436652aa04ee9adfb92977826b7959a1561d26783fa"
+    },
+    "historical_hash_disagreements_recorded": true
+  }
+}

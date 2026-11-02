@@ -1,0 +1,1868 @@
+{
+  "date": "2026-10-27",
+  "scope": "DISPOSABLE_OWNED_WINDOWS_SQLITE_GRAPH_INDEX_RECOVERY_ONLY",
+  "status": "NOT_QUALIFIED",
+  "candidate_decision": "REJECTED",
+  "head": "9e21509591bfa5457cc829ebd5637f95be68d573",
+  "branch": "codex/scale-001-local-continuation",
+  "production_source_or_migration_changed_this_task": false,
+  "preservation": {
+    "frozen_source_files": 271,
+    "all_source_hashes_unchanged": true,
+    "four_original_databases_unchanged": true,
+    "historical_test_and_evidence_unchanged": true,
+    "original_report_prefix_unchanged": true,
+    "original_database_checks": {
+      "10000": {
+        "sqlite_integrity": "ok",
+        "foreign_key_violations": 0,
+        "audit_links_verified": 9,
+        "audit_event_ids_sha256": "c961602bcc3ff10be4bde88926efe949d362e7942fa8a24a9bca3225656f1f63",
+        "edges_verified": 1230,
+        "unresolved_cross_tenant_cross_generation_or_duplicate_edges": 0,
+        "generation_states": [
+          [
+            "PUBLISHED",
+            1
+          ]
+        ],
+        "pointers": 1,
+        "graph_index_definitions": {
+          "ix_records_graph_class": "CREATE INDEX ix_records_graph_class ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"class\"') AS VARCHAR), id)",
+          "ix_records_graph_snapshot": "CREATE INDEX ix_records_graph_snapshot ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR))",
+          "ix_records_graph_source": "CREATE INDEX ix_records_graph_source ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"source\"') AS VARCHAR))",
+          "ix_records_graph_target": "CREATE INDEX ix_records_graph_target ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"target\"') AS VARCHAR))"
+        }
+      },
+      "147": {
+        "sqlite_integrity": "ok",
+        "foreign_key_violations": 0,
+        "audit_links_verified": 28,
+        "audit_event_ids_sha256": "9d3b6055fd44c269c2d9a967ac6e6a12b3d64fbbae3f64cf259ad8452b0963ed",
+        "edges_verified": 3694,
+        "unresolved_cross_tenant_cross_generation_or_duplicate_edges": 0,
+        "generation_states": [
+          [
+            "PUBLISHED",
+            3
+          ]
+        ],
+        "pointers": 2,
+        "graph_index_definitions": {
+          "ix_records_graph_class": "CREATE INDEX ix_records_graph_class ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"class\"') AS VARCHAR), id)",
+          "ix_records_graph_snapshot": "CREATE INDEX ix_records_graph_snapshot ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR))",
+          "ix_records_graph_source": "CREATE INDEX ix_records_graph_source ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"source\"') AS VARCHAR))",
+          "ix_records_graph_target": "CREATE INDEX ix_records_graph_target ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"target\"') AS VARCHAR))"
+        }
+      },
+      "30000": {
+        "sqlite_integrity": "ok",
+        "foreign_key_violations": 0,
+        "audit_links_verified": 9,
+        "audit_event_ids_sha256": "c961602bcc3ff10be4bde88926efe949d362e7942fa8a24a9bca3225656f1f63",
+        "edges_verified": 1230,
+        "unresolved_cross_tenant_cross_generation_or_duplicate_edges": 0,
+        "generation_states": [
+          [
+            "PUBLISHED",
+            1
+          ]
+        ],
+        "pointers": 1,
+        "graph_index_definitions": {
+          "ix_records_graph_class": "CREATE INDEX ix_records_graph_class ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"class\"') AS VARCHAR), id)",
+          "ix_records_graph_snapshot": "CREATE INDEX ix_records_graph_snapshot ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR))",
+          "ix_records_graph_source": "CREATE INDEX ix_records_graph_source ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"source\"') AS VARCHAR))",
+          "ix_records_graph_target": "CREATE INDEX ix_records_graph_target ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"target\"') AS VARCHAR))"
+        }
+      },
+      "prior": {
+        "sqlite_integrity": "ok",
+        "foreign_key_violations": 0,
+        "audit_links_verified": 28,
+        "audit_event_ids_sha256": "9d3b6055fd44c269c2d9a967ac6e6a12b3d64fbbae3f64cf259ad8452b0963ed",
+        "edges_verified": 3694,
+        "unresolved_cross_tenant_cross_generation_or_duplicate_edges": 0,
+        "generation_states": [
+          [
+            "PUBLISHED",
+            3
+          ]
+        ],
+        "pointers": 2,
+        "graph_index_definitions": {
+          "ix_records_graph_class": "CREATE INDEX ix_records_graph_class ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"class\"') AS VARCHAR), id)",
+          "ix_records_graph_snapshot": "CREATE INDEX ix_records_graph_snapshot ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR))",
+          "ix_records_graph_source": "CREATE INDEX ix_records_graph_source ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"source\"') AS VARCHAR))",
+          "ix_records_graph_target": "CREATE INDEX ix_records_graph_target ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"target\"') AS VARCHAR))"
+        }
+      }
+    }
+  },
+  "frozen_62_query_229_write_corpus_equal": true,
+  "frozen_22_assertions_v2": {
+    "passed": 22,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "tests": 22
+  },
+  "final_acceptance_by_source": {
+    "FROZEN_22_ASSERTIONS_V2_SUBJECTS": {
+      "passed": 22,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "tests": 22
+    },
+    "tests\\test_graph_index_recovery.py": {
+      "passed": 17,
+      "failed": 3,
+      "errors": 0,
+      "skipped": 0,
+      "tests": 20
+    },
+    "tests\\test_graph_pages.py": {
+      "passed": 2,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "tests": 2
+    },
+    "tests\\test_indexed_workspace_queries.py": {
+      "passed": 4,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "tests": 4
+    },
+    "tests\\test_workspace_pagination.py": {
+      "passed": 1,
+      "failed": 5,
+      "errors": 0,
+      "skipped": 0,
+      "tests": 6
+    },
+    "tests\\test_graph_impact.py": {
+      "passed": 8,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "tests": 8
+    },
+    "tests\\test_generations.py": {
+      "passed": 7,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "tests": 7
+    }
+  },
+  "final_acceptance_failures": [
+    {
+      "attributes": {
+        "classname": "tests.test_graph_index_recovery",
+        "name": "test_extra_version_filter_preserves_complete_baseline_sequence[partial]",
+        "file": "tests\\test_graph_index_recovery.py",
+        "line": "253",
+        "time": "1.775"
+      },
+      "outcome": "failed",
+      "failure": "owned = WindowsPath('C:/Users/sai krishna/Documents/Codex/2026-10-25/you-are-taking-over-projecttrace-development/work/graph-index-recovery-20261027/p94/test_extra_version_filter_pres0/seeded.db')\nmode = 'partial'\n\n    @pytest.mark.parametrize(\"mode\", [\"partial\", \"validated_partial\", \"guarded\"])\n    def test_extra_version_filter_preserves_complete_baseline_sequence(owned, mode):\n        \"\"\"Mandatory broad-compatibility assertion; retain failure if not recovered.\"\"\"\n        from backend.db import Record\n        from backend.domain import snapshot_record_query\n    \n        statement = snapshot_record_query(\"owned-eq\", \"owned-eq\", \"compat-a\").where(Record.version >= 1)\n        with sqlite3.connect(owned) as db:\n            expected = db.execute(*compiled(statement)).fetchall()\n            recovery.install(db, mode)\n            candidate, _ = recovery.guarded_statement(statement, mode=\"guarded\" if mode == \"guarded\" else \"partial\")\n>           assert db.execute(*compiled(candidate)).fetchall() == expected\nE           assert [('compat-nod...}', ...), ...] == [('compat-nod...}', ...), ...]\nE             \nE             At index 49 diff: ('compat-edge-0001', 'owned-eq', 'owned-eq', 'edge', 'compat-edge-0001', '{\"snapshot_id\": \"compat-a\", \"source\": \"compat-node-0001\", \"target\": \"compat-node-0002\", \"relationship\": \"LINK\"}', '2026-10-27T00:00:00+00:00', 1) != ('compat-edge-0011', 'owned-eq', 'owned-eq', 'edge', 'compat-edge-0011', '{\"snapshot_id\": \"compat-a\", \"source\": \"compat-node-0011\", \"target\": \"compat-node-0000\", \"relationship\": \"LINK\"}', '2026-10-27T00:00:00+00:00', 1)\nE             Use -v to get more diff\n\ntests\\test_graph_index_recovery.py:265: AssertionError",
+      "error": null,
+      "skipped": null
+    },
+    {
+      "attributes": {
+        "classname": "tests.test_graph_index_recovery",
+        "name": "test_extra_version_filter_preserves_complete_baseline_sequence[validated_partial]",
+        "file": "tests\\test_graph_index_recovery.py",
+        "line": "253",
+        "time": "1.721"
+      },
+      "outcome": "failed",
+      "failure": "owned = WindowsPath('C:/Users/sai krishna/Documents/Codex/2026-10-25/you-are-taking-over-projecttrace-development/work/graph-index-recovery-20261027/p94/test_extra_version_filter_pres1/seeded.db')\nmode = 'validated_partial'\n\n    @pytest.mark.parametrize(\"mode\", [\"partial\", \"validated_partial\", \"guarded\"])\n    def test_extra_version_filter_preserves_complete_baseline_sequence(owned, mode):\n        \"\"\"Mandatory broad-compatibility assertion; retain failure if not recovered.\"\"\"\n        from backend.db import Record\n        from backend.domain import snapshot_record_query\n    \n        statement = snapshot_record_query(\"owned-eq\", \"owned-eq\", \"compat-a\").where(Record.version >= 1)\n        with sqlite3.connect(owned) as db:\n            expected = db.execute(*compiled(statement)).fetchall()\n            recovery.install(db, mode)\n            candidate, _ = recovery.guarded_statement(statement, mode=\"guarded\" if mode == \"guarded\" else \"partial\")\n>           assert db.execute(*compiled(candidate)).fetchall() == expected\nE           assert [('compat-nod...}', ...), ...] == [('compat-nod...}', ...), ...]\nE             \nE             At index 49 diff: ('compat-edge-0001', 'owned-eq', 'owned-eq', 'edge', 'compat-edge-0001', '{\"snapshot_id\": \"compat-a\", \"source\": \"compat-node-0001\", \"target\": \"compat-node-0002\", \"relationship\": \"LINK\"}', '2026-10-27T00:00:00+00:00', 1) != ('compat-edge-0011', 'owned-eq', 'owned-eq', 'edge', 'compat-edge-0011', '{\"snapshot_id\": \"compat-a\", \"source\": \"compat-node-0011\", \"target\": \"compat-node-0000\", \"relationship\": \"LINK\"}', '2026-10-27T00:00:00+00:00', 1)\nE             Use -v to get more diff\n\ntests\\test_graph_index_recovery.py:265: AssertionError",
+      "error": null,
+      "skipped": null
+    },
+    {
+      "attributes": {
+        "classname": "tests.test_graph_index_recovery",
+        "name": "test_extra_version_filter_preserves_complete_baseline_sequence[guarded]",
+        "file": "tests\\test_graph_index_recovery.py",
+        "line": "253",
+        "time": "2.284"
+      },
+      "outcome": "failed",
+      "failure": "owned = WindowsPath('C:/Users/sai krishna/Documents/Codex/2026-10-25/you-are-taking-over-projecttrace-development/work/graph-index-recovery-20261027/p94/test_extra_version_filter_pres2/seeded.db')\nmode = 'guarded'\n\n    @pytest.mark.parametrize(\"mode\", [\"partial\", \"validated_partial\", \"guarded\"])\n    def test_extra_version_filter_preserves_complete_baseline_sequence(owned, mode):\n        \"\"\"Mandatory broad-compatibility assertion; retain failure if not recovered.\"\"\"\n        from backend.db import Record\n        from backend.domain import snapshot_record_query\n    \n        statement = snapshot_record_query(\"owned-eq\", \"owned-eq\", \"compat-a\").where(Record.version >= 1)\n        with sqlite3.connect(owned) as db:\n            expected = db.execute(*compiled(statement)).fetchall()\n            recovery.install(db, mode)\n            candidate, _ = recovery.guarded_statement(statement, mode=\"guarded\" if mode == \"guarded\" else \"partial\")\n>           assert db.execute(*compiled(candidate)).fetchall() == expected\nE           assert [('compat-nod...}', ...), ...] == [('compat-nod...}', ...), ...]\nE             \nE             At index 170 diff: ('compat-snapshot-shape-0000', 'owned-eq', 'owned-eq', 'snapshot', 'compat-snapshot-shape-0000', '{\"status\": \"PARTIAL\", \"scope\": {\"snapshot_id\": \"compat-a\"}, \"snapshot_id\": \"compat-a\", \"source\": \"zz\", \"target\": \"zz\", \"class\": \"zz\"}', '2026-10-27T00:00:00+00:00', 1) != ('compat-snapshot-shape-0004', 'owned-eq', 'owned-eq', 'snapshot', 'compat-snapshot-shape-0004', '{\"status\": \"PARTIAL\", \"scope\": {\"snapshot_id\": \"compat-a\"}, \"snapshot_id\": \"compat-a\", \"source\": null, \"target\": null, \"class\": null}', '2026-10-27T00:00:00+00:00', 1)\nE             Use -v to get more diff\n\ntests\\test_graph_index_recovery.py:265: AssertionError",
+      "error": null,
+      "skipped": null
+    },
+    {
+      "attributes": {
+        "classname": "tests.test_workspace_pagination",
+        "name": "test_large_graph_cannot_truncate_summary_or_paginated_claims",
+        "file": "tests\\test_workspace_pagination.py",
+        "line": "28",
+        "time": "9.976"
+      },
+      "outcome": "failed",
+      "failure": "self = <sqlalchemy.engine.base.Connection object at 0x0000026E142577A0>\ndialect = <sqlalchemy.dialects.sqlite.pysqlite.SQLiteDialect_pysqlite object at 0x0000026E0E952580>\ncontext = <sqlalchemy.dialects.sqlite.base.SQLiteExecutionContext object at 0x0000026E1001DA90>\nstatement = <sqlalchemy.dialects.sqlite.base.SQLiteCompiler object at 0x0000026E13C51810>\nparameters = [('$.\"started_at\"', '$.\"queued_at\"', 'northstar', 'identity', 'job', 'PUBLISHED', ...)]\n\n    def _exec_single_context(\n        self,\n        dialect: Dialect,\n        context: ExecutionContext,\n        statement: Union[str, Compiled],\n        parameters: Optional[_AnyMultiExecuteParams],\n    ) -> CursorResult[Unpack[TupleAny]]:\n        \"\"\"continue the _execute_context() method for a single DBAPI\n        cursor.execute() or cursor.executemany() call.\n    \n        \"\"\"\n        if dialect.bind_typing is BindTyping.SETINPUTSIZES:\n            generic_setinputsizes = context._prepare_set_input_sizes()\n    \n            if generic_setinputsizes:\n                try:\n                    dialect.do_set_input_sizes(\n                        context.cursor, generic_setinputsizes, context\n                    )\n                except BaseException as e:\n                    self._handle_dbapi_exception(\n                        e, str(statement), parameters, None, context\n                    )\n    \n        cursor, str_statement, parameters = (\n            context.cursor,\n            context.statement,\n            context.parameters,\n        )\n    \n        effective_parameters: Optional[_AnyExecuteParams]\n    \n        if not context.executemany:\n            effective_parameters = parameters[0]\n        else:\n            effective_parameters = parameters\n    \n        evt_handled: bool = False\n        try:\n            if self._has_events or self.engine._has_events:\n                for fn in self.dispatch.before_cursor_execute:\n                    str_statement, effective_parameters = fn(\n                        self,\n                        cursor,\n                        str_statement,\n                        effective_parameters,\n                        context,\n                        context.executemany,\n                    )\n    \n            if self._echo:\n                self._log_info(str_statement)\n    \n                stats = context._get_cache_stats()\n    \n                if not self.engine.hide_parameters:\n                    self._log_info(\n                        \"[%s] %r\",\n                        stats,\n                        sql_util._repr_params(\n                            effective_parameters,\n                            batches=10,\n                            ismulti=context.executemany,\n                        ),\n                    )\n                else:\n                    self._log_info(\n                        \"[%s] [SQL parameters hidden due to \"\n                        \"hide_parameters=True]\",\n                        stats,\n                    )\n            if context.execute_style is ExecuteStyle.EXECUTEMANY:\n                effective_parameters = cast(\n                    \"_CoreMultiExecuteParams\", effective_parameters\n                )\n                if self.dialect._has_events:\n                    for fn in self.dialect.dispatch.do_executemany:\n                        if fn(\n                            cursor,\n                            str_statement,\n                            effective_parameters,\n                            context,\n                        ):\n                            evt_handled = True\n                            break\n                if not evt_handled:\n                    self.dialect.do_executemany(\n                        cursor,\n                        str_statement,\n                        effective_parameters,\n                        context,\n                    )\n            elif not effective_parameters and context.no_parameters:\n                if self.dialect._has_events:\n                    for fn in self.dialect.dispatch.do_execute_no_params:\n                        if fn(cursor, str_statement, context):\n                            evt_handled = True\n                            break\n                if not evt_handled:\n                    self.dialect.do_execute_no_params(\n                        cursor, str_statement, context\n                    )\n            else:\n                effective_parameters = cast(\n                    \"_CoreSingleExecuteParams\", effective_parameters\n                )\n                if self.dialect._has_events:\n                    for fn in self.dialect.dispatch.do_execute:\n                        if fn(\n                            cursor,\n                            str_statement,\n                            effective_parameters,\n                            context,\n                        ):\n                            evt_handled = True\n                            break\n                if not evt_handled:\n>                   self.dialect.do_execute(\n                        cursor, str_statement, effective_parameters, context\n                    )\n\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\base.py:1943: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nself = <sqlalchemy.dialects.sqlite.pysqlite.SQLiteDialect_pysqlite object at 0x0000026E0E952580>\ncursor = <sqlite3.Cursor object at 0x0000026E14767240>\nstatement = 'SELECT records.id, records.organization_id, records.repository_id, records.kind, records.natural_key, records.data, r...neration_records.generation_id \\nWHERE generation_records.record_id = records.id AND analysis_generations.state != ?))'\nparameters = ('$.\"started_at\"', '$.\"queued_at\"', 'northstar', 'identity', 'job', 'PUBLISHED', ...)\ncontext = <sqlalchemy.dialects.sqlite.base.SQLiteExecutionContext object at 0x0000026E1001DA90>\n\n    def do_execute(self, cursor, statement, parameters, context=None):\n>       cursor.execute(statement, parameters)\nE       sqlite3.OperationalError: ambiguous column name: anon_1.position\n\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\default.py:1192: OperationalError\n\nThe above exception was the direct cause of the following exception:\n\nsigned = <starlette.testclient.TestClient object at 0x0000026E0E9527A0>\n\n    def test_large_graph_cannot_truncate_summary_or_paginated_claims(signed):\n        repo, before = current_scope(signed)\n        sid = repo[\"snapshot\"][\"id\"]\n        with main.Session() as db:\n            db.execute(insert(Record), [\n                {\"id\": f\"large-graph-{i:05}\", \"organization_id\": \"northstar\", \"repository_id\": \"identity\",\n                 \"kind\": \"graph_node\", \"natural_key\": f\"large-graph-{i}\", \"created_at\": \"2099-01-01\", \"version\": 1,\n                 \"data\": {\"scope\": {\"repository_id\": \"identity\", \"snapshot_id\": sid}, \"class\": \"FUNCTION\", \"title\": \"Inert graph fixture\"}}\n                for i in range(6000)\n            ])\n            expected = db.scalar(select(func.count()).select_from(Record).where(Record.kind == \"claim\", Record.repository_id == \"identity\", Record.data[\"scope\"][\"snapshot_id\"].as_string() == sid))\n            db.commit()\n>       response = signed.get(\"/api/workspace?summary=1&repository_id=identity\")\n                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\ntests\\test_workspace_pagination.py:41: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\httpx\\_client.py:1053: in get\n    return self.request(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\testclient.py:463: in request\n    return super().request(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\httpx\\_client.py:825: in request\n    return self.send(request, auth=auth, follow_redirects=follow_redirects)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\httpx\\_client.py:914: in send\n    response = self._send_handling_auth(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\httpx\\_client.py:942: in _send_handling_auth\n    response = self._send_handling_redirects(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\httpx\\_client.py:979: in _send_handling_redirects\n    response = self._send_single_request(request)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\httpx\\_client.py:1014: in _send_single_request\n    response = transport.handle_request(request)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\testclient.py:360: in handle_request\n    raise exc\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\testclient.py:357: in handle_request\n    portal.call(self.app, scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\anyio\\from_thread.py:340: in call\n    return cast(T_Retval, self.start_task_soon(func, *args).result())\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\AppData\\Local\\Python\\pythoncore-3.14-64\\Lib\\concurrent\\futures\\_base.py:450: in result\n    return self.__get_result()\n           ^^^^^^^^^^^^^^^^^^^\n..\\..\\AppData\\Local\\Python\\pythoncore-3.14-64\\Lib\\concurrent\\futures\\_base.py:395: in __get_result\n    raise self._exception\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\anyio\\from_thread.py:265: in _call_func\n    retval = await retval_or_awaitable\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\applications.py:1215: in __call__\n    await super().__call__(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\applications.py:96: in __call__\n    await self.middleware_stack(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\errors.py:186: in __call__\n    raise exc\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\errors.py:164: in __call__\n    await self.app(scope, receive, _send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\telemetry\\_asgi.py:151: in __call__\n    await self.app(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\base.py:197: in __call__\n    response = await self.dispatch_func(request, call_next)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nbackend\\main.py:134: in security_boundary\n    response = await call_next(request)\n               ^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\base.py:173: in call_next\n    raise app_exc from app_exc.__cause__ or app_exc.__context__\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\base.py:149: in coro\n    await self.app(scope, receive_or_disconnect, send_no_error)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\cors.py:91: in __call__\n    await self.simple_response(scope, receive, send, request_headers=headers)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\cors.py:149: in simple_response\n    await self.app(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\exceptions.py:63: in __call__\n    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\_exception_handler.py:53: in wrapped_app\n    raise exc\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\_exception_handler.py:42: in wrapped_app\n    await app(scope, receive, sender)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\middleware\\asyncexitstack.py:18: in __call__\n    await self.app(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\routing.py:676: in __call__\n    await self.middleware_stack(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\routing.py:2786: in app\n    await route.handle(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\routing.py:1310: in handle\n    await super().handle(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\routing.py:282: in handle\n    await self.app(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\routing.py:165: in app\n    await wrap_app_handling_exceptions(app, request)(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\_exception_handler.py:53: in wrapped_app\n    raise exc\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\_exception_handler.py:42: in wrapped_app\n    await app(scope, receive, sender)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\routing.py:151: in app\n    response = await f(request)\n               ^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\routing.py:727: in app\n    raw_response = await run_endpoint_function(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\routing.py:362: in run_endpoint_function\n    return await run_in_threadpool(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\concurrency.py:34: in run_in_threadpool\n    return await anyio.to_thread.run_sync(func)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\anyio\\to_thread.py:65: in run_sync\n    return await get_async_backend().run_sync_in_worker_thread(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\anyio\\_backends\\_asyncio.py:2706: in run_sync_in_worker_thread\n    return await future\n           ^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\anyio\\_backends\\_asyncio.py:1100: in run\n    result = context.run(func, *args)\n             ^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\telemetry\\_api.py:240: in _run_sync_endpoint\n    return function(**arguments)\n           ^^^^^^^^^^^^^^^^^^^^^\nbackend\\main.py:694: in workspace\n    **workspace_summary(db, user, repos, snapshots),\n      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nbackend\\workspace_read.py:155: in workspace_summary\n    jobs = latest_jobs(db, user, repos)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nbackend\\workspace_read.py:77: in latest_jobs\n    return {row.repository_id: row for row in db.scalars(select(Record).join(ranked, ranked.c.id == Record.id).where(ranked.c.position == 1))}\n                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\orm\\session.py:2594: in scalars\n    return self._execute_internal(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\orm\\session.py:2363: in _execute_internal\n    compile_state_cls.orm_execute_statement(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\orm\\context.py:316: in orm_execute_statement\n    result = conn.execute(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\base.py:1448: in execute\n    return meth(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\sql\\elements.py:533: in _execute_on_connection\n    return connection._execute_clauseelement(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\base.py:1668: in _execute_clauseelement\n    ret = self._execute_context(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\base.py:1822: in _execute_context\n    return self._exec_single_context(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\base.py:1962: in _exec_single_context\n    self._handle_dbapi_exception(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\base.py:2332: in _handle_dbapi_exception\n    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\base.py:1943: in _exec_single_context\n    self.dialect.do_execute(\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nself = <sqlalchemy.dialects.sqlite.pysqlite.SQLiteDialect_pysqlite object at 0x0000026E0E952580>\ncursor = <sqlite3.Cursor object at 0x0000026E14767240>\nstatement = 'SELECT records.id, records.organization_id, records.repository_id, records.kind, records.natural_key, records.data, r...neration_records.generation_id \\nWHERE generation_records.record_id = records.id AND analysis_generations.state != ?))'\nparameters = ('$.\"started_at\"', '$.\"queued_at\"', 'northstar', 'identity', 'job', 'PUBLISHED', ...)\ncontext = <sqlalchemy.dialects.sqlite.base.SQLiteExecutionContext object at 0x0000026E1001DA90>\n\n    def do_execute(self, cursor, statement, parameters, context=None):\n>       cursor.execute(statement, parameters)\nE       sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) ambiguous column name: anon_1.position\nE       [SQL: SELECT records.id, records.organization_id, records.repository_id, records.kind, records.natural_key, records.data, records.created_at, records.version \nE       FROM records JOIN (SELECT records.id AS id, row_number() OVER (PARTITION BY records.repository_id ORDER BY coalesce(CAST(JSON_EXTRACT(records.data, ?) AS VARCHAR), CAST(JSON_EXTRACT(records.data, ?) AS VARCHAR), records.created_at) DESC, records.id DESC) AS position \nE       FROM records \nE       WHERE records.organization_id = ? AND records.repository_id IN (?) AND records.kind = ? AND records.kind != 'snapshot' AND NOT (EXISTS (SELECT generation_records.record_id \nE       FROM generation_records JOIN analysis_generations ON analysis_generations.id = generation_records.generation_id \nE       WHERE generation_records.record_id = records.id AND analysis_generations.state != ?))) AS anon_1 ON anon_1.id = records.id, (SELECT records.id AS id, row_number() OVER (PARTITION BY records.repository_id ORDER BY coalesce(CAST(JSON_EXTRACT(records.data, ?) AS VARCHAR), CAST(JSON_EXTRACT(records.data, ?) AS VARCHAR), records.created_at) DESC, records.id DESC) AS position \nE       FROM records \nE       WHERE records.organization_id = ? AND records.repository_id IN (?) AND records.kind = ? AND records.kind != 'snapshot' AND NOT (EXISTS (SELECT generation_records.record_id \nE       FROM generation_records JOIN analysis_generations ON analysis_generations.id = generation_records.generation_id \nE       WHERE generation_records.record_id = records.id AND analysis_generations.state != ?))) AS anon_1 \nE       WHERE anon_1.position = ? AND NOT (EXISTS (SELECT generation_records.record_id \nE       FROM generation_records JOIN analysis_generations ON analysis_generations.id = generation_records.generation_id \nE       WHERE generation_records.record_id = records.id AND analysis_generations.state != ?))]\nE       [parameters: ('$.\"started_at\"', '$.\"queued_at\"', 'northstar', 'identity', 'job', 'PUBLISHED', '$.\"started_at\"', '$.\"queued_at\"', 'northstar', 'identity', 'job', 'PUBLISHED', 1, 'PUBLISHED')]\nE       (Background on this error at: https://sqlalche.me/e/21/e3q8)\n\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\default.py:1192: OperationalError",
+      "error": null,
+      "skipped": null
+    },
+    {
+      "attributes": {
+        "classname": "tests.test_workspace_pagination",
+        "name": "test_summary_is_partial_when_published_snapshot_is_partial",
+        "file": "tests\\test_workspace_pagination.py",
+        "line": "55",
+        "time": "6.163"
+      },
+      "outcome": "failed",
+      "failure": "self = <sqlalchemy.engine.base.Connection object at 0x0000026E0D7DA120>\ndialect = <sqlalchemy.dialects.sqlite.pysqlite.SQLiteDialect_pysqlite object at 0x0000026E0E950270>\ncontext = <sqlalchemy.dialects.sqlite.base.SQLiteExecutionContext object at 0x0000026E13BF5FD0>\nstatement = <sqlalchemy.dialects.sqlite.base.SQLiteCompiler object at 0x0000026E0D74D090>\nparameters = [('$.\"started_at\"', '$.\"queued_at\"', 'northstar', 'identity', 'job', 'PUBLISHED', ...)]\n\n    def _exec_single_context(\n        self,\n        dialect: Dialect,\n        context: ExecutionContext,\n        statement: Union[str, Compiled],\n        parameters: Optional[_AnyMultiExecuteParams],\n    ) -> CursorResult[Unpack[TupleAny]]:\n        \"\"\"continue the _execute_context() method for a single DBAPI\n        cursor.execute() or cursor.executemany() call.\n    \n        \"\"\"\n        if dialect.bind_typing is BindTyping.SETINPUTSIZES:\n            generic_setinputsizes = context._prepare_set_input_sizes()\n    \n            if generic_setinputsizes:\n                try:\n                    dialect.do_set_input_sizes(\n                        context.cursor, generic_setinputsizes, context\n                    )\n                except BaseException as e:\n                    self._handle_dbapi_exception(\n                        e, str(statement), parameters, None, context\n                    )\n    \n        cursor, str_statement, parameters = (\n            context.cursor,\n            context.statement,\n            context.parameters,\n        )\n    \n        effective_parameters: Optional[_AnyExecuteParams]\n    \n        if not context.executemany:\n            effective_parameters = parameters[0]\n        else:\n            effective_parameters = parameters\n    \n        evt_handled: bool = False\n        try:\n            if self._has_events or self.engine._has_events:\n                for fn in self.dispatch.before_cursor_execute:\n                    str_statement, effective_parameters = fn(\n                        self,\n                        cursor,\n                        str_statement,\n                        effective_parameters,\n                        context,\n                        context.executemany,\n                    )\n    \n            if self._echo:\n                self._log_info(str_statement)\n    \n                stats = context._get_cache_stats()\n    \n                if not self.engine.hide_parameters:\n                    self._log_info(\n                        \"[%s] %r\",\n                        stats,\n                        sql_util._repr_params(\n                            effective_parameters,\n                            batches=10,\n                            ismulti=context.executemany,\n                        ),\n                    )\n                else:\n                    self._log_info(\n                        \"[%s] [SQL parameters hidden due to \"\n                        \"hide_parameters=True]\",\n                        stats,\n                    )\n            if context.execute_style is ExecuteStyle.EXECUTEMANY:\n                effective_parameters = cast(\n                    \"_CoreMultiExecuteParams\", effective_parameters\n                )\n                if self.dialect._has_events:\n                    for fn in self.dialect.dispatch.do_executemany:\n                        if fn(\n                            cursor,\n                            str_statement,\n                            effective_parameters,\n                            context,\n                        ):\n                            evt_handled = True\n                            break\n                if not evt_handled:\n                    self.dialect.do_executemany(\n                        cursor,\n                        str_statement,\n                        effective_parameters,\n                        context,\n                    )\n            elif not effective_parameters and context.no_parameters:\n                if self.dialect._has_events:\n                    for fn in self.dialect.dispatch.do_execute_no_params:\n                        if fn(cursor, str_statement, context):\n                            evt_handled = True\n                            break\n                if not evt_handled:\n                    self.dialect.do_execute_no_params(\n                        cursor, str_statement, context\n                    )\n            else:\n                effective_parameters = cast(\n                    \"_CoreSingleExecuteParams\", effective_parameters\n                )\n                if self.dialect._has_events:\n                    for fn in self.dialect.dispatch.do_execute:\n                        if fn(\n                            cursor,\n                            str_statement,\n                            effective_parameters,\n                            context,\n                        ):\n                            evt_handled = True\n                            break\n                if not evt_handled:\n>                   self.dialect.do_execute(\n                        cursor, str_statement, effective_parameters, context\n                    )\n\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\base.py:1943: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nself = <sqlalchemy.dialects.sqlite.pysqlite.SQLiteDialect_pysqlite object at 0x0000026E0E950270>\ncursor = <sqlite3.Cursor object at 0x0000026E10290740>\nstatement = 'SELECT records.id, records.organization_id, records.repository_id, records.kind, records.natural_key, records.data, r...neration_records.generation_id \\nWHERE generation_records.record_id = records.id AND analysis_generations.state != ?))'\nparameters = ('$.\"started_at\"', '$.\"queued_at\"', 'northstar', 'identity', 'job', 'PUBLISHED', ...)\ncontext = <sqlalchemy.dialects.sqlite.base.SQLiteExecutionContext object at 0x0000026E13BF5FD0>\n\n    def do_execute(self, cursor, statement, parameters, context=None):\n>       cursor.execute(statement, parameters)\nE       sqlite3.OperationalError: ambiguous column name: anon_1.position\n\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\default.py:1192: OperationalError\n\nThe above exception was the direct cause of the following exception:\n\nsigned = <starlette.testclient.TestClient object at 0x0000026E0D61A9C0>\n\n    def test_summary_is_partial_when_published_snapshot_is_partial(signed):\n        repo, _ = current_scope(signed)\n        with main.Session() as db:\n            row = db.get(Record, repo[\"snapshot\"][\"id\"])\n            row.data = {**row.data, \"status\": \"PARTIAL\"}\n            project_snapshot(db, row)\n            db.commit()\n>       data = signed.get(\"/api/workspace?summary=1&repository_id=identity\").json()\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\ntests\\test_workspace_pagination.py:63: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\httpx\\_client.py:1053: in get\n    return self.request(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\testclient.py:463: in request\n    return super().request(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\httpx\\_client.py:825: in request\n    return self.send(request, auth=auth, follow_redirects=follow_redirects)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\httpx\\_client.py:914: in send\n    response = self._send_handling_auth(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\httpx\\_client.py:942: in _send_handling_auth\n    response = self._send_handling_redirects(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\httpx\\_client.py:979: in _send_handling_redirects\n    response = self._send_single_request(request)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\httpx\\_client.py:1014: in _send_single_request\n    response = transport.handle_request(request)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\testclient.py:360: in handle_request\n    raise exc\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\testclient.py:357: in handle_request\n    portal.call(self.app, scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\anyio\\from_thread.py:340: in call\n    return cast(T_Retval, self.start_task_soon(func, *args).result())\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\AppData\\Local\\Python\\pythoncore-3.14-64\\Lib\\concurrent\\futures\\_base.py:450: in result\n    return self.__get_result()\n           ^^^^^^^^^^^^^^^^^^^\n..\\..\\AppData\\Local\\Python\\pythoncore-3.14-64\\Lib\\concurrent\\futures\\_base.py:395: in __get_result\n    raise self._exception\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\anyio\\from_thread.py:265: in _call_func\n    retval = await retval_or_awaitable\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\applications.py:1215: in __call__\n    await super().__call__(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\applications.py:96: in __call__\n    await self.middleware_stack(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\errors.py:186: in __call__\n    raise exc\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\errors.py:164: in __call__\n    await self.app(scope, receive, _send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\telemetry\\_asgi.py:151: in __call__\n    await self.app(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\base.py:197: in __call__\n    response = await self.dispatch_func(request, call_next)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nbackend\\main.py:134: in security_boundary\n    response = await call_next(request)\n               ^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\base.py:173: in call_next\n    raise app_exc from app_exc.__cause__ or app_exc.__context__\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\base.py:149: in coro\n    await self.app(scope, receive_or_disconnect, send_no_error)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\cors.py:91: in __call__\n    await self.simple_response(scope, receive, send, request_headers=headers)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\cors.py:149: in simple_response\n    await self.app(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\exceptions.py:63: in __call__\n    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\_exception_handler.py:53: in wrapped_app\n    raise exc\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\_exception_handler.py:42: in wrapped_app\n    await app(scope, receive, sender)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\middleware\\asyncexitstack.py:18: in __call__\n    await self.app(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\routing.py:676: in __call__\n    await self.middleware_stack(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\routing.py:2786: in app\n    await route.handle(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\routing.py:1310: in handle\n    await super().handle(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\routing.py:282: in handle\n    await self.app(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\routing.py:165: in app\n    await wrap_app_handling_exceptions(app, request)(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\_exception_handler.py:53: in wrapped_app\n    raise exc\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\_exception_handler.py:42: in wrapped_app\n    await app(scope, receive, sender)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\routing.py:151: in app\n    response = await f(request)\n               ^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\routing.py:727: in app\n    raw_response = await run_endpoint_function(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\routing.py:362: in run_endpoint_function\n    return await run_in_threadpool(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\concurrency.py:34: in run_in_threadpool\n    return await anyio.to_thread.run_sync(func)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\anyio\\to_thread.py:65: in run_sync\n    return await get_async_backend().run_sync_in_worker_thread(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\anyio\\_backends\\_asyncio.py:2706: in run_sync_in_worker_thread\n    return await future\n           ^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\anyio\\_backends\\_asyncio.py:1100: in run\n    result = context.run(func, *args)\n             ^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\telemetry\\_api.py:240: in _run_sync_endpoint\n    return function(**arguments)\n           ^^^^^^^^^^^^^^^^^^^^^\nbackend\\main.py:694: in workspace\n    **workspace_summary(db, user, repos, snapshots),\n      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nbackend\\workspace_read.py:155: in workspace_summary\n    jobs = latest_jobs(db, user, repos)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nbackend\\workspace_read.py:77: in latest_jobs\n    return {row.repository_id: row for row in db.scalars(select(Record).join(ranked, ranked.c.id == Record.id).where(ranked.c.position == 1))}\n                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\orm\\session.py:2594: in scalars\n    return self._execute_internal(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\orm\\session.py:2363: in _execute_internal\n    compile_state_cls.orm_execute_statement(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\orm\\context.py:316: in orm_execute_statement\n    result = conn.execute(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\base.py:1448: in execute\n    return meth(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\sql\\elements.py:533: in _execute_on_connection\n    return connection._execute_clauseelement(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\base.py:1668: in _execute_clauseelement\n    ret = self._execute_context(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\base.py:1822: in _execute_context\n    return self._exec_single_context(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\base.py:1962: in _exec_single_context\n    self._handle_dbapi_exception(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\base.py:2332: in _handle_dbapi_exception\n    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\base.py:1943: in _exec_single_context\n    self.dialect.do_execute(\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nself = <sqlalchemy.dialects.sqlite.pysqlite.SQLiteDialect_pysqlite object at 0x0000026E0E950270>\ncursor = <sqlite3.Cursor object at 0x0000026E10290740>\nstatement = 'SELECT records.id, records.organization_id, records.repository_id, records.kind, records.natural_key, records.data, r...neration_records.generation_id \\nWHERE generation_records.record_id = records.id AND analysis_generations.state != ?))'\nparameters = ('$.\"started_at\"', '$.\"queued_at\"', 'northstar', 'identity', 'job', 'PUBLISHED', ...)\ncontext = <sqlalchemy.dialects.sqlite.base.SQLiteExecutionContext object at 0x0000026E13BF5FD0>\n\n    def do_execute(self, cursor, statement, parameters, context=None):\n>       cursor.execute(statement, parameters)\nE       sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) ambiguous column name: anon_1.position\nE       [SQL: SELECT records.id, records.organization_id, records.repository_id, records.kind, records.natural_key, records.data, records.created_at, records.version \nE       FROM records JOIN (SELECT records.id AS id, row_number() OVER (PARTITION BY records.repository_id ORDER BY coalesce(CAST(JSON_EXTRACT(records.data, ?) AS VARCHAR), CAST(JSON_EXTRACT(records.data, ?) AS VARCHAR), records.created_at) DESC, records.id DESC) AS position \nE       FROM records \nE       WHERE records.organization_id = ? AND records.repository_id IN (?) AND records.kind = ? AND records.kind != 'snapshot' AND NOT (EXISTS (SELECT generation_records.record_id \nE       FROM generation_records JOIN analysis_generations ON analysis_generations.id = generation_records.generation_id \nE       WHERE generation_records.record_id = records.id AND analysis_generations.state != ?))) AS anon_1 ON anon_1.id = records.id, (SELECT records.id AS id, row_number() OVER (PARTITION BY records.repository_id ORDER BY coalesce(CAST(JSON_EXTRACT(records.data, ?) AS VARCHAR), CAST(JSON_EXTRACT(records.data, ?) AS VARCHAR), records.created_at) DESC, records.id DESC) AS position \nE       FROM records \nE       WHERE records.organization_id = ? AND records.repository_id IN (?) AND records.kind = ? AND records.kind != 'snapshot' AND NOT (EXISTS (SELECT generation_records.record_id \nE       FROM generation_records JOIN analysis_generations ON analysis_generations.id = generation_records.generation_id \nE       WHERE generation_records.record_id = records.id AND analysis_generations.state != ?))) AS anon_1 \nE       WHERE anon_1.position = ? AND NOT (EXISTS (SELECT generation_records.record_id \nE       FROM generation_records JOIN analysis_generations ON analysis_generations.id = generation_records.generation_id \nE       WHERE generation_records.record_id = records.id AND analysis_generations.state != ?))]\nE       [parameters: ('$.\"started_at\"', '$.\"queued_at\"', 'northstar', 'identity', 'job', 'PUBLISHED', '$.\"started_at\"', '$.\"queued_at\"', 'northstar', 'identity', 'job', 'PUBLISHED', 1, 'PUBLISHED')]\nE       (Background on this error at: https://sqlalche.me/e/21/e3q8)\n\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\default.py:1192: OperationalError",
+      "error": null,
+      "skipped": null
+    },
+    {
+      "attributes": {
+        "classname": "tests.test_workspace_pagination",
+        "name": "test_projection_rejects_stale_versions_and_is_transactional",
+        "file": "tests\\test_workspace_pagination.py",
+        "line": "66",
+        "time": "3.852"
+      },
+      "outcome": "failed",
+      "failure": "self = <sqlalchemy.engine.base.Connection object at 0x0000026E0D7D8F50>\ndialect = <sqlalchemy.dialects.sqlite.pysqlite.SQLiteDialect_pysqlite object at 0x0000026E0EEFB240>\ncontext = <sqlalchemy.dialects.sqlite.base.SQLiteExecutionContext object at 0x0000026E1001C590>\nstatement = <sqlalchemy.dialects.sqlite.base.SQLiteCompiler object at 0x0000026E11866C10>\nparameters = [('$.\"started_at\"', '$.\"queued_at\"', 'northstar', 'identity', 'job', 'PUBLISHED', ...)]\n\n    def _exec_single_context(\n        self,\n        dialect: Dialect,\n        context: ExecutionContext,\n        statement: Union[str, Compiled],\n        parameters: Optional[_AnyMultiExecuteParams],\n    ) -> CursorResult[Unpack[TupleAny]]:\n        \"\"\"continue the _execute_context() method for a single DBAPI\n        cursor.execute() or cursor.executemany() call.\n    \n        \"\"\"\n        if dialect.bind_typing is BindTyping.SETINPUTSIZES:\n            generic_setinputsizes = context._prepare_set_input_sizes()\n    \n            if generic_setinputsizes:\n                try:\n                    dialect.do_set_input_sizes(\n                        context.cursor, generic_setinputsizes, context\n                    )\n                except BaseException as e:\n                    self._handle_dbapi_exception(\n                        e, str(statement), parameters, None, context\n                    )\n    \n        cursor, str_statement, parameters = (\n            context.cursor,\n            context.statement,\n            context.parameters,\n        )\n    \n        effective_parameters: Optional[_AnyExecuteParams]\n    \n        if not context.executemany:\n            effective_parameters = parameters[0]\n        else:\n            effective_parameters = parameters\n    \n        evt_handled: bool = False\n        try:\n            if self._has_events or self.engine._has_events:\n                for fn in self.dispatch.before_cursor_execute:\n                    str_statement, effective_parameters = fn(\n                        self,\n                        cursor,\n                        str_statement,\n                        effective_parameters,\n                        context,\n                        context.executemany,\n                    )\n    \n            if self._echo:\n                self._log_info(str_statement)\n    \n                stats = context._get_cache_stats()\n    \n                if not self.engine.hide_parameters:\n                    self._log_info(\n                        \"[%s] %r\",\n                        stats,\n                        sql_util._repr_params(\n                            effective_parameters,\n                            batches=10,\n                            ismulti=context.executemany,\n                        ),\n                    )\n                else:\n                    self._log_info(\n                        \"[%s] [SQL parameters hidden due to \"\n                        \"hide_parameters=True]\",\n                        stats,\n                    )\n            if context.execute_style is ExecuteStyle.EXECUTEMANY:\n                effective_parameters = cast(\n                    \"_CoreMultiExecuteParams\", effective_parameters\n                )\n                if self.dialect._has_events:\n                    for fn in self.dialect.dispatch.do_executemany:\n                        if fn(\n                            cursor,\n                            str_statement,\n                            effective_parameters,\n                            context,\n                        ):\n                            evt_handled = True\n                            break\n                if not evt_handled:\n                    self.dialect.do_executemany(\n                        cursor,\n                        str_statement,\n                        effective_parameters,\n                        context,\n                    )\n            elif not effective_parameters and context.no_parameters:\n                if self.dialect._has_events:\n                    for fn in self.dialect.dispatch.do_execute_no_params:\n                        if fn(cursor, str_statement, context):\n                            evt_handled = True\n                            break\n                if not evt_handled:\n                    self.dialect.do_execute_no_params(\n                        cursor, str_statement, context\n                    )\n            else:\n                effective_parameters = cast(\n                    \"_CoreSingleExecuteParams\", effective_parameters\n                )\n                if self.dialect._has_events:\n                    for fn in self.dialect.dispatch.do_execute:\n                        if fn(\n                            cursor,\n                            str_statement,\n                            effective_parameters,\n                            context,\n                        ):\n                            evt_handled = True\n                            break\n                if not evt_handled:\n>                   self.dialect.do_execute(\n                        cursor, str_statement, effective_parameters, context\n                    )\n\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\base.py:1943: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nself = <sqlalchemy.dialects.sqlite.pysqlite.SQLiteDialect_pysqlite object at 0x0000026E0EEFB240>\ncursor = <sqlite3.Cursor object at 0x0000026E10412B40>\nstatement = 'SELECT records.id, records.organization_id, records.repository_id, records.kind, records.natural_key, records.data, r...neration_records.generation_id \\nWHERE generation_records.record_id = records.id AND analysis_generations.state != ?))'\nparameters = ('$.\"started_at\"', '$.\"queued_at\"', 'northstar', 'identity', 'job', 'PUBLISHED', ...)\ncontext = <sqlalchemy.dialects.sqlite.base.SQLiteExecutionContext object at 0x0000026E1001C590>\n\n    def do_execute(self, cursor, statement, parameters, context=None):\n>       cursor.execute(statement, parameters)\nE       sqlite3.OperationalError: ambiguous column name: anon_1.position\n\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\default.py:1192: OperationalError\n\nThe above exception was the direct cause of the following exception:\n\nsigned = <starlette.testclient.TestClient object at 0x0000026E10307BD0>\n\n    def test_projection_rejects_stale_versions_and_is_transactional(signed):\n        repo, _ = current_scope(signed)\n        with main.Session() as db:\n            snapshot = db.get(Record, repo[\"snapshot\"][\"id\"])\n            projection = db.get(SnapshotView, snapshot.id)\n            assert projection.source_version == snapshot.version\n            projection.data = {**projection.data, \"status\": \"INCORRECT_STALE_STATE\"}\n            projection.source_version -= 1\n            db.commit()\n>       data = signed.get(\"/api/workspace?summary=1&repository_id=identity\").json()\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\ntests\\test_workspace_pagination.py:76: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\httpx\\_client.py:1053: in get\n    return self.request(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\testclient.py:463: in request\n    return super().request(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\httpx\\_client.py:825: in request\n    return self.send(request, auth=auth, follow_redirects=follow_redirects)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\httpx\\_client.py:914: in send\n    response = self._send_handling_auth(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\httpx\\_client.py:942: in _send_handling_auth\n    response = self._send_handling_redirects(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\httpx\\_client.py:979: in _send_handling_redirects\n    response = self._send_single_request(request)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\httpx\\_client.py:1014: in _send_single_request\n    response = transport.handle_request(request)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\testclient.py:360: in handle_request\n    raise exc\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\testclient.py:357: in handle_request\n    portal.call(self.app, scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\anyio\\from_thread.py:340: in call\n    return cast(T_Retval, self.start_task_soon(func, *args).result())\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\AppData\\Local\\Python\\pythoncore-3.14-64\\Lib\\concurrent\\futures\\_base.py:450: in result\n    return self.__get_result()\n           ^^^^^^^^^^^^^^^^^^^\n..\\..\\AppData\\Local\\Python\\pythoncore-3.14-64\\Lib\\concurrent\\futures\\_base.py:395: in __get_result\n    raise self._exception\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\anyio\\from_thread.py:265: in _call_func\n    retval = await retval_or_awaitable\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\applications.py:1215: in __call__\n    await super().__call__(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\applications.py:96: in __call__\n    await self.middleware_stack(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\errors.py:186: in __call__\n    raise exc\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\errors.py:164: in __call__\n    await self.app(scope, receive, _send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\telemetry\\_asgi.py:151: in __call__\n    await self.app(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\base.py:197: in __call__\n    response = await self.dispatch_func(request, call_next)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nbackend\\main.py:134: in security_boundary\n    response = await call_next(request)\n               ^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\base.py:173: in call_next\n    raise app_exc from app_exc.__cause__ or app_exc.__context__\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\base.py:149: in coro\n    await self.app(scope, receive_or_disconnect, send_no_error)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\cors.py:91: in __call__\n    await self.simple_response(scope, receive, send, request_headers=headers)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\cors.py:149: in simple_response\n    await self.app(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\exceptions.py:63: in __call__\n    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\_exception_handler.py:53: in wrapped_app\n    raise exc\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\_exception_handler.py:42: in wrapped_app\n    await app(scope, receive, sender)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\middleware\\asyncexitstack.py:18: in __call__\n    await self.app(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\routing.py:676: in __call__\n    await self.middleware_stack(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\routing.py:2786: in app\n    await route.handle(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\routing.py:1310: in handle\n    await super().handle(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\routing.py:282: in handle\n    await self.app(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\routing.py:165: in app\n    await wrap_app_handling_exceptions(app, request)(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\_exception_handler.py:53: in wrapped_app\n    raise exc\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\_exception_handler.py:42: in wrapped_app\n    await app(scope, receive, sender)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\routing.py:151: in app\n    response = await f(request)\n               ^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\routing.py:727: in app\n    raw_response = await run_endpoint_function(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\routing.py:362: in run_endpoint_function\n    return await run_in_threadpool(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\concurrency.py:34: in run_in_threadpool\n    return await anyio.to_thread.run_sync(func)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\anyio\\to_thread.py:65: in run_sync\n    return await get_async_backend().run_sync_in_worker_thread(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\anyio\\_backends\\_asyncio.py:2706: in run_sync_in_worker_thread\n    return await future\n           ^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\anyio\\_backends\\_asyncio.py:1100: in run\n    result = context.run(func, *args)\n             ^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\telemetry\\_api.py:240: in _run_sync_endpoint\n    return function(**arguments)\n           ^^^^^^^^^^^^^^^^^^^^^\nbackend\\main.py:694: in workspace\n    **workspace_summary(db, user, repos, snapshots),\n      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nbackend\\workspace_read.py:155: in workspace_summary\n    jobs = latest_jobs(db, user, repos)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nbackend\\workspace_read.py:77: in latest_jobs\n    return {row.repository_id: row for row in db.scalars(select(Record).join(ranked, ranked.c.id == Record.id).where(ranked.c.position == 1))}\n                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\orm\\session.py:2594: in scalars\n    return self._execute_internal(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\orm\\session.py:2363: in _execute_internal\n    compile_state_cls.orm_execute_statement(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\orm\\context.py:316: in orm_execute_statement\n    result = conn.execute(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\base.py:1448: in execute\n    return meth(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\sql\\elements.py:533: in _execute_on_connection\n    return connection._execute_clauseelement(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\base.py:1668: in _execute_clauseelement\n    ret = self._execute_context(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\base.py:1822: in _execute_context\n    return self._exec_single_context(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\base.py:1962: in _exec_single_context\n    self._handle_dbapi_exception(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\base.py:2332: in _handle_dbapi_exception\n    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\base.py:1943: in _exec_single_context\n    self.dialect.do_execute(\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nself = <sqlalchemy.dialects.sqlite.pysqlite.SQLiteDialect_pysqlite object at 0x0000026E0EEFB240>\ncursor = <sqlite3.Cursor object at 0x0000026E10412B40>\nstatement = 'SELECT records.id, records.organization_id, records.repository_id, records.kind, records.natural_key, records.data, r...neration_records.generation_id \\nWHERE generation_records.record_id = records.id AND analysis_generations.state != ?))'\nparameters = ('$.\"started_at\"', '$.\"queued_at\"', 'northstar', 'identity', 'job', 'PUBLISHED', ...)\ncontext = <sqlalchemy.dialects.sqlite.base.SQLiteExecutionContext object at 0x0000026E1001C590>\n\n    def do_execute(self, cursor, statement, parameters, context=None):\n>       cursor.execute(statement, parameters)\nE       sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) ambiguous column name: anon_1.position\nE       [SQL: SELECT records.id, records.organization_id, records.repository_id, records.kind, records.natural_key, records.data, records.created_at, records.version \nE       FROM records JOIN (SELECT records.id AS id, row_number() OVER (PARTITION BY records.repository_id ORDER BY coalesce(CAST(JSON_EXTRACT(records.data, ?) AS VARCHAR), CAST(JSON_EXTRACT(records.data, ?) AS VARCHAR), records.created_at) DESC, records.id DESC) AS position \nE       FROM records \nE       WHERE records.organization_id = ? AND records.repository_id IN (?) AND records.kind = ? AND records.kind != 'snapshot' AND NOT (EXISTS (SELECT generation_records.record_id \nE       FROM generation_records JOIN analysis_generations ON analysis_generations.id = generation_records.generation_id \nE       WHERE generation_records.record_id = records.id AND analysis_generations.state != ?))) AS anon_1 ON anon_1.id = records.id, (SELECT records.id AS id, row_number() OVER (PARTITION BY records.repository_id ORDER BY coalesce(CAST(JSON_EXTRACT(records.data, ?) AS VARCHAR), CAST(JSON_EXTRACT(records.data, ?) AS VARCHAR), records.created_at) DESC, records.id DESC) AS position \nE       FROM records \nE       WHERE records.organization_id = ? AND records.repository_id IN (?) AND records.kind = ? AND records.kind != 'snapshot' AND NOT (EXISTS (SELECT generation_records.record_id \nE       FROM generation_records JOIN analysis_generations ON analysis_generations.id = generation_records.generation_id \nE       WHERE generation_records.record_id = records.id AND analysis_generations.state != ?))) AS anon_1 \nE       WHERE anon_1.position = ? AND NOT (EXISTS (SELECT generation_records.record_id \nE       FROM generation_records JOIN analysis_generations ON analysis_generations.id = generation_records.generation_id \nE       WHERE generation_records.record_id = records.id AND analysis_generations.state != ?))]\nE       [parameters: ('$.\"started_at\"', '$.\"queued_at\"', 'northstar', 'identity', 'job', 'PUBLISHED', '$.\"started_at\"', '$.\"queued_at\"', 'northstar', 'identity', 'job', 'PUBLISHED', 1, 'PUBLISHED')]\nE       (Background on this error at: https://sqlalche.me/e/21/e3q8)\n\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\default.py:1192: OperationalError",
+      "error": null,
+      "skipped": null
+    },
+    {
+      "attributes": {
+        "classname": "tests.test_workspace_pagination",
+        "name": "test_paging_search_status_grants_and_bounds",
+        "file": "tests\\test_workspace_pagination.py",
+        "line": "86",
+        "time": "5.719"
+      },
+      "outcome": "failed",
+      "failure": "self = <sqlalchemy.engine.base.Connection object at 0x0000026E13EE6E40>\ndialect = <sqlalchemy.dialects.sqlite.pysqlite.SQLiteDialect_pysqlite object at 0x0000026E0D61B790>\ncontext = <sqlalchemy.dialects.sqlite.base.SQLiteExecutionContext object at 0x0000026E0D848650>\nstatement = <sqlalchemy.dialects.sqlite.base.SQLiteCompiler object at 0x0000026E143B1A90>\nparameters = [('$.\"started_at\"', '$.\"queued_at\"', 'northstar', 'clean', 'job', 'PUBLISHED', ...)]\n\n    def _exec_single_context(\n        self,\n        dialect: Dialect,\n        context: ExecutionContext,\n        statement: Union[str, Compiled],\n        parameters: Optional[_AnyMultiExecuteParams],\n    ) -> CursorResult[Unpack[TupleAny]]:\n        \"\"\"continue the _execute_context() method for a single DBAPI\n        cursor.execute() or cursor.executemany() call.\n    \n        \"\"\"\n        if dialect.bind_typing is BindTyping.SETINPUTSIZES:\n            generic_setinputsizes = context._prepare_set_input_sizes()\n    \n            if generic_setinputsizes:\n                try:\n                    dialect.do_set_input_sizes(\n                        context.cursor, generic_setinputsizes, context\n                    )\n                except BaseException as e:\n                    self._handle_dbapi_exception(\n                        e, str(statement), parameters, None, context\n                    )\n    \n        cursor, str_statement, parameters = (\n            context.cursor,\n            context.statement,\n            context.parameters,\n        )\n    \n        effective_parameters: Optional[_AnyExecuteParams]\n    \n        if not context.executemany:\n            effective_parameters = parameters[0]\n        else:\n            effective_parameters = parameters\n    \n        evt_handled: bool = False\n        try:\n            if self._has_events or self.engine._has_events:\n                for fn in self.dispatch.before_cursor_execute:\n                    str_statement, effective_parameters = fn(\n                        self,\n                        cursor,\n                        str_statement,\n                        effective_parameters,\n                        context,\n                        context.executemany,\n                    )\n    \n            if self._echo:\n                self._log_info(str_statement)\n    \n                stats = context._get_cache_stats()\n    \n                if not self.engine.hide_parameters:\n                    self._log_info(\n                        \"[%s] %r\",\n                        stats,\n                        sql_util._repr_params(\n                            effective_parameters,\n                            batches=10,\n                            ismulti=context.executemany,\n                        ),\n                    )\n                else:\n                    self._log_info(\n                        \"[%s] [SQL parameters hidden due to \"\n                        \"hide_parameters=True]\",\n                        stats,\n                    )\n            if context.execute_style is ExecuteStyle.EXECUTEMANY:\n                effective_parameters = cast(\n                    \"_CoreMultiExecuteParams\", effective_parameters\n                )\n                if self.dialect._has_events:\n                    for fn in self.dialect.dispatch.do_executemany:\n                        if fn(\n                            cursor,\n                            str_statement,\n                            effective_parameters,\n                            context,\n                        ):\n                            evt_handled = True\n                            break\n                if not evt_handled:\n                    self.dialect.do_executemany(\n                        cursor,\n                        str_statement,\n                        effective_parameters,\n                        context,\n                    )\n            elif not effective_parameters and context.no_parameters:\n                if self.dialect._has_events:\n                    for fn in self.dialect.dispatch.do_execute_no_params:\n                        if fn(cursor, str_statement, context):\n                            evt_handled = True\n                            break\n                if not evt_handled:\n                    self.dialect.do_execute_no_params(\n                        cursor, str_statement, context\n                    )\n            else:\n                effective_parameters = cast(\n                    \"_CoreSingleExecuteParams\", effective_parameters\n                )\n                if self.dialect._has_events:\n                    for fn in self.dialect.dispatch.do_execute:\n                        if fn(\n                            cursor,\n                            str_statement,\n                            effective_parameters,\n                            context,\n                        ):\n                            evt_handled = True\n                            break\n                if not evt_handled:\n>                   self.dialect.do_execute(\n                        cursor, str_statement, effective_parameters, context\n                    )\n\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\base.py:1943: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nself = <sqlalchemy.dialects.sqlite.pysqlite.SQLiteDialect_pysqlite object at 0x0000026E0D61B790>\ncursor = <sqlite3.Cursor object at 0x0000026E116CECC0>\nstatement = 'SELECT records.id, records.organization_id, records.repository_id, records.kind, records.natural_key, records.data, r...neration_records.generation_id \\nWHERE generation_records.record_id = records.id AND analysis_generations.state != ?))'\nparameters = ('$.\"started_at\"', '$.\"queued_at\"', 'northstar', 'clean', 'job', 'PUBLISHED', ...)\ncontext = <sqlalchemy.dialects.sqlite.base.SQLiteExecutionContext object at 0x0000026E0D848650>\n\n    def do_execute(self, cursor, statement, parameters, context=None):\n>       cursor.execute(statement, parameters)\nE       sqlite3.OperationalError: ambiguous column name: anon_1.position\n\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\default.py:1192: OperationalError\n\nThe above exception was the direct cause of the following exception:\n\nsigned = <starlette.testclient.TestClient object at 0x0000026E0E952F10>\n\n    def test_paging_search_status_grants_and_bounds(signed):\n        signed.post(\"/api/auth/login\", json={\"email\": \"viewer@example.com\", \"password\": \"Strong-test-password-123!\"})\n        assert signed.get(\"/api/workspace/records?view=Claim%20Ledger&repository_id=identity\").status_code == 404\n>       data = signed.get(\"/api/workspace?summary=1\").json()\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\ntests\\test_workspace_pagination.py:90: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\httpx\\_client.py:1053: in get\n    return self.request(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\testclient.py:463: in request\n    return super().request(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\httpx\\_client.py:825: in request\n    return self.send(request, auth=auth, follow_redirects=follow_redirects)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\httpx\\_client.py:914: in send\n    response = self._send_handling_auth(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\httpx\\_client.py:942: in _send_handling_auth\n    response = self._send_handling_redirects(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\httpx\\_client.py:979: in _send_handling_redirects\n    response = self._send_single_request(request)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\httpx\\_client.py:1014: in _send_single_request\n    response = transport.handle_request(request)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\testclient.py:360: in handle_request\n    raise exc\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\testclient.py:357: in handle_request\n    portal.call(self.app, scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\anyio\\from_thread.py:340: in call\n    return cast(T_Retval, self.start_task_soon(func, *args).result())\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\AppData\\Local\\Python\\pythoncore-3.14-64\\Lib\\concurrent\\futures\\_base.py:450: in result\n    return self.__get_result()\n           ^^^^^^^^^^^^^^^^^^^\n..\\..\\AppData\\Local\\Python\\pythoncore-3.14-64\\Lib\\concurrent\\futures\\_base.py:395: in __get_result\n    raise self._exception\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\anyio\\from_thread.py:265: in _call_func\n    retval = await retval_or_awaitable\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\applications.py:1215: in __call__\n    await super().__call__(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\applications.py:96: in __call__\n    await self.middleware_stack(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\errors.py:186: in __call__\n    raise exc\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\errors.py:164: in __call__\n    await self.app(scope, receive, _send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\telemetry\\_asgi.py:151: in __call__\n    await self.app(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\base.py:197: in __call__\n    response = await self.dispatch_func(request, call_next)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nbackend\\main.py:134: in security_boundary\n    response = await call_next(request)\n               ^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\base.py:173: in call_next\n    raise app_exc from app_exc.__cause__ or app_exc.__context__\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\base.py:149: in coro\n    await self.app(scope, receive_or_disconnect, send_no_error)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\cors.py:91: in __call__\n    await self.simple_response(scope, receive, send, request_headers=headers)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\cors.py:149: in simple_response\n    await self.app(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\exceptions.py:63: in __call__\n    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\_exception_handler.py:53: in wrapped_app\n    raise exc\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\_exception_handler.py:42: in wrapped_app\n    await app(scope, receive, sender)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\middleware\\asyncexitstack.py:18: in __call__\n    await self.app(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\routing.py:676: in __call__\n    await self.middleware_stack(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\routing.py:2786: in app\n    await route.handle(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\routing.py:1310: in handle\n    await super().handle(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\routing.py:282: in handle\n    await self.app(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\routing.py:165: in app\n    await wrap_app_handling_exceptions(app, request)(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\_exception_handler.py:53: in wrapped_app\n    raise exc\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\_exception_handler.py:42: in wrapped_app\n    await app(scope, receive, sender)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\routing.py:151: in app\n    response = await f(request)\n               ^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\routing.py:727: in app\n    raw_response = await run_endpoint_function(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\routing.py:362: in run_endpoint_function\n    return await run_in_threadpool(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\concurrency.py:34: in run_in_threadpool\n    return await anyio.to_thread.run_sync(func)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\anyio\\to_thread.py:65: in run_sync\n    return await get_async_backend().run_sync_in_worker_thread(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\anyio\\_backends\\_asyncio.py:2706: in run_sync_in_worker_thread\n    return await future\n           ^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\anyio\\_backends\\_asyncio.py:1100: in run\n    result = context.run(func, *args)\n             ^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\telemetry\\_api.py:240: in _run_sync_endpoint\n    return function(**arguments)\n           ^^^^^^^^^^^^^^^^^^^^^\nbackend\\main.py:694: in workspace\n    **workspace_summary(db, user, repos, snapshots),\n      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nbackend\\workspace_read.py:155: in workspace_summary\n    jobs = latest_jobs(db, user, repos)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nbackend\\workspace_read.py:77: in latest_jobs\n    return {row.repository_id: row for row in db.scalars(select(Record).join(ranked, ranked.c.id == Record.id).where(ranked.c.position == 1))}\n                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\orm\\session.py:2594: in scalars\n    return self._execute_internal(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\orm\\session.py:2363: in _execute_internal\n    compile_state_cls.orm_execute_statement(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\orm\\context.py:316: in orm_execute_statement\n    result = conn.execute(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\base.py:1448: in execute\n    return meth(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\sql\\elements.py:533: in _execute_on_connection\n    return connection._execute_clauseelement(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\base.py:1668: in _execute_clauseelement\n    ret = self._execute_context(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\base.py:1822: in _execute_context\n    return self._exec_single_context(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\base.py:1962: in _exec_single_context\n    self._handle_dbapi_exception(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\base.py:2332: in _handle_dbapi_exception\n    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\base.py:1943: in _exec_single_context\n    self.dialect.do_execute(\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nself = <sqlalchemy.dialects.sqlite.pysqlite.SQLiteDialect_pysqlite object at 0x0000026E0D61B790>\ncursor = <sqlite3.Cursor object at 0x0000026E116CECC0>\nstatement = 'SELECT records.id, records.organization_id, records.repository_id, records.kind, records.natural_key, records.data, r...neration_records.generation_id \\nWHERE generation_records.record_id = records.id AND analysis_generations.state != ?))'\nparameters = ('$.\"started_at\"', '$.\"queued_at\"', 'northstar', 'clean', 'job', 'PUBLISHED', ...)\ncontext = <sqlalchemy.dialects.sqlite.base.SQLiteExecutionContext object at 0x0000026E0D848650>\n\n    def do_execute(self, cursor, statement, parameters, context=None):\n>       cursor.execute(statement, parameters)\nE       sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) ambiguous column name: anon_1.position\nE       [SQL: SELECT records.id, records.organization_id, records.repository_id, records.kind, records.natural_key, records.data, records.created_at, records.version \nE       FROM records JOIN (SELECT records.id AS id, row_number() OVER (PARTITION BY records.repository_id ORDER BY coalesce(CAST(JSON_EXTRACT(records.data, ?) AS VARCHAR), CAST(JSON_EXTRACT(records.data, ?) AS VARCHAR), records.created_at) DESC, records.id DESC) AS position \nE       FROM records \nE       WHERE records.organization_id = ? AND records.repository_id IN (?) AND records.kind = ? AND records.kind != 'snapshot' AND NOT (EXISTS (SELECT generation_records.record_id \nE       FROM generation_records JOIN analysis_generations ON analysis_generations.id = generation_records.generation_id \nE       WHERE generation_records.record_id = records.id AND analysis_generations.state != ?))) AS anon_1 ON anon_1.id = records.id, (SELECT records.id AS id, row_number() OVER (PARTITION BY records.repository_id ORDER BY coalesce(CAST(JSON_EXTRACT(records.data, ?) AS VARCHAR), CAST(JSON_EXTRACT(records.data, ?) AS VARCHAR), records.created_at) DESC, records.id DESC) AS position \nE       FROM records \nE       WHERE records.organization_id = ? AND records.repository_id IN (?) AND records.kind = ? AND records.kind != 'snapshot' AND NOT (EXISTS (SELECT generation_records.record_id \nE       FROM generation_records JOIN analysis_generations ON analysis_generations.id = generation_records.generation_id \nE       WHERE generation_records.record_id = records.id AND analysis_generations.state != ?))) AS anon_1 \nE       WHERE anon_1.position = ? AND NOT (EXISTS (SELECT generation_records.record_id \nE       FROM generation_records JOIN analysis_generations ON analysis_generations.id = generation_records.generation_id \nE       WHERE generation_records.record_id = records.id AND analysis_generations.state != ?))]\nE       [parameters: ('$.\"started_at\"', '$.\"queued_at\"', 'northstar', 'clean', 'job', 'PUBLISHED', '$.\"started_at\"', '$.\"queued_at\"', 'northstar', 'clean', 'job', 'PUBLISHED', 1, 'PUBLISHED')]\nE       (Background on this error at: https://sqlalche.me/e/21/e3q8)\n\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\default.py:1192: OperationalError",
+      "error": null,
+      "skipped": null
+    },
+    {
+      "attributes": {
+        "classname": "tests.test_workspace_pagination",
+        "name": "test_concurrent_scoped_summary_reads_are_consistent",
+        "file": "tests\\test_workspace_pagination.py",
+        "line": "102",
+        "time": "6.558"
+      },
+      "outcome": "failed",
+      "failure": "self = <sqlalchemy.engine.base.Connection object at 0x0000026E142559A0>\ndialect = <sqlalchemy.dialects.sqlite.pysqlite.SQLiteDialect_pysqlite object at 0x0000026E0D618490>\ncontext = <sqlalchemy.dialects.sqlite.base.SQLiteExecutionContext object at 0x0000026E13BF7110>\nstatement = <sqlalchemy.dialects.sqlite.base.SQLiteCompiler object at 0x0000026E12A46FD0>\nparameters = [('$.\"started_at\"', '$.\"queued_at\"', 'northstar', 'identity', 'job', 'PUBLISHED', ...)]\n\n    def _exec_single_context(\n        self,\n        dialect: Dialect,\n        context: ExecutionContext,\n        statement: Union[str, Compiled],\n        parameters: Optional[_AnyMultiExecuteParams],\n    ) -> CursorResult[Unpack[TupleAny]]:\n        \"\"\"continue the _execute_context() method for a single DBAPI\n        cursor.execute() or cursor.executemany() call.\n    \n        \"\"\"\n        if dialect.bind_typing is BindTyping.SETINPUTSIZES:\n            generic_setinputsizes = context._prepare_set_input_sizes()\n    \n            if generic_setinputsizes:\n                try:\n                    dialect.do_set_input_sizes(\n                        context.cursor, generic_setinputsizes, context\n                    )\n                except BaseException as e:\n                    self._handle_dbapi_exception(\n                        e, str(statement), parameters, None, context\n                    )\n    \n        cursor, str_statement, parameters = (\n            context.cursor,\n            context.statement,\n            context.parameters,\n        )\n    \n        effective_parameters: Optional[_AnyExecuteParams]\n    \n        if not context.executemany:\n            effective_parameters = parameters[0]\n        else:\n            effective_parameters = parameters\n    \n        evt_handled: bool = False\n        try:\n            if self._has_events or self.engine._has_events:\n                for fn in self.dispatch.before_cursor_execute:\n                    str_statement, effective_parameters = fn(\n                        self,\n                        cursor,\n                        str_statement,\n                        effective_parameters,\n                        context,\n                        context.executemany,\n                    )\n    \n            if self._echo:\n                self._log_info(str_statement)\n    \n                stats = context._get_cache_stats()\n    \n                if not self.engine.hide_parameters:\n                    self._log_info(\n                        \"[%s] %r\",\n                        stats,\n                        sql_util._repr_params(\n                            effective_parameters,\n                            batches=10,\n                            ismulti=context.executemany,\n                        ),\n                    )\n                else:\n                    self._log_info(\n                        \"[%s] [SQL parameters hidden due to \"\n                        \"hide_parameters=True]\",\n                        stats,\n                    )\n            if context.execute_style is ExecuteStyle.EXECUTEMANY:\n                effective_parameters = cast(\n                    \"_CoreMultiExecuteParams\", effective_parameters\n                )\n                if self.dialect._has_events:\n                    for fn in self.dialect.dispatch.do_executemany:\n                        if fn(\n                            cursor,\n                            str_statement,\n                            effective_parameters,\n                            context,\n                        ):\n                            evt_handled = True\n                            break\n                if not evt_handled:\n                    self.dialect.do_executemany(\n                        cursor,\n                        str_statement,\n                        effective_parameters,\n                        context,\n                    )\n            elif not effective_parameters and context.no_parameters:\n                if self.dialect._has_events:\n                    for fn in self.dialect.dispatch.do_execute_no_params:\n                        if fn(cursor, str_statement, context):\n                            evt_handled = True\n                            break\n                if not evt_handled:\n                    self.dialect.do_execute_no_params(\n                        cursor, str_statement, context\n                    )\n            else:\n                effective_parameters = cast(\n                    \"_CoreSingleExecuteParams\", effective_parameters\n                )\n                if self.dialect._has_events:\n                    for fn in self.dialect.dispatch.do_execute:\n                        if fn(\n                            cursor,\n                            str_statement,\n                            effective_parameters,\n                            context,\n                        ):\n                            evt_handled = True\n                            break\n                if not evt_handled:\n>                   self.dialect.do_execute(\n                        cursor, str_statement, effective_parameters, context\n                    )\n\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\base.py:1943: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nself = <sqlalchemy.dialects.sqlite.pysqlite.SQLiteDialect_pysqlite object at 0x0000026E0D618490>\ncursor = <sqlite3.Cursor object at 0x0000026E1041B2C0>\nstatement = 'SELECT records.id, records.organization_id, records.repository_id, records.kind, records.natural_key, records.data, r...neration_records.generation_id \\nWHERE generation_records.record_id = records.id AND analysis_generations.state != ?))'\nparameters = ('$.\"started_at\"', '$.\"queued_at\"', 'northstar', 'identity', 'job', 'PUBLISHED', ...)\ncontext = <sqlalchemy.dialects.sqlite.base.SQLiteExecutionContext object at 0x0000026E13BF7110>\n\n    def do_execute(self, cursor, statement, parameters, context=None):\n>       cursor.execute(statement, parameters)\nE       sqlite3.OperationalError: ambiguous column name: anon_1.position\n\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\default.py:1192: OperationalError\n\nThe above exception was the direct cause of the following exception:\n\nsigned = <starlette.testclient.TestClient object at 0x0000026E0D258270>\n\n    def test_concurrent_scoped_summary_reads_are_consistent(signed):\n        def read(_):\n            response = signed.get(\"/api/workspace?summary=1&repository_id=identity\")\n            assert response.status_code == 200\n            return response.json()[\"counts\"]\n        with ThreadPoolExecutor(max_workers=4) as pool:\n>           results = list(pool.map(read, range(8)))\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\ntests\\test_workspace_pagination.py:109: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n..\\..\\AppData\\Local\\Python\\pythoncore-3.14-64\\Lib\\concurrent\\futures\\_base.py:639: in result_iterator\n    yield _result_or_cancel(fs.pop())\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\AppData\\Local\\Python\\pythoncore-3.14-64\\Lib\\concurrent\\futures\\_base.py:311: in _result_or_cancel\n    return fut.result(timeout)\n           ^^^^^^^^^^^^^^^^^^^\n..\\..\\AppData\\Local\\Python\\pythoncore-3.14-64\\Lib\\concurrent\\futures\\_base.py:450: in result\n    return self.__get_result()\n           ^^^^^^^^^^^^^^^^^^^\n..\\..\\AppData\\Local\\Python\\pythoncore-3.14-64\\Lib\\concurrent\\futures\\_base.py:395: in __get_result\n    raise self._exception\n..\\..\\AppData\\Local\\Python\\pythoncore-3.14-64\\Lib\\concurrent\\futures\\thread.py:86: in run\n    result = ctx.run(self.task)\n             ^^^^^^^^^^^^^^^^^^\n..\\..\\AppData\\Local\\Python\\pythoncore-3.14-64\\Lib\\concurrent\\futures\\thread.py:73: in run\n    return fn(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^\ntests\\test_workspace_pagination.py:105: in read\n    response = signed.get(\"/api/workspace?summary=1&repository_id=identity\")\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\httpx\\_client.py:1053: in get\n    return self.request(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\testclient.py:463: in request\n    return super().request(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\httpx\\_client.py:825: in request\n    return self.send(request, auth=auth, follow_redirects=follow_redirects)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\httpx\\_client.py:914: in send\n    response = self._send_handling_auth(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\httpx\\_client.py:942: in _send_handling_auth\n    response = self._send_handling_redirects(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\httpx\\_client.py:979: in _send_handling_redirects\n    response = self._send_single_request(request)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\httpx\\_client.py:1014: in _send_single_request\n    response = transport.handle_request(request)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\testclient.py:360: in handle_request\n    raise exc\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\testclient.py:357: in handle_request\n    portal.call(self.app, scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\anyio\\from_thread.py:340: in call\n    return cast(T_Retval, self.start_task_soon(func, *args).result())\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\AppData\\Local\\Python\\pythoncore-3.14-64\\Lib\\concurrent\\futures\\_base.py:450: in result\n    return self.__get_result()\n           ^^^^^^^^^^^^^^^^^^^\n..\\..\\AppData\\Local\\Python\\pythoncore-3.14-64\\Lib\\concurrent\\futures\\_base.py:395: in __get_result\n    raise self._exception\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\anyio\\from_thread.py:265: in _call_func\n    retval = await retval_or_awaitable\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\applications.py:1215: in __call__\n    await super().__call__(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\applications.py:96: in __call__\n    await self.middleware_stack(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\errors.py:186: in __call__\n    raise exc\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\errors.py:164: in __call__\n    await self.app(scope, receive, _send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\telemetry\\_asgi.py:151: in __call__\n    await self.app(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\base.py:197: in __call__\n    response = await self.dispatch_func(request, call_next)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nbackend\\main.py:134: in security_boundary\n    response = await call_next(request)\n               ^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\base.py:173: in call_next\n    raise app_exc from app_exc.__cause__ or app_exc.__context__\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\base.py:149: in coro\n    await self.app(scope, receive_or_disconnect, send_no_error)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\cors.py:91: in __call__\n    await self.simple_response(scope, receive, send, request_headers=headers)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\cors.py:149: in simple_response\n    await self.app(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\middleware\\exceptions.py:63: in __call__\n    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\_exception_handler.py:53: in wrapped_app\n    raise exc\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\_exception_handler.py:42: in wrapped_app\n    await app(scope, receive, sender)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\middleware\\asyncexitstack.py:18: in __call__\n    await self.app(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\routing.py:676: in __call__\n    await self.middleware_stack(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\routing.py:2786: in app\n    await route.handle(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\routing.py:1310: in handle\n    await super().handle(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\routing.py:282: in handle\n    await self.app(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\routing.py:165: in app\n    await wrap_app_handling_exceptions(app, request)(scope, receive, send)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\_exception_handler.py:53: in wrapped_app\n    raise exc\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\_exception_handler.py:42: in wrapped_app\n    await app(scope, receive, sender)\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\routing.py:151: in app\n    response = await f(request)\n               ^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\routing.py:727: in app\n    raw_response = await run_endpoint_function(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\routing.py:362: in run_endpoint_function\n    return await run_in_threadpool(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\starlette\\concurrency.py:34: in run_in_threadpool\n    return await anyio.to_thread.run_sync(func)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\anyio\\to_thread.py:65: in run_sync\n    return await get_async_backend().run_sync_in_worker_thread(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\anyio\\_backends\\_asyncio.py:2706: in run_sync_in_worker_thread\n    return await future\n           ^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\anyio\\_backends\\_asyncio.py:1100: in run\n    result = context.run(func, *args)\n             ^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\telemetry\\_api.py:240: in _run_sync_endpoint\n    return function(**arguments)\n           ^^^^^^^^^^^^^^^^^^^^^\nbackend\\main.py:694: in workspace\n    **workspace_summary(db, user, repos, snapshots),\n      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nbackend\\workspace_read.py:155: in workspace_summary\n    jobs = latest_jobs(db, user, repos)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nbackend\\workspace_read.py:77: in latest_jobs\n    return {row.repository_id: row for row in db.scalars(select(Record).join(ranked, ranked.c.id == Record.id).where(ranked.c.position == 1))}\n                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\orm\\session.py:2594: in scalars\n    return self._execute_internal(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\orm\\session.py:2363: in _execute_internal\n    compile_state_cls.orm_execute_statement(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\orm\\context.py:316: in orm_execute_statement\n    result = conn.execute(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\base.py:1448: in execute\n    return meth(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\sql\\elements.py:533: in _execute_on_connection\n    return connection._execute_clauseelement(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\base.py:1668: in _execute_clauseelement\n    ret = self._execute_context(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\base.py:1822: in _execute_context\n    return self._exec_single_context(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\base.py:1962: in _exec_single_context\n    self._handle_dbapi_exception(\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\base.py:2332: in _handle_dbapi_exception\n    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\base.py:1943: in _exec_single_context\n    self.dialect.do_execute(\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nself = <sqlalchemy.dialects.sqlite.pysqlite.SQLiteDialect_pysqlite object at 0x0000026E0D618490>\ncursor = <sqlite3.Cursor object at 0x0000026E1041B2C0>\nstatement = 'SELECT records.id, records.organization_id, records.repository_id, records.kind, records.natural_key, records.data, r...neration_records.generation_id \\nWHERE generation_records.record_id = records.id AND analysis_generations.state != ?))'\nparameters = ('$.\"started_at\"', '$.\"queued_at\"', 'northstar', 'identity', 'job', 'PUBLISHED', ...)\ncontext = <sqlalchemy.dialects.sqlite.base.SQLiteExecutionContext object at 0x0000026E13BF7110>\n\n    def do_execute(self, cursor, statement, parameters, context=None):\n>       cursor.execute(statement, parameters)\nE       sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) ambiguous column name: anon_1.position\nE       [SQL: SELECT records.id, records.organization_id, records.repository_id, records.kind, records.natural_key, records.data, records.created_at, records.version \nE       FROM records JOIN (SELECT records.id AS id, row_number() OVER (PARTITION BY records.repository_id ORDER BY coalesce(CAST(JSON_EXTRACT(records.data, ?) AS VARCHAR), CAST(JSON_EXTRACT(records.data, ?) AS VARCHAR), records.created_at) DESC, records.id DESC) AS position \nE       FROM records \nE       WHERE records.organization_id = ? AND records.repository_id IN (?) AND records.kind = ? AND records.kind != 'snapshot' AND NOT (EXISTS (SELECT generation_records.record_id \nE       FROM generation_records JOIN analysis_generations ON analysis_generations.id = generation_records.generation_id \nE       WHERE generation_records.record_id = records.id AND analysis_generations.state != ?))) AS anon_1 ON anon_1.id = records.id, (SELECT records.id AS id, row_number() OVER (PARTITION BY records.repository_id ORDER BY coalesce(CAST(JSON_EXTRACT(records.data, ?) AS VARCHAR), CAST(JSON_EXTRACT(records.data, ?) AS VARCHAR), records.created_at) DESC, records.id DESC) AS position \nE       FROM records \nE       WHERE records.organization_id = ? AND records.repository_id IN (?) AND records.kind = ? AND records.kind != 'snapshot' AND NOT (EXISTS (SELECT generation_records.record_id \nE       FROM generation_records JOIN analysis_generations ON analysis_generations.id = generation_records.generation_id \nE       WHERE generation_records.record_id = records.id AND analysis_generations.state != ?))) AS anon_1 \nE       WHERE anon_1.position = ? AND NOT (EXISTS (SELECT generation_records.record_id \nE       FROM generation_records JOIN analysis_generations ON analysis_generations.id = generation_records.generation_id \nE       WHERE generation_records.record_id = records.id AND analysis_generations.state != ?))]\nE       [parameters: ('$.\"started_at\"', '$.\"queued_at\"', 'northstar', 'identity', 'job', 'PUBLISHED', '$.\"started_at\"', '$.\"queued_at\"', 'northstar', 'identity', 'job', 'PUBLISHED', 1, 'PUBLISHED')]\nE       (Background on this error at: https://sqlalche.me/e/21/e3q8)\n\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\engine\\default.py:1192: OperationalError",
+      "error": null,
+      "skipped": null
+    }
+  ],
+  "unchanged_assertions_binding_caveat": "22 unchanged assertions run against explicitly rebound repaired v2 algorithms. Historical v1 results/failures remain separate and unchanged.",
+  "statistics_before_after_reverse": {
+    "baseline": {
+      "before_differences": [],
+      "after_differences": [],
+      "reverse_unordered_selects_differences_from_frozen": [
+        "existing_core_implicit_order",
+        "existing_mixed_implicit_order"
+      ],
+      "integrity": "ok",
+      "foreign_keys": []
+    },
+    "partial": {
+      "before_differences": [],
+      "after_differences": [],
+      "reverse_unordered_selects_differences_from_frozen": [
+        "existing_core_implicit_order"
+      ],
+      "integrity": "ok",
+      "foreign_keys": []
+    },
+    "validated_partial": {
+      "before_differences": [],
+      "after_differences": [],
+      "reverse_unordered_selects_differences_from_frozen": [
+        "existing_core_implicit_order"
+      ],
+      "integrity": "ok",
+      "foreign_keys": []
+    },
+    "guarded": {
+      "before_differences": [],
+      "after_differences": [],
+      "reverse_unordered_selects_differences_from_frozen": [
+        "existing_core_implicit_order"
+      ],
+      "integrity": "ok",
+      "foreign_keys": []
+    }
+  },
+  "selected_query_plans_and_seven_sample_medians": {
+    "baseline": [
+      {
+        "name": "node_page_0",
+        "plan": [
+          [
+            8,
+            0,
+            61,
+            "SEARCH records USING INDEX ix_records_graph_snapshot (organization_id=? AND repository_id=? AND kind=? AND <expr>=?)"
+          ],
+          [
+            70,
+            0,
+            0,
+            "USE TEMP B-TREE FOR LAST TERM OF ORDER BY"
+          ]
+        ],
+        "median_seconds": 7.899999991423101e-05
+      },
+      {
+        "name": "neighborhood_compat-node-0000_0",
+        "plan": [
+          [
+            2,
+            0,
+            0,
+            "CO-ROUTINE anon_1"
+          ],
+          [
+            3,
+            2,
+            0,
+            "COMPOUND QUERY"
+          ],
+          [
+            4,
+            3,
+            0,
+            "LEFT-MOST SUBQUERY"
+          ],
+          [
+            8,
+            4,
+            57,
+            "SEARCH records USING INDEX ix_records_graph_source (organization_id=? AND repository_id=? AND kind=? AND <expr>=? AND <expr>=?)"
+          ],
+          [
+            27,
+            3,
+            0,
+            "UNION USING TEMP B-TREE"
+          ],
+          [
+            30,
+            27,
+            57,
+            "SEARCH records USING INDEX ix_records_graph_target (organization_id=? AND repository_id=? AND kind=? AND <expr>=? AND <expr>=?)"
+          ],
+          [
+            62,
+            0,
+            51,
+            "SCAN anon_1"
+          ],
+          [
+            65,
+            0,
+            46,
+            "SEARCH records USING INDEX sqlite_autoindex_records_1 (id=?)"
+          ],
+          [
+            87,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ],
+        "median_seconds": 0.0002540999998927873
+      },
+      {
+        "name": "neighbor_total_compat-node-0000",
+        "plan": [
+          [
+            2,
+            0,
+            0,
+            "CO-ROUTINE anon_1"
+          ],
+          [
+            3,
+            2,
+            0,
+            "COMPOUND QUERY"
+          ],
+          [
+            4,
+            3,
+            0,
+            "LEFT-MOST SUBQUERY"
+          ],
+          [
+            8,
+            4,
+            57,
+            "SEARCH records USING INDEX ix_records_graph_source (organization_id=? AND repository_id=? AND kind=? AND <expr>=? AND <expr>=?)"
+          ],
+          [
+            27,
+            3,
+            0,
+            "UNION USING TEMP B-TREE"
+          ],
+          [
+            30,
+            27,
+            57,
+            "SEARCH records USING INDEX ix_records_graph_target (organization_id=? AND repository_id=? AND kind=? AND <expr>=? AND <expr>=?)"
+          ],
+          [
+            56,
+            0,
+            51,
+            "SCAN anon_1"
+          ]
+        ],
+        "median_seconds": 0.0002420999999230844
+      },
+      {
+        "name": "existing_mixed_implicit_order",
+        "plan": [
+          [
+            3,
+            0,
+            61,
+            "SEARCH records USING INDEX ix_records_graph_target (organization_id=? AND repository_id=?)"
+          ]
+        ],
+        "median_seconds": 0.1485250000000633
+      },
+      {
+        "name": "workspace_count_graph_node",
+        "plan": [
+          [
+            4,
+            0,
+            52,
+            "SEARCH records USING COVERING INDEX ix_records_graph_snapshot (organization_id=? AND repository_id=? AND kind=? AND <expr>=?)"
+          ]
+        ],
+        "median_seconds": 6.73000004098867e-05
+      }
+    ],
+    "partial": [
+      {
+        "name": "node_page_0",
+        "plan": [
+          [
+            8,
+            0,
+            61,
+            "SEARCH records USING INDEX ix_records_graph_snapshot (organization_id=? AND repository_id=? AND kind=? AND <expr>=?)"
+          ],
+          [
+            70,
+            0,
+            0,
+            "USE TEMP B-TREE FOR LAST TERM OF ORDER BY"
+          ]
+        ],
+        "median_seconds": 0.00034009999990303186
+      },
+      {
+        "name": "neighborhood_compat-node-0000_0",
+        "plan": [
+          [
+            2,
+            0,
+            0,
+            "CO-ROUTINE anon_1"
+          ],
+          [
+            3,
+            2,
+            0,
+            "COMPOUND QUERY"
+          ],
+          [
+            4,
+            3,
+            0,
+            "LEFT-MOST SUBQUERY"
+          ],
+          [
+            11,
+            4,
+            57,
+            "SEARCH records USING INDEX ix_records_graph_source (organization_id=? AND repository_id=? AND kind=? AND <expr>=? AND <expr>=?)"
+          ],
+          [
+            30,
+            3,
+            0,
+            "UNION USING TEMP B-TREE"
+          ],
+          [
+            36,
+            30,
+            57,
+            "SEARCH records USING INDEX ix_records_graph_target (organization_id=? AND repository_id=? AND kind=? AND <expr>=? AND <expr>=?)"
+          ],
+          [
+            68,
+            0,
+            51,
+            "SCAN anon_1"
+          ],
+          [
+            71,
+            0,
+            46,
+            "SEARCH records USING INDEX sqlite_autoindex_records_1 (id=?)"
+          ],
+          [
+            93,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ],
+        "median_seconds": 0.0005737999999837484
+      },
+      {
+        "name": "neighbor_total_compat-node-0000",
+        "plan": [
+          [
+            2,
+            0,
+            0,
+            "CO-ROUTINE anon_1"
+          ],
+          [
+            3,
+            2,
+            0,
+            "COMPOUND QUERY"
+          ],
+          [
+            4,
+            3,
+            0,
+            "LEFT-MOST SUBQUERY"
+          ],
+          [
+            11,
+            4,
+            57,
+            "SEARCH records USING INDEX ix_records_graph_source (organization_id=? AND repository_id=? AND kind=? AND <expr>=? AND <expr>=?)"
+          ],
+          [
+            30,
+            3,
+            0,
+            "UNION USING TEMP B-TREE"
+          ],
+          [
+            36,
+            30,
+            57,
+            "SEARCH records USING INDEX ix_records_graph_target (organization_id=? AND repository_id=? AND kind=? AND <expr>=? AND <expr>=?)"
+          ],
+          [
+            62,
+            0,
+            51,
+            "SCAN anon_1"
+          ]
+        ],
+        "median_seconds": 0.0003956000000471249
+      },
+      {
+        "name": "existing_mixed_implicit_order",
+        "plan": [
+          [
+            4,
+            0,
+            62,
+            "SEARCH records USING INDEX ix_records_scoped_current (organization_id=? AND repository_id=?)"
+          ],
+          [
+            50,
+            0,
+            0,
+            "USE TEMP B-TREE FOR LAST 3 TERMS OF ORDER BY"
+          ]
+        ],
+        "median_seconds": 0.1995465999998487
+      },
+      {
+        "name": "workspace_count_graph_node",
+        "plan": [
+          [
+            7,
+            0,
+            52,
+            "SEARCH records USING COVERING INDEX ix_records_graph_snapshot (organization_id=? AND repository_id=? AND kind=? AND <expr>=?)"
+          ]
+        ],
+        "median_seconds": 5.309999960445566e-05
+      }
+    ],
+    "validated_partial": [
+      {
+        "name": "node_page_0",
+        "plan": [
+          [
+            8,
+            0,
+            61,
+            "SEARCH records USING INDEX ix_records_graph_snapshot (organization_id=? AND repository_id=? AND kind=? AND <expr>=?)"
+          ],
+          [
+            70,
+            0,
+            0,
+            "USE TEMP B-TREE FOR LAST TERM OF ORDER BY"
+          ]
+        ],
+        "median_seconds": 0.000496499999826483
+      },
+      {
+        "name": "neighborhood_compat-node-0000_0",
+        "plan": [
+          [
+            2,
+            0,
+            0,
+            "CO-ROUTINE anon_1"
+          ],
+          [
+            3,
+            2,
+            0,
+            "COMPOUND QUERY"
+          ],
+          [
+            4,
+            3,
+            0,
+            "LEFT-MOST SUBQUERY"
+          ],
+          [
+            11,
+            4,
+            57,
+            "SEARCH records USING INDEX ix_records_graph_source (organization_id=? AND repository_id=? AND kind=? AND <expr>=? AND <expr>=?)"
+          ],
+          [
+            30,
+            3,
+            0,
+            "UNION USING TEMP B-TREE"
+          ],
+          [
+            36,
+            30,
+            57,
+            "SEARCH records USING INDEX ix_records_graph_target (organization_id=? AND repository_id=? AND kind=? AND <expr>=? AND <expr>=?)"
+          ],
+          [
+            68,
+            0,
+            51,
+            "SCAN anon_1"
+          ],
+          [
+            71,
+            0,
+            46,
+            "SEARCH records USING INDEX sqlite_autoindex_records_1 (id=?)"
+          ],
+          [
+            93,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ],
+        "median_seconds": 0.000559999999950378
+      },
+      {
+        "name": "neighbor_total_compat-node-0000",
+        "plan": [
+          [
+            2,
+            0,
+            0,
+            "CO-ROUTINE anon_1"
+          ],
+          [
+            3,
+            2,
+            0,
+            "COMPOUND QUERY"
+          ],
+          [
+            4,
+            3,
+            0,
+            "LEFT-MOST SUBQUERY"
+          ],
+          [
+            11,
+            4,
+            57,
+            "SEARCH records USING INDEX ix_records_graph_source (organization_id=? AND repository_id=? AND kind=? AND <expr>=? AND <expr>=?)"
+          ],
+          [
+            30,
+            3,
+            0,
+            "UNION USING TEMP B-TREE"
+          ],
+          [
+            36,
+            30,
+            57,
+            "SEARCH records USING INDEX ix_records_graph_target (organization_id=? AND repository_id=? AND kind=? AND <expr>=? AND <expr>=?)"
+          ],
+          [
+            62,
+            0,
+            51,
+            "SCAN anon_1"
+          ]
+        ],
+        "median_seconds": 0.0003441000003476802
+      },
+      {
+        "name": "existing_mixed_implicit_order",
+        "plan": [
+          [
+            4,
+            0,
+            62,
+            "SEARCH records USING INDEX ix_records_scoped_current (organization_id=? AND repository_id=?)"
+          ],
+          [
+            50,
+            0,
+            0,
+            "USE TEMP B-TREE FOR LAST 3 TERMS OF ORDER BY"
+          ]
+        ],
+        "median_seconds": 0.18824439999980314
+      },
+      {
+        "name": "workspace_count_graph_node",
+        "plan": [
+          [
+            7,
+            0,
+            52,
+            "SEARCH records USING COVERING INDEX ix_records_graph_snapshot (organization_id=? AND repository_id=? AND kind=? AND <expr>=?)"
+          ]
+        ],
+        "median_seconds": 2.97000001410197e-05
+      }
+    ],
+    "guarded": [
+      {
+        "name": "node_page_0",
+        "plan": [
+          [
+            8,
+            0,
+            61,
+            "SEARCH records USING INDEX ix_records_graph_snapshot (organization_id=? AND repository_id=? AND kind=? AND <expr>=?)"
+          ],
+          [
+            72,
+            0,
+            0,
+            "USE TEMP B-TREE FOR LAST TERM OF ORDER BY"
+          ]
+        ],
+        "median_seconds": 0.00041419999979552813
+      },
+      {
+        "name": "neighborhood_compat-node-0000_0",
+        "plan": [
+          [
+            2,
+            0,
+            0,
+            "CO-ROUTINE anon_1"
+          ],
+          [
+            3,
+            2,
+            0,
+            "COMPOUND QUERY"
+          ],
+          [
+            4,
+            3,
+            0,
+            "LEFT-MOST SUBQUERY"
+          ],
+          [
+            11,
+            4,
+            57,
+            "SEARCH records USING INDEX ix_records_graph_source (organization_id=? AND repository_id=? AND kind=? AND <expr>=? AND <expr>=?)"
+          ],
+          [
+            30,
+            3,
+            0,
+            "UNION USING TEMP B-TREE"
+          ],
+          [
+            36,
+            30,
+            57,
+            "SEARCH records USING INDEX ix_records_graph_target (organization_id=? AND repository_id=? AND kind=? AND <expr>=? AND <expr>=?)"
+          ],
+          [
+            68,
+            0,
+            51,
+            "SCAN anon_1"
+          ],
+          [
+            71,
+            0,
+            46,
+            "SEARCH records USING INDEX sqlite_autoindex_records_1 (id=?)"
+          ],
+          [
+            93,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ],
+        "median_seconds": 0.0006310999997367617
+      },
+      {
+        "name": "neighbor_total_compat-node-0000",
+        "plan": [
+          [
+            2,
+            0,
+            0,
+            "CO-ROUTINE anon_1"
+          ],
+          [
+            3,
+            2,
+            0,
+            "COMPOUND QUERY"
+          ],
+          [
+            4,
+            3,
+            0,
+            "LEFT-MOST SUBQUERY"
+          ],
+          [
+            11,
+            4,
+            57,
+            "SEARCH records USING INDEX ix_records_graph_source (organization_id=? AND repository_id=? AND kind=? AND <expr>=? AND <expr>=?)"
+          ],
+          [
+            30,
+            3,
+            0,
+            "UNION USING TEMP B-TREE"
+          ],
+          [
+            36,
+            30,
+            57,
+            "SEARCH records USING INDEX ix_records_graph_target (organization_id=? AND repository_id=? AND kind=? AND <expr>=? AND <expr>=?)"
+          ],
+          [
+            62,
+            0,
+            51,
+            "SCAN anon_1"
+          ]
+        ],
+        "median_seconds": 0.0003335999999762862
+      },
+      {
+        "name": "existing_mixed_implicit_order",
+        "plan": [
+          [
+            4,
+            0,
+            61,
+            "SEARCH records USING INDEX ix_records_graph_snapshot (organization_id=? AND repository_id=?)"
+          ],
+          [
+            50,
+            0,
+            0,
+            "USE TEMP B-TREE FOR LAST 3 TERMS OF ORDER BY"
+          ]
+        ],
+        "median_seconds": 0.13914310000018304
+      },
+      {
+        "name": "workspace_count_graph_node",
+        "plan": [
+          [
+            7,
+            0,
+            52,
+            "SEARCH records USING COVERING INDEX ix_records_graph_snapshot (organization_id=? AND repository_id=? AND kind=? AND <expr>=?)"
+          ]
+        ],
+        "median_seconds": 5.0799999826267594e-05
+      }
+    ]
+  },
+  "thirty_thousand_metric_measurements": [
+    {
+      "mode": "baseline",
+      "owned_metrics": 30000,
+      "fresh_processes_per_operation": 3,
+      "same_value_update_seconds_median": 0.2178515000000516,
+      "same_value_update_rss_peak_max": 399798272,
+      "same_value_sqlite_peak_max": 342809752,
+      "install_seconds_median": 0.003115800000159652,
+      "micro_database_sizes": [
+        {
+          "page_size": 4096,
+          "page_count": 15866,
+          "freelist_count": 285,
+          "dbstat_unavailable": "no such table: dbstat"
+        },
+        {
+          "page_size": 4096,
+          "page_count": 15866,
+          "freelist_count": 285,
+          "dbstat_unavailable": "no such table: dbstat"
+        },
+        {
+          "page_size": 4096,
+          "page_count": 15866,
+          "freelist_count": 285,
+          "dbstat_unavailable": "no such table: dbstat"
+        }
+      ],
+      "mixed_query_seconds_median": 0.11391779999985374,
+      "mixed_query_rss_peak_max": 201789440,
+      "mixed_query_sampled_rss_peak_max": 201306112,
+      "mixed_query_sqlite_peak_max": 83977288,
+      "mixed_query_rows": [
+        1777,
+        1777,
+        1777
+      ],
+      "mixed_query_complete_hashes": [
+        "47cfa7ce1e124e900e00d76ba8d9df66e606447d240244d07d0443b17fce3bc1",
+        "47cfa7ce1e124e900e00d76ba8d9df66e606447d240244d07d0443b17fce3bc1",
+        "47cfa7ce1e124e900e00d76ba8d9df66e606447d240244d07d0443b17fce3bc1"
+      ],
+      "mixed_query_plans": [
+        [
+          [
+            3,
+            0,
+            61,
+            "SEARCH records USING INDEX ix_records_graph_target (organization_id=? AND repository_id=?)"
+          ]
+        ],
+        [
+          [
+            3,
+            0,
+            61,
+            "SEARCH records USING INDEX ix_records_graph_target (organization_id=? AND repository_id=?)"
+          ]
+        ],
+        [
+          [
+            3,
+            0,
+            61,
+            "SEARCH records USING INDEX ix_records_graph_target (organization_id=? AND repository_id=?)"
+          ]
+        ]
+      ],
+      "publication_update_seconds_median": 0.13928949999990436,
+      "publication_sqlite_update_peak_max": 350651800,
+      "publication_final_path_rss_peak_max": 524705792,
+      "publication_whole_process_rss_peak_max": 524705792,
+      "publication_final_path_seconds_median": 5.922047600000042,
+      "complete_cold_analysis_seconds_median": 76.76773139999978,
+      "publication_database_sizes": [
+        {
+          "benchmark.db": 64991232,
+          "benchmark.db-shm": 32768,
+          "benchmark.db-wal": 0
+        },
+        {
+          "benchmark.db": 64991232,
+          "benchmark.db-shm": 32768,
+          "benchmark.db-wal": 0
+        },
+        {
+          "benchmark.db": 64991232,
+          "benchmark.db-shm": 32768,
+          "benchmark.db-wal": 0
+        }
+      ]
+    },
+    {
+      "mode": "validated_partial",
+      "owned_metrics": 30000,
+      "fresh_processes_per_operation": 3,
+      "same_value_update_seconds_median": 0.0697810000001482,
+      "same_value_update_rss_peak_max": 194899968,
+      "same_value_sqlite_peak_max": 137468560,
+      "install_seconds_median": 0.11097639999979947,
+      "micro_database_sizes": [
+        {
+          "page_size": 4096,
+          "page_count": 15866,
+          "freelist_count": 304,
+          "dbstat_unavailable": "no such table: dbstat"
+        },
+        {
+          "page_size": 4096,
+          "page_count": 15866,
+          "freelist_count": 304,
+          "dbstat_unavailable": "no such table: dbstat"
+        },
+        {
+          "page_size": 4096,
+          "page_count": 15866,
+          "freelist_count": 304,
+          "dbstat_unavailable": "no such table: dbstat"
+        }
+      ],
+      "mixed_query_seconds_median": 0.1732041999998728,
+      "mixed_query_rss_peak_max": 310513664,
+      "mixed_query_sampled_rss_peak_max": 310513664,
+      "mixed_query_sqlite_peak_max": 197360368,
+      "mixed_query_rows": [
+        1777,
+        1777,
+        1777
+      ],
+      "mixed_query_complete_hashes": [
+        "47cfa7ce1e124e900e00d76ba8d9df66e606447d240244d07d0443b17fce3bc1",
+        "47cfa7ce1e124e900e00d76ba8d9df66e606447d240244d07d0443b17fce3bc1",
+        "47cfa7ce1e124e900e00d76ba8d9df66e606447d240244d07d0443b17fce3bc1"
+      ],
+      "mixed_query_plans": [
+        [
+          [
+            4,
+            0,
+            62,
+            "SEARCH records USING INDEX ix_records_scoped_current (organization_id=? AND repository_id=?)"
+          ],
+          [
+            50,
+            0,
+            0,
+            "USE TEMP B-TREE FOR LAST 3 TERMS OF ORDER BY"
+          ]
+        ],
+        [
+          [
+            4,
+            0,
+            62,
+            "SEARCH records USING INDEX ix_records_scoped_current (organization_id=? AND repository_id=?)"
+          ],
+          [
+            50,
+            0,
+            0,
+            "USE TEMP B-TREE FOR LAST 3 TERMS OF ORDER BY"
+          ]
+        ],
+        [
+          [
+            4,
+            0,
+            62,
+            "SEARCH records USING INDEX ix_records_scoped_current (organization_id=? AND repository_id=?)"
+          ],
+          [
+            50,
+            0,
+            0,
+            "USE TEMP B-TREE FOR LAST 3 TERMS OF ORDER BY"
+          ]
+        ]
+      ],
+      "publication_update_seconds_median": 0.06231500000012602,
+      "publication_sqlite_update_peak_max": 167279520,
+      "publication_final_path_rss_peak_max": 347119616,
+      "publication_whole_process_rss_peak_max": 347119616,
+      "publication_final_path_seconds_median": 11.243197999999666,
+      "complete_cold_analysis_seconds_median": 133.43091989999994,
+      "publication_database_sizes": [
+        {
+          "benchmark.db": 64974848,
+          "benchmark.db-shm": 32768,
+          "benchmark.db-wal": 0
+        },
+        {
+          "benchmark.db": 64974848,
+          "benchmark.db-shm": 32768,
+          "benchmark.db-wal": 0
+        },
+        {
+          "benchmark.db": 64974848,
+          "benchmark.db-shm": 32768,
+          "benchmark.db-wal": 0
+        }
+      ]
+    }
+  ],
+  "mixed_complete_row_hashes_equal": true,
+  "publication_fingerprint_comparisons": 4,
+  "publication_fingerprints_equal": true,
+  "http_requests_per_mode": {
+    "baseline": 20,
+    "validated_partial": 20
+  },
+  "http_complete_responses_equal": true,
+  "fresh_process_jobs": 21,
+  "failed_initial_setup_database_forensics": {
+    "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\measurements\\publish-validated_partial-0\\benchmark.db",
+    "sha256": "03e8285d01a6e233a8f4fb59d955a81945571b4476d12e2d9898082d22572a13",
+    "scope": "FAILED_SETUP_BEFORE_ANALYSIS",
+    "sqlite_integrity": "ok",
+    "foreign_key_violations": 0,
+    "tables_created": [
+      "administrative_approvals",
+      "administrative_commands",
+      "administrative_notifications",
+      "administrative_policy_previews",
+      "administrative_quotas",
+      "analysis_checkpoint_parts",
+      "analysis_checkpoints",
+      "analysis_generations",
+      "analysis_inputs",
+      "application_activity",
+      "audit_events",
+      "audit_heads",
+      "audit_links",
+      "cloud_assets",
+      "feature_policies",
+      "feature_policy_revisions",
+      "finding_identities",
+      "finding_occurrences",
+      "generation_audits",
+      "generation_chunks",
+      "generation_context_parts",
+      "generation_receipts",
+      "generation_records",
+      "governance_revisions",
+      "job_attribution",
+      "job_team_attribution",
+      "learning_assessments",
+      "learning_journeys",
+      "learning_objectives",
+      "learning_reviews",
+      "native_profiles",
+      "oidc_attempts",
+      "oidc_subjects",
+      "organization_controls",
+      "organization_invitations",
+      "organization_memberships",
+      "organizations",
+      "parser_artifacts",
+      "platform_account_controls",
+      "platform_operators",
+      "publication_units",
+      "published_generations",
+      "quality_analyses",
+      "quality_occurrences",
+      "queue_cursor",
+      "queue_entries",
+      "queue_pr_heads",
+      "records",
+      "repositories",
+      "repository_access_denials",
+      "repository_controls",
+      "repository_grants",
+      "session_contexts",
+      "sessions",
+      "snapshot_inventories",
+      "snapshot_views",
+      "source_blobs",
+      "source_inventories",
+      "source_inventory_files",
+      "team_memberships",
+      "team_repositories",
+      "teams",
+      "tenant_policies",
+      "users",
+      "webhook_deliveries"
+    ],
+    "records_count": 0,
+    "generation_states": [],
+    "pointers": 0,
+    "snapshot_statuses": [],
+    "malformed_snapshot_ids": [],
+    "snapshot_status_complete_count": 0,
+    "no_published_generation_or_pointer_or_complete_snapshot": true
+  },
+  "initial_setup_failure_attempts": [
+    {
+      "operation": "publish",
+      "mode": "validated_partial",
+      "repeat": 0,
+      "command": [
+        "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+        "-m",
+        "tests.graph_index_recovery_probe",
+        "publish",
+        "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\measurements\\publish-validated_partial-0",
+        "validated_partial"
+      ],
+      "exit_code": 1,
+      "stderr": "Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"C:\\Users\\sai krishna\\Projects\\ProjectTrace-local\\tests\\graph_index_recovery_probe.py\", line 104, in <module>\n    result = publish(args.root, args.mode, all_phases=args.operation == \"all_phases\")\n  File \"C:\\Users\\sai krishna\\Projects\\ProjectTrace-local\\tests\\graph_index_recovery_probe.py\", line 21, in publish\n    return probe.run(root, mode, 30000 if not all_phases else None, all_phases=all_phases)\n           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\sai krishna\\Projects\\ProjectTrace-local\\tests\\graph_index_publication_probe.py\", line 35, in run\n    result = pipeline.run(root, metrics, phases=(\"cold\", \"warm\", \"incremental\") if all_phases else (\"cold\",))\n  File \"C:\\Users\\sai krishna\\Projects\\ProjectTrace-local\\tests\\snapshot_materialization_probe.py\", line 371, in run\n    db.commit()\n    ~~~~~~~~~^^\n  File \"C:\\Users\\sai krishna\\Projects\\ProjectTrace-local\\tests\\snapshot_materialization_probe.py\", line 180, in measured_commit\n    return commit(self)\n  File \"C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\orm\\session.py\", line 2095, in commit\n    trans.commit(_to_root=True)\n    ~~~~~~~~~~~~^^^^^^^^^^^^^^^\n  File \"<sqlalchemy generated _go() wrapper for sqlalchemy.orm.session.SessionTransaction.commit>\", line 2, in commit\n    return target(fn, self, _to_root=_to_root)\n  File \"C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\orm\\state_changes.py\", line 137, in _go\n    ret_value = fn(self, *arg, **kw)\n  File \"C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\orm\\session.py\", line 1330, in commit\n    self._prepare_impl()\n    ~~~~~~~~~~~~~~~~~~^^\n  File \"<sqlalchemy generated _go() wrapper for sqlalchemy.orm.session.SessionTransaction._prepare_impl>\", line 2, in _prepare_impl\n    return target(fn, self)\n  File \"C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\orm\\state_changes.py\", line 137, in _go\n    ret_value = fn(self, *arg, **kw)\n  File \"C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\orm\\session.py\", line 1304, in _prepare_impl\n    self.session.flush()\n    ~~~~~~~~~~~~~~~~~~^^\n  File \"C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\orm\\session.py\", line 4536, in flush\n    self._flush(objects)\n    ~~~~~~~~~~~^^^^^^^^^\n  File \"<sqlalchemy generated warned() wrapper for sqlalchemy.orm.session.Session._flush>\", line 2, in _flush\n    return target(fn, self, objects=objects)\n  File \"C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\util\\deprecations.py\", line 281, in warned\n    return fn(*args, **kwargs)  # type: ignore[no-any-return]\n  File \"C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\orm\\session.py\", line 4572, in _flush\n    self.dispatch.before_flush(self, flush_context, objects)\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\event\\attr.py\", line 388, in __call__\n    fn(*args, **kw)\n    ~~^^^^^^^^^^^^^\n  File \"C:\\Users\\sai krishna\\Projects\\ProjectTrace-local\\backend\\db.py\", line 587, in enforce_tenant_references\n    member = db.get(OrganizationMembership, (repo.organization_id, row.user_id))\n  File \"C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\orm\\session.py\", line 3845, in get\n    return self._get_impl(\n           ~~~~~~~~~~~~~~^\n        entity,\n        ^^^^^^^\n    ...<7 lines>...\n        bind_arguments=bind_arguments,\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    )\n    ^\n  File \"C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\orm\\session.py\", line 4032, in _get_impl\n    return db_load_fn(\n        self,\n    ...<5 lines>...\n        bind_arguments=bind_arguments,\n    )\n  File \"C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\orm\\loading.py\", line 702, in _load_on_pk_identity\n    session.execute(\n    ~~~~~~~~~~~~~~~^\n        q,\n        ^^\n    ...<2 lines>...\n        bind_arguments=bind_arguments,\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    )\n    ^\n  File \"C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\orm\\session.py\", line 2473, in execute\n    return self._execute_internal(\n           ~~~~~~~~~~~~~~~~~~~~~~^\n        statement,\n        ^^^^^^^^^^\n    ...<4 lines>...\n        _add_event=_add_event,\n        ^^^^^^^^^^^^^^^^^^^^^^\n    )\n    ^\n  File \"C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\orm\\session.py\", line 2307, in _execute_internal\n    fn_result: Optional[Result[Unpack[TupleAny]]] = fn(\n                                                    ~~^\n        orm_exec_state\n        ^^^^^^^^^^^^^^\n    )\n    ^\n  File \"C:\\Users\\sai krishna\\Projects\\ProjectTrace-local\\tests\\graph_index_recovery.py\", line 312, in scoped\n    execution.statement, _ = guarded_statement(\n                             ~~~~~~~~~~~~~~~~~^\n        execution.statement, execution.parameters, mode=mode, counters=counters\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    )\n    ^\n  File \"C:\\Users\\sai krishna\\Projects\\ProjectTrace-local\\tests\\graph_index_recovery.py\", line 299, in guarded_statement\n    updated = visitors.replacement_traverse(statement, {}, transform)\n  File \"C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\sql\\visitors.py\", line 1149, in replacement_traverse\n    obj = clone(\n        obj, deferred_copy_internals=deferred_copy_internals, **opts\n    )\n  File \"C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\sql\\visitors.py\", line 1128, in clone\n    newelem = replace(elem)\n  File \"C:\\Users\\sai krishna\\Projects\\ProjectTrace-local\\tests\\graph_index_recovery.py\", line 239, in transform\n    rebuilt = visitors.replacement_traverse(\n        element, {}, lambda child: None if child is element else transform(child)\n    )\n  File \"C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\sql\\visitors.py\", line 1149, in replacement_traverse\n    obj = clone(\n        obj, deferred_copy_internals=deferred_copy_internals, **opts\n    )\n  File \"C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\sql\\visitors.py\", line 1145, in clone\n    newelem._copy_internals(clone=clone, **kw)\n    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\sql\\selectable.py\", line 6174, in _copy_internals\n    super()._copy_internals(clone=clone, omit_attrs=(\"_from_obj\",), **kw)\n    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\sql\\traversals.py\", line 242, in _copy_internals\n    result = meth(attrname, self, obj, **kw)\n  File \"C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\sql\\traversals.py\", line 269, in visit_executable_options\n    return tuple([clone(clause, **kw) for clause in element])\n                  ~~~~~^^^^^^^^^^^^^^\n  File \"C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\sql\\visitors.py\", line 1144, in clone\n    cloned[id_elem] = newelem = elem._clone(**kw)\n                                ~~~~~~~~~~~^^^^^^\n  File \"C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\sqlalchemy\\sql\\base.py\", line 1260, in _clone\n    c.__dict__ = dict(self.__dict__)  # type: ignore[misc]\n                      ^^^^^^^^^^^^^\nAttributeError: 'LoaderCriteriaOption' object has no attribute '__dict__'. Did you mean: '__dir__'?\n"
+    }
+  ],
+  "total_distinct_fresh_process_attempts": 22,
+  "setup_failure_caveat": "Initial validated-partial publication setup failed while cloning an immutable LoaderCriteriaOption before analysis. The full failed attempt and directory remain preserved; successful measurements use a new retry directory after the option-identity fix. Earlier successful micro/mixed children preceded this fix and are retained with their original provenance.",
+  "actual_publication_database_checks": {
+    "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\measurements\\publish-baseline-0\\benchmark.db": {
+      "sqlite_integrity": "ok",
+      "foreign_key_violations": 0,
+      "audit_links_verified": 9,
+      "audit_event_ids_sha256": "c961602bcc3ff10be4bde88926efe949d362e7942fa8a24a9bca3225656f1f63",
+      "edges_verified": 1230,
+      "unresolved_cross_tenant_cross_generation_or_duplicate_edges": 0,
+      "generation_states": [
+        [
+          "PUBLISHED",
+          1
+        ]
+      ],
+      "pointers": 1,
+      "graph_index_definitions": {
+        "ix_records_graph_class": "CREATE INDEX ix_records_graph_class ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"class\"') AS VARCHAR), id)",
+        "ix_records_graph_snapshot": "CREATE INDEX ix_records_graph_snapshot ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR))",
+        "ix_records_graph_source": "CREATE INDEX ix_records_graph_source ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"source\"') AS VARCHAR))",
+        "ix_records_graph_target": "CREATE INDEX ix_records_graph_target ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"target\"') AS VARCHAR))"
+      }
+    },
+    "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\measurements\\publish-baseline-1\\benchmark.db": {
+      "sqlite_integrity": "ok",
+      "foreign_key_violations": 0,
+      "audit_links_verified": 9,
+      "audit_event_ids_sha256": "c961602bcc3ff10be4bde88926efe949d362e7942fa8a24a9bca3225656f1f63",
+      "edges_verified": 1230,
+      "unresolved_cross_tenant_cross_generation_or_duplicate_edges": 0,
+      "generation_states": [
+        [
+          "PUBLISHED",
+          1
+        ]
+      ],
+      "pointers": 1,
+      "graph_index_definitions": {
+        "ix_records_graph_class": "CREATE INDEX ix_records_graph_class ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"class\"') AS VARCHAR), id)",
+        "ix_records_graph_snapshot": "CREATE INDEX ix_records_graph_snapshot ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR))",
+        "ix_records_graph_source": "CREATE INDEX ix_records_graph_source ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"source\"') AS VARCHAR))",
+        "ix_records_graph_target": "CREATE INDEX ix_records_graph_target ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"target\"') AS VARCHAR))"
+      }
+    },
+    "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\measurements\\publish-baseline-2\\benchmark.db": {
+      "sqlite_integrity": "ok",
+      "foreign_key_violations": 0,
+      "audit_links_verified": 9,
+      "audit_event_ids_sha256": "c961602bcc3ff10be4bde88926efe949d362e7942fa8a24a9bca3225656f1f63",
+      "edges_verified": 1230,
+      "unresolved_cross_tenant_cross_generation_or_duplicate_edges": 0,
+      "generation_states": [
+        [
+          "PUBLISHED",
+          1
+        ]
+      ],
+      "pointers": 1,
+      "graph_index_definitions": {
+        "ix_records_graph_class": "CREATE INDEX ix_records_graph_class ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"class\"') AS VARCHAR), id)",
+        "ix_records_graph_snapshot": "CREATE INDEX ix_records_graph_snapshot ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR))",
+        "ix_records_graph_source": "CREATE INDEX ix_records_graph_source ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"source\"') AS VARCHAR))",
+        "ix_records_graph_target": "CREATE INDEX ix_records_graph_target ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"target\"') AS VARCHAR))"
+      }
+    },
+    "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\measurements\\publish-validated_partial-0-retry\\benchmark.db": {
+      "sqlite_integrity": "ok",
+      "foreign_key_violations": 0,
+      "audit_links_verified": 9,
+      "audit_event_ids_sha256": "c961602bcc3ff10be4bde88926efe949d362e7942fa8a24a9bca3225656f1f63",
+      "edges_verified": 1230,
+      "unresolved_cross_tenant_cross_generation_or_duplicate_edges": 0,
+      "generation_states": [
+        [
+          "PUBLISHED",
+          1
+        ]
+      ],
+      "pointers": 1,
+      "graph_index_definitions": {
+        "ix_records_graph_class": "CREATE INDEX ix_records_graph_class ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"class\"') AS VARCHAR), id) WHERE kind != 'snapshot'",
+        "ix_records_graph_snapshot": "CREATE INDEX ix_records_graph_snapshot ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR)) WHERE kind != 'snapshot'",
+        "ix_records_graph_source": "CREATE INDEX ix_records_graph_source ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"source\"') AS VARCHAR)) WHERE kind != 'snapshot'",
+        "ix_records_graph_target": "CREATE INDEX ix_records_graph_target ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"target\"') AS VARCHAR)) WHERE kind != 'snapshot'"
+      }
+    },
+    "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\measurements\\publish-validated_partial-1\\benchmark.db": {
+      "sqlite_integrity": "ok",
+      "foreign_key_violations": 0,
+      "audit_links_verified": 9,
+      "audit_event_ids_sha256": "c961602bcc3ff10be4bde88926efe949d362e7942fa8a24a9bca3225656f1f63",
+      "edges_verified": 1230,
+      "unresolved_cross_tenant_cross_generation_or_duplicate_edges": 0,
+      "generation_states": [
+        [
+          "PUBLISHED",
+          1
+        ]
+      ],
+      "pointers": 1,
+      "graph_index_definitions": {
+        "ix_records_graph_class": "CREATE INDEX ix_records_graph_class ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"class\"') AS VARCHAR), id) WHERE kind != 'snapshot'",
+        "ix_records_graph_snapshot": "CREATE INDEX ix_records_graph_snapshot ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR)) WHERE kind != 'snapshot'",
+        "ix_records_graph_source": "CREATE INDEX ix_records_graph_source ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"source\"') AS VARCHAR)) WHERE kind != 'snapshot'",
+        "ix_records_graph_target": "CREATE INDEX ix_records_graph_target ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"target\"') AS VARCHAR)) WHERE kind != 'snapshot'"
+      }
+    },
+    "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\measurements\\publish-validated_partial-2\\benchmark.db": {
+      "sqlite_integrity": "ok",
+      "foreign_key_violations": 0,
+      "audit_links_verified": 9,
+      "audit_event_ids_sha256": "c961602bcc3ff10be4bde88926efe949d362e7942fa8a24a9bca3225656f1f63",
+      "edges_verified": 1230,
+      "unresolved_cross_tenant_cross_generation_or_duplicate_edges": 0,
+      "generation_states": [
+        [
+          "PUBLISHED",
+          1
+        ]
+      ],
+      "pointers": 1,
+      "graph_index_definitions": {
+        "ix_records_graph_class": "CREATE INDEX ix_records_graph_class ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"class\"') AS VARCHAR), id) WHERE kind != 'snapshot'",
+        "ix_records_graph_snapshot": "CREATE INDEX ix_records_graph_snapshot ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR)) WHERE kind != 'snapshot'",
+        "ix_records_graph_source": "CREATE INDEX ix_records_graph_source ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"source\"') AS VARCHAR)) WHERE kind != 'snapshot'",
+        "ix_records_graph_target": "CREATE INDEX ix_records_graph_target ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"target\"') AS VARCHAR)) WHERE kind != 'snapshot'"
+      }
+    },
+    "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\measurements\\all_phases-baseline-0\\benchmark.db": {
+      "sqlite_integrity": "ok",
+      "foreign_key_violations": 0,
+      "audit_links_verified": 28,
+      "audit_event_ids_sha256": "9d3b6055fd44c269c2d9a967ac6e6a12b3d64fbbae3f64cf259ad8452b0963ed",
+      "edges_verified": 3694,
+      "unresolved_cross_tenant_cross_generation_or_duplicate_edges": 0,
+      "generation_states": [
+        [
+          "PUBLISHED",
+          3
+        ]
+      ],
+      "pointers": 2,
+      "graph_index_definitions": {
+        "ix_records_graph_class": "CREATE INDEX ix_records_graph_class ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"class\"') AS VARCHAR), id)",
+        "ix_records_graph_snapshot": "CREATE INDEX ix_records_graph_snapshot ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR))",
+        "ix_records_graph_source": "CREATE INDEX ix_records_graph_source ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"source\"') AS VARCHAR))",
+        "ix_records_graph_target": "CREATE INDEX ix_records_graph_target ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"target\"') AS VARCHAR))"
+      }
+    },
+    "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\measurements\\all_phases-validated_partial-0\\benchmark.db": {
+      "sqlite_integrity": "ok",
+      "foreign_key_violations": 0,
+      "audit_links_verified": 28,
+      "audit_event_ids_sha256": "9d3b6055fd44c269c2d9a967ac6e6a12b3d64fbbae3f64cf259ad8452b0963ed",
+      "edges_verified": 3694,
+      "unresolved_cross_tenant_cross_generation_or_duplicate_edges": 0,
+      "generation_states": [
+        [
+          "PUBLISHED",
+          3
+        ]
+      ],
+      "pointers": 2,
+      "graph_index_definitions": {
+        "ix_records_graph_class": "CREATE INDEX ix_records_graph_class ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"class\"') AS VARCHAR), id) WHERE kind != 'snapshot'",
+        "ix_records_graph_snapshot": "CREATE INDEX ix_records_graph_snapshot ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR)) WHERE kind != 'snapshot'",
+        "ix_records_graph_source": "CREATE INDEX ix_records_graph_source ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"source\"') AS VARCHAR)) WHERE kind != 'snapshot'",
+        "ix_records_graph_target": "CREATE INDEX ix_records_graph_target ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"target\"') AS VARCHAR)) WHERE kind != 'snapshot'"
+      }
+    }
+  },
+  "test_receipts": [
+    {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\correlated-focused.xml",
+      "sha256": "7bac00463bd6b51fd97676855f9500042b13d2392277296427d4732db3e24f30",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "1",
+          "time": "3.336",
+          "timestamp": "2026-10-27T13:31:36.637513+05:30",
+          "hostname": "LAPTOP-I8MJR81P"
+        }
+      ],
+      "by_source": {
+        "tests.test_graph_index_recovery": {
+          "passed": 1,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "tests": 1
+        }
+      }
+    },
+    {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\historical-reproduced.xml",
+      "sha256": "7dab41c2e8d36117e71d95146b0048e96bb4f55c033481fee44045290f5ff30f",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "5",
+          "skipped": "0",
+          "tests": "22",
+          "time": "108.314",
+          "timestamp": "2026-10-27T13:12:01.539572+05:30",
+          "hostname": "LAPTOP-I8MJR81P"
+        }
+      ],
+      "by_source": {
+        "FROZEN_22_ASSERTIONS_V1_SUBJECTS": {
+          "passed": 17,
+          "failed": 5,
+          "errors": 0,
+          "skipped": 0,
+          "tests": 22
+        }
+      }
+    },
+    {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\loader-options-fixed.xml",
+      "sha256": "dd8946388fed1c21dfad359f9e9c4df4b327a19d030a21f8e7eea1ee4e22ff84",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "1",
+          "skipped": "0",
+          "tests": "3",
+          "time": "1.862",
+          "timestamp": "2026-10-27T13:43:57.196831+05:30",
+          "hostname": "LAPTOP-I8MJR81P"
+        }
+      ],
+      "by_source": {
+        "tests.test_graph_index_recovery": {
+          "passed": 2,
+          "failed": 1,
+          "errors": 0,
+          "skipped": 0,
+          "tests": 3
+        }
+      }
+    },
+    {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\loader-options-validated.xml",
+      "sha256": "672ce028af8d257c8d2b2b6f67480b7f16b667debb9b0df4415470a34593db42",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "1",
+          "time": "0.677",
+          "timestamp": "2026-10-27T13:44:20.886111+05:30",
+          "hostname": "LAPTOP-I8MJR81P"
+        }
+      ],
+      "by_source": {
+        "tests.test_graph_index_recovery": {
+          "passed": 1,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "tests": 1
+        }
+      }
+    },
+    {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\mutation-fixed.xml",
+      "sha256": "954566adab59b9ccb0a217578d3734baca796e366a56077d0632203215a938d8",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "1",
+          "skipped": "0",
+          "tests": "3",
+          "time": "2.305",
+          "timestamp": "2026-10-27T13:37:30.683291+05:30",
+          "hostname": "LAPTOP-I8MJR81P"
+        }
+      ],
+      "by_source": {
+        "tests.test_graph_index_recovery": {
+          "passed": 2,
+          "failed": 1,
+          "errors": 0,
+          "skipped": 0,
+          "tests": 3
+        }
+      }
+    },
+    {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\recovery-acceptance-final.xml",
+      "sha256": "7ad655721a887df02d49319db1b110e7526e88330ebb7069ad2a86e8877a6d57",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "3",
+          "skipped": "0",
+          "tests": "41",
+          "time": "30.388",
+          "timestamp": "2026-10-27T13:37:53.449719+05:30",
+          "hostname": "LAPTOP-I8MJR81P"
+        }
+      ],
+      "by_source": {
+        "FROZEN_22_ASSERTIONS_V2_SUBJECTS": {
+          "passed": 22,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "tests": 22
+        },
+        "tests\\test_graph_index_recovery.py": {
+          "passed": 16,
+          "failed": 3,
+          "errors": 0,
+          "skipped": 0,
+          "tests": 19
+        }
+      }
+    },
+    {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\recovery-acceptance-final2.xml",
+      "sha256": "0060915b79d88198f9edbd3aca08c0f7703975548c728bbda763f42e86188912",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "8",
+          "skipped": "0",
+          "tests": "69",
+          "time": "466.896",
+          "timestamp": "2026-10-27T13:57:53.416756+05:30",
+          "hostname": "LAPTOP-I8MJR81P"
+        }
+      ],
+      "by_source": {
+        "FROZEN_22_ASSERTIONS_V2_SUBJECTS": {
+          "passed": 22,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "tests": 22
+        },
+        "tests\\test_graph_index_recovery.py": {
+          "passed": 17,
+          "failed": 3,
+          "errors": 0,
+          "skipped": 0,
+          "tests": 20
+        },
+        "tests\\test_graph_pages.py": {
+          "passed": 2,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "tests": 2
+        },
+        "tests\\test_indexed_workspace_queries.py": {
+          "passed": 4,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "tests": 4
+        },
+        "tests\\test_workspace_pagination.py": {
+          "passed": 1,
+          "failed": 5,
+          "errors": 0,
+          "skipped": 0,
+          "tests": 6
+        },
+        "tests\\test_graph_impact.py": {
+          "passed": 8,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "tests": 8
+        },
+        "tests\\test_generations.py": {
+          "passed": 7,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "tests": 7
+        }
+      }
+    },
+    {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\recovery-acceptance.xml",
+      "sha256": "7df8e5bf8e458c0a473b45aed5b523c2b09c540d7cff4f7ebc9ed022fb3ee1a1",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "5",
+          "skipped": "0",
+          "tests": "41",
+          "time": "69.574",
+          "timestamp": "2026-10-27T13:35:14.822016+05:30",
+          "hostname": "LAPTOP-I8MJR81P"
+        }
+      ],
+      "by_source": {
+        "FROZEN_22_ASSERTIONS_V2_SUBJECTS": {
+          "passed": 22,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "tests": 22
+        },
+        "tests\\test_graph_index_recovery.py": {
+          "passed": 14,
+          "failed": 5,
+          "errors": 0,
+          "skipped": 0,
+          "tests": 19
+        }
+      }
+    },
+    {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\repaired-contract-corrected.xml",
+      "sha256": "01f3a268132206efc4db2b57ded6b607fb951cf3d293fa2015f07bf6710756be",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "1",
+          "skipped": "0",
+          "tests": "34",
+          "time": "131.882",
+          "timestamp": "2026-10-27T13:20:35.716978+05:30",
+          "hostname": "LAPTOP-I8MJR81P"
+        }
+      ],
+      "by_source": {
+        "FROZEN_22_ASSERTIONS_V2_SUBJECTS": {
+          "passed": 22,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "tests": 22
+        },
+        "tests\\test_graph_index_recovery.py": {
+          "passed": 11,
+          "failed": 1,
+          "errors": 0,
+          "skipped": 0,
+          "tests": 12
+        }
+      }
+    },
+    {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\repaired-contract-validated.xml",
+      "sha256": "87c1f4077d568d535cc693e16a10af605217dd7e9f73fdd8c994fd9fcdd8369c",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "2",
+          "skipped": "0",
+          "tests": "38",
+          "time": "98.414",
+          "timestamp": "2026-10-27T13:32:14.917895+05:30",
+          "hostname": "LAPTOP-I8MJR81P"
+        }
+      ],
+      "by_source": {
+        "FROZEN_22_ASSERTIONS_V2_SUBJECTS": {
+          "passed": 22,
+          "failed": 0,
+          "errors": 0,
+          "skipped": 0,
+          "tests": 22
+        },
+        "tests\\test_graph_index_recovery.py": {
+          "passed": 14,
+          "failed": 2,
+          "errors": 0,
+          "skipped": 0,
+          "tests": 16
+        }
+      }
+    },
+    {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\repaired-contract.xml",
+      "sha256": "c3fdf37d7840ab7479b9ddcf791bff381b67d7db9fb5747bdff1d35b02655192",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "1",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "1",
+          "time": "1.771",
+          "timestamp": "2026-10-27T13:18:49.757984+05:30",
+          "hostname": "LAPTOP-I8MJR81P"
+        }
+      ],
+      "by_source": {
+        "pytest": {
+          "passed": 0,
+          "failed": 0,
+          "errors": 1,
+          "skipped": 0,
+          "tests": 1
+        }
+      }
+    }
+  ],
+  "static_checks": {
+    "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\static-checks.json",
+    "sha256": "e1c6a714bd68ddbb1137fcdef4c8030d197ae89e23527a99085cd85540051de2",
+    "receipt": [
+      {
+        "command": [
+          "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+          "-m",
+          "ruff",
+          "check",
+          "backend",
+          "analyzers",
+          "tests",
+          "scripts",
+          "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\check_statistics.py",
+          "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\compare_outputs.py",
+          "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\final_checks.py",
+          "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\package_recovery_evidence.py",
+          "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\resume_probes.py",
+          "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\run_compatibility.py",
+          "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\run_probes.py"
+        ],
+        "exit_code": 0,
+        "stdout": "All checks passed!\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+          "-m",
+          "ruff",
+          "format",
+          "--check",
+          "C:\\Users\\sai krishna\\Projects\\ProjectTrace-local\\tests\\graph_index_recovery.py",
+          "C:\\Users\\sai krishna\\Projects\\ProjectTrace-local\\tests\\graph_index_recovery_plugin.py",
+          "C:\\Users\\sai krishna\\Projects\\ProjectTrace-local\\tests\\graph_index_recovery_probe.py",
+          "C:\\Users\\sai krishna\\Projects\\ProjectTrace-local\\tests\\test_graph_index_recovery.py",
+          "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\check_statistics.py",
+          "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\compare_outputs.py",
+          "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\final_checks.py",
+          "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\package_recovery_evidence.py",
+          "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\resume_probes.py",
+          "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\run_compatibility.py",
+          "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\run_probes.py"
+        ],
+        "exit_code": 0,
+        "stdout": "11 files already formatted\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+          "-m",
+          "compileall",
+          "-q",
+          "backend",
+          "analyzers",
+          "tests",
+          "scripts",
+          "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\check_statistics.py",
+          "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\compare_outputs.py",
+          "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\final_checks.py",
+          "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\package_recovery_evidence.py",
+          "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\resume_probes.py",
+          "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\run_compatibility.py",
+          "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-recovery-20261027\\run_probes.py"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    ]
+  },
+  "new_prototype_source_sha256": {
+    "tests\\graph_index_recovery.py": "18203b6df4f60ecbaa48d85962c1f3307f70b4d9c21571e08726c5c5e37441f1",
+    "tests\\graph_index_recovery_plugin.py": "e24d53573d831eeae429e58c4ccbf0604815cd3bc77c41a17b7122558172e27b",
+    "tests\\graph_index_recovery_probe.py": "d782684a91274db101ccf03b0895a898bb4a70c282770e07edca2115dffc4b6e",
+    "tests\\test_graph_index_recovery.py": "ff588653be46c4632bf29d610889343cfed4103a93fa337be5d641d5b4664298"
+  },
+  "raw_archive": {
+    "path": "docs\\evidence\\SCALE001_GRAPH_INDEX_RECOVERY_RAW.json.gz",
+    "bytes": 1187951,
+    "sha256": "c46c0dce40d8c83747048865de4e2d12f4b02d2175846eda8527e7b150bdc838"
+  },
+  "remaining_gates": [
+    "Any final acceptance failures remain release blockers even when the original 22 assertions pass.",
+    "SQLite rowid/BINARY/index-traversal ordering is not a general portable query-ordering contract.",
+    "Exact per-index byte attribution is blocked by the linked SQLite build lacking dbstat.",
+    "Windows owned fixture results do not qualify Linux process-tree cgroup memory, zero swap or parser isolation.",
+    "Full pinned cold/warm/incremental, cancellation, exhaustion, recovery, duplicate delivery and isolation acceptance remain NOT_RUN.",
+    "50k final snapshot sanitizer shape, whole-snapshot materialization and downgrade/expiry remain separate unresolved tasks.",
+    "No production migration, reverse migration, commit, push, PR change or remote workflow is authorized."
+  ]
+}

@@ -34,6 +34,11 @@ def digest(value):
     return hashlib.sha256(value).hexdigest()
 
 
+def _set_item_key(value):
+    """Return a stable JSON key for ordering unordered generation values."""
+    return json.dumps(value, default=encoded, ensure_ascii=True, separators=(",", ":"), sort_keys=True)
+
+
 def encoded(value):
     # Context contains JSON values or explicit references, never Python objects
     # supplied by repository source. No pickle or executable deserialization.
@@ -42,8 +47,10 @@ def encoded(value):
     from backend.publication_state import FindingRecords
     if isinstance(value, FindingRecords):
         return {"$finding_records": value.snapshots()}
-    if isinstance(value, (set, tuple)):
-        return {"$set" if isinstance(value, set) else "$tuple": list(value)}
+    if isinstance(value, set):
+        return {"$set": sorted(value, key=_set_item_key)}
+    if isinstance(value, tuple):
+        return {"$tuple": list(value)}
     raise TypeError("Unsupported generation context type: " + type(value).__name__)
 
 
@@ -192,6 +199,20 @@ class Generation:
         self.batch()
 
     def save(self, stage, state):
+        from backend.generation_context import Writer
+        if stage != self.stage:
+            raise ValueError("Generation stage does not match its active context.")
+        if self.db.get(GenerationReceipt, (self.row.id, stage)):
+            raise ValueError("Completed generation receipt is immutable.")
+        dependencies = self.dependencies(stage)
+        self.batch()
+        if stage == "SNAPSHOT":
+            self.row.snapshot_id = state["snapshot"].id
+            self.batch()
+        Writer(self, dependencies).save(state)
+
+    def _save_legacy(self, stage, state):
+        """Historical codec retained for compatibility fixtures, never new jobs."""
         if self.db.get(GenerationReceipt, (self.row.id, stage)):
             raise ValueError("Completed generation receipt is immutable.")
         dependency_digest = self.dependencies(stage)
@@ -256,6 +277,15 @@ class Generation:
             return None
         if receipt.dependency_digest != self.dependencies(stage):
             raise ValueError("Generation dependency digest is invalid.")
+        if (receipt.organization_id, receipt.repository_id) != (self.row.organization_id, self.row.repository_id):
+            raise ValueError("Generation receipt scope is invalid.")
+        if receipt.format_version == 2:
+            from backend.generation_context import Reader
+            result = Reader(self, receipt).load()
+            self.reused += 1
+            return result
+        if receipt.format_version != 1:
+            raise ValueError("Generation receipt version is invalid.")
 
         def decode(value):
             if set(value) == {"$finding_records"}:
@@ -291,8 +321,21 @@ class Generation:
                 GenerationRecord.generation_id == self.row.id, GenerationRecord.stage == stage))
             if actual != receipt.record_count:
                 raise ValueError("Generation receipt record count is invalid.")
-            for _ in self.read_chunks(receipt):
-                pass
+            if receipt.format_version == 2:
+                from backend.generation_context import Reader
+                # Receipt replay never recreates repository-wide ORM/context
+                # state merely to authenticate it before publication.
+                active_stage = self.stage
+                self.stage = stage
+                try:
+                    Reader(self, receipt, validate_only=True).load()
+                finally:
+                    self.stage = active_stage
+            elif receipt.format_version == 1:
+                for _ in self.read_chunks(receipt):
+                    pass
+            else:
+                raise ValueError("Generation receipt version is invalid.")
             self.fence()
             self.db.commit()
         previous_stage, previous_ordinal, count, snapshots, validation = "", 0, 0, [], hashlib.sha256()
@@ -429,25 +472,40 @@ def clear(db):
                 db.expunge(row)
 
 
-def purge_expired_chunks(db, *, limit=250):
+def purge_expired_chunks(db, *, limit=250, _guard=None):
     """Retain every snapshot/graph/receipt; expire only private context chunks.
 
     An active worker owns its input retention window. Maintenance never removes
     its recovery context. Expired unfinished generations remain hidden forever.
     """
-    from sqlalchemy import exists
+    from sqlalchemy import delete, tuple_
 
-    from backend.db import QueueEntry
-    active = exists(select(QueueEntry.job_id).where(QueueEntry.job_id == AnalysisGeneration.job_id,
-                    QueueEntry.state == "RUNNING", QueueEntry.lease_expires_at > now()))
-    eligible = select(AnalysisGeneration.id).where(AnalysisGeneration.expires_at <= now(), ~active)
-    count = 0
-    for chunk in db.scalars(select(GenerationChunk).where(GenerationChunk.generation_id.in_(eligible))
-                           .order_by(GenerationChunk.generation_id, GenerationChunk.stage, GenerationChunk.ordinal)
-                           .limit(limit)):
-        db.delete(chunk)
-        count += 1
-    for row in db.scalars(select(AnalysisGeneration).where(AnalysisGeneration.id.in_(eligible),
+    from backend.generation_models import GenerationContextPart
+    from backend.retention import ExpiryGuard
+    if type(limit) is not int or limit < 0:
+        raise ValueError("Generation expiry batch limit must be a nonnegative integer.")
+    if not limit:
+        return 0
+    guard = _guard or ExpiryGuard(db, now())
+    expired = (AnalysisGeneration.expires_at <= guard.instant, ~guard.active(AnalysisGeneration))
+
+    def reclaim(model, keys, maximum):
+        if maximum <= 0:
+            return 0
+        # Keep ciphertext out of the maintenance working set.
+        rows = db.execute(select(*keys, AnalysisGeneration.job_id, AnalysisGeneration.organization_id,
+            AnalysisGeneration.repository_id).join(AnalysisGeneration, model.generation_id == AnalysisGeneration.id)
+            .where(*expired).order_by(*keys).limit(maximum)).all()
+        selected = [tuple(row[:-3]) for row in rows if guard.allows(*row[-3:])]
+        if not selected:
+            return 0
+        return db.execute(delete(model).where(tuple_(*keys).in_(selected))).rowcount
+
+    count = reclaim(GenerationChunk, (GenerationChunk.generation_id, GenerationChunk.stage, GenerationChunk.ordinal), limit)
+    count += reclaim(GenerationContextPart, (GenerationContextPart.generation_id, GenerationContextPart.stage,
+        GenerationContextPart.attempt, GenerationContextPart.collection, GenerationContextPart.ordinal), limit - count)
+    for row in db.scalars(select(AnalysisGeneration).where(*expired,
                          AnalysisGeneration.state.in_(["STAGING", "VALIDATED"])).limit(limit)):
-        row.state = "ABANDONED"
+        if guard.allows(row.job_id, row.organization_id, row.repository_id):
+            row.state = "ABANDONED"
     return count

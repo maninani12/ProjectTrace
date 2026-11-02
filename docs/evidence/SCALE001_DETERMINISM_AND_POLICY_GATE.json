@@ -1,0 +1,291 @@
+{
+  "schema": "projecttrace-scale001-determinism-policy-gate-v1",
+  "date": "2026-10-29",
+  "repository": "C:\\Users\\sai krishna\\Projects\\ProjectTrace-local",
+  "observed_repository": {
+    "branch": "codex/scale-001-local-continuation",
+    "head": "9e21509591bfa5457cc829ebd5637f95be68d573",
+    "expected_head_match": true,
+    "entry_worktree_preserved": true,
+    "tracked_diff_stat_at_end": "10 modified tracked files; 296 insertions, 88 deletions",
+    "entry_preexisting_work_preserved": true,
+    "no_destructive_git_operations": true
+  },
+  "baseline_artifact_hashes": {
+    "aggregate_report": {
+      "path": "docs/SCALE001_AGGREGATE_GUARD_INVESTIGATION.md",
+      "expected_sha256": "bc9a98b7249ec27cdcb5b58c64a9be18d4294996070c67537f43f8e64f942e5a",
+      "current_sha256": "bc9a98b7249ec27cdcb5b58c64a9be18d4294996070c67537f43f8e64f942e5a",
+      "matches": true
+    },
+    "aggregate_evidence": {
+      "path": "docs/evidence/SCALE001_AGGREGATE_GUARD_INVESTIGATION.json",
+      "expected_sha256": "e63f22214bf1b1b146a4930b93fb0595e03478b33b9aab6e7a11e2ca7264e64b",
+      "current_sha256": "e63f22214bf1b1b146a4930b93fb0595e03478b33b9aab6e7a11e2ca7264e64b",
+      "matches": true
+    },
+    "adr_0007": {
+      "path": "docs/adr/0007-bounded-published-snapshot-segments.md",
+      "expected_sha256": "d38f27bf16882d7095b03407966d5479bc8fb8c100e9fa684b33354f414ac45a",
+      "current_sha256": "d38f27bf16882d7095b03407966d5479bc8fb8c100e9fa684b33354f414ac45a",
+      "matches": true
+    }
+  },
+  "original_databases": {
+    "10000": {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\p74\\test_owned_final_snapshot_prof1\\owned\\benchmark.db",
+      "baseline_sha256": "465441f1dfd2c7d6ca3d7427c79dd55e57c350bee451b60a66b8e0e92f5a1d1b",
+      "current_sha256": "465441f1dfd2c7d6ca3d7427c79dd55e57c350bee451b60a66b8e0e92f5a1d1b",
+      "matches": true
+    },
+    "147": {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\p74\\test_owned_final_snapshot_prof0\\owned\\benchmark.db",
+      "baseline_sha256": "97aeda34f1cb1b1d67784926c2140c3c27063585ae135fbb39e22643edce94d6",
+      "current_sha256": "97aeda34f1cb1b1d67784926c2140c3c27063585ae135fbb39e22643edce94d6",
+      "matches": true
+    },
+    "30000": {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\p77\\test_owned_final_snapshot_prof0\\owned\\benchmark.db",
+      "baseline_sha256": "c7313fd66baa9e23ec5f5a7e9bdb8003554d086796c101be14f8d02d6ee5e9a4",
+      "current_sha256": "c7313fd66baa9e23ec5f5a7e9bdb8003554d086796c101be14f8d02d6ee5e9a4",
+      "matches": true
+    },
+    "prior": {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\vp-json-export-final\\benchmark.db",
+      "baseline_sha256": "14a15885488462c687ce2581807ea56ecb2145b98bc58d67f6e2aad3ba9a5627",
+      "current_sha256": "14a15885488462c687ce2581807ea56ecb2145b98bc58d67f6e2aad3ba9a5627",
+      "matches": true
+    }
+  },
+  "environment": {
+    "os": "Windows local",
+    "python": "3.14.3",
+    "pytest": "9.1.1",
+    "ruff": "0.16.10",
+    "venv": "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv",
+    "test_storage": "isolated scratch SQLite, source/blob directories, key and pytest basetemp under work/determinism-final",
+    "original_databases_used": false
+  },
+  "original_failures": {
+    "source": "docs/evidence/SCALE001_POLICY_DECISION_READINESS.json; historical full export/sanitizer run",
+    "original_suite": {
+      "tests": 118,
+      "passed": 116,
+      "failed": 2,
+      "skipped": 0
+    },
+    "failed_test_names": [
+      "test_typed_context_export_replay_mutations_and_snapshot_integrity[False]",
+      "test_typed_context_export_replay_mutations_and_snapshot_integrity[True]"
+    ],
+    "assertion": "assert serialized replay equals pre-save JSON text",
+    "expected_set_fragment": "\\\"$set\\\": [\\\"b\\\", \\\"a\\\"]",
+    "actual_set_fragment": "\\\"$set\\\": [\\\"a\\\", \\\"b\\\"]",
+    "historical_fixed_seed_rerun": {
+      "PYTHONHASHSEED": "0",
+      "tests": 2,
+      "passed": 2,
+      "failed": 0
+    },
+    "historical_record_preserved": true
+  },
+  "diagnosis": {
+    "root_cause": "backend.generations.encoded converted sets to lists using list(value), exposing hash-dependent set iteration as ordered JSON array order. Generation context correctly restores set membership, but its iteration order can differ at replay; both legacy and v2 receipt paths end at the same JSON default encoder.",
+    "classification": "production serialization nondeterminism for an unordered collection; externally visible JSON arrays and serialized text can vary despite equal set membership",
+    "contract_basis": "json export preserves mapping insertion order and stdlib spelling; set values have no defined insertion order. Existing deterministic-export/replay tests and output shape establish that set order must be stable while preserving mapping order. Canonicalizing set members only does not alter graph traversal, ordered mappings, tuple ordering, set membership, or sanitizer counts.",
+    "relevant_code": "backend/generations.py:encoded; Generation save/load in backend/generations.py; typed context regression in tests/test_json_export.py"
+  },
+  "change": {
+    "production_files": [
+      "backend/generations.py"
+    ],
+    "tests": [
+      "tests/test_json_export.py"
+    ],
+    "implementation": "Order generation set members by canonical compact JSON text with sorted keys, then emit the existing $set list shape. Tuple and mapping encodings are unchanged.",
+    "storage_schema_or_admission_changed": false,
+    "sanitizer_cap_changed": false,
+    "test_assertions_weakened": false
+  },
+  "test_runs": {
+    "targeted_hash_seed_matrix": {
+      "command": "python -m pytest -q --basetemp <isolated-base> tests/test_json_export.py -k 'typed_context_export_replay_mutations_and_snapshot_integrity or generation_set_encoding_is_deterministic' --junitxml <receipt>",
+      "unforced_default": {
+        "junit_xml": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\determinism-final\\default-final.xml",
+        "sha256": "e34ea3e86f87aba8c8d6d55d80d99fc8491f97bc5de4284efb143b3b713cca31",
+        "tests": 3,
+        "passed": 3,
+        "failed": 0,
+        "skipped": 0,
+        "duration_seconds": 6.84
+      },
+      "PYTHONHASHSEED": {
+        "0": {
+          "junit_xml": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\determinism-final\\seed-0-final.xml",
+          "sha256": "af0acd8b4c7b89ca3d9285e39dfc76a37f4651b3214921399c468ab559744817",
+          "tests": 3,
+          "passed": 3,
+          "failed": 0,
+          "skipped": 0,
+          "duration_seconds": 6.331
+        },
+        "1": {
+          "junit_xml": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\determinism-final\\seed-1-final.xml",
+          "sha256": "477ddf628fa5cbfacae84e7b7f571ecef26fe0084e4982027a4c702eb8e22ffe",
+          "tests": 3,
+          "passed": 3,
+          "failed": 0,
+          "skipped": 0,
+          "duration_seconds": 6.097
+        },
+        "2": {
+          "junit_xml": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\determinism-final\\seed-2-final.xml",
+          "sha256": "218ce739a48a1cc0682e6a65e5f5610e4e9bcf95439b63c5b67411b755bf0373",
+          "tests": 3,
+          "passed": 3,
+          "failed": 0,
+          "skipped": 0,
+          "duration_seconds": 5.731
+        },
+        "3": {
+          "junit_xml": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\determinism-final\\seed-3-final.xml",
+          "sha256": "6273cb328e3c517eb31c9b60bb77c1f04aad36c19055d20579887d17d6da540e",
+          "tests": 3,
+          "passed": 3,
+          "failed": 0,
+          "skipped": 0,
+          "duration_seconds": 5.863
+        },
+        "7": {
+          "junit_xml": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\determinism-final\\seed-7-final.xml",
+          "sha256": "626189cfd4291d8d7a7323cb66fc5d752dd4b78a416f0f07e8b7ec98e83bc50f",
+          "tests": 3,
+          "passed": 3,
+          "failed": 0,
+          "skipped": 0,
+          "duration_seconds": 6.064
+        },
+        "17": {
+          "junit_xml": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\determinism-final\\seed-17-final.xml",
+          "sha256": "84bad0731c38435f60cc51bd1bf4f66bb7e0c64820c6c025f691b676830c5226",
+          "tests": 3,
+          "passed": 3,
+          "failed": 0,
+          "skipped": 0,
+          "duration_seconds": 6.388
+        },
+        "42": {
+          "junit_xml": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\determinism-final\\seed-42-final.xml",
+          "sha256": "71cee205f6160d491df754d08049e412a73d801f0bd2d15a1437f01ee1f7d051",
+          "tests": 3,
+          "passed": 3,
+          "failed": 0,
+          "skipped": 0,
+          "duration_seconds": 6.102
+        }
+      },
+      "each_run_passed": true
+    },
+    "export_sanitizer": {
+      "command": "python -m pytest -q tests/test_json_export.py tests/test_sanitization_cache.py tests/test_sanitization_fast_path.py tests/test_lexical_boundary.py",
+      "receipt": {
+        "junit_xml": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\determinism-final\\export-sanitizer.xml",
+        "sha256": "2a5781f79b009c0173b661a6456c33b220873a8977546d8161eda0a05af0e1ca",
+        "tests": 119,
+        "passed": 119,
+        "failed": 0,
+        "skipped": 0,
+        "duration_seconds": 360.196
+      }
+    },
+    "snapshot_persistence": {
+      "command": "python -m pytest -q tests/test_repository_store.py -k 'snapshot_references or comparison_context_omits or job_link_is_captured or snapshot_job_link_rejects'",
+      "receipt": {
+        "junit_xml": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\determinism-final\\persistence.xml",
+        "sha256": "0d4cca77b1d20539529b2307f68014ee719bb68c516a309188906ee6fad9398a",
+        "tests": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "duration_seconds": 18.697
+      }
+    },
+    "generation_context_maps": {
+      "command": "python -m pytest -q tests/test_generations.py tests/test_generation_context.py tests/test_generation_maps.py",
+      "receipt": {
+        "junit_xml": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\determinism-final\\generation.xml",
+        "sha256": "841f5f38c618d2273107f26e1bd6e617d75eaefc62855207d2d830729ae6a95c",
+        "tests": 71,
+        "passed": 71,
+        "failed": 0,
+        "skipped": 0,
+        "duration_seconds": 889.298
+      }
+    },
+    "graph_security": {
+      "command": "python -m pytest -q tests/test_advisory_graph.py tests/test_graph_scalar_reading.py tests/test_graph_impact.py tests/test_graph_pages.py tests/test_graph_scalar_projection.py tests/test_graph_index_recovery.py tests/test_security_hardening.py",
+      "receipt": {
+        "junit_xml": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\determinism-final\\graph-security.xml",
+        "sha256": "a20381812f7960cff053bc6e8f540c530a509f5e72fa0582c9e155fea629e2f7",
+        "tests": 92,
+        "passed": 22,
+        "failed": 0,
+        "skipped": 70,
+        "duration_seconds": 100.075
+      },
+      "skip_reason": "The repository's explicit disposable-ownership markers skipped those cases; no skip was introduced for this task."
+    },
+    "full_repository_suite": "NOT RUN"
+  },
+  "static_checks": {
+    "ruff": {
+      "command": "ruff check backend analyzers integrations workers tests scripts",
+      "exit_code": 0,
+      "result": "All checks passed!"
+    },
+    "compileall": {
+      "command": "python -m compileall -q backend analyzers integrations workers scripts tests integration_tests",
+      "exit_code": 0,
+      "result": "passed"
+    },
+    "git_diff_check": {
+      "command": "git diff --check",
+      "exit_code": 0,
+      "result": "passed"
+    },
+    "json_parse": {
+      "result": "passed using Python 3.14 stdlib json parser",
+      "exit_code": 0
+    }
+  },
+  "scale_policy": {
+    "aggregate_sanitizer_cap_nodes": 1000000,
+    "observed_50k_logical_nodes": 1115947,
+    "excess_nodes": 115947,
+    "observed_50k_attempt": "Rejected after 451.57 seconds at final sanitization; sampled peak RSS 303468544 bytes; 42856474 serialized bytes; depth 6; longest string 229; metric spill 51820828 bytes; zero published pointers; generation STAGING; job FAILED; SQL snapshot persistence, Generation.validate, and BASE/HEAD comparison not reached.",
+    "page_local_counter_reset_acceptable": false,
+    "recommendation": "OPTION_A",
+    "approval_state": "PENDING_PRODUCT_OWNER_APPROVAL",
+    "approval_search": "Searched current policy readiness report, ADR 0007, progress record, release gates, and relevant docs/evidence. No explicit product-owner approval for Option A found. ADR 0007 says its page-local proposal remains proposed and not approved.",
+    "proposal_path": "docs/SCALE001_SUPPORTED_INPUT_BOUNDARY_PROPOSAL.md",
+    "proposal_sha256": "a4602efd9d91e0668ea4b274e599d8524405dc32b8adf6d8869b4cb38b7bdb2a",
+    "official_support_claims_or_release_gates_changed": false
+  },
+  "remaining_qualification_gates": [
+    "Product owner must explicitly decide the supported-input policy.",
+    "No successful complete 50k persistence, Generation.validate, or BASE/HEAD comparison measurement exists.",
+    "Resource bounds and memory ceilings for the proposed target remain unestablished.",
+    "Required PostgreSQL, distributed/broker recovery, concurrency and tenant-isolation evidence remains outside this task.",
+    "SCALE-001 remains NOT QUALIFIED; Commercial V1 remains DEVELOPMENT IN PROGRESS."
+  ],
+  "new_file_sha256": {
+    "docs/SCALE001_SUPPORTED_INPUT_BOUNDARY_PROPOSAL.md": "a4602efd9d91e0668ea4b274e599d8524405dc32b8adf6d8869b4cb38b7bdb2a",
+    "PROJECTTRACE_PROGRESS.md": "be1b866ff2143476301c81a30919f40f5f2c1ca2b753dcaf7a41ad92c8d03389",
+    "backend/generations.py": "9be789e551064d085c95f50b1b1273994db5b6f4f2fce5689c9ed1546a9d4594",
+    "tests/test_json_export.py": "7a40d3dc7858407528c6895d2c04be79b9c2e8821981290ed66a40be5ea1d89a"
+  },
+  "status": {
+    "scale001": "NOT QUALIFIED",
+    "commercial_v1": "DEVELOPMENT IN PROGRESS"
+  }
+}

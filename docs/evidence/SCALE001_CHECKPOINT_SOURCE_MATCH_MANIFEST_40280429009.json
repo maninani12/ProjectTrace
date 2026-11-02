@@ -1,0 +1,512 @@
+{
+  "schema": "projecttrace-scale001-source-match-manifest-v1",
+  "assessment_date": "2026-10-29",
+  "target_run": {
+    "repository": "maninani12/ProjectTrace",
+    "run_id": 40280429009,
+    "status": "completed",
+    "conclusion": "failure",
+    "event": "push",
+    "branch": "codex/scale-001-local-continuation",
+    "head_sha": "9e21509591bfa5457cc829ebd5637f95be68d573",
+    "candidate_job_id": 121432289978,
+    "baseline_job_id": 121432290767,
+    "candidate_artifact_id": 12633028505,
+    "baseline_artifact_id": 12631224908,
+    "candidate_artifact_zip_sha256_prior_receipt": "3b61c5dd4cfe863f82241c99fc648db06f50b30b1e6f5e0c810090c8ab4ae411",
+    "baseline_artifact_zip_sha256_prior_receipt": "b66221363c7cca3608eed5c81420e4ff7929758f4f40a64c12bb67b2e8ce5df5"
+  },
+  "identity_checks": [
+    {
+      "identity": "github_actions_projecttrace_commit",
+      "status": "VERIFIED_MATCH",
+      "observed": "9e21509591bfa5457cc829ebd5637f95be68d573",
+      "evidence": "Run metadata head SHA, branch and job checkout."
+    },
+    {
+      "identity": "published_projecttrace_tree",
+      "status": "VERIFIED_MATCH",
+      "observed": "1b427f16a38110944e27e96c1466e7ed1faf11e1",
+      "evidence": "Immutable tree for the run head commit."
+    },
+    {
+      "identity": "current_dirty_worktree_equals_tested_tree",
+      "status": "VERIFIED_MISMATCH",
+      "observed": "Current checkpoint and downstream files are modified from HEAD.",
+      "evidence": "git status and current versus HEAD file hashes; run was published HEAD only."
+    },
+    {
+      "identity": "historical_v1_checkpoint_source",
+      "status": "VERIFIED_MATCH",
+      "observed": {
+        "backend/analysis_checkpoints.py": "52d6bf8ac730a25103c0d9b727319d5671a505141e662f2ba6f2806578bafdaf",
+        "schema": "projecttrace-analysis-checkpoint-v1"
+      },
+      "evidence": "Historical v1 source in the tested HEAD."
+    },
+    {
+      "identity": "input_repository_commit",
+      "status": "VERIFIED_MATCH",
+      "observed": "b1fab2bc21c63335dead4daaaa28194c9878e9bf",
+      "evidence": "Workflow codeload URL and candidate/baseline qualification receipts identify the same commit."
+    },
+    {
+      "identity": "run_archive_sha256_and_size",
+      "status": "VERIFIED_MATCH",
+      "observed": {
+        "sha256": "95747f22ebf3d01232b1592551bc2bc1866b9bbe7322dd3bf1a97028b0592257",
+        "bytes": 158981993,
+        "hash_check_step": "passed"
+      },
+      "evidence": "Workflow download step and both qualification receipts."
+    },
+    {
+      "identity": "archive_zip_retained_for_local_replay",
+      "status": "NOT_AVAILABLE",
+      "observed": "No source ZIP in either downloaded artifact.",
+      "evidence": "Artifact entry inventory; only receipts, manifest and resource samples were retained."
+    },
+    {
+      "identity": "run_inventory_manifest",
+      "status": "VERIFIED_MATCH",
+      "observed": {
+        "candidate_sha256": "081071ce099d103270175ab53ef12842586d7b0f1ee0c58dadbc3654a2246a89",
+        "baseline_sha256": "081071ce099d103270175ab53ef12842586d7b0f1ee0c58dadbc3654a2246a89",
+        "rows": 21636,
+        "expanded_bytes": 330420155
+      },
+      "evidence": "Downloaded candidate/baseline manifest raw hashes equal recorded qualification values and each other."
+    },
+    {
+      "identity": "run_archive_equals_prior_historical_archive",
+      "status": "VERIFIED_MISMATCH",
+      "observed": {
+        "run_sha256": "95747f22ebf3d01232b1592551bc2bc1866b9bbe7322dd3bf1a97028b0592257",
+        "prior_historical_sha256": "027615f80245c4534f4af0270951ad7dc0418928440c5332522b46103ddfa914",
+        "historical_input_reproduced": false
+      },
+      "evidence": "Qualification receipts; run used pinned authorized replacement commit."
+    },
+    {
+      "identity": "analyzer_parser_versions_and_signatures",
+      "status": "NOT_AVAILABLE",
+      "observed": "No analyzer/parser signature or version fields in downloaded qualification or job logs.",
+      "evidence": "Receipt schema/key review and sanitized log keyword scan."
+    },
+    {
+      "identity": "effective_quality_configuration_profile_lineage",
+      "status": "NOT_AVAILABLE",
+      "observed": "No profile identifier, configuration digest or profile lineage in retained run artifacts.",
+      "evidence": "Downloaded qualification key review."
+    },
+    {
+      "identity": "python_runtime",
+      "status": "VERIFIED_MATCH",
+      "observed": "3.14.9 (main, Oct 21 2026, 22:25:42) [GCC 14.2.0]",
+      "evidence": "Candidate and baseline qualification receipts."
+    },
+    {
+      "identity": "docker_kernel_cgroup_limits",
+      "status": "VERIFIED_MATCH",
+      "observed": {
+        "docker": "29.4.2",
+        "kernel": "7.0.0-1017-azure",
+        "memory_max": 768000000,
+        "swap_max": 0,
+        "candidate_oom_killed": false
+      },
+      "evidence": "Candidate container envelope and qualification receipt."
+    },
+    {
+      "identity": "python_base_image_digest",
+      "status": "NOT_AVAILABLE",
+      "observed": "A prior local normalized receipt records a base digest, but the downloaded GitHub candidate artifact does not carry it; not independently attributable here.",
+      "evidence": "Downloaded artifact field review compared with prior normalized receipt."
+    },
+    {
+      "identity": "requirements_lock_bytes_used_by_runner",
+      "status": "NOT_AVAILABLE",
+      "observed": "Run artifacts omit the digest. The prior normalized value matches Windows CRLF bytes, not the Linux checkout bytes, so it is not used as run identity.",
+      "evidence": "Raw qualification key review; Windows worktree and HEAD blob hashes; core.autocrlf=true."
+    },
+    {
+      "identity": "apt_snapshot_identity",
+      "status": "VERIFIED_MISMATCH",
+      "observed": "The run used an unpinned apt snapshot; apt_snapshot_pinned=false in the normalized sanitized receipt and HEAD Dockerfile calls apt-get update without a dated repository snapshot.",
+      "evidence": "HEAD infrastructure/Dockerfile and existing sanitized environment receipt."
+    },
+    {
+      "identity": "final_application_image_digest",
+      "status": "NOT_AVAILABLE",
+      "observed": "No final image digest is retained in the downloaded run artifacts.",
+      "evidence": "Qualification/container artifact fields and existing sanitized environment receipt."
+    },
+    {
+      "identity": "exact_failed_checkpoint_result_object",
+      "status": "NOT_AVAILABLE",
+      "observed": "safe_budget_diagnostic.actual is null; no result/checkpoint object is in retained artifacts.",
+      "evidence": "Candidate qualification, post-exit integrity receipt, downloaded artifact inventory."
+    },
+    {
+      "identity": "failed_run_database_or_checkpoint_ciphertext",
+      "status": "NOT_AVAILABLE",
+      "observed": "No database/checkpoint file in artifact; workflow allowlist excludes DB, source and keys.",
+      "evidence": "Workflow artifact allowlist and artifact inventory."
+    },
+    {
+      "identity": "local_approved_linux_cgroup_environment",
+      "status": "NOT_AVAILABLE",
+      "observed": "Docker Desktop Linux engine unavailable; no reproduction run was launched.",
+      "evidence": "Prior local docker info exit 1; environment unavailable."
+    }
+  ],
+  "input": {
+    "repository": "OpenMetadata",
+    "commit": "b1fab2bc21c63335dead4daaaa28194c9878e9bf",
+    "archive_sha256": "95747f22ebf3d01232b1592551bc2bc1866b9bbe7322dd3bf1a97028b0592257",
+    "archive_bytes": 158981993,
+    "historical_archive_sha256": "027615f80245c4534f4af0270951ad7dc0418928440c5332522b46103ddfa914",
+    "historical_input_reproduced": false,
+    "candidate_manifest_sha256": "081071ce099d103270175ab53ef12842586d7b0f1ee0c58dadbc3654a2246a89",
+    "baseline_manifest_sha256": "081071ce099d103270175ab53ef12842586d7b0f1ee0c58dadbc3654a2246a89",
+    "manifest_rows": 21636,
+    "expanded_bytes": 330420155
+  },
+  "result_availability": {
+    "result_object_available": false,
+    "checkpoint_database_available": false,
+    "ciphertext_available": false,
+    "v1_exact_raw_json_bytes": null,
+    "receipt_actual": null,
+    "limit_bytes": 64000000,
+    "status": "NOT_AVAILABLE",
+    "complete": false,
+    "reason": "The workflow retained only sanitized receipts, inventory, operation/resource samples, container envelope and post-exit integrity; exact result is absent."
+  },
+  "source_state": {
+    "published_head_tree": "1b427f16a38110944e27e96c1466e7ed1faf11e1",
+    "published_head_file_sha256": {
+      ".github/workflows/scale-qualification.yml": "b1335443de5ed4eb11b2ac7d95cb562df8f7429a3e2836b1afff46a613dbf68e",
+      "infrastructure/Dockerfile": "a6d027f2329d64a484c5290db4c75b078be86d0a6b89607712e62c5fe65fc78e",
+      "backend/analysis_checkpoints.py": "52d6bf8ac730a25103c0d9b727319d5671a505141e662f2ba6f2806578bafdaf",
+      "backend/jobs.py": "bae3b8556ceabffc20d2028856cd08954cf7c1be4fb450f356365cf864456abe",
+      "backend/domain.py": "299f270f63de35a6d445eb59287811a62900925833240498bab3d4673838d697",
+      "backend/generations.py": "c24f326d708e3414f0de8942b7f06d3fe7df46f4fc82d7073cca7b08f71919bc",
+      "backend/generation_models.py": "d52799edfbad783cd855f8a5bb6d48f5f3825d7ba7a006248b303fa9c477adba",
+      "backend/db.py": "3689e096dd0aaaa069a587d5bd5c6a3985b3bdf237020b7fd383f099fda5b63d"
+    },
+    "current_dirty_worktree_file_sha256": {
+      "backend/analysis_checkpoints.py": "7bed5a0360c4b1fe9ab1b16091c4f5370380958ffa4afe028a9a0b813f799000",
+      "backend/checkpoint_pages.py": "e433aac19c4c592cd6513013d8a3c2984b3e93afe7f4a321084daf4f089f7562",
+      "backend/jobs.py": "3b267014a0caf42743ee4c554732e05a713b6d155f7f2ab7e8f59c49424a0da0",
+      "backend/domain.py": "7d319405487b4b148b53249ea564967e18e8b7633b001ffaaa13ffb8b9c02dd2",
+      "backend/generations.py": "9be789e551064d085c95f50b1b1273994db5b6f4f2fce5689c9ed1546a9d4594",
+      "backend/generation_models.py": "00cb29396e66f5ce50afef9e1f2a6886f54352006b6a216f737cfe1723508fa2",
+      "backend/db.py": "947ed5a72f5a5c020afecf9526f9e0a1c048c4f26ceacff4acd109e6e6d767e2"
+    },
+    "current_dirty_candidate_tested_by_run": false,
+    "requirements_lock_comparison": {
+      "prior_local_receipt_value": "0331753af6ba66329bbb3e218c94da7e0634b8013b91d83ecbcb5f27c5b95aa",
+      "current_windows_worktree_sha256": "0331753af6ba66329bbb3e218c94da7e0634b8013b91d83ecbcb5f27c5b95aa",
+      "head_checkout_bytes_sha256": "75fad9768e1525acba2c3c898e9955e0cf01d089618f1346c9d56d7253e2762a",
+      "head_git_object_id": "110d51584e0997d9c4021d17d90c5ba6c608accd",
+      "core_autocrlf": true,
+      "interpretation": "The prior receipt value is the Windows CRLF byte hash, not independently verified as the GitHub runner lock hash. The HEAD source file content is unchanged under normal Git line-ending conversion; exact bytes used inside the runner are not recorded."
+    },
+    "base_image_digest_prior_normalized_receipt": "sha256:35caba83af2fe6da9a5d922f9b0156f21d1246a48278c58a08bd253303ba42e8",
+    "base_image_digest_artifact_status": "NOT_AVAILABLE in downloaded raw qualification artifact"
+  },
+  "downloaded_artifacts": {
+    "staging": "External disposable directory outside repository.",
+    "file_hashes": {
+      "candidate/manifest/qualification.json": {
+        "sha256": "9d94966df1ddadecb21a2f4ad2b599e0a3955af47d4845916d490419152b27d2",
+        "bytes": 7715
+      },
+      "candidate/candidate/qualification.json": {
+        "sha256": "8bbe005869b6138bc72fe9fb6594d958dd3ac9c22fbf99d46940d47fe8980cdd",
+        "bytes": 13410
+      },
+      "candidate/manifest/manifest.jsonl": {
+        "sha256": "081071ce099d103270175ab53ef12842586d7b0f1ee0c58dadbc3654a2246a89",
+        "bytes": 5544023
+      },
+      "candidate/candidate/post-exit-integrity.json": {
+        "sha256": "f07b74f9a60e63f369bbcc86d7eb6110a7cd1275495a9141c8f83b6729469c92",
+        "bytes": 4819
+      },
+      "candidate/candidate/container-envelope.json": {
+        "sha256": "59c14a221e309642bf4cd99e204ed6e24931216910b0e2db1fd850f3d2ef07cc",
+        "bytes": 5013
+      },
+      "candidate/candidate/operation-memory.jsonl": {
+        "sha256": "8fbf8b8742bfe69af734e59536650f90097403fd87aff9d4eb7a0ff5a0944271",
+        "bytes": 129222
+      },
+      "baseline/manifest/qualification.json": {
+        "sha256": "e88cc763ea773855dbbc007be27e66eab48767be470749dca47b6c4dbd4a16fc",
+        "bytes": 7720
+      },
+      "baseline/manifest/manifest.jsonl": {
+        "sha256": "081071ce099d103270175ab53ef12842586d7b0f1ee0c58dadbc3654a2246a89",
+        "bytes": 5544023
+      },
+      "job-logs/candidate.log": {
+        "sha256": "777c18e84e37ed6a9fa29f024b497100554332339407d32c69d1180a71f15bff",
+        "bytes": 104810
+      },
+      "job-logs/baseline.log": {
+        "sha256": "16bf42bd993b0f51960dc852465a41a6de617d43d7addfe819524db3793520c3",
+        "bytes": 110790
+      }
+    },
+    "candidate_baseline_inventory_equal": true,
+    "source_zip_present": false,
+    "database_or_checkpoint_present": false,
+    "result_object_present": false
+  },
+  "historical_failure": {
+    "stage": "VERIFYING",
+    "failure": "GLOBAL_CHECKPOINT_BUDGET",
+    "candidate_oom_killed": false,
+    "cgroup_peak_bytes": 768000000,
+    "swap_max_bytes": 0,
+    "checkpoint_actual_bytes": null,
+    "published_generations": 0,
+    "published_pointers": 0
+  },
+  "current_checkout": {
+    "root": "C:/Users/sai krishna/Projects/ProjectTrace-local",
+    "branch": "codex/scale-001-local-continuation",
+    "head": "9e21509591bfa5457cc829ebd5637f95be68d573",
+    "status_porcelain": [
+      " M backend/analysis_checkpoints.py",
+      " M backend/db.py",
+      " M backend/domain.py",
+      " M backend/generation_models.py",
+      " M backend/generations.py",
+      " M backend/jobs.py",
+      " M backend/publication_units.py",
+      " M backend/quality_api.py",
+      " M backend/queue.py",
+      " M tests/test_migrations.py",
+      " M tests/test_parser_sandbox.py",
+      "?? PROJECTTRACE_PROGRESS.md",
+      "?? backend/checkpoint_pages.py",
+      "?? backend/context_json.py",
+      "?? backend/context_maps.py",
+      "?? backend/generation_context.py",
+      "?? backend/json_export.py",
+      "?? backend/migrations/versions/0026_checkpoint_parts.py",
+      "?? backend/retention.py",
+      "?? docs/CHECKPOINT_RETENTION_AND_ROLLBACK.md",
+      "?? docs/COMMERCIAL_V1_RELEASE_GATES.md",
+      "?? docs/PROJECTTRACE_POST_SERIALIZATION_REGRESSION_REPORT.md",
+      "?? docs/SCALE001_AGGREGATE_GUARD_INVESTIGATION.md",
+      "?? docs/SCALE001_CHECKPOINT_ARCHITECTURE.md",
+      "?? docs/SCALE001_CHECKPOINT_FIELD_ATTRIBUTION.md",
+      "?? docs/SCALE001_GENERATION_MAPS_LOCAL_TECHNICAL_REPORT.md",
+      "?? docs/SCALE001_GRAPH_ORDERING_CONTRACT.md",
+      "?? docs/SCALE001_INTEGRATED_QUALIFICATION_GATE.md",
+      "?? docs/SCALE001_POLICY_DECISION_READINESS.md",
+      "?? docs/SCALE001_SUPPORTED_INPUT_BOUNDARY_PROPOSAL.md",
+      "?? docs/adr/0007-bounded-published-snapshot-segments.md",
+      "?? docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29.json",
+      "?? docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_FINAL.json",
+      "?? docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_FINAL_RAW.tar.gz",
+      "?? docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_RAW.tar.gz",
+      "?? docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_REVIEWED.json",
+      "?? docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_REVIEWED_RAW.tar.gz",
+      "?? docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_REVIEWED_V2.json",
+      "?? docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_REVIEWED_V2_RAW.tar.gz",
+      "?? docs/evidence/PROJECTTRACE_POST_SERIALIZATION_REGRESSION.json",
+      "?? docs/evidence/PROJECTTRACE_POST_SERIALIZATION_REGRESSION_RAW_20261029.tar.gz",
+      "?? docs/evidence/SCALE001_AGGREGATE_GUARD_INVESTIGATION.json",
+      "?? docs/evidence/SCALE001_CGROUP_40280429009.json",
+      "?? docs/evidence/SCALE001_CGROUP_40280429009_MEMORY.jsonl.gz",
+      "?? docs/evidence/SCALE001_CHECKPOINT_FIELD_ATTRIBUTION.json",
+      "?? docs/evidence/SCALE001_CHECKPOINT_PAGES_EQUIVALENCE.json",
+      "?? docs/evidence/SCALE001_CHECKPOINT_PAGES_OWNED.json",
+      "?? docs/evidence/SCALE001_DETERMINISM_AND_POLICY_GATE.json",
+      "?? docs/evidence/SCALE001_FINAL_SNAPSHOT_PROFILE.json",
+      "?? docs/evidence/SCALE001_FINAL_SNAPSHOT_PROFILE_RAW.json.gz",
+      "?? docs/evidence/SCALE001_GENERATION_JSON_EXPORT.json",
+      "?? docs/evidence/SCALE001_GENERATION_MAPS_OWNED.json",
+      "?? docs/evidence/SCALE001_GENERATION_MAP_ITERATION.json",
+      "?? docs/evidence/SCALE001_GRAPH_INDEX_PROTOTYPE.json",
+      "?? docs/evidence/SCALE001_GRAPH_INDEX_PROTOTYPE_RAW.json.gz",
+      "?? docs/evidence/SCALE001_GRAPH_INDEX_RECOVERY.json",
+      "?? docs/evidence/SCALE001_GRAPH_INDEX_RECOVERY_RAW.json.gz",
+      "?? docs/evidence/SCALE001_GRAPH_SCALAR_PROTOTYPE.json",
+      "?? docs/evidence/SCALE001_GRAPH_SCALAR_PROTOTYPE_RAW.json.gz",
+      "?? docs/evidence/SCALE001_INTEGRATED_QUALIFICATION_GATE.json",
+      "?? docs/evidence/SCALE001_POLICY_DECISION_READINESS.json",
+      "?? frontend/e2e/configuration-drift.spec.ts",
+      "?? samples/configuration-drift.json",
+      "?? tests/commercial_snapshot_profile.py",
+      "?? tests/generation_json_export_probe.py",
+      "?? tests/generation_map_iteration_probe.py",
+      "?? tests/graph_index_api_probe.py",
+      "?? tests/graph_index_compatibility.py",
+      "?? tests/graph_index_measure.py",
+      "?? tests/graph_index_prototype.py",
+      "?? tests/graph_index_publication_probe.py",
+      "?? tests/graph_index_pytest_plugin.py",
+      "?? tests/graph_index_recovery.py",
+      "?? tests/graph_index_recovery_plugin.py",
+      "?? tests/graph_index_recovery_probe.py",
+      "?? tests/graph_scalar_plugin.py",
+      "?? tests/graph_scalar_probe.py",
+      "?? tests/graph_scalar_prototype.py",
+      "?? tests/snapshot_component_probe.py",
+      "?? tests/snapshot_materialization_probe.py",
+      "?? tests/sqlite_memory_probe.py",
+      "?? tests/test_checkpoint_field_attribution.py",
+      "?? tests/test_checkpoint_pages.py",
+      "?? tests/test_configuration_drift.py",
+      "?? tests/test_generation_context.py",
+      "?? tests/test_generation_map_iteration.py",
+      "?? tests/test_generation_maps.py",
+      "?? tests/test_graph_index_recovery.py",
+      "?? tests/test_graph_scalar_projection.py",
+      "?? tests/test_graph_scalar_reading.py",
+      "?? tests/test_json_export.py",
+      "?? tests/test_retention_downgrade.py",
+      "?? tests/test_retention_postgresql.py",
+      "?? tests/test_retention_recovery.py",
+      "?? tests/test_sanitization_aggregate_guard.py",
+      "?? tests/test_snapshot_materialization_profile.py"
+    ],
+    "preexisting_dirty_work_preserved": true,
+    "start_evidence_hashes": {
+      "docs/SCALE001_CHECKPOINT_FIELD_ATTRIBUTION.md": "937d2a5014e5692585ae969b7b7612aef83aef2464cb3cb35846769d81b920a7",
+      "docs/evidence/SCALE001_CHECKPOINT_FIELD_ATTRIBUTION.json": "747647d11912656145d3b482d5c1d0737644ae227d67382447458ef63bf5f55d",
+      "docs/SCALE001_INTEGRATED_QUALIFICATION_GATE.md": "651d53fe42335f4e6c7c136cb34963c346f78ce05c3255c8387e2eda7597cd8f",
+      "docs/evidence/SCALE001_INTEGRATED_QUALIFICATION_GATE.json": "d5f47e6ac327f57456cf6f56a367def75cea15f578ba4c002b1b2fb7af3f3dd8",
+      "docs/PROJECTTRACE_POST_SERIALIZATION_REGRESSION_REPORT.md": "746845b9694886d8301e7e4b6e2d9e0bdeb0f1a32c154821029ddd02c1ebf202",
+      "PROJECTTRACE_PROGRESS.md": "fae538891f26a510af17fdb82666e899f8c6917aa221f962f8cef8d33c694904",
+      "docs/COMMERCIAL_V1_RELEASE_GATES.md": "1608016634ef1309579a3398717ddcb9e84e02cc8321be94ffbeabd5c4745b30",
+      "docs/SCALE001_SUPPORTED_INPUT_BOUNDARY_PROPOSAL.md": "a4602efd9d91e0668ea4b274e599d8524405dc32b8adf6d8869b4cb38b7bdb2a",
+      "docs/adr/0007-bounded-published-snapshot-segments.md": "d38f27bf16882d7095b03407966d5479bc8fb8c100e9fa684b33354f414ac45a",
+      "docs/evidence/SCALE001_CGROUP_40280429009.json": "fbf39ccb8579d5b73f30bc5109e50dcf3d8e558135788e562d79b04645e079ad",
+      "docs/evidence/SCALE001_CGROUP_40280429009_MEMORY.jsonl.gz": "c16bf8e898bd15917d48e2ac9685242d88571d6ea34aa1bb285754f223d5231f",
+      "docs/evidence/PROJECTTRACE_POST_SERIALIZATION_REGRESSION_RAW_20261029.tar.gz": "32773275b70e22b6568adc04b46e53dcdd7cd43fd7e705ce932245ea7d2dbaff"
+    },
+    "four_original_databases_read_only": {
+      "10000": {
+        "sha256": "465441f1dfd2c7d6ca3d7427c79dd55e57c350bee451b60a66b8e0e92f5a1d1b",
+        "captured_sha256": "465441f1dfd2c7d6ca3d7427c79dd55e57c350bee451b60a66b8e0e92f5a1d1b",
+        "hash_matches": true,
+        "integrity": "ok",
+        "foreign_key_violations": 0
+      },
+      "147": {
+        "sha256": "97aeda34f1cb1b1d67784926c2140c3c27063585ae135fbb39e22643edce94d6",
+        "captured_sha256": "97aeda34f1cb1b1d67784926c2140c3c27063585ae135fbb39e22643edce94d6",
+        "hash_matches": true,
+        "integrity": "ok",
+        "foreign_key_violations": 0
+      },
+      "30000": {
+        "sha256": "c7313fd66baa9e23ec5f5a7e9bdb8003554d086796c101be14f8d02d6ee5e9a4",
+        "captured_sha256": "c7313fd66baa9e23ec5f5a7e9bdb8003554d086796c101be14f8d02d6ee5e9a4",
+        "hash_matches": true,
+        "integrity": "ok",
+        "foreign_key_violations": 0
+      },
+      "prior": {
+        "sha256": "14a15885488462c687ce2581807ea56ecb2145b98bc58d67f6e2aad3ba9a5627",
+        "captured_sha256": "14a15885488462c687ce2581807ea56ecb2145b98bc58d67f6e2aad3ba9a5627",
+        "hash_matches": true,
+        "integrity": "ok",
+        "foreign_key_violations": 0
+      }
+    }
+  },
+  "measurement_readiness": {
+    "status": "NOT_AVAILABLE",
+    "recorded_run_source_and_inventory_identity": "VERIFIED_MATCH",
+    "source_matched_measurement_ready": false,
+    "reason": "Exact result is not retained; runtime/config signatures are incomplete; local Docker Linux cgroup unavailable; no replacement workload run.",
+    "local_environment": {
+      "docker_client": "29.8.2",
+      "docker_context": "desktop-linux",
+      "docker_server": "unavailable; pipe open failed",
+      "docker_info_exit_code": 1,
+      "postgres_urls": "unset",
+      "redis_celery_urls": "unset"
+    }
+  },
+  "next_safe_experiment": [
+    "Use ProjectTrace commit 9e21509591bfa5457cc829ebd5637f95be68d573 and input commit b1fab2bc21c63335dead4daaaa28194c9878e9bf; reacquire codeload archive, verify SHA 95747f22ebf3d01232b1592551bc2bc1866b9bbe7322dd3bf1a97028b0592257 and manifest 081071ce099d103270175ab53ef12842586d7b0f1ee0c58dadbc3654a2246a89 before use.",
+    "Before one controlled run, retain actual base/final image digests, apt snapshot identity, requirements-lock digest inside Linux build, analyzer/parser signatures and effective config/profile lineage.",
+    "In an approved isolated Linux cgroup-v2 environment, use a disposable streaming counter matching v1 JSONEncoder(sort_keys=True), default escaping/separators, files=list normalization, UTF-8 byte counts and exact field/punctuation reconciliation; retain aggregates only, no raw payload buffer.",
+    "Use memory.max=768000000, swap.max=0, no network, all descendants in cgroup, disposable database/blob storage, and no execution of imported repository code; preserve current fail-closed admission and publish no incomplete output."
+  ],
+  "source_match_gate": "Do not call a byte count source-matched and complete until exact result data and all required source/input/runtime/config identity are verified and retained.",
+  "runtime_identity_gaps": {
+    "apt_snapshot": "VERIFIED_MISMATCH: not pinned",
+    "final_app_image_digest": "NOT_AVAILABLE: not retained",
+    "analyzer_parser_signatures": "NOT_AVAILABLE",
+    "effective_quality_profile": "NOT_AVAILABLE",
+    "requirements_lock_as_seen_by_runner": "NOT_AVAILABLE",
+    "python_base_digest": "NOT_AVAILABLE in downloaded artifact"
+  },
+  "validation": {
+    "environment": {
+      "python": "3.14.3",
+      "pytest": "9.1.1",
+      "ruff": "0.16.10",
+      "platform": "Windows"
+    },
+    "combined_checkpoint_source_and_candidate": {
+      "command": "& 'C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe' -m pytest -q -s tests/test_analysis_checkpoints.py tests/test_checkpoint_pages.py tests/test_checkpoint_field_attribution.py tests/test_checkpoint_source_match_manifest.py --basetemp 'C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\source-match-focused-20261029\\pytest'",
+      "exit_code": 1,
+      "passed": 39,
+      "failed": 1,
+      "skipped": 0,
+      "warnings": 1,
+      "duration_seconds": 100.78,
+      "failure": "New test used run_input_inventory_manifest; exact manifest key is run_inventory_manifest. Corrected. The 38 existing checkpoint tests and the second new test passed in this invocation."
+    },
+    "corrected_manifest_tests": {
+      "command": "& 'C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe' -m pytest -q tests/test_checkpoint_source_match_manifest.py --basetemp 'C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\source-match-manifest-test-final-20261029'",
+      "exit_code": 0,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "warnings": 1,
+      "duration_seconds": 0.16,
+      "status": "PASS after correcting the assertion; rerun after final identity-field assertions."
+    },
+    "ruff": {
+      "command": "& 'C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\ruff.exe' check backend/analysis_checkpoints.py backend/checkpoint_pages.py backend/jobs.py backend/domain.py backend/db.py backend/migrations/versions/0026_checkpoint_parts.py tests/test_analysis_checkpoints.py tests/test_checkpoint_pages.py tests/test_checkpoint_field_attribution.py tests/test_checkpoint_source_match_manifest.py",
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    "compileall": {
+      "command": "& 'C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe' -m compileall -q backend tests",
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    "diff_check": {
+      "command": "git diff --check",
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    "related_prior_regressions": {
+      "command": "& 'C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe' -m pytest -q tests/test_generations.py tests/test_publication_units.py tests/test_quality_spill.py tests/test_sanitization_aggregate_guard.py tests/test_generation_context.py tests/test_generation_maps.py tests/test_migrations.py tests/test_retention_recovery.py tests/test_recovery_boundaries.py tests/test_analysis_performance.py tests/test_repository_store.py tests/test_observation_store.py tests/test_timeout_recovery.py tests/test_queue.py tests/test_worker_failure.py --basetemp 'C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\checkpoint-attribution-regressions-20261029' --junitxml 'C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\checkpoint-attribution-regressions-20261029\\results.xml'",
+      "result": "unchanged-product-source prior run: 233 passed, 0 failed, 1 skipped, 1 warning; Linux unnamed SQLite lifecycle skip."
+    },
+    "first_attempts": {
+      "manifest_test": "1 failed due to assertion using an incorrect field key; corrected test module passed 2. No application assertion failed.",
+      "docker_environment": "docker info exit 1; Docker Desktop Linux engine pipe unavailable."
+    },
+    "services": {
+      "postgres_urls": "unset",
+      "redis_celery_urls": "unset",
+      "linux_cgroup": "NOT_RUN",
+      "full_pinned_workload": "NOT_RUN"
+    }
+  }
+}

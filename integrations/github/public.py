@@ -2,6 +2,7 @@
 
 import hashlib
 import re
+from collections.abc import Mapping
 from urllib.parse import quote, urlsplit
 
 import httpx
@@ -33,6 +34,70 @@ def validate_ref(value):
             or re.search(r"[\x00-\x20\x7f~^:?*\[]", value)):
         raise IntakeError("PUBLIC_GITHUB_REF", "The requested Git ref is invalid.", remediation="Use a branch, tag or exact commit from this public repository.")
     return value
+
+
+def repository_archive_root(provenance):
+    """Return the exact top-level directory emitted for a pinned codeload ZIP."""
+    if not isinstance(provenance, dict):
+        raise IntakeError("PUBLIC_GITHUB_ARCHIVE_LAYOUT", "Pinned GitHub archive provenance is unavailable.")
+    repository, commit = provenance.get("repository"), provenance.get("commit")
+    if not isinstance(repository, str) or not isinstance(commit, str) or not re.fullmatch(r"[0-9a-f]{40}", commit):
+        raise IntakeError("PUBLIC_GITHUB_ARCHIVE_LAYOUT", "Pinned GitHub archive provenance is invalid.")
+    try:
+        canonical_repository = repository_url("https://github.com/" + repository)
+    except IntakeError:
+        raise IntakeError("PUBLIC_GITHUB_ARCHIVE_LAYOUT", "Pinned GitHub archive provenance is invalid.") from None
+    if canonical_repository != repository:
+        raise IntakeError("PUBLIC_GITHUB_ARCHIVE_LAYOUT", "Pinned GitHub archive provenance is invalid.")
+    return repository.rsplit("/", 1)[-1] + "-" + commit
+
+
+def repository_archive_items(items, provenance):
+    """Expose codeload files under stable repository-relative paths, lazily."""
+    prefix = repository_archive_root(provenance) + "/"
+    for path, value in items:
+        if not isinstance(path, str) or not path.startswith(prefix) or len(path) == len(prefix):
+            raise IntakeError("PUBLIC_GITHUB_ARCHIVE_LAYOUT", "Pinned GitHub archive has an unexpected root directory.")
+        yield path[len(prefix):], value
+
+
+class _ComparableArchiveHashes(Mapping):
+    """Lazy view over historical hashes; does not duplicate a repository index."""
+
+    def __init__(self, hashes, prefix):
+        self.hashes, self.prefix = hashes, prefix
+
+    def __iter__(self):
+        for path in self.hashes:
+            yield path[len(self.prefix):] if isinstance(path, str) and path.startswith(self.prefix) else path
+
+    def __len__(self):
+        return len(self.hashes)
+
+    def get(self, path, default=None):
+        exact = self.hashes.get(path, default)
+        rooted = self.hashes.get(self.prefix + path, default) if isinstance(path, str) else default
+        if exact is not default and rooted is not default:
+            # Ambiguous historical aliases must never imply unchanged content.
+            return default
+        return exact if exact is not default else rooted
+
+    def __getitem__(self, path):
+        value = self.get(path, self)
+        if value is self:
+            raise KeyError(path)
+        return value
+
+
+def comparable_archive_hashes(hashes, provenance):
+    """Expose legacy codeload hashes by repo path without rewriting snapshots."""
+    if not isinstance(hashes, dict):
+        return hashes
+    try:
+        prefix = repository_archive_root(provenance) + "/"
+    except IntakeError:
+        return hashes
+    return _ComparableArchiveHashes(hashes, prefix)
 
 
 class PublicGitHub:

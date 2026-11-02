@@ -15,7 +15,7 @@ from sqlalchemy import select
 
 from analyzers import sandbox
 from analyzers.code_quality.classification import classify, ownership, ownership_rules
-from analyzers.lexical import changed_ranges, describe_one
+from analyzers.lexical import changed_ranges, describe_one, storage_claims
 from analyzers.source_input import SourceFiles
 from backend.db import Record
 from backend.generation_models import AnalysisGeneration
@@ -31,6 +31,46 @@ FILES = SourceFiles({
     "compose.yaml": "services:\n app: {image: owned:v1}\n", "README.md": "# Owned\n",
 }, intake=[{"path": "bad.py", "bytes": 1, "physical_lines": None},
            {"path": "blob.bin", "bytes": 2, "physical_lines": None, "state": "BINARY"}])
+
+
+def test_storage_privacy_examples_preserve_isolated_worker_contract():
+    files = {
+        "backticks.md": "```text\nProduction storage is private.\n```\n",
+        "tildes.md": "~~~text\nProduction storage is private.\n~~~\n",
+        "mismatched-short-fence.md": (
+            "````text\nProduction storage is private.\n```\n~~~\n"
+            "Production storage is private.\n````\n"
+        ),
+        "malformed-close.md": (
+            "~~~text\nProduction storage is private.\n~~~ trailing-text\n"
+            "Production storage is private.\n~~~\n"
+        ),
+        "indented.md": "    Production storage is private.\n",
+        "unclosed.md": "~~~~text\nProduction storage is private.\n",
+        "after-longer-close.md": (
+            "~~~~text\nProduction storage is private.\n~~~~~\n"
+            "Production storage is private.\n"
+        ),
+        "ordinary.md": "Production storage is private.\n",
+    }
+    assets = [{
+        "kind": "aws_s3_bucket",
+        "identity": "aws_s3_bucket.production",
+        "path": "main.tf",
+        "line": 1,
+        "environment": "production",
+        "public": "DECLARED_PUBLIC",
+    }]
+
+    claims = storage_claims(files, assets)
+
+    assert [(claim["path"], claim["line"], claim["status"]) for claim in claims] == [
+        ("after-longer-close.md", 4, "CONTRADICTED"),
+        ("ordinary.md", 1, "CONTRADICTED"),
+    ]
+    assert all(claim["verification_scope"] == "DECLARED_CONFIGURATION" for claim in claims)
+    assert all(claim["verifier"] == "NATIVE_STATIC_STORAGE_PRIVACY" for claim in claims)
+    assert all(claim["signals"][0]["path"] == "main.tf" for claim in claims)
 
 
 @pytest.mark.parametrize("old,head", [("a\nb\nc\n", "a\nchanged\nc\n"), ("a\nb\n", "a\n"),

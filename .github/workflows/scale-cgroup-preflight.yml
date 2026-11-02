@@ -1,0 +1,126 @@
+name: SCALE-001 cgroup preflight (manual)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  cgroup-preflight:
+    name: Verify Linux cgroup v2 enforcement (no ProjectTrace workload)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      PYTHON_IMAGE: python:3.14.9-slim-bookworm@sha256:7dff173021016c8829ae58d5ce112ffc388073ebe67f351aeb6ba2909e35f847
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Record runner, lock, Docker and image identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          command -v docker >/dev/null || { echo "BLOCKED: Docker CLI unavailable"; exit 1; }
+          [[ -n "${ImageOS:-}" && -n "${ImageVersion:-}" ]] || {
+            echo 'BLOCKED: GitHub runner ImageOS/ImageVersion identity unavailable'; exit 1;
+          }
+          docker_info="$(docker info --format '{{.ServerVersion}}|{{.OSType}}|{{.CgroupVersion}}|{{.CgroupDriver}}')"
+          IFS='|' read -r docker_server docker_os docker_cgroup docker_driver <<<"$docker_info"
+          printf 'DockerServer=%s OSType=%s CgroupVersion=%s CgroupDriver=%s\n' \
+            "$docker_server" "$docker_os" "$docker_cgroup" "$docker_driver"
+          [[ -n "$docker_server" && "$docker_os" == linux && "$docker_cgroup" == 2 ]] || {
+            echo 'BLOCKED: Docker Linux engine with cgroup v2 is required'; exit 1;
+          }
+          printf 'RunnerOS=%s RunnerArch=%s ImageOS=%s ImageVersion=%s\n' \
+            "${RUNNER_OS:-UNAVAILABLE}" "${RUNNER_ARCH:-UNAVAILABLE}" "$ImageOS" "$ImageVersion"
+          uname -a
+          cat /etc/os-release
+          python3 --version
+          printf 'requirements.lock sha256: '
+          sha256sum requirements.lock
+          docker pull --platform linux/amd64 "$PYTHON_IMAGE"
+          printf 'ContainerImageRef=%s\n' "$PYTHON_IMAGE"
+          printf 'ContainerImageId='
+          docker image inspect --format '{{.Id}}' "$PYTHON_IMAGE"
+          DOCKER_FLAGS=(--platform linux/amd64 --network none --memory 768000000 --memory-swap 768000000 \
+            --cpus 2 --pids-limit 64 --cgroupns private --cap-drop ALL \
+            --security-opt no-new-privileges --user "$(id -u):$(id -g)")
+          docker run --rm "${DOCKER_FLAGS[@]}" --entrypoint python "$PYTHON_IMAGE" --version
+          docker run --rm "${DOCKER_FLAGS[@]}" --entrypoint sh "$PYTHON_IMAGE" -ec \
+            '. /etc/os-release; printf "ContainerOS=%s %s\\n" "$ID" "$VERSION_ID"; dpkg-query -W -f="\${Package}=\${Version}\\n" | sha256sum | cut -d" " -f1 | sed "s/^/ContainerPackageManifestSHA256=/"'
+          echo 'Application dependencies are not installed by this preflight; the lock hash is identity evidence only.'
+          echo 'PostgreSQL, Redis, and Celery are separate full-qualification gates and are not exercised here.'
+      - name: Run the owned resource-envelope probe (intentional child OOM; not an application workload)
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(mktemp -d "$RUNNER_TEMP/scale-cgroup-preflight.XXXXXX")"
+          container_id=""
+          cleanup() {
+            if [[ -n "$container_id" ]]; then
+              docker rm -f "$container_id" >/dev/null 2>&1 || true
+            fi
+          }
+          trap cleanup EXIT
+          container_id="$(docker create \
+            --memory 768000000 --memory-swap 768000000 --cpus 2 --pids-limit 64 \
+            --cgroupns private --network none --cap-drop ALL \
+            --security-opt no-new-privileges --user "$(id -u):$(id -g)" \
+            --workdir /workspace \
+            --mount "type=bind,src=$GITHUB_WORKSPACE,dst=/workspace,readonly" \
+            --mount "type=bind,src=$output,dst=/evidence" \
+            --entrypoint sh "$PYTHON_IMAGE" -ec 'sleep 2; exec python -B -m scripts.scale_resource_probe')"
+          docker start "$container_id" >/dev/null
+          pid="$(docker inspect --format '{{.State.Pid}}' "$container_id")"
+          [[ "$pid" =~ ^[1-9][0-9]*$ ]] || { echo 'BLOCKED: Docker did not expose a running container PID'; exit 1; }
+          configured="$(docker inspect --format '{{.HostConfig.Memory}} {{.HostConfig.MemorySwap}} {{.HostConfig.PidsLimit}} {{.HostConfig.CgroupnsMode}} {{.HostConfig.NetworkMode}}' "$container_id")"
+          [[ "$configured" == '768000000 768000000 64 private none' ]] || {
+            echo "BLOCKED: Docker configuration mismatch: $configured"; exit 1;
+          }
+          cgroup_path="$(awk -F: '$1 == "0" {print $3; exit}' "/proc/$pid/cgroup")"
+          [[ -n "$cgroup_path" ]] || { echo 'BLOCKED: host process is not in a visible cgroup v2'; exit 1; }
+          cgroup_root="/sys/fs/cgroup${cgroup_path}"
+          [[ -r "$cgroup_root/memory.max" && -r "$cgroup_root/memory.swap.max" && -r "$cgroup_root/memory.events" ]] || {
+            echo 'BLOCKED: required cgroup v2 memory files are unavailable'; exit 1;
+          }
+          actual_memory="$(cat "$cgroup_root/memory.max")"
+          actual_swap="$(cat "$cgroup_root/memory.swap.max")"
+          [[ "$actual_memory" == '768000000' && "$actual_swap" == '0' ]] || {
+            echo "BLOCKED: kernel limits memory.max=$actual_memory memory.swap.max=$actual_swap"; exit 1;
+          }
+          echo "HostCgroupV2 memory.max=$actual_memory memory.swap.max=$actual_swap"
+          echo "HostMemoryEventsBeforeProbe=$(tr '\n' ' ' < "$cgroup_root/memory.events")"
+          exit_status="$(docker wait "$container_id")"
+          state="$(docker inspect --format '{{.State.ExitCode}} {{.State.OOMKilled}}' "$container_id")"
+          [[ "$exit_status" == '0' && "$state" == '0 false' ]] || {
+            echo "BLOCKED: probe container failed: wait=$exit_status state=$state"; exit 1;
+          }
+          [[ -s "$output/resource-probe.json" ]] || { echo 'BLOCKED: owned probe did not write its receipt'; exit 1; }
+          python3 - "$output/resource-probe.json" <<'PY'
+          import json
+          import sys
+          from pathlib import Path
+
+          receipt = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+          before, after = receipt["before"], receipt["after"]
+          before_kill = before["memory.events"]["oom_kill"]
+          after_kill = after["memory.events"]["oom_kill"]
+          summary = {
+              "schema": "projecttrace-scale-cgroup-preflight-summary-v1",
+              "scope": "disposable cgroup enforcement probe only; no application or imported repository code",
+              "enforced": receipt["enforced"],
+              "memory_limit_bytes": before["memory.max"],
+              "swap_limit_bytes": before["memory.swap.max"],
+              "memory_peak_bytes": after.get("memory.peak"),
+              "memory_events_before": before["memory.events"],
+              "memory_events_after": after["memory.events"],
+              "intentional_oom_kill_delta": after_kill - before_kill,
+              "child_exit_statuses": receipt["child_exit_statuses"],
+              "services": {
+                  "postgresql": "NOT_TESTED; separate full-qualification gate",
+                  "redis": "NOT_TESTED; separate full-qualification gate",
+                  "celery": "NOT_TESTED; separate full-qualification gate",
+              },
+          }
+          print(json.dumps(summary, sort_keys=True))
+          if not receipt["enforced"] or before["memory.max"] != 768_000_000 or before["memory.swap.max"] != 0:
+              raise SystemExit("BLOCKED: cgroup resource probe did not verify the required limits")
+          if after_kill <= before_kill:
+              raise SystemExit("BLOCKED: kernel did not record the owned child OOM probe")
+          PY

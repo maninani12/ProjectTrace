@@ -165,18 +165,21 @@ def execute_analysis(db, user, repo, files, *, request_id=None, job=None, _elaps
     # Long computation checks cancellation without holding the queue writer
     # lock. Stage/receipt/publication fences retain their existing renewals.
     stage.check_current = lambda: check_current(renew=False)
+    check_current.read_check = stage.check_current
+    check_current.close_on_failure = attempt_resources.append
     stage.retain_completed_analysis = retain_completed_analysis
     def load_checkpoint(signature):
         from backend.analysis_checkpoints import load
-        check_current()
-        result = load(db, job_id, organization_id, repository_id, signature)
+        check_current(renew=False)
+        result = load(db, job_id, organization_id, repository_id, signature,
+                      checkpoint=stage.check_current, own=attempt_resources.append)
         if result is not None:
             performance.count("global_analysis_checkpoint_hits")
         return result
 
     def save_checkpoint(signature, result):
         from backend.analysis_checkpoints import save
-        saved = save(db, job_id, organization_id, repository_id, signature, result, check_current)
+        saved = save(db, job_id, organization_id, repository_id, signature, result, check_current, check=stage.check_current)
         performance.count("global_analysis_checkpoints_saved" if saved else "global_analysis_checkpoints_oversize")
         if not saved and inventory_input and os.getenv("PROJECTTRACE_GENERATION_PUBLICATION", "1") == "1":
             raise IntakeError("GLOBAL_CHECKPOINT_BUDGET", "Completed analysis exceeds the durable checkpoint byte budget.",
@@ -223,10 +226,8 @@ def execute_analysis(db, user, repo, files, *, request_id=None, job=None, _elaps
             **({"completed_analysis": {**completed_analysis, "publication_state": "PUBLISHED", "snapshot_id": snapshot.id}}
                if completed_analysis else {}),
         }
-        from backend.db import AnalysisCheckpoint
-        retained_checkpoint = db.get(AnalysisCheckpoint, job_id)
-        if retained_checkpoint:
-            db.delete(retained_checkpoint)
+        from backend.analysis_checkpoints import discard
+        discard(db, job)
         from sqlalchemy import delete
 
         from backend.db import PublicationUnit

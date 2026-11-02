@@ -1,0 +1,1107 @@
+{
+  "status": "NOT_QUALIFIED",
+  "scope": "OWNED_WINDOWS_STREAMING_MAP_ITERATION_ONLY",
+  "date": "2026-10-26",
+  "branch": "codex/scale-001-local-continuation",
+  "head": "9e21509591bfa5457cc829ebd5637f95be68d573",
+  "baseline_context_maps_sha256": "74d275529d7cc8d36b3f0bbdc5f6366d579ea0df1be334fda6a5abe9dd49a716",
+  "final_source_sha256": {
+    "backend/context_maps.py": "2580bfc747d259deab252b0bec9ea1f5790afb62520027287cf4a879a939d494",
+    "tests/generation_map_iteration_probe.py": "ded554b96c698be90a0c359789bf2fcb5943a724661974827502331a348a4727",
+    "tests/test_generation_map_iteration.py": "2093318aa632f9d2a97fc4b78a7e373de80d747892ab6a2214d5b8e685c4e22c"
+  },
+  "preserved_prior_source_hashes": {
+    "backend/generation_context.py": true,
+    "backend/context_json.py": true,
+    "tests/test_generation_maps.py": true
+  },
+  "summary": [
+    {
+      "entries": 10000,
+      "logical": {
+        "sha256": "dfd65078bdf464191ed4034af1c8d31221f60933a6bfc5df377401f662dc0c7b",
+        "bytes": 3808891
+      },
+      "before_decryptions": 30000,
+      "after_decryptions": 10000,
+      "before_median_iteration_seconds": 3.975712100000237,
+      "after_median_iteration_seconds": 1.219992700003786,
+      "before_max_process_peak_rss_bytes": 118894592,
+      "after_max_process_peak_rss_bytes": 118890496
+    },
+    {
+      "entries": 50000,
+      "logical": {
+        "sha256": "b3c66416c2976176f65c22ccd0a7637c6317ed50fe2c171e6834fcc7b107abdc",
+        "bytes": 19088891
+      },
+      "before_decryptions": 150000,
+      "after_decryptions": 50000,
+      "before_median_iteration_seconds": 47.44379939999635,
+      "after_median_iteration_seconds": 5.7003117999993265,
+      "before_max_process_peak_rss_bytes": 129028096,
+      "after_max_process_peak_rss_bytes": 128094208
+    }
+  ],
+  "before_profiles": [
+    {
+      "count": 10000,
+      "expected": {
+        "sha256": "dfd65078bdf464191ed4034af1c8d31221f60933a6bfc5df377401f662dc0c7b",
+        "bytes": 3808891
+      },
+      "samples": [
+        {
+          "scope": "OWNED_FRESH_PROCESS_STREAMING_MAP_ITERATION",
+          "count": 10000,
+          "logical": {
+            "sha256": "dfd65078bdf464191ed4034af1c8d31221f60933a6bfc5df377401f662dc0c7b",
+            "bytes": 3808891
+          },
+          "load_seconds": 1.1745584000018425,
+          "iteration_seconds": 3.746510800003307,
+          "decryptions": 30000,
+          "encryptions": 0,
+          "hmac_tag_calls": 20000,
+          "first_decryption_paths": [
+            [
+              "analyzers.observation_store.EncryptedRows.__getitem__",
+              "backend.checkpoint_pages.ReplayRows.__getitem__",
+              "backend.context_maps.ContextMap._frame",
+              "backend.context_maps.ContextMap._keys",
+              "collections.abc.ItemsView.__iter__",
+              "json.encoder._make_iterencode.<locals>._iterencode_dict"
+            ],
+            [
+              "analyzers.observation_store.EncryptedRows.__getitem__",
+              "backend.checkpoint_pages.ReplayRows.__getitem__",
+              "backend.context_maps.ContextMap._frame",
+              "backend.context_maps.ContextMap._position",
+              "backend.context_maps.ContextMap.__getitem__",
+              "collections.abc.ItemsView.__iter__"
+            ],
+            [
+              "analyzers.observation_store.EncryptedRows.__getitem__",
+              "backend.checkpoint_pages.ReplayRows.__getitem__",
+              "backend.generation_context.ContextRows.__getitem__",
+              "backend.context_maps.ContextMap.__getitem__",
+              "collections.abc.ItemsView.__iter__",
+              "json.encoder._make_iterencode.<locals>._iterencode_dict"
+            ]
+          ],
+          "before": {
+            "cpu_seconds": 1.703125,
+            "rss_bytes": 97652736,
+            "peak_rss_bytes": 97652736
+          },
+          "after": {
+            "cpu_seconds": 5.3125,
+            "rss_bytes": 118685696,
+            "peak_rss_bytes": 118685696
+          },
+          "cache_size": -1024,
+          "headers": 1,
+          "python_base_slots": 1
+        },
+        {
+          "scope": "OWNED_FRESH_PROCESS_STREAMING_MAP_ITERATION",
+          "count": 10000,
+          "logical": {
+            "sha256": "dfd65078bdf464191ed4034af1c8d31221f60933a6bfc5df377401f662dc0c7b",
+            "bytes": 3808891
+          },
+          "load_seconds": 1.238834700001462,
+          "iteration_seconds": 4.500905199995032,
+          "decryptions": 30000,
+          "encryptions": 0,
+          "hmac_tag_calls": 20000,
+          "first_decryption_paths": [
+            [
+              "analyzers.observation_store.EncryptedRows.__getitem__",
+              "backend.checkpoint_pages.ReplayRows.__getitem__",
+              "backend.context_maps.ContextMap._frame",
+              "backend.context_maps.ContextMap._keys",
+              "collections.abc.ItemsView.__iter__",
+              "json.encoder._make_iterencode.<locals>._iterencode_dict"
+            ],
+            [
+              "analyzers.observation_store.EncryptedRows.__getitem__",
+              "backend.checkpoint_pages.ReplayRows.__getitem__",
+              "backend.context_maps.ContextMap._frame",
+              "backend.context_maps.ContextMap._position",
+              "backend.context_maps.ContextMap.__getitem__",
+              "collections.abc.ItemsView.__iter__"
+            ],
+            [
+              "analyzers.observation_store.EncryptedRows.__getitem__",
+              "backend.checkpoint_pages.ReplayRows.__getitem__",
+              "backend.generation_context.ContextRows.__getitem__",
+              "backend.context_maps.ContextMap.__getitem__",
+              "collections.abc.ItemsView.__iter__",
+              "json.encoder._make_iterencode.<locals>._iterencode_dict"
+            ]
+          ],
+          "before": {
+            "cpu_seconds": 2.109375,
+            "rss_bytes": 97644544,
+            "peak_rss_bytes": 97644544
+          },
+          "after": {
+            "cpu_seconds": 6.546875,
+            "rss_bytes": 118894592,
+            "peak_rss_bytes": 118894592
+          },
+          "cache_size": -1024,
+          "headers": 1,
+          "python_base_slots": 1
+        },
+        {
+          "scope": "OWNED_FRESH_PROCESS_STREAMING_MAP_ITERATION",
+          "count": 10000,
+          "logical": {
+            "sha256": "dfd65078bdf464191ed4034af1c8d31221f60933a6bfc5df377401f662dc0c7b",
+            "bytes": 3808891
+          },
+          "load_seconds": 1.1801057999982731,
+          "iteration_seconds": 3.975712100000237,
+          "decryptions": 30000,
+          "encryptions": 0,
+          "hmac_tag_calls": 20000,
+          "first_decryption_paths": [
+            [
+              "analyzers.observation_store.EncryptedRows.__getitem__",
+              "backend.checkpoint_pages.ReplayRows.__getitem__",
+              "backend.context_maps.ContextMap._frame",
+              "backend.context_maps.ContextMap._keys",
+              "collections.abc.ItemsView.__iter__",
+              "json.encoder._make_iterencode.<locals>._iterencode_dict"
+            ],
+            [
+              "analyzers.observation_store.EncryptedRows.__getitem__",
+              "backend.checkpoint_pages.ReplayRows.__getitem__",
+              "backend.context_maps.ContextMap._frame",
+              "backend.context_maps.ContextMap._position",
+              "backend.context_maps.ContextMap.__getitem__",
+              "collections.abc.ItemsView.__iter__"
+            ],
+            [
+              "analyzers.observation_store.EncryptedRows.__getitem__",
+              "backend.checkpoint_pages.ReplayRows.__getitem__",
+              "backend.generation_context.ContextRows.__getitem__",
+              "backend.context_maps.ContextMap.__getitem__",
+              "collections.abc.ItemsView.__iter__",
+              "json.encoder._make_iterencode.<locals>._iterencode_dict"
+            ]
+          ],
+          "before": {
+            "cpu_seconds": 1.65625,
+            "rss_bytes": 97595392,
+            "peak_rss_bytes": 97595392
+          },
+          "after": {
+            "cpu_seconds": 5.578125,
+            "rss_bytes": 118833152,
+            "peak_rss_bytes": 118833152
+          },
+          "cache_size": -1024,
+          "headers": 1,
+          "python_base_slots": 1
+        }
+      ]
+    },
+    {
+      "count": 50000,
+      "expected": {
+        "sha256": "b3c66416c2976176f65c22ccd0a7637c6317ed50fe2c171e6834fcc7b107abdc",
+        "bytes": 19088891
+      },
+      "samples": [
+        {
+          "scope": "OWNED_FRESH_PROCESS_STREAMING_MAP_ITERATION",
+          "count": 50000,
+          "logical": {
+            "sha256": "b3c66416c2976176f65c22ccd0a7637c6317ed50fe2c171e6834fcc7b107abdc",
+            "bytes": 19088891
+          },
+          "load_seconds": 24.681928300000436,
+          "iteration_seconds": 47.44379939999635,
+          "decryptions": 150000,
+          "encryptions": 0,
+          "hmac_tag_calls": 100000,
+          "first_decryption_paths": [
+            [
+              "analyzers.observation_store.EncryptedRows.__getitem__",
+              "backend.checkpoint_pages.ReplayRows.__getitem__",
+              "backend.context_maps.ContextMap._frame",
+              "backend.context_maps.ContextMap._keys",
+              "collections.abc.ItemsView.__iter__",
+              "json.encoder._make_iterencode.<locals>._iterencode_dict"
+            ],
+            [
+              "analyzers.observation_store.EncryptedRows.__getitem__",
+              "backend.checkpoint_pages.ReplayRows.__getitem__",
+              "backend.context_maps.ContextMap._frame",
+              "backend.context_maps.ContextMap._position",
+              "backend.context_maps.ContextMap.__getitem__",
+              "collections.abc.ItemsView.__iter__"
+            ],
+            [
+              "analyzers.observation_store.EncryptedRows.__getitem__",
+              "backend.checkpoint_pages.ReplayRows.__getitem__",
+              "backend.generation_context.ContextRows.__getitem__",
+              "backend.context_maps.ContextMap.__getitem__",
+              "collections.abc.ItemsView.__iter__",
+              "json.encoder._make_iterencode.<locals>._iterencode_dict"
+            ]
+          ],
+          "before": {
+            "cpu_seconds": 24.59375,
+            "rss_bytes": 99180544,
+            "peak_rss_bytes": 99180544
+          },
+          "after": {
+            "cpu_seconds": 69.765625,
+            "rss_bytes": 107646976,
+            "peak_rss_bytes": 128462848
+          },
+          "cache_size": -1024,
+          "headers": 1,
+          "python_base_slots": 1
+        },
+        {
+          "scope": "OWNED_FRESH_PROCESS_STREAMING_MAP_ITERATION",
+          "count": 50000,
+          "logical": {
+            "sha256": "b3c66416c2976176f65c22ccd0a7637c6317ed50fe2c171e6834fcc7b107abdc",
+            "bytes": 19088891
+          },
+          "load_seconds": 27.950254099996528,
+          "iteration_seconds": 55.23014239999611,
+          "decryptions": 150000,
+          "encryptions": 0,
+          "hmac_tag_calls": 100000,
+          "first_decryption_paths": [
+            [
+              "analyzers.observation_store.EncryptedRows.__getitem__",
+              "backend.checkpoint_pages.ReplayRows.__getitem__",
+              "backend.context_maps.ContextMap._frame",
+              "backend.context_maps.ContextMap._keys",
+              "collections.abc.ItemsView.__iter__",
+              "json.encoder._make_iterencode.<locals>._iterencode_dict"
+            ],
+            [
+              "analyzers.observation_store.EncryptedRows.__getitem__",
+              "backend.checkpoint_pages.ReplayRows.__getitem__",
+              "backend.context_maps.ContextMap._frame",
+              "backend.context_maps.ContextMap._position",
+              "backend.context_maps.ContextMap.__getitem__",
+              "collections.abc.ItemsView.__iter__"
+            ],
+            [
+              "analyzers.observation_store.EncryptedRows.__getitem__",
+              "backend.checkpoint_pages.ReplayRows.__getitem__",
+              "backend.generation_context.ContextRows.__getitem__",
+              "backend.context_maps.ContextMap.__getitem__",
+              "collections.abc.ItemsView.__iter__",
+              "json.encoder._make_iterencode.<locals>._iterencode_dict"
+            ]
+          ],
+          "before": {
+            "cpu_seconds": 27.796875,
+            "rss_bytes": 99176448,
+            "peak_rss_bytes": 99356672
+          },
+          "after": {
+            "cpu_seconds": 80.96875,
+            "rss_bytes": 108589056,
+            "peak_rss_bytes": 128565248
+          },
+          "cache_size": -1024,
+          "headers": 1,
+          "python_base_slots": 1
+        },
+        {
+          "scope": "OWNED_FRESH_PROCESS_STREAMING_MAP_ITERATION",
+          "count": 50000,
+          "logical": {
+            "sha256": "b3c66416c2976176f65c22ccd0a7637c6317ed50fe2c171e6834fcc7b107abdc",
+            "bytes": 19088891
+          },
+          "load_seconds": 17.660098099993775,
+          "iteration_seconds": 43.628968899996835,
+          "decryptions": 150000,
+          "encryptions": 0,
+          "hmac_tag_calls": 100000,
+          "first_decryption_paths": [
+            [
+              "analyzers.observation_store.EncryptedRows.__getitem__",
+              "backend.checkpoint_pages.ReplayRows.__getitem__",
+              "backend.context_maps.ContextMap._frame",
+              "backend.context_maps.ContextMap._keys",
+              "collections.abc.ItemsView.__iter__",
+              "json.encoder._make_iterencode.<locals>._iterencode_dict"
+            ],
+            [
+              "analyzers.observation_store.EncryptedRows.__getitem__",
+              "backend.checkpoint_pages.ReplayRows.__getitem__",
+              "backend.context_maps.ContextMap._frame",
+              "backend.context_maps.ContextMap._position",
+              "backend.context_maps.ContextMap.__getitem__",
+              "collections.abc.ItemsView.__iter__"
+            ],
+            [
+              "analyzers.observation_store.EncryptedRows.__getitem__",
+              "backend.checkpoint_pages.ReplayRows.__getitem__",
+              "backend.generation_context.ContextRows.__getitem__",
+              "backend.context_maps.ContextMap.__getitem__",
+              "collections.abc.ItemsView.__iter__",
+              "json.encoder._make_iterencode.<locals>._iterencode_dict"
+            ]
+          ],
+          "before": {
+            "cpu_seconds": 17.234375,
+            "rss_bytes": 99762176,
+            "peak_rss_bytes": 99762176
+          },
+          "after": {
+            "cpu_seconds": 58.015625,
+            "rss_bytes": 108265472,
+            "peak_rss_bytes": 129028096
+          },
+          "cache_size": -1024,
+          "headers": 1,
+          "python_base_slots": 1
+        }
+      ]
+    }
+  ],
+  "after_profiles": [
+    {
+      "count": 10000,
+      "expected": {
+        "sha256": "dfd65078bdf464191ed4034af1c8d31221f60933a6bfc5df377401f662dc0c7b",
+        "bytes": 3808891
+      },
+      "samples": [
+        {
+          "scope": "OWNED_FRESH_PROCESS_STREAMING_MAP_ITERATION",
+          "count": 10000,
+          "logical": {
+            "sha256": "dfd65078bdf464191ed4034af1c8d31221f60933a6bfc5df377401f662dc0c7b",
+            "bytes": 3808891
+          },
+          "load_seconds": 1.3440636999948765,
+          "iteration_seconds": 3.0373189999954775,
+          "decryptions": 10000,
+          "encryptions": 0,
+          "hmac_tag_calls": 10000,
+          "first_decryption_paths": [
+            [
+              "analyzers.observation_store.EncryptedRows.__getitem__",
+              "backend.checkpoint_pages.ReplayRows.__getitem__",
+              "backend.context_maps.ContextMap._frame",
+              "backend.context_maps.ContextMap._iterate",
+              "json.encoder._make_iterencode.<locals>._iterencode_dict",
+              "json.encoder._make_iterencode.<locals>._iterencode"
+            ],
+            [
+              "analyzers.observation_store.EncryptedRows.__getitem__",
+              "backend.checkpoint_pages.ReplayRows.__getitem__",
+              "backend.context_maps.ContextMap._frame",
+              "backend.context_maps.ContextMap._iterate",
+              "json.encoder._make_iterencode.<locals>._iterencode_dict",
+              "json.encoder._make_iterencode.<locals>._iterencode"
+            ],
+            [
+              "analyzers.observation_store.EncryptedRows.__getitem__",
+              "backend.checkpoint_pages.ReplayRows.__getitem__",
+              "backend.context_maps.ContextMap._frame",
+              "backend.context_maps.ContextMap._iterate",
+              "json.encoder._make_iterencode.<locals>._iterencode_dict",
+              "json.encoder._make_iterencode.<locals>._iterencode"
+            ]
+          ],
+          "before": {
+            "cpu_seconds": 2.09375,
+            "rss_bytes": 97742848,
+            "peak_rss_bytes": 97742848
+          },
+          "after": {
+            "cpu_seconds": 5.03125,
+            "rss_bytes": 118607872,
+            "peak_rss_bytes": 118607872
+          },
+          "cache_size": -1024,
+          "headers": 1,
+          "python_base_slots": 1
+        },
+        {
+          "scope": "OWNED_FRESH_PROCESS_STREAMING_MAP_ITERATION",
+          "count": 10000,
+          "logical": {
+            "sha256": "dfd65078bdf464191ed4034af1c8d31221f60933a6bfc5df377401f662dc0c7b",
+            "bytes": 3808891
+          },
+          "load_seconds": 1.2259450999990804,
+          "iteration_seconds": 1.219992700003786,
+          "decryptions": 10000,
+          "encryptions": 0,
+          "hmac_tag_calls": 10000,
+          "first_decryption_paths": [
+            [
+              "analyzers.observation_store.EncryptedRows.__getitem__",
+              "backend.checkpoint_pages.ReplayRows.__getitem__",
+              "backend.context_maps.ContextMap._frame",
+              "backend.context_maps.ContextMap._iterate",
+              "json.encoder._make_iterencode.<locals>._iterencode_dict",
+              "json.encoder._make_iterencode.<locals>._iterencode"
+            ],
+            [
+              "analyzers.observation_store.EncryptedRows.__getitem__",
+              "backend.checkpoint_pages.ReplayRows.__getitem__",
+              "backend.context_maps.ContextMap._frame",
+              "backend.context_maps.ContextMap._iterate",
+              "json.encoder._make_iterencode.<locals>._iterencode_dict",
+              "json.encoder._make_iterencode.<locals>._iterencode"
+            ],
+            [
+              "analyzers.observation_store.EncryptedRows.__getitem__",
+              "backend.checkpoint_pages.ReplayRows.__getitem__",
+              "backend.context_maps.ContextMap._frame",
+              "backend.context_maps.ContextMap._iterate",
+              "json.encoder._make_iterencode.<locals>._iterencode_dict",
+              "json.encoder._make_iterencode.<locals>._iterencode"
+            ]
+          ],
+          "before": {
+            "cpu_seconds": 1.90625,
+            "rss_bytes": 97595392,
+            "peak_rss_bytes": 97595392
+          },
+          "after": {
+            "cpu_seconds": 3.125,
+            "rss_bytes": 118521856,
+            "peak_rss_bytes": 118521856
+          },
+          "cache_size": -1024,
+          "headers": 1,
+          "python_base_slots": 1
+        },
+        {
+          "scope": "OWNED_FRESH_PROCESS_STREAMING_MAP_ITERATION",
+          "count": 10000,
+          "logical": {
+            "sha256": "dfd65078bdf464191ed4034af1c8d31221f60933a6bfc5df377401f662dc0c7b",
+            "bytes": 3808891
+          },
+          "load_seconds": 1.1596463000023505,
+          "iteration_seconds": 0.7704391000006581,
+          "decryptions": 10000,
+          "encryptions": 0,
+          "hmac_tag_calls": 10000,
+          "first_decryption_paths": [
+            [
+              "analyzers.observation_store.EncryptedRows.__getitem__",
+              "backend.checkpoint_pages.ReplayRows.__getitem__",
+              "backend.context_maps.ContextMap._frame",
+              "backend.context_maps.ContextMap._iterate",
+              "json.encoder._make_iterencode.<locals>._iterencode_dict",
+              "json.encoder._make_iterencode.<locals>._iterencode"
+            ],
+            [
+              "analyzers.observation_store.EncryptedRows.__getitem__",
+              "backend.checkpoint_pages.ReplayRows.__getitem__",
+              "backend.context_maps.ContextMap._frame",
+              "backend.context_maps.ContextMap._iterate",
+              "json.encoder._make_iterencode.<locals>._iterencode_dict",
+              "json.encoder._make_iterencode.<locals>._iterencode"
+            ],
+            [
+              "analyzers.observation_store.EncryptedRows.__getitem__",
+              "backend.checkpoint_pages.ReplayRows.__getitem__",
+              "backend.context_maps.ContextMap._frame",
+              "backend.context_maps.ContextMap._iterate",
+              "json.encoder._make_iterencode.<locals>._iterencode_dict",
+              "json.encoder._make_iterencode.<locals>._iterencode"
+            ]
+          ],
+          "before": {
+            "cpu_seconds": 1.890625,
+            "rss_bytes": 97906688,
+            "peak_rss_bytes": 97906688
+          },
+          "after": {
+            "cpu_seconds": 2.625,
+            "rss_bytes": 118890496,
+            "peak_rss_bytes": 118890496
+          },
+          "cache_size": -1024,
+          "headers": 1,
+          "python_base_slots": 1
+        }
+      ]
+    },
+    {
+      "count": 50000,
+      "expected": {
+        "sha256": "b3c66416c2976176f65c22ccd0a7637c6317ed50fe2c171e6834fcc7b107abdc",
+        "bytes": 19088891
+      },
+      "samples": [
+        {
+          "scope": "OWNED_FRESH_PROCESS_STREAMING_MAP_ITERATION",
+          "count": 50000,
+          "logical": {
+            "sha256": "b3c66416c2976176f65c22ccd0a7637c6317ed50fe2c171e6834fcc7b107abdc",
+            "bytes": 19088891
+          },
+          "load_seconds": 7.745238499999687,
+          "iteration_seconds": 5.386574099997233,
+          "decryptions": 50000,
+          "encryptions": 0,
+          "hmac_tag_calls": 50000,
+          "first_decryption_paths": [
+            [
+              "analyzers.observation_store.EncryptedRows.__getitem__",
+              "backend.checkpoint_pages.ReplayRows.__getitem__",
+              "backend.context_maps.ContextMap._frame",
+              "backend.context_maps.ContextMap._iterate",
+              "json.encoder._make_iterencode.<locals>._iterencode_dict",
+              "json.encoder._make_iterencode.<locals>._iterencode"
+            ],
+            [
+              "analyzers.observation_store.EncryptedRows.__getitem__",
+              "backend.checkpoint_pages.ReplayRows.__getitem__",
+              "backend.context_maps.ContextMap._frame",
+              "backend.context_maps.ContextMap._iterate",
+              "json.encoder._make_iterencode.<locals>._iterencode_dict",
+              "json.encoder._make_iterencode.<locals>._iterencode"
+            ],
+            [
+              "analyzers.observation_store.EncryptedRows.__getitem__",
+              "backend.checkpoint_pages.ReplayRows.__getitem__",
+              "backend.context_maps.ContextMap._frame",
+              "backend.context_maps.ContextMap._iterate",
+              "json.encoder._make_iterencode.<locals>._iterencode_dict",
+              "json.encoder._make_iterencode.<locals>._iterencode"
+            ]
+          ],
+          "before": {
+            "cpu_seconds": 8.1875,
+            "rss_bytes": 99233792,
+            "peak_rss_bytes": 99491840
+          },
+          "after": {
+            "cpu_seconds": 13.390625,
+            "rss_bytes": 109223936,
+            "peak_rss_bytes": 128016384
+          },
+          "cache_size": -1024,
+          "headers": 1,
+          "python_base_slots": 1
+        },
+        {
+          "scope": "OWNED_FRESH_PROCESS_STREAMING_MAP_ITERATION",
+          "count": 50000,
+          "logical": {
+            "sha256": "b3c66416c2976176f65c22ccd0a7637c6317ed50fe2c171e6834fcc7b107abdc",
+            "bytes": 19088891
+          },
+          "load_seconds": 7.710418999995454,
+          "iteration_seconds": 5.9457169999950565,
+          "decryptions": 50000,
+          "encryptions": 0,
+          "hmac_tag_calls": 50000,
+          "first_decryption_paths": [
+            [
+              "analyzers.observation_store.EncryptedRows.__getitem__",
+              "backend.checkpoint_pages.ReplayRows.__getitem__",
+              "backend.context_maps.ContextMap._frame",
+              "backend.context_maps.ContextMap._iterate",
+              "json.encoder._make_iterencode.<locals>._iterencode_dict",
+              "json.encoder._make_iterencode.<locals>._iterencode"
+            ],
+            [
+              "analyzers.observation_store.EncryptedRows.__getitem__",
+              "backend.checkpoint_pages.ReplayRows.__getitem__",
+              "backend.context_maps.ContextMap._frame",
+              "backend.context_maps.ContextMap._iterate",
+              "json.encoder._make_iterencode.<locals>._iterencode_dict",
+              "json.encoder._make_iterencode.<locals>._iterencode"
+            ],
+            [
+              "analyzers.observation_store.EncryptedRows.__getitem__",
+              "backend.checkpoint_pages.ReplayRows.__getitem__",
+              "backend.context_maps.ContextMap._frame",
+              "backend.context_maps.ContextMap._iterate",
+              "json.encoder._make_iterencode.<locals>._iterencode_dict",
+              "json.encoder._make_iterencode.<locals>._iterencode"
+            ]
+          ],
+          "before": {
+            "cpu_seconds": 8.078125,
+            "rss_bytes": 99606528,
+            "peak_rss_bytes": 99606528
+          },
+          "after": {
+            "cpu_seconds": 13.796875,
+            "rss_bytes": 109092864,
+            "peak_rss_bytes": 128094208
+          },
+          "cache_size": -1024,
+          "headers": 1,
+          "python_base_slots": 1
+        },
+        {
+          "scope": "OWNED_FRESH_PROCESS_STREAMING_MAP_ITERATION",
+          "count": 50000,
+          "logical": {
+            "sha256": "b3c66416c2976176f65c22ccd0a7637c6317ed50fe2c171e6834fcc7b107abdc",
+            "bytes": 19088891
+          },
+          "load_seconds": 6.794087300004321,
+          "iteration_seconds": 5.7003117999993265,
+          "decryptions": 50000,
+          "encryptions": 0,
+          "hmac_tag_calls": 50000,
+          "first_decryption_paths": [
+            [
+              "analyzers.observation_store.EncryptedRows.__getitem__",
+              "backend.checkpoint_pages.ReplayRows.__getitem__",
+              "backend.context_maps.ContextMap._frame",
+              "backend.context_maps.ContextMap._iterate",
+              "json.encoder._make_iterencode.<locals>._iterencode_dict",
+              "json.encoder._make_iterencode.<locals>._iterencode"
+            ],
+            [
+              "analyzers.observation_store.EncryptedRows.__getitem__",
+              "backend.checkpoint_pages.ReplayRows.__getitem__",
+              "backend.context_maps.ContextMap._frame",
+              "backend.context_maps.ContextMap._iterate",
+              "json.encoder._make_iterencode.<locals>._iterencode_dict",
+              "json.encoder._make_iterencode.<locals>._iterencode"
+            ],
+            [
+              "analyzers.observation_store.EncryptedRows.__getitem__",
+              "backend.checkpoint_pages.ReplayRows.__getitem__",
+              "backend.context_maps.ContextMap._frame",
+              "backend.context_maps.ContextMap._iterate",
+              "json.encoder._make_iterencode.<locals>._iterencode_dict",
+              "json.encoder._make_iterencode.<locals>._iterencode"
+            ]
+          ],
+          "before": {
+            "cpu_seconds": 7.234375,
+            "rss_bytes": 99213312,
+            "peak_rss_bytes": 99213312
+          },
+          "after": {
+            "cpu_seconds": 12.71875,
+            "rss_bytes": 108138496,
+            "peak_rss_bytes": 127500288
+          },
+          "cache_size": -1024,
+          "headers": 1,
+          "python_base_slots": 1
+        }
+      ]
+    }
+  ],
+  "tests": [
+    {
+      "file": "map-iteration-before.xml",
+      "tests": "6",
+      "failures": "5",
+      "errors": "0",
+      "skipped": "0",
+      "time": "285.797",
+      "failed_cases": [
+        "test_large_map_iteration_decrypts_each_entry_once[10000]",
+        "test_large_map_iteration_decrypts_each_entry_once[50000]",
+        "test_iteration_operation_counts[items]",
+        "test_iteration_operation_counts[values]",
+        "test_direct_lookup_reuses_its_verified_frame"
+      ]
+    },
+    {
+      "file": "map-iteration-small.xml",
+      "tests": "29",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "40.090",
+      "failed_cases": []
+    },
+    {
+      "file": "map-iteration-after.xml",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "205.991",
+      "failed_cases": []
+    },
+    {
+      "file": "map-iteration-owner-before.xml",
+      "tests": "2",
+      "failures": "2",
+      "errors": "0",
+      "skipped": "0",
+      "time": "3.588",
+      "failed_cases": [
+        "test_owner_closed_during_frame_read_never_returns_value[lookup]",
+        "test_owner_closed_during_frame_read_never_returns_value[items]"
+      ]
+    },
+    {
+      "file": "map-iteration-regression.xml",
+      "tests": "136",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "719.910",
+      "failed_cases": []
+    },
+    {
+      "file": "map-iteration-after-final.xml",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "93.061",
+      "failed_cases": []
+    },
+    {
+      "file": "map-iteration-final.xml",
+      "tests": "68",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "45.659",
+      "failed_cases": []
+    }
+  ],
+  "owned_pipeline": {
+    "complete_fingerprints_equal": true,
+    "before": {
+      "snapshots": {
+        "snapshot:3566f7630bd77c564b2cc4de1d826ffb30d5c4884ab67148648ba7d85f1843dc": {
+          "claim": {
+            "count": 8,
+            "sha256": "2bd112363400c3d0ca5676a65317037b8f98f8bad62cf6b63bfac421e55e171d"
+          },
+          "dependency": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "drift": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "edge": {
+            "count": 1230,
+            "sha256": "94984310b57b7f669c4b3367c3a364517182b89e6a571eb715a758f92b921e79"
+          },
+          "evidence": {
+            "count": 19,
+            "sha256": "05cbec300bb80740f2875d884f1f3568c2f59b22d15e65157d1f9bf8eea038f2"
+          },
+          "finding": {
+            "count": 336,
+            "sha256": "3aa0a75ff9d4a3a83d8b25e7dc48a475bd01b407d367e6d719dadb89ef50b5dd"
+          },
+          "graph_node": {
+            "count": 182,
+            "sha256": "60a90e4c16d6f40e9ab638ac917d1d57dbe3b68d8dc0283e4e5ed8e0956cd177"
+          },
+          "quality_projection": {
+            "count": 1,
+            "sha256": "f647a96a2c156e4158c2a196b14c2247071b22e19a44376d111f8c667178a444"
+          },
+          "risk_path": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "snapshot": {
+            "count": 1,
+            "sha256": "f4f00a064ac9f34b0181a1f0cfd90339f19f7af299f9f74c6454ae215dda9107"
+          }
+        },
+        "snapshot:746a8883eae1ba02dc319fe3553479bc0dfe9049cc7d89c4d1be46b2ad1b65fa": {
+          "claim": {
+            "count": 8,
+            "sha256": "3ab675eff8f0f828f5589ecf60d4a072a294d5b4944c700585d0f0430b158d12"
+          },
+          "dependency": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "drift": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "edge": {
+            "count": 1230,
+            "sha256": "65a41c4b992a52560f8e05e928134a57876d917558e4a59181317eca568754cc"
+          },
+          "evidence": {
+            "count": 19,
+            "sha256": "8139ef67dbdcd1fb3bc8072458095b5008b56c95e6ce114407ae12511b9dc261"
+          },
+          "finding": {
+            "count": 336,
+            "sha256": "9e59e785faba7a119a7998f95aff8c3e4929afded71c29cd0761e70dddb3799f"
+          },
+          "graph_node": {
+            "count": 182,
+            "sha256": "71a2e87ebddb5eb4cc0c225459b3846fd0c9efa20a12fa2c4433cc3ce39f2b8d"
+          },
+          "quality_projection": {
+            "count": 1,
+            "sha256": "f647a96a2c156e4158c2a196b14c2247071b22e19a44376d111f8c667178a444"
+          },
+          "risk_path": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "snapshot": {
+            "count": 1,
+            "sha256": "09dd501ece56cd53220f33c914783c6871af33115e842221e633e6c72fefe583"
+          }
+        },
+        "snapshot:8f88b43de4a53d177f650e77450b6f56621c28b18fbf6eb3b5ab41e3fb56baf8": {
+          "claim": {
+            "count": 8,
+            "sha256": "13c77b3ad0aee032a58e6d9d16b467c899000b7661a8e87df17affc9ba7e65c0"
+          },
+          "dependency": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "drift": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "edge": {
+            "count": 1234,
+            "sha256": "4769df7dae3779eb63fbc9e88f639aa12d095b82f7204a38ea117b19a95b4d78"
+          },
+          "evidence": {
+            "count": 19,
+            "sha256": "04b333e8db69d4050ad1a741724eb86172fbfbb00a058df2e86d4c5c1949fcf9"
+          },
+          "finding": {
+            "count": 337,
+            "sha256": "f8f6510afdf6da56019a5148c6e806384b7f968e4cb5100b88c684eda3f02b9f"
+          },
+          "graph_node": {
+            "count": 182,
+            "sha256": "ed8bb442ef89c9c8a458915979d0dcab7acfabf956a41272139a6b75ecb6fdb5"
+          },
+          "quality_projection": {
+            "count": 1,
+            "sha256": "63f78ebb441624e178c1d5fd80ce4e661dbcd4250c893459d680c4f99c7187bd"
+          },
+          "risk_path": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "snapshot": {
+            "count": 1,
+            "sha256": "9a734626be748eef1c060ddf4242f36bc5cd9170505bf29de70ef6680ac955fd"
+          }
+        }
+      },
+      "source_inventories": {
+        "inventory:4cffe841bdbd8392d3fff4bcc261e1713c2b01a3864a1ebb1b56d275769c5225": {
+          "count": 19,
+          "sha256": "4cffe841bdbd8392d3fff4bcc261e1713c2b01a3864a1ebb1b56d275769c5225"
+        },
+        "inventory:08d9add80d09b560e5b244133a067aae2951499da85621f5d01b3cf04fa9c46c": {
+          "count": 19,
+          "sha256": "08d9add80d09b560e5b244133a067aae2951499da85621f5d01b3cf04fa9c46c"
+        }
+      },
+      "parser_artifacts": {
+        "count": 20,
+        "sha256": "16f1a9cc2d7f583c794b6e22c1ca6fb4c22e13d882ee7fd6fa7aa654692f5d13"
+      },
+      "sqlite_integrity": "ok",
+      "foreign_key_violations": 0
+    },
+    "after": {
+      "snapshots": {
+        "snapshot:3566f7630bd77c564b2cc4de1d826ffb30d5c4884ab67148648ba7d85f1843dc": {
+          "claim": {
+            "count": 8,
+            "sha256": "2bd112363400c3d0ca5676a65317037b8f98f8bad62cf6b63bfac421e55e171d"
+          },
+          "dependency": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "drift": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "edge": {
+            "count": 1230,
+            "sha256": "94984310b57b7f669c4b3367c3a364517182b89e6a571eb715a758f92b921e79"
+          },
+          "evidence": {
+            "count": 19,
+            "sha256": "05cbec300bb80740f2875d884f1f3568c2f59b22d15e65157d1f9bf8eea038f2"
+          },
+          "finding": {
+            "count": 336,
+            "sha256": "3aa0a75ff9d4a3a83d8b25e7dc48a475bd01b407d367e6d719dadb89ef50b5dd"
+          },
+          "graph_node": {
+            "count": 182,
+            "sha256": "60a90e4c16d6f40e9ab638ac917d1d57dbe3b68d8dc0283e4e5ed8e0956cd177"
+          },
+          "quality_projection": {
+            "count": 1,
+            "sha256": "f647a96a2c156e4158c2a196b14c2247071b22e19a44376d111f8c667178a444"
+          },
+          "risk_path": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "snapshot": {
+            "count": 1,
+            "sha256": "f4f00a064ac9f34b0181a1f0cfd90339f19f7af299f9f74c6454ae215dda9107"
+          }
+        },
+        "snapshot:746a8883eae1ba02dc319fe3553479bc0dfe9049cc7d89c4d1be46b2ad1b65fa": {
+          "claim": {
+            "count": 8,
+            "sha256": "3ab675eff8f0f828f5589ecf60d4a072a294d5b4944c700585d0f0430b158d12"
+          },
+          "dependency": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "drift": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "edge": {
+            "count": 1230,
+            "sha256": "65a41c4b992a52560f8e05e928134a57876d917558e4a59181317eca568754cc"
+          },
+          "evidence": {
+            "count": 19,
+            "sha256": "8139ef67dbdcd1fb3bc8072458095b5008b56c95e6ce114407ae12511b9dc261"
+          },
+          "finding": {
+            "count": 336,
+            "sha256": "9e59e785faba7a119a7998f95aff8c3e4929afded71c29cd0761e70dddb3799f"
+          },
+          "graph_node": {
+            "count": 182,
+            "sha256": "71a2e87ebddb5eb4cc0c225459b3846fd0c9efa20a12fa2c4433cc3ce39f2b8d"
+          },
+          "quality_projection": {
+            "count": 1,
+            "sha256": "f647a96a2c156e4158c2a196b14c2247071b22e19a44376d111f8c667178a444"
+          },
+          "risk_path": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "snapshot": {
+            "count": 1,
+            "sha256": "09dd501ece56cd53220f33c914783c6871af33115e842221e633e6c72fefe583"
+          }
+        },
+        "snapshot:8f88b43de4a53d177f650e77450b6f56621c28b18fbf6eb3b5ab41e3fb56baf8": {
+          "claim": {
+            "count": 8,
+            "sha256": "13c77b3ad0aee032a58e6d9d16b467c899000b7661a8e87df17affc9ba7e65c0"
+          },
+          "dependency": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "drift": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "edge": {
+            "count": 1234,
+            "sha256": "4769df7dae3779eb63fbc9e88f639aa12d095b82f7204a38ea117b19a95b4d78"
+          },
+          "evidence": {
+            "count": 19,
+            "sha256": "04b333e8db69d4050ad1a741724eb86172fbfbb00a058df2e86d4c5c1949fcf9"
+          },
+          "finding": {
+            "count": 337,
+            "sha256": "f8f6510afdf6da56019a5148c6e806384b7f968e4cb5100b88c684eda3f02b9f"
+          },
+          "graph_node": {
+            "count": 182,
+            "sha256": "ed8bb442ef89c9c8a458915979d0dcab7acfabf956a41272139a6b75ecb6fdb5"
+          },
+          "quality_projection": {
+            "count": 1,
+            "sha256": "63f78ebb441624e178c1d5fd80ce4e661dbcd4250c893459d680c4f99c7187bd"
+          },
+          "risk_path": {
+            "count": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "snapshot": {
+            "count": 1,
+            "sha256": "9a734626be748eef1c060ddf4242f36bc5cd9170505bf29de70ef6680ac955fd"
+          }
+        }
+      },
+      "source_inventories": {
+        "inventory:4cffe841bdbd8392d3fff4bcc261e1713c2b01a3864a1ebb1b56d275769c5225": {
+          "count": 19,
+          "sha256": "4cffe841bdbd8392d3fff4bcc261e1713c2b01a3864a1ebb1b56d275769c5225"
+        },
+        "inventory:08d9add80d09b560e5b244133a067aae2951499da85621f5d01b3cf04fa9c46c": {
+          "count": 19,
+          "sha256": "08d9add80d09b560e5b244133a067aae2951499da85621f5d01b3cf04fa9c46c"
+        }
+      },
+      "parser_artifacts": {
+        "count": 20,
+        "sha256": "16f1a9cc2d7f583c794b6e22c1ca6fb4c22e13d882ee7fd6fa7aa654692f5d13"
+      },
+      "sqlite_integrity": "ok",
+      "foreign_key_violations": 0
+    },
+    "integrity": {
+      "sqlite_integrity": "ok",
+      "foreign_key_violations": 0
+    },
+    "publication": {
+      "generation_states": [
+        [
+          "PUBLISHED",
+          3
+        ]
+      ],
+      "pointers": 2
+    }
+  },
+  "unchanged_limits": {
+    "descriptor_nodes": 256000,
+    "stage_ciphertext_bytes": 64000000,
+    "decoded_page_bytes": 256000,
+    "row_bytes": 31991808,
+    "sqlite_cache_kib": 1024
+  },
+  "limitations": [
+    "Peak RSS includes replay and iteration in the measured child, excludes fixture-authoring parent; not process-tree/cgroup qualification.",
+    "Timing samples include hash/export and instrumentation and are subject to uncontrolled host/I/O variance.",
+    "Untimed load durations changed despite no replay-builder optimization; elapsed ratios are not isolated causal speedup claims.",
+    "Whole-document JSON export/materialization and downgrade/expiry were not changed.",
+    "Full Linux/pinned workload, PostgreSQL, real broker and full acceptance matrix were not run.",
+    "Test selections overlap; do not add their counts."
+  ]
+}

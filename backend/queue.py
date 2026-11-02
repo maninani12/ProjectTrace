@@ -201,20 +201,27 @@ def load_input(db, job):
 
 
 def purge_expired_inputs(db):
+    from backend.retention import ExpiryGuard
+    guard = ExpiryGuard(db, now())
     from backend.generations import purge_expired_chunks
-    purge_expired_chunks(db)
+    purge_expired_chunks(db, _guard=guard)
     from backend.publication_units import purge_expired
-    purge_expired(db)
-    from backend.db import AnalysisCheckpoint
-    for checkpoint in db.scalars(select(AnalysisCheckpoint).where(AnalysisCheckpoint.expires_at <= now()).limit(1000)):
-        db.delete(checkpoint)
-    expired = list(db.scalars(select(AnalysisInput).where(AnalysisInput.expires_at <= now()).limit(1000)))
-    for retained in expired:
-        from backend.db import AnalysisCheckpoint
-        checkpoint = db.get(AnalysisCheckpoint, retained.job_id)
-        if checkpoint:
-            db.delete(checkpoint)
-        job = db.get(Record, retained.job_id)
+    purge_expired(db, _guard=guard)
+    from backend.analysis_checkpoints import discard, purge_expired
+    purge_expired(db, _guard=guard)
+    from sqlalchemy import delete
+    expired = db.execute(select(AnalysisInput.job_id, AnalysisInput.organization_id, AnalysisInput.repository_id)
+        .where(AnalysisInput.expires_at <= guard.instant, ~guard.active(AnalysisInput)).limit(1000)).all()
+    count = 0
+    for job_id, organization_id, repository_id in expired:
+        if not guard.allows(job_id, organization_id, repository_id):
+            continue
+        job = db.get(Record, job_id)
+        if job and (job.kind, job.organization_id, job.repository_id) != (
+                "job", organization_id, repository_id):
+            raise ValueError("Expired input job scope is invalid.")
+        if job:
+            discard(db, job)
         if job and job.data.get("state") not in TERMINAL:
             job.data = {
                 **job.data,
@@ -222,6 +229,11 @@ def purge_expired_inputs(db):
                 "finished_at": now(),
                 "errors": ["Retained input expired; upload a fresh snapshot."],
             }
-        db.delete(retained)
+        db.execute(delete(AnalysisInput).where(AnalysisInput.job_id == job_id,
+            AnalysisInput.organization_id == organization_id, AnalysisInput.repository_id == repository_id,
+            AnalysisInput.expires_at <= guard.instant))
+        if job:
+            guard.finish(job)  # An expired attempt cannot renew after cleanup.
+        count += 1
     db.commit()
-    return len(expired)
+    return count

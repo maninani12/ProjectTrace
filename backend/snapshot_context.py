@@ -8,7 +8,8 @@ from backend.db import QualityAnalysis, Record
 
 SNAPSHOT_FIELDS = (
     "base_id", "branch", "commit", "analyzer_version", "parser_signature",
-    "verification_cache", "hashes", "claims", "findings", "dependencies", "cloud_assets", "gate",
+    "verification_cache", "hashes", "source_provenance", "source_inventory_id", "source_path_basis",
+    "claims", "findings", "dependencies", "cloud_assets", "gate",
 )
 
 

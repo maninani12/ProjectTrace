@@ -9,6 +9,9 @@ from pathlib import PurePosixPath
 from analyzers import sandbox
 from analyzers.lexical import POLICY
 
+_MARKDOWN_FENCE_OPEN = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
+_MARKDOWN_FENCE_CLOSE = re.compile(r"^ {0,3}(`{3,}|~{3,})[ \t]*$")
+
 
 def changed_ranges(value):
     old, head = value["old"], value["head"]
@@ -112,6 +115,32 @@ def sections(value):
         for n, line in enumerate(source.splitlines(), 1) if line.startswith("#")]}
 
 
+def _markdown_assertion_lines(source):
+    """Yield prose lines, excluding Markdown fenced and indented code blocks."""
+    fence_character = None
+    fence_length = 0
+    for line_number, content in enumerate(source.splitlines(), 1):
+        if fence_character is not None:
+            closing = _MARKDOWN_FENCE_CLOSE.match(content)
+            if (closing and closing.group(1)[0] == fence_character
+                    and len(closing.group(1)) >= fence_length):
+                fence_character = None
+                fence_length = 0
+            continue
+
+        if content.startswith(("    ", "\t")):
+            continue
+        opening = _MARKDOWN_FENCE_OPEN.match(content)
+        if opening:
+            delimiter, info = opening.groups()
+            if delimiter[0] == "`" and "`" in info:
+                continue
+            fence_character = delimiter[0]
+            fence_length = len(delimiter)
+            continue
+        yield line_number, content
+
+
 def storage_claims(files, assets):
     claims = []
     storage = [
@@ -123,11 +152,8 @@ def storage_claims(files, assets):
         if not path.endswith(".md"):
             continue
         source = files[path]
-        fenced = False
-        for line, content in enumerate(source.splitlines(), 1):
-            if content.strip().startswith("```"):
-                fenced = not fenced
-            if fenced or not re.search(r"^\s*(?:[-*]\s+)?(?:Production\s+)?storage is private[.!]?\s*$", content, re.I):
+        for line, content in _markdown_assertion_lines(source):
+            if not re.search(r"^\s*(?:[-*]\s+)?(?:Production\s+)?storage is private[.!]?\s*$", content, re.I):
                 continue
             scoped_storage = storage
             if content.strip().lower().startswith("production"):

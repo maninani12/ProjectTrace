@@ -1,0 +1,754 @@
+{
+  "schema": "projecttrace-scale001-policy-decision-readiness-v1",
+  "date": "2026-10-29",
+  "decision_status": "POLICY DECISION REQUIRED; no new policy selected or implemented",
+  "recommendation": "Option A provisionally: retain 1,000,000 aggregate cap and document snapshots over it as unsupported, subject to explicit product-owner approval.",
+  "qualification": "SCALE-001 NOT QUALIFIED",
+  "commercial_v1": "DEVELOPMENT IN PROGRESS",
+  "repository": "C:\\Users\\sai krishna\\Projects\\ProjectTrace-local",
+  "preservation": {
+    "branch": "codex/scale-001-local-continuation",
+    "head": "9e21509591bfa5457cc829ebd5637f95be68d573",
+    "expected_head_match": true,
+    "entry_short_status": " M backend/analysis_checkpoints.py\n M backend/db.py\n M backend/domain.py\n M backend/generation_models.py\n M backend/generations.py\n M backend/jobs.py\n M backend/publication_units.py\n M backend/quality_api.py\n M backend/queue.py\n M tests/test_migrations.py\n?? PROJECTTRACE_PROGRESS.md\n?? backend/checkpoint_pages.py\n?? backend/context_json.py\n?? backend/context_maps.py\n?? backend/generation_context.py\n?? backend/json_export.py\n?? backend/migrations/versions/0026_checkpoint_parts.py\n?? backend/retention.py\n?? docs/CHECKPOINT_RETENTION_AND_ROLLBACK.md\n?? docs/COMMERCIAL_V1_RELEASE_GATES.md\n?? docs/SCALE001_AGGREGATE_GUARD_INVESTIGATION.md\n?? docs/SCALE001_CHECKPOINT_ARCHITECTURE.md\n?? docs/SCALE001_GENERATION_MAPS_LOCAL_TECHNICAL_REPORT.md\n?? docs/SCALE001_GRAPH_ORDERING_CONTRACT.md\n?? docs/adr/0007-bounded-published-snapshot-segments.md\n?? docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29.json\n?? docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_FINAL.json\n?? docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_FINAL_RAW.tar.gz\n?? docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_RAW.tar.gz\n?? docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_REVIEWED.json\n?? docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_REVIEWED_RAW.tar.gz\n?? docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_REVIEWED_V2.json\n?? docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_REVIEWED_V2_RAW.tar.gz\n?? docs/evidence/SCALE001_AGGREGATE_GUARD_INVESTIGATION.json\n?? docs/evidence/SCALE001_CGROUP_40280429009.json\n?? docs/evidence/SCALE001_CGROUP_40280429009_MEMORY.jsonl.gz\n?? docs/evidence/SCALE001_CHECKPOINT_PAGES_EQUIVALENCE.json\n?? docs/evidence/SCALE001_CHECKPOINT_PAGES_OWNED.json\n?? docs/evidence/SCALE001_FINAL_SNAPSHOT_PROFILE.json\n?? docs/evidence/SCALE001_FINAL_SNAPSHOT_PROFILE_RAW.json.gz\n?? docs/evidence/SCALE001_GENERATION_JSON_EXPORT.json\n?? docs/evidence/SCALE001_GENERATION_MAPS_OWNED.json\n?? docs/evidence/SCALE001_GENERATION_MAP_ITERATION.json\n?? docs/evidence/SCALE001_GRAPH_INDEX_PROTOTYPE.json\n?? docs/evidence/SCALE001_GRAPH_INDEX_PROTOTYPE_RAW.json.gz\n?? docs/evidence/SCALE001_GRAPH_INDEX_RECOVERY.json\n?? docs/evidence/SCALE001_GRAPH_INDEX_RECOVERY_RAW.json.gz\n?? docs/evidence/SCALE001_GRAPH_SCALAR_PROTOTYPE.json\n?? docs/evidence/SCALE001_GRAPH_SCALAR_PROTOTYPE_RAW.json.gz\n?? frontend/e2e/configuration-drift.spec.ts\n?? samples/configuration-drift.json\n?? tests/commercial_snapshot_profile.py\n?? tests/generation_json_export_probe.py\n?? tests/generation_map_iteration_probe.py\n?? tests/graph_index_api_probe.py\n?? tests/graph_index_compatibility.py\n?? tests/graph_index_measure.py\n?? tests/graph_index_prototype.py\n?? tests/graph_index_publication_probe.py\n?? tests/graph_index_pytest_plugin.py\n?? tests/graph_index_recovery.py\n?? tests/graph_index_recovery_plugin.py\n?? tests/graph_index_recovery_probe.py\n?? tests/graph_scalar_plugin.py\n?? tests/graph_scalar_probe.py\n?? tests/graph_scalar_prototype.py\n?? tests/snapshot_component_probe.py\n?? tests/snapshot_materialization_probe.py\n?? tests/sqlite_memory_probe.py\n?? tests/test_checkpoint_pages.py\n?? tests/test_configuration_drift.py\n?? tests/test_generation_context.py\n?? tests/test_generation_map_iteration.py\n?? tests/test_generation_maps.py\n?? tests/test_graph_index_recovery.py\n?? tests/test_graph_scalar_projection.py\n?? tests/test_graph_scalar_reading.py\n?? tests/test_json_export.py\n?? tests/test_retention_downgrade.py\n?? tests/test_retention_postgresql.py\n?? tests/test_retention_recovery.py\n?? tests/test_sanitization_aggregate_guard.py\n?? tests/test_snapshot_materialization_profile.py",
+    "entry_status_rows": 83,
+    "entry_tracked_diff_stat": "10 modified tracked files; 287 insertions, 86 deletions",
+    "staged_diff_stat": "",
+    "entry_tracked_diff_sha256": "ec79724dbe5405e6b0a7cded5a3bd8505f060383e490bda097d9bf739bd7eaec",
+    "four_original_databases": {
+      "10000": {
+        "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\p74\\test_owned_final_snapshot_prof1\\owned\\benchmark.db",
+        "baseline_sha256": "465441f1dfd2c7d6ca3d7427c79dd55e57c350bee451b60a66b8e0e92f5a1d1b",
+        "current_sha256": "465441f1dfd2c7d6ca3d7427c79dd55e57c350bee451b60a66b8e0e92f5a1d1b",
+        "matches": true
+      },
+      "147": {
+        "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\p74\\test_owned_final_snapshot_prof0\\owned\\benchmark.db",
+        "baseline_sha256": "97aeda34f1cb1b1d67784926c2140c3c27063585ae135fbb39e22643edce94d6",
+        "current_sha256": "97aeda34f1cb1b1d67784926c2140c3c27063585ae135fbb39e22643edce94d6",
+        "matches": true
+      },
+      "30000": {
+        "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\p77\\test_owned_final_snapshot_prof0\\owned\\benchmark.db",
+        "baseline_sha256": "c7313fd66baa9e23ec5f5a7e9bdb8003554d086796c101be14f8d02d6ee5e9a4",
+        "current_sha256": "c7313fd66baa9e23ec5f5a7e9bdb8003554d086796c101be14f8d02d6ee5e9a4",
+        "matches": true
+      },
+      "prior": {
+        "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\vp-json-export-final\\benchmark.db",
+        "baseline_sha256": "14a15885488462c687ce2581807ea56ecb2145b98bc58d67f6e2aad3ba9a5627",
+        "current_sha256": "14a15885488462c687ce2581807ea56ecb2145b98bc58d67f6e2aad3ba9a5627",
+        "matches": true
+      }
+    },
+    "prior_investigation_artifacts": {
+      "aggregate_report": {
+        "path": "docs/SCALE001_AGGREGATE_GUARD_INVESTIGATION.md",
+        "expected_sha256": "bc9a98b7249ec27cdcb5b58c64a9be18d4294996070c67537f43f8e64f942e5a",
+        "current_sha256": "bc9a98b7249ec27cdcb5b58c64a9be18d4294996070c67537f43f8e64f942e5a",
+        "matches": true
+      },
+      "aggregate_evidence": {
+        "path": "docs/evidence/SCALE001_AGGREGATE_GUARD_INVESTIGATION.json",
+        "expected_sha256": "e63f22214bf1b1b146a4930b93fb0595e03478b33b9aab6e7a11e2ca7264e64b",
+        "current_sha256": "e63f22214bf1b1b146a4930b93fb0595e03478b33b9aab6e7a11e2ca7264e64b",
+        "matches": true
+      },
+      "adr_0007": {
+        "path": "docs/adr/0007-bounded-published-snapshot-segments.md",
+        "expected_sha256": "d38f27bf16882d7095b03407966d5479bc8fb8c100e9fa684b33354f414ac45a",
+        "current_sha256": "d38f27bf16882d7095b03407966d5479bc8fb8c100e9fa684b33354f414ac45a",
+        "matches": true
+      }
+    },
+    "preexisting_changes_preserved": true,
+    "new_database_mutation": false
+  },
+  "environment": {
+    "python": "3.14.3",
+    "venv": "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv",
+    "pytest": "9.1.1",
+    "ruff": "0.16.10",
+    "pip_check": "No broken requirements found.",
+    "dependency_source": "Existing documented venv; versions match requirements.lock test tools; no package or manifest changes.",
+    "os": "Windows 11, win32; local-only",
+    "isolation": {
+      "APP_ENV": "demo",
+      "JOB_MODE": "sync",
+      "DATABASE_URL": "scratch SQLite under task work",
+      "SOURCE_BLOB_DIR": "scratch",
+      "SOURCE_UPLOAD_DIR": "scratch",
+      "ANALYSIS_KEY_FILE": "scratch only",
+      "pytest_basetemp": "scratch only"
+    }
+  },
+  "admission_policy": {
+    "function": "analyzers.sanitization.metadata",
+    "default_node_limit": 1000000,
+    "per_call_counter": true,
+    "count_semantics": "Root/visited containers/values count; keys do not; non-null sensitive values redact without visiting subtree.",
+    "depth_limit": 60,
+    "per_text_character_limit": 1000000,
+    "maximum_nodes_override_parameter": "maximum_nodes",
+    "production_final_call_uses_default": true,
+    "callsite": "backend/domain.py:persist_analysis at final snapshot assignment (line 1816)",
+    "generation_validate_reached_on_50k": false,
+    "base_head_50k_comparison_reached": false
+  },
+  "verified_boundary": {
+    "tests": {
+      "xml": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\scale001-test-run\\boundary.xml",
+      "xml_sha256": "cbe15dfc74c271026790e7a7661de003341d7cf08d3febad126b4907a68d3380",
+      "tests": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 3.529,
+      "failure_details": [],
+      "skip_details": []
+    },
+    "results": [
+      {
+        "nodes": 999999,
+        "accepted": true
+      },
+      {
+        "nodes": 1000000,
+        "accepted": true
+      },
+      {
+        "nodes": 1000001,
+        "accepted": false,
+        "error": "Sanitization structure budget exceeded"
+      }
+    ]
+  },
+  "fifty_k_fixture": {
+    "fixture_method": "Complete 30k snapshot fields preserved, complete metric rows cycled to 50,000.",
+    "source_database_sha256": "c7313fd66baa9e23ec5f5a7e9bdb8003554d086796c101be14f8d02d6ee5e9a4",
+    "source_snapshot_json_bytes": 26197173,
+    "metric_rows": 50000,
+    "counted_logical_nodes": 1115947,
+    "excess_nodes": 115947,
+    "shape_measurement": {
+      "source_database_sha256": "c7313fd66baa9e23ec5f5a7e9bdb8003554d086796c101be14f8d02d6ee5e9a4",
+      "source_snapshot_json_bytes": 26197173,
+      "metrics": 50000,
+      "logical_nodes": 1115947,
+      "cap": 1000000,
+      "excess_nodes": 115947,
+      "serialized_json_bytes": 42856474,
+      "serialized_json_sha256": "3e1b2bf8e88da00ca33c9789f751cf2861d0aba3a3cfc7ab896dd3ec7fbd3909",
+      "serialized_json_encoder_seconds": 1.3987635,
+      "serialized_measurement_peak_rss_bytes": 94097408,
+      "maximum_depth": 6,
+      "maximum_string_characters": 229,
+      "measurement_command": "$env:PYTHONPATH='C:\\Users\\sai krishna\\Projects\\ProjectTrace-local'; py -3.14 'C:\\\\Users\\\\sai krishna\\\\Documents\\\\Codex\\\\2026-10-29\\\\files-pasted-by-the-user-projecttrace\\\\work\\\\measure_50k_shape.py'",
+      "measurement_script": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\measure_50k_shape.py"
+    },
+    "full_profile": {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\scale001-test-run\\basetemp-50k\\test_owned_final_snapshot_prof0\\owned\\profile.json",
+      "sha256": "7b2d6612699a819b563ba9f26e390c2bac4144dfe4937af59a69ff8fa215641a",
+      "scope": "OWNED_WINDOWS_FINAL_SNAPSHOT_PROFILE_ONLY",
+      "profile_test": {
+        "xml": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\scale001-test-run\\snapshot-50k.xml",
+        "xml_sha256": "eabc5edb06d12ea8dbbd715156e5e6b64fbdf31197da8387b3800dbac42a5561",
+        "tests": 1,
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "duration_seconds": 455.638,
+        "failure_details": [],
+        "skip_details": []
+      },
+      "analysis_seconds": 451.56706959999974,
+      "analysis_sampled_peak_rss_bytes": 303468544,
+      "final_sanitize_seconds": 17.25002929999937,
+      "final_sanitize_sampled_peak_rss_bytes": 238129152,
+      "metric_spill": {
+        "rows": 50000,
+        "ciphertext_bytes": 51820828,
+        "cache_size": -1024
+      },
+      "job": {
+        "state": "FAILED",
+        "stage": "CORRELATING",
+        "error_type": "ValueError",
+        "error_code": null,
+        "snapshot_id": null
+      },
+      "generation_states": [
+        [
+          "STAGING",
+          1
+        ]
+      ],
+      "published_pointers": 0,
+      "sqlite_integrity": {
+        "sqlite_integrity": "ok",
+        "foreign_key_violations": 0
+      },
+      "failure": "ValueError: Sanitization structure budget exceeded",
+      "downstream_sql_write_validation_comparison": "NOT REACHED"
+    },
+    "existing_30k_comparison_measurement_seconds": 8.2139612,
+    "existing_30k_sqlite_peak_malloc_bytes": 350664352,
+    "existing_30k_snapshot_update_sampled_peak_rss_bytes": 502472704,
+    "not_extrapolated": true
+  },
+  "other_existing_limits": {
+    "repository_files_default": 100000,
+    "repository_total_bytes_default": 2000000000,
+    "repository_archive_bytes_default": 512000000,
+    "analysis_time_seconds_default": 900,
+    "analysis_checkpoint_bytes_default": 64000000,
+    "analysis_checkpoint_bytes_config_upper": 256000000,
+    "generation_context_bytes_per_stage": 64000000,
+    "generation_descriptor_nodes": 256000,
+    "observation_spill_profile_bytes": 256000000,
+    "fixture_observed_spill_bytes": 51820828,
+    "memory_hard_limit_windows": "Not established",
+    "sqlite_peak_at_50k": "Not measured; SQL update not reached",
+    "direct_file_api_max_files": 1000,
+    "direct_file_api_max_total_bytes": 10000000,
+    "source_file_max_bytes": 512000,
+    "stored_inventory_partition_files": 100,
+    "stored_inventory_partition_bytes": 2000000
+  },
+  "tests": {
+    "boundary": {
+      "xml": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\scale001-test-run\\boundary.xml",
+      "xml_sha256": "cbe15dfc74c271026790e7a7661de003341d7cf08d3febad126b4907a68d3380",
+      "tests": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 3.529,
+      "failure_details": [],
+      "skip_details": []
+    },
+    "snapshot_50k": {
+      "xml": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\scale001-test-run\\snapshot-50k.xml",
+      "xml_sha256": "eabc5edb06d12ea8dbbd715156e5e6b64fbdf31197da8387b3800dbac42a5561",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 455.638,
+      "failure_details": [],
+      "skip_details": []
+    },
+    "persistence_focused": {
+      "xml": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\scale001-test-run\\persistence-focused.xml",
+      "xml_sha256": "6161c6343e4b0816d854ee26d5d8cb0bf78642783f3153524cb380fd0137e01a",
+      "tests": 4,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 19.53,
+      "failure_details": [],
+      "skip_details": []
+    },
+    "generation": {
+      "xml": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\scale001-test-run\\generation.xml",
+      "xml_sha256": "3337beb21cef89ad781a2c659d501000c7eb8eb654a97a5ae4832c4828c5e484",
+      "tests": 104,
+      "passed": 104,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 947.413,
+      "failure_details": [],
+      "skip_details": []
+    },
+    "commercial_rules": {
+      "xml": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\scale001-test-run\\commercial-rules.xml",
+      "xml_sha256": "493d7138bf2b4736b4f0fb47ee66419c8e88fa37b78c486cc5cacae47079b17f",
+      "tests": 105,
+      "passed": 105,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 59.464,
+      "failure_details": [],
+      "skip_details": []
+    },
+    "graph_security": {
+      "xml": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\scale001-test-run\\graph-security.xml",
+      "xml_sha256": "7884e31b23d45c5c007d1e144256f6eaf51204513fe2a4cc439a4cde57b24afd",
+      "tests": 92,
+      "passed": 22,
+      "failed": 0,
+      "skipped": 70,
+      "duration_seconds": 40.577,
+      "failure_details": [],
+      "skip_details": [
+        {
+          "test": "test_filtered_mixed_sequences_match_complete_baseline[version]",
+          "message": "Explicit disposable ownership required"
+        },
+        {
+          "test": "test_filtered_mixed_sequences_match_complete_baseline[id_in]",
+          "message": "Explicit disposable ownership required"
+        },
+        {
+          "test": "test_filtered_mixed_sequences_match_complete_baseline[path]",
+          "message": "Explicit disposable ownership required"
+        },
+        {
+          "test": "test_rowid_read_namespace_is_preserved",
+          "message": "Explicit disposable ownership required"
+        },
+        {
+          "test": "test_alias_join_rank_security_and_original_ast[alias]",
+          "message": "Explicit disposable ownership required"
+        },
+        {
+          "test": "test_alias_join_rank_security_and_original_ast[quoted]",
+          "message": "Explicit disposable ownership required"
+        },
+        {
+          "test": "test_alias_join_rank_security_and_original_ast[self_join]",
+          "message": "Explicit disposable ownership required"
+        },
+        {
+          "test": "test_alias_join_rank_security_and_original_ast[outer_join]",
+          "message": "Explicit disposable ownership required"
+        },
+        {
+          "test": "test_alias_join_rank_security_and_original_ast[ranked]",
+          "message": "Explicit disposable ownership required"
+        },
+        {
+          "test": "test_alias_join_rank_security_and_original_ast[loader]",
+          "message": "Explicit disposable ownership required"
+        },
+        {
+          "test": "test_alias_join_rank_security_and_original_ast[correlated]",
+          "message": "Explicit disposable ownership required"
+        },
+        {
+          "test": "test_named_runtime_path_is_not_substituted",
+          "message": "Explicit disposable ownership required"
+        },
+        {
+          "test": "test_all_229_native_write_errors_and_eight_column_contracts",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_natural_key_only_update_preserves_projection_metadata",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_malformed_update_error_precedence_for_every_kind[snapshot]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_malformed_update_error_precedence_for_every_kind[graph_node]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_malformed_update_error_precedence_for_every_kind[edge]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_malformed_update_error_precedence_for_every_kind[job]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_projection_tampering_is_rejected_and_rolled_back[update_key]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_projection_tampering_is_rejected_and_rolled_back[update_tenant]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_projection_tampering_is_rejected_and_rolled_back[insert_forged]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_projection_tampering_is_rejected_and_rolled_back[delete_live]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_nullable_repository_delete_and_reinsert_keeps_coverage[False-False]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_nullable_repository_delete_and_reinsert_keeps_coverage[False-True]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_nullable_repository_delete_and_reinsert_keeps_coverage[True-False]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_nullable_repository_delete_and_reinsert_keeps_coverage[True-True]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_identity_mutations_match_baseline_and_reanchor_projection[id]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_identity_mutations_match_baseline_and_reanchor_projection[rowid]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_identity_mutations_match_baseline_and_reanchor_projection[_rowid_]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_identity_mutations_match_baseline_and_reanchor_projection[oid]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_replace_contracts_across_recursive_and_fk_modes[id-False-False]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_replace_contracts_across_recursive_and_fk_modes[id-False-True]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_replace_contracts_across_recursive_and_fk_modes[id-True-False]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_replace_contracts_across_recursive_and_fk_modes[id-True-True]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_replace_contracts_across_recursive_and_fk_modes[rowid-False-False]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_replace_contracts_across_recursive_and_fk_modes[rowid-False-True]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_replace_contracts_across_recursive_and_fk_modes[rowid-True-False]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_replace_contracts_across_recursive_and_fk_modes[rowid-True-True]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_replace_contracts_across_recursive_and_fk_modes[natural-False-False]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_replace_contracts_across_recursive_and_fk_modes[natural-False-True]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_replace_contracts_across_recursive_and_fk_modes[natural-True-False]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_replace_contracts_across_recursive_and_fk_modes[natural-True-True]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_replace_contracts_across_recursive_and_fk_modes[id_and_rowid-False-False]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_replace_contracts_across_recursive_and_fk_modes[id_and_rowid-False-True]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_replace_contracts_across_recursive_and_fk_modes[id_and_rowid-True-False]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_replace_contracts_across_recursive_and_fk_modes[id_and_rowid-True-True]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_projection_trigger_failure_rolls_back_authoritative_record",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_transaction_rollback_restores_records_and_projection",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_interrupted_backfill_is_atomic_and_preserves_original_error",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_large_native_values_are_complete_without_copying_non_key_payload",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_frozen_rows_and_writes_are_never_redefined[partial]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_frozen_rows_and_writes_are_never_redefined[validated_partial]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_frozen_rows_and_writes_are_never_redefined[guarded]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_mixed_sequence_null_affinity_and_true_rowid_pagination[partial]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_mixed_sequence_null_affinity_and_true_rowid_pagination[validated_partial]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_mixed_sequence_null_affinity_and_true_rowid_pagination[guarded]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_nested_union_and_count_restore_both_endpoint_seeks[partial]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_nested_union_and_count_restore_both_endpoint_seeks[guarded]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_nested_correlated_select_shared_subquery_and_idempotence",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_recursive_cte_is_refused_without_damaging_original",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_guarded_outer_proof_does_not_rewrite_inner_snapshot_scope",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_atomic_install_rolls_back_trigger_failure",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_explicit_order_is_not_applied_to_alias_or_existing_order",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_id_filtered_mixed_query_keeps_its_actual_baseline_traversal",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_mutated_ast_reproves_binds_and_visits_new_subquery[partial]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_mutated_ast_reproves_binds_and_visits_new_subquery[guarded]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_extra_version_filter_preserves_complete_baseline_sequence[partial]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_extra_version_filter_preserves_complete_baseline_sequence[validated_partial]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_extra_version_filter_preserves_complete_baseline_sequence[guarded]",
+          "message": "Explicit disposable prototype ownership required."
+        },
+        {
+          "test": "test_loader_security_options_preserved_by_identity",
+          "message": "Explicit disposable prototype ownership required."
+        }
+      ]
+    },
+    "maps_export_sanitization": {
+      "xml": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\scale001-test-run\\maps-export-sanitization.xml",
+      "xml_sha256": "38736174da3489a6ad7e8e983b9bf2f315bb256e4d12abbe95cbc63ef5163c7a",
+      "tests": 118,
+      "passed": 116,
+      "failed": 2,
+      "skipped": 0,
+      "duration_seconds": 94.517,
+      "failure_details": [
+        {
+          "test": "test_typed_context_export_replay_mutations_and_snapshot_integrity[False]",
+          "message": "assert '{\"snapshot\":...e\": [1, \"x\"]}' == '{\"snapshot\":...e\": [1, \"x\"]}'\n  \n  Skipping 2003 identical leading characters in diff, use -v to show\n  - \"$set\": [\"b\", \"a\"]}, \"tuple\": [1, \"x\"]}\n  ?           ^    ^\n  + \"$set\": [\"a\", \"b\"]}, \"tuple\": [1, \"x\"]}\n  ?           ^    ^"
+        },
+        {
+          "test": "test_typed_context_export_replay_mutations_and_snapshot_integrity[True]",
+          "message": "assert '{\"snapshot\":...e\": [1, \"x\"]}' == '{\"snapshot\":...e\": [1, \"x\"]}'\n  \n  Skipping 2003 identical leading characters in diff, use -v to show\n  - \"$set\": [\"b\", \"a\"]}, \"tuple\": [1, \"x\"]}\n  ?           ^    ^\n  + \"$set\": [\"a\", \"b\"]}, \"tuple\": [1, \"x\"]}\n  ?           ^    ^"
+        }
+      ],
+      "skip_details": []
+    },
+    "checkpoint_retention": {
+      "xml": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\scale001-test-run\\checkpoint-retention.xml",
+      "xml_sha256": "bd5738644adb846720b07385e759f5e21f11460adcef8124abb89a2bfcff523f",
+      "tests": 66,
+      "passed": 65,
+      "failed": 0,
+      "skipped": 1,
+      "duration_seconds": 31.603,
+      "failure_details": [],
+      "skip_details": [
+        {
+          "test": "test_expiry_skips_locked_renewal_without_deleting_recovery_input",
+          "message": "Requires an explicit disposable PostgreSQL test database."
+        }
+      ]
+    },
+    "hash_seed_reproduction": {
+      "xml": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\scale001-test-run\\set-order.xml",
+      "xml_sha256": "9c12ae8adeb7c4cb0be67705d7801b93f31594f0d6e3bcb02db884f43797f70b",
+      "tests": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 1.406,
+      "failure_details": [],
+      "skip_details": []
+    }
+  },
+  "static_checks": {
+    "ruff_final": {
+      "command": ".\\.venv\\Scripts\\ruff.exe check backend analyzers integrations workers tests scripts",
+      "exit_code": 0,
+      "result": "All checks passed."
+    },
+    "compileall": {
+      "command": ".\\.venv\\Scripts\\python.exe -m compileall -q backend analyzers integrations workers scripts tests integration_tests",
+      "exit_code": 0
+    },
+    "git_diff_check": {
+      "command": "git diff --check",
+      "exit_code": 0
+    },
+    "initial_ruff_failure": "I001 import-spacing violation in the new test; the extra blank line was removed, then the full requested Ruff command passed."
+  },
+  "nonpassing_or_skipped": {
+    "json_export_default_hash_seed_failures": [
+      {
+        "test": "test_typed_context_export_replay_mutations_and_snapshot_integrity[False]",
+        "cause": "set members encoded in different array order: [\"b\",\"a\"] vs [\"a\",\"b\"]"
+      },
+      {
+        "test": "test_typed_context_export_replay_mutations_and_snapshot_integrity[True]",
+        "cause": "same set-order mismatch"
+      }
+    ],
+    "rerun_with_pythonhashseed_0": "Both cases passed. The default-run suite remains recorded as 116 passed, 2 failed.",
+    "graph_security_skip_reasons": [
+      "Explicit disposable ownership required",
+      "Explicit disposable prototype ownership required"
+    ],
+    "postgresql_skip": "Requires an explicit disposable PostgreSQL test database.",
+    "full_test_suite": "Not run; only listed relevant suites were run.",
+    "unverified_platform_services": [
+      "Linux cgroup/zero swap",
+      "PostgreSQL live service",
+      "broker/worker recovery",
+      "distributed workers"
+    ]
+  },
+  "policy_alternatives": {
+    "option_a": {
+      "meaning": "Keep the 1,000,000 aggregate limit; logical snapshots over it are unsupported.",
+      "advantages": [
+        "Preserves existing sanitizer/security contract and stored snapshot compatibility.",
+        "Existing fail-closed behavior and no-publication behavior are verified.",
+        "Provides a defensible structural input boundary independent of repository file counts."
+      ],
+      "costs": [
+        "Some large repositories fail based on snapshot shape even if source byte/file quotas pass.",
+        "Current user-facing failure is generic; product support messaging must explain limits.",
+        "Does not qualify or demonstrate 50k support/performance."
+      ]
+    },
+    "option_b": {
+      "meaning": "Seek explicit policy change to a reviewed aggregate budget; no new value proposed.",
+      "evidence_for_consideration": {
+        "50k_nodes": 1115947,
+        "50k_serialized_bytes": 42856474,
+        "50k_depth": 6,
+        "50k_max_string_chars": 229,
+        "time_to_rejection_seconds": 451.567,
+        "process_peak_rss_bytes": 303468544,
+        "30k_sqlite_peak_malloc_bytes": 350664352
+      },
+      "missing": [
+        "Successful 50k snapshot and quality SQL persistence/SQLite peak.",
+        "Successful Generation.validate and BASE/HEAD comparison at 50k.",
+        "Three fresh-process complete-path runs under declared memory/time ceilings.",
+        "Concurrent analyses, per-tenant isolation, cancellation, process-exit recovery, malformed/adversarial inputs, and failure atomicity at proposed bound.",
+        "Supported Linux memory.max/zero-swap and PostgreSQL/worker service acceptance."
+      ],
+      "risk": "No evidence-based replacement budget or safety margin can be chosen. 11.6% over the old cap is not a resource margin.",
+      "approval_required_before_any_test_override": true
+    }
+  },
+  "recommendation_and_owner_approval": {
+    "recommended_option": "A, provisionally, pending explicit product-owner approval.",
+    "owner_decisions": [
+      "Approve the supported-input boundary under the current 1,000,000-node cap, or authorize a formal Option B policy investigation.",
+      "If Option B is authorized, product/security owners must review and approve semantics, resource envelope, threat analysis, compatibility plan, and acceptance gates before implementation."
+    ],
+    "no_option_implemented": true,
+    "scale_qualification_remains_blocked": true
+  },
+  "measurement_provenance": {
+    "full_profile_json": {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\scale001-test-run\\basetemp-50k\\test_owned_final_snapshot_prof0\\owned\\profile.json",
+      "sha256": "7b2d6612699a819b563ba9f26e390c2bac4144dfe4937af59a69ff8fa215641a"
+    },
+    "full_profile_test_xml": {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\scale001-test-run\\snapshot-50k.xml",
+      "sha256": "eabc5edb06d12ea8dbbd715156e5e6b64fbdf31197da8387b3800dbac42a5561"
+    },
+    "shape_probe_script": {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\measure_50k_shape.py",
+      "sha256": "528a6c4bc72e713f5dc0b438c5ded4972e104ce9808cc8aefad8f5ffef393dc1"
+    },
+    "xml_receipts": {
+      "boundary": "cbe15dfc74c271026790e7a7661de003341d7cf08d3febad126b4907a68d3380",
+      "snapshot_50k": "eabc5edb06d12ea8dbbd715156e5e6b64fbdf31197da8387b3800dbac42a5561",
+      "persistence_focused": "6161c6343e4b0816d854ee26d5d8cb0bf78642783f3153524cb380fd0137e01a",
+      "generation": "3337beb21cef89ad781a2c659d501000c7eb8eb654a97a5ae4832c4828c5e484",
+      "commercial_rules": "493d7138bf2b4736b4f0fb47ee66419c8e88fa37b78c486cc5cacae47079b17f",
+      "graph_security": "7884e31b23d45c5c007d1e144256f6eaf51204513fe2a4cc439a4cde57b24afd",
+      "maps_export_sanitization": "38736174da3489a6ad7e8e983b9bf2f315bb256e4d12abbe95cbc63ef5163c7a",
+      "checkpoint_retention": "bd5738644adb846720b07385e759f5e21f11460adcef8124abb89a2bfcff523f",
+      "hash_seed_reproduction": "9c12ae8adeb7c4cb0be67705d7801b93f31594f0d6e3bcb02db884f43797f70b"
+    },
+    "historical_evidence_hashes": {
+      "docs/SCALE001_AGGREGATE_GUARD_INVESTIGATION.md": "bc9a98b7249ec27cdcb5b58c64a9be18d4294996070c67537f43f8e64f942e5a",
+      "docs/evidence/SCALE001_AGGREGATE_GUARD_INVESTIGATION.json": "e63f22214bf1b1b146a4930b93fb0595e03478b33b9aab6e7a11e2ca7264e64b",
+      "docs/adr/0007-bounded-published-snapshot-segments.md": "d38f27bf16882d7095b03407966d5479bc8fb8c100e9fa684b33354f414ac45a",
+      "docs/COMMERCIAL_V1_RELEASE_GATES.md": "1608016634ef1309579a3398717ddcb9e84e02cc8321be94ffbeabd5c4745b30",
+      "PROJECTTRACE_PROGRESS.md_before_milestone_8": "163cbd396ba86b794a1f22610dcc48184591af2e3df9e636760e9e6d0b0f39f7",
+      "docs/evidence/SCALE001_FINAL_SNAPSHOT_PROFILE.json": "699d2f976a8c7c823c7f80afd166609d910eee482b2ebb030405496f00995345",
+      "docs/evidence/SCALE001_GENERATION_MAP_ITERATION.json": "8c8e7b42c4320bc3d9287d78a2856d69db9f6d655501a1b9badc6ffcf24f1526"
+    }
+  },
+  "new_output_sha256": {
+    "docs/SCALE001_POLICY_DECISION_READINESS.md": "e520151f4890948083a18f071a134e2d4ca4d6f888ec1c37e20816ef588f7286",
+    "PROJECTTRACE_PROGRESS.md": "d0a879b59f10bda067632c65011a75c750464e66a1cb1f732fca4c9c673f0733",
+    "tests/test_sanitization_aggregate_guard.py": "68f7bfe36eede753767de5adcef4e41dcb0786013bd84af86eadaa0bc6a27e6d"
+  },
+  "exact_test_commands": [
+    "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe -m pytest -q --basetemp C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\scale001-test-run\\basetemp tests/test_sanitization_aggregate_guard.py --junitxml C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\scale001-test-run\\boundary.xml",
+    "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe -m pytest -q --basetemp C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\scale001-test-run\\basetemp-50k tests/test_snapshot_materialization_profile.py -k 50000 --junitxml C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\scale001-test-run\\snapshot-50k.xml",
+    "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe -m pytest -q --basetemp C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\scale001-test-run\\basetemp-persistence tests/test_repository_store.py -k \"snapshot_references or comparison_context_omits or job_link_is_captured or snapshot_job_link_rejects\" --junitxml C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\scale001-test-run\\persistence-focused.xml",
+    "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe -m pytest -q --basetemp C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\scale001-test-run\\basetemp-generation tests/test_generations.py tests/test_generation_context.py tests/test_generation_maps.py tests/test_generation_map_iteration.py --junitxml C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\scale001-test-run\\generation.xml",
+    "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe -m pytest -q --basetemp C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\scale001-test-run\\basetemp-commercial tests/test_analyzer_evolution.py tests/test_openapi_batches.py tests/test_real_pipeline.py tests/test_quality_profiles.py tests/test_quality_spill.py tests/test_code_quality.py --junitxml C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\scale001-test-run\\commercial-rules.xml",
+    "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe -m pytest -q --basetemp C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\scale001-test-run\\basetemp-graph tests/test_advisory_graph.py tests/test_graph_scalar_reading.py tests/test_graph_impact.py tests/test_graph_pages.py tests/test_graph_scalar_projection.py tests/test_graph_index_recovery.py tests/test_security_hardening.py --junitxml C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\scale001-test-run\\graph-security.xml",
+    "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe -m pytest -q --basetemp C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\scale001-test-run\\basetemp-export tests/test_json_export.py tests/test_sanitization_cache.py tests/test_sanitization_fast_path.py tests/test_lexical_boundary.py --junitxml C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\scale001-test-run\\maps-export-sanitization.xml",
+    "PYTHONHASHSEED=0 C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe -m pytest -q --basetemp C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\scale001-test-run\\basetemp-set-order tests/test_json_export.py -k typed_context_export_replay_mutations_and_snapshot_integrity --junitxml C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\scale001-test-run\\set-order.xml",
+    "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe -m pytest -q --basetemp C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\scale001-test-run\\basetemp-checkpoint tests/test_analysis_checkpoints.py tests/test_checkpoint_pages.py tests/test_retention_recovery.py tests/test_retention_downgrade.py tests/test_retention_postgresql.py --junitxml C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\scale001-test-run\\checkpoint-retention.xml",
+    "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\ruff.exe check backend analyzers integrations workers tests scripts",
+    "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe -m compileall -q backend analyzers integrations workers scripts tests integration_tests",
+    "git diff --check"
+  ],
+  "no_production_changes": true
+}

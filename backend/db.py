@@ -18,6 +18,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker
 from sqlalchemy.orm import Session as ORMSession
 
+from backend.json_export import dumps as json_dumps
 from backend.settings import load_secrets, validate_production
 
 load_secrets()
@@ -164,7 +165,27 @@ class AnalysisCheckpoint(Base):
     result_digest: Mapped[str] = mapped_column(String(64))
     expires_at: Mapped[str] = mapped_column(String(50), index=True)
     ciphertext: Mapped[str] = mapped_column(Text)
+    format_version: Mapped[int] = mapped_column(default=1, server_default="1")
     created_at: Mapped[str] = mapped_column(String(50), default=now)
+
+
+class AnalysisCheckpointPart(Base):
+    """Attempt-private pages; only an authenticated checkpoint manifest admits them."""
+    __tablename__ = "analysis_checkpoint_parts"
+    __table_args__ = (
+        ForeignKeyConstraint(["job_id", "organization_id", "repository_id"],
+            ["records.id", "records.organization_id", "records.repository_id"],
+            ondelete="CASCADE", name="fk_checkpoint_part_job_scope"),
+        Index("ix_checkpoint_parts_expiry", "expires_at"),
+    )
+    job_id: Mapped[str] = mapped_column(String(80), primary_key=True)
+    attempt: Mapped[str] = mapped_column(String(36), primary_key=True)
+    ordinal: Mapped[int] = mapped_column(primary_key=True)
+    organization_id: Mapped[str] = mapped_column(ForeignKey("organizations.id"))
+    repository_id: Mapped[str] = mapped_column(ForeignKey("repositories.id"))
+    ciphertext: Mapped[str] = mapped_column(Text)
+    digest: Mapped[str] = mapped_column(String(64))
+    expires_at: Mapped[str] = mapped_column(String(50))
 
 
 class PublicationUnit(Base):
@@ -477,7 +498,8 @@ class OIDCAttempt(Base):
 
 def make_engine(url):
     engine = create_engine(
-        url, connect_args={"check_same_thread": False} if url.startswith("sqlite") else {}, pool_pre_ping=True
+        url, connect_args={"check_same_thread": False} if url.startswith("sqlite") else {}, pool_pre_ping=True,
+        json_serializer=json_dumps,
     )
     if url.startswith("sqlite"):
 

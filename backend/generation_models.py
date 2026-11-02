@@ -69,6 +69,7 @@ class GenerationReceipt(Base):
     digest: Mapped[str] = mapped_column(String(64))
     chunk_count: Mapped[int]
     record_count: Mapped[int]
+    format_version: Mapped[int] = mapped_column(default=1, server_default="1")
     completed_at: Mapped[str] = mapped_column(String(50), default=now)
 
 
@@ -85,6 +86,26 @@ class GenerationChunk(Base):
     repository_id: Mapped[str] = mapped_column(String(80))
     ciphertext: Mapped[str] = mapped_column(Text)
     digest: Mapped[str] = mapped_column(String(64))
+
+
+class GenerationContextPart(Base):
+    """Unpublished, authenticated pages admitted only by a complete receipt."""
+    __tablename__ = "generation_context_parts"
+    __table_args__ = (
+        ForeignKeyConstraint(["generation_id", "organization_id", "repository_id"],
+            ["analysis_generations.id", "analysis_generations.organization_id", "analysis_generations.repository_id"]),
+        Index("ix_generation_context_expiry", "expires_at"),
+    )
+    generation_id: Mapped[str] = mapped_column(String(80), primary_key=True)
+    stage: Mapped[str] = mapped_column(String(40), primary_key=True)
+    attempt: Mapped[str] = mapped_column(String(36), primary_key=True)
+    collection: Mapped[int] = mapped_column(primary_key=True)
+    ordinal: Mapped[int] = mapped_column(primary_key=True)
+    organization_id: Mapped[str] = mapped_column(String(80))
+    repository_id: Mapped[str] = mapped_column(String(80))
+    ciphertext: Mapped[str] = mapped_column(Text)
+    digest: Mapped[str] = mapped_column(String(64))
+    expires_at: Mapped[str] = mapped_column(String(50))
 
 
 class GenerationAudit(Base):

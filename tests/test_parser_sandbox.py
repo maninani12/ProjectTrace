@@ -19,7 +19,11 @@ def test_helper_decoder_uses_bounded_python_scanning(monkeypatch):
     assert sandbox.decode_packet(raw) == value
 
 
-@pytest.mark.parametrize("raw,code", [("[" * 101, "HELPER_PROTOCOL_DEPTH"), ("," * 1_000_001, "HELPER_PROTOCOL_NODES")])
+@pytest.mark.parametrize(
+    "raw,code",
+    [("[" * 101, "HELPER_PROTOCOL_DEPTH"), ("," * 1_000_001, "HELPER_PROTOCOL_NODES")],
+    ids=["depth-overflow", "node-budget-overflow"],
+)
 def test_helper_protocol_rejects_excessive_structure(raw, code):
     with pytest.raises(sandbox.SandboxFailure, match=code):
         sandbox.decode_packet(raw)

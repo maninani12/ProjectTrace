@@ -1,0 +1,1710 @@
+{
+  "schema": "projecttrace-legacy-continuity-local-v1",
+  "date": "2026-10-31",
+  "branch": "codex/scale-001-local-continuation",
+  "head": "9e21509591bfa5457cc829ebd5637f95be68d573",
+  "source_sha256": {
+    "backend/public_snapshot_paths.py": "657b9fabd4a3afbd6744ed0a47bd460170c9b0467196de92d3542768f0fbfb75",
+    "backend/domain.py": "1644dda85ceb48c5dbc4f0f9f92a7ee36fb3a4dfa651e1a0a4e8656c12e14631",
+    "backend/engineering_changes.py": "fd81227d24fb44202dc4d03125e417bda431cc42ae3d64292b0834712e696414",
+    "backend/snapshot_context.py": "577c40779657b7a06c3875ca85f0a02dff4946d07975910bceaa72d2a467b1fe",
+    "tests/test_public_snapshot_continuity.py": "bf3a487a2f6da8772626c4b448096e111d28d5f573e9f99b01167e30bbe06d37",
+    "tests/test_public_github.py": "df7bd69240e626ed04741f72ea72ac5190f0938f26c114f5476538597b62d16c",
+    "frontend/src/ClaimComparisons.test.tsx": "e21cb6793e26006803701447345a512a030686f722d490b6d0715b21b5634e69"
+  },
+  "scale001": "NOT QUALIFIED",
+  "commercial_v1": "DEVELOPMENT IN PROGRESS",
+  "current_linux_docker": "NOT_RUN",
+  "backend": {
+    "red": {
+      "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-continuity-red.xml",
+      "sha256": "099a2e793d0e728a1fb6068ad3a1563466f70607d8dcdf4c800064fad2b8ab27",
+      "counts": {
+        "PASSED": 0,
+        "FAILED": 1,
+        "ERROR": 0,
+        "SKIPPED": 0
+      },
+      "cases": [
+        {
+          "id": "tests.test_public_snapshot_continuity::test_published_public_paths_preserve_identity_and_real_drift[True]",
+          "status": "FAILED",
+          "seconds": 3.701
+        }
+      ]
+    },
+    "repro": {
+      "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-continuity-repro.xml",
+      "sha256": "a22c2d432d69b829a16703139c06097074d7bade51dd53424e5356088d5ee26a",
+      "counts": {
+        "PASSED": 0,
+        "FAILED": 1,
+        "ERROR": 0,
+        "SKIPPED": 0
+      },
+      "cases": [
+        {
+          "id": "tests.test_public_snapshot_continuity::test_published_public_paths_preserve_identity_and_real_drift[True]",
+          "status": "FAILED",
+          "seconds": 6.612
+        }
+      ]
+    },
+    "first-fix": {
+      "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-continuity-first-fix.xml",
+      "sha256": "0343acb64ee8a6a71c6b00eabc3d9b07b8f4482c7a0ec97b07cf73182fb778b2",
+      "counts": {
+        "PASSED": 0,
+        "FAILED": 1,
+        "ERROR": 0,
+        "SKIPPED": 0
+      },
+      "cases": [
+        {
+          "id": "tests.test_public_snapshot_continuity::test_published_public_paths_preserve_identity_and_real_drift[True]",
+          "status": "FAILED",
+          "seconds": 14.509
+        }
+      ]
+    },
+    "fix2": {
+      "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-continuity-fix2.xml",
+      "sha256": "722e416a8cedc5d90b55caaf7585313e7b763344e1e7baef39d3241ab5048290",
+      "counts": {
+        "PASSED": 2,
+        "FAILED": 0,
+        "ERROR": 0,
+        "SKIPPED": 0
+      },
+      "cases": [
+        {
+          "id": "tests.test_public_snapshot_continuity::test_published_public_paths_preserve_identity_and_real_drift[True]",
+          "status": "PASSED",
+          "seconds": 14.317
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_published_public_paths_preserve_identity_and_real_drift[False]",
+          "status": "PASSED",
+          "seconds": 15.415
+        }
+      ]
+    },
+    "regression": {
+      "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-continuity-regression.xml",
+      "sha256": "ffce47059cf0c2e8f344a1ff0ff52de4196e80a7e8f286e15bebeca240d90cb8",
+      "counts": {
+        "PASSED": 43,
+        "FAILED": 0,
+        "ERROR": 0,
+        "SKIPPED": 0
+      },
+      "cases": [
+        {
+          "id": "tests.test_public_snapshot_continuity::test_published_public_paths_preserve_identity_and_real_drift[True]",
+          "status": "PASSED",
+          "seconds": 14.801
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_published_public_paths_preserve_identity_and_real_drift[False]",
+          "status": "PASSED",
+          "seconds": 16.07
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch0-paths0]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch1-paths1]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch2-paths2]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch3-paths3]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch4-paths4]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch5-paths5]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_relative_basis_and_unknown_claim_schemas_do_not_alias_literal_git_paths",
+          "status": "PASSED",
+          "seconds": 0.0
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[http://github.com/a/b]",
+          "status": "PASSED",
+          "seconds": 0.006
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://evil.example/a/b]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com@127.0.0.1/a/b]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com/a/b?token=bad]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com/a/b#ref]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com/a/b/tree/main]",
+          "status": "PASSED",
+          "seconds": 0.0
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com/a/%2e%2e]",
+          "status": "PASSED",
+          "seconds": 0.0
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com:443/a/b]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[../main]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[refs//main]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[main@{1}]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[main\\\\x]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[bad ref]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[main:evil]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[x.lock]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_archive_paths_are_pinned_and_legacy_hashes_compare_by_repo_path",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_resolution_is_exact_and_no_app_credentials_required",
+          "status": "PASSED",
+          "seconds": 0.003
+        },
+        {
+          "id": "tests.test_public_github::test_provider_errors_and_redirects_are_actionable[patch0-PUBLIC_GITHUB_PRIVATE]",
+          "status": "PASSED",
+          "seconds": 0.004
+        },
+        {
+          "id": "tests.test_public_github::test_provider_errors_and_redirects_are_actionable[patch1-PUBLIC_GITHUB_REDIRECT]",
+          "status": "PASSED",
+          "seconds": 0.003
+        },
+        {
+          "id": "tests.test_public_github::test_provider_errors_and_redirects_are_actionable[patch2-PUBLIC_GITHUB_RATE_LIMIT]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_provider_errors_and_redirects_are_actionable[patch3-PUBLIC_GITHUB_UNAVAILABLE]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_api_continuation_compares_pinned_snapshots_and_preserves_tenant_scope",
+          "status": "PASSED",
+          "seconds": 15.327
+        },
+        {
+          "id": "tests.test_public_github::test_public_explicit_base_remains_selected_when_a_newer_snapshot_exists",
+          "status": "PASSED",
+          "seconds": 2.68
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_uses_only_scoped_positive_configuration[resource \"aws_s3_bucket\" \"production\" { acl = \"public-read\" }-CONTRADICTED-True]",
+          "status": "PASSED",
+          "seconds": 0.651
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_uses_only_scoped_positive_configuration[resource \"aws_s3_bucket\" \"production\" { acl = \"private\" }-UNVERIFIED-False]",
+          "status": "PASSED",
+          "seconds": 0.501
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_uses_only_scoped_positive_configuration[resource \"aws_s3_bucket\" \"development\" { acl = \"public-read\" }-UNVERIFIED-False]",
+          "status": "PASSED",
+          "seconds": 0.548
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_uses_only_scoped_positive_configuration[# resource \"aws_s3_bucket\" \"production\" { acl = \"public-read\" }-UNVERIFIED-False]",
+          "status": "PASSED",
+          "seconds": 0.519
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_ignores_markdown_code_examples[~~~text\\nProduction storage is private.\\n~~~\\n]",
+          "status": "PASSED",
+          "seconds": 0.538
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_ignores_markdown_code_examples[````text\\nProduction storage is private.\\n```\\n~~~\\nProduction storage is private.\\n````\\n]",
+          "status": "PASSED",
+          "seconds": 0.616
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_ignores_markdown_code_examples[    Production storage is private.\\n]",
+          "status": "PASSED",
+          "seconds": 0.479
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_resumes_after_a_matching_markdown_fence",
+          "status": "PASSED",
+          "seconds": 0.637
+        },
+        {
+          "id": "tests.test_configuration_drift::test_captured_storage_configuration_drift_preserves_source_scope_and_tenant_isolation",
+          "status": "PASSED",
+          "seconds": 4.292
+        },
+        {
+          "id": "tests.test_engineering_changes::test_correlated_changes_use_explicit_baseline_graph_and_authorized_history",
+          "status": "PASSED",
+          "seconds": 3.952
+        },
+        {
+          "id": "tests.test_engineering_changes::test_claim_transitions_and_model_reevaluation_have_distinct_priority",
+          "status": "PASSED",
+          "seconds": 4.552
+        }
+      ]
+    },
+    "final": {
+      "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-continuity-final.xml",
+      "sha256": "ce184359b0c63c24cebb9c830b3b187bc0197fe126301c9896e337bde9a180ae",
+      "counts": {
+        "PASSED": 78,
+        "FAILED": 1,
+        "ERROR": 0,
+        "SKIPPED": 0
+      },
+      "cases": [
+        {
+          "id": "tests.test_public_snapshot_continuity::test_published_public_paths_preserve_identity_and_real_drift[True]",
+          "status": "PASSED",
+          "seconds": 12.688
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_published_public_paths_preserve_identity_and_real_drift[False]",
+          "status": "PASSED",
+          "seconds": 13.773
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch0-paths0]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch1-paths1]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch2-paths2]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch3-paths3]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch4-paths4]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch5-paths5]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_relative_basis_and_unknown_claim_schemas_do_not_alias_literal_git_paths",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_malformed_historical_provenance_reports_partial_without_inventing_removal",
+          "status": "PASSED",
+          "seconds": 5.567
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_inventory_scope_cannot_supply_a_relative_path_marker",
+          "status": "FAILED",
+          "seconds": 0.28
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[http://github.com/a/b]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://evil.example/a/b]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com@127.0.0.1/a/b]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com/a/b?token=bad]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com/a/b#ref]",
+          "status": "PASSED",
+          "seconds": 0.002
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com/a/b/tree/main]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com/a/%2e%2e]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com:443/a/b]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[../main]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[refs//main]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[main@{1}]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[main\\\\x]",
+          "status": "PASSED",
+          "seconds": 0.002
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[bad ref]",
+          "status": "PASSED",
+          "seconds": 0.002
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[main:evil]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[x.lock]",
+          "status": "PASSED",
+          "seconds": 0.002
+        },
+        {
+          "id": "tests.test_public_github::test_public_archive_paths_are_pinned_and_legacy_hashes_compare_by_repo_path",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_resolution_is_exact_and_no_app_credentials_required",
+          "status": "PASSED",
+          "seconds": 0.004
+        },
+        {
+          "id": "tests.test_public_github::test_provider_errors_and_redirects_are_actionable[patch0-PUBLIC_GITHUB_PRIVATE]",
+          "status": "PASSED",
+          "seconds": 0.002
+        },
+        {
+          "id": "tests.test_public_github::test_provider_errors_and_redirects_are_actionable[patch1-PUBLIC_GITHUB_REDIRECT]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_provider_errors_and_redirects_are_actionable[patch2-PUBLIC_GITHUB_RATE_LIMIT]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_provider_errors_and_redirects_are_actionable[patch3-PUBLIC_GITHUB_UNAVAILABLE]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_api_continuation_compares_pinned_snapshots_and_preserves_tenant_scope",
+          "status": "PASSED",
+          "seconds": 14.389
+        },
+        {
+          "id": "tests.test_public_github::test_public_explicit_base_remains_selected_when_a_newer_snapshot_exists",
+          "status": "PASSED",
+          "seconds": 2.504
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_uses_only_scoped_positive_configuration[resource \"aws_s3_bucket\" \"production\" { acl = \"public-read\" }-CONTRADICTED-True]",
+          "status": "PASSED",
+          "seconds": 0.603
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_uses_only_scoped_positive_configuration[resource \"aws_s3_bucket\" \"production\" { acl = \"private\" }-UNVERIFIED-False]",
+          "status": "PASSED",
+          "seconds": 0.535
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_uses_only_scoped_positive_configuration[resource \"aws_s3_bucket\" \"development\" { acl = \"public-read\" }-UNVERIFIED-False]",
+          "status": "PASSED",
+          "seconds": 0.533
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_uses_only_scoped_positive_configuration[# resource \"aws_s3_bucket\" \"production\" { acl = \"public-read\" }-UNVERIFIED-False]",
+          "status": "PASSED",
+          "seconds": 0.478
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_ignores_markdown_code_examples[~~~text\\nProduction storage is private.\\n~~~\\n]",
+          "status": "PASSED",
+          "seconds": 0.535
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_ignores_markdown_code_examples[````text\\nProduction storage is private.\\n```\\n~~~\\nProduction storage is private.\\n````\\n]",
+          "status": "PASSED",
+          "seconds": 0.51
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_ignores_markdown_code_examples[    Production storage is private.\\n]",
+          "status": "PASSED",
+          "seconds": 0.528
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_resumes_after_a_matching_markdown_fence",
+          "status": "PASSED",
+          "seconds": 0.502
+        },
+        {
+          "id": "tests.test_configuration_drift::test_captured_storage_configuration_drift_preserves_source_scope_and_tenant_isolation",
+          "status": "PASSED",
+          "seconds": 4.224
+        },
+        {
+          "id": "tests.test_engineering_changes::test_correlated_changes_use_explicit_baseline_graph_and_authorized_history",
+          "status": "PASSED",
+          "seconds": 3.691
+        },
+        {
+          "id": "tests.test_engineering_changes::test_claim_transitions_and_model_reevaluation_have_distinct_priority",
+          "status": "PASSED",
+          "seconds": 4.296
+        },
+        {
+          "id": "tests.test_generations::test_visibility_scope_switches_in_one_session_and_rechecks_publication",
+          "status": "PASSED",
+          "seconds": 1.281
+        },
+        {
+          "id": "tests.test_generations::test_actual_worker_exit_resumes_partial_stage_with_new_lease[BATCH]",
+          "status": "PASSED",
+          "seconds": 18.517
+        },
+        {
+          "id": "tests.test_generations::test_actual_worker_exit_resumes_partial_stage_with_new_lease[HISTORY]",
+          "status": "PASSED",
+          "seconds": 21.053
+        },
+        {
+          "id": "tests.test_generations::test_actual_worker_exit_resumes_partial_stage_with_new_lease[VALIDATED]",
+          "status": "PASSED",
+          "seconds": 33.694
+        },
+        {
+          "id": "tests.test_generations::test_final_promotion_rejects_cancellation_replacement_and_access_revocation[CANCELLED]",
+          "status": "PASSED",
+          "seconds": 5.309
+        },
+        {
+          "id": "tests.test_generations::test_final_promotion_rejects_cancellation_replacement_and_access_revocation[REPLACED]",
+          "status": "PASSED",
+          "seconds": 4.687
+        },
+        {
+          "id": "tests.test_generations::test_final_promotion_rejects_cancellation_replacement_and_access_revocation[REVOKED]",
+          "status": "PASSED",
+          "seconds": 7.723
+        },
+        {
+          "id": "tests.test_generations::test_publication_validation_rejects_corrupted_receipts_or_output[DIGEST]",
+          "status": "PASSED",
+          "seconds": 10.945
+        },
+        {
+          "id": "tests.test_generations::test_publication_validation_rejects_corrupted_receipts_or_output[COUNT]",
+          "status": "PASSED",
+          "seconds": 12.101
+        },
+        {
+          "id": "tests.test_generations::test_publication_validation_rejects_corrupted_receipts_or_output[REFERENCE]",
+          "status": "PASSED",
+          "seconds": 17.232
+        },
+        {
+          "id": "tests.test_generations::test_publication_validation_rejects_corrupted_receipts_or_output[SOURCE]",
+          "status": "PASSED",
+          "seconds": 18.14
+        },
+        {
+          "id": "tests.test_generations::test_publication_validation_rejects_corrupted_receipts_or_output[PAYLOAD]",
+          "status": "PASSED",
+          "seconds": 17.955
+        },
+        {
+          "id": "tests.test_generations::test_publication_validation_rejects_corrupted_receipts_or_output[ASSOCIATION]",
+          "status": "PASSED",
+          "seconds": 18.243
+        },
+        {
+          "id": "tests.test_generations::test_public_api_readers_never_return_unpublished_snapshot_or_source",
+          "status": "PASSED",
+          "seconds": 21.647
+        },
+        {
+          "id": "tests.test_generations::test_final_commit_failure_or_lost_acknowledgement_is_consistent[False]",
+          "status": "PASSED",
+          "seconds": 18.479
+        },
+        {
+          "id": "tests.test_generations::test_final_commit_failure_or_lost_acknowledgement_is_consistent[True]",
+          "status": "PASSED",
+          "seconds": 20.085
+        },
+        {
+          "id": "tests.test_generations::test_expired_checkpoint_cleanup_is_bounded_and_preserves_published_history",
+          "status": "PASSED",
+          "seconds": 18.58
+        },
+        {
+          "id": "tests.test_generations::test_duplicate_content_reuses_published_generation_without_new_output",
+          "status": "PASSED",
+          "seconds": 19.559
+        },
+        {
+          "id": "tests.test_generations::test_duplicate_graph_relationship_is_reused_before_ownership_batch_commits",
+          "status": "PASSED",
+          "seconds": 1.13
+        },
+        {
+          "id": "tests.test_generations::test_profile_changed_after_validation_cannot_publish_captured_old_decisions",
+          "status": "PASSED",
+          "seconds": 20.221
+        },
+        {
+          "id": "tests.test_generations::test_each_stage_survives_restart_without_private_reader_leaks[SNAPSHOT]",
+          "status": "PASSED",
+          "seconds": 25.179
+        },
+        {
+          "id": "tests.test_generations::test_each_stage_survives_restart_without_private_reader_leaks[EVIDENCE]",
+          "status": "PASSED",
+          "seconds": 23.195
+        },
+        {
+          "id": "tests.test_generations::test_each_stage_survives_restart_without_private_reader_leaks[CLAIMS]",
+          "status": "PASSED",
+          "seconds": 25.375
+        },
+        {
+          "id": "tests.test_generations::test_each_stage_survives_restart_without_private_reader_leaks[FINDINGS]",
+          "status": "PASSED",
+          "seconds": 25.522
+        },
+        {
+          "id": "tests.test_generations::test_each_stage_survives_restart_without_private_reader_leaks[DEPENDENCIES]",
+          "status": "PASSED",
+          "seconds": 24.644
+        },
+        {
+          "id": "tests.test_generations::test_each_stage_survives_restart_without_private_reader_leaks[CORRELATION]",
+          "status": "PASSED",
+          "seconds": 24.009
+        },
+        {
+          "id": "tests.test_generations::test_each_stage_survives_restart_without_private_reader_leaks[HISTORY]",
+          "status": "PASSED",
+          "seconds": 23.879
+        },
+        {
+          "id": "tests.test_generations::test_each_stage_survives_restart_without_private_reader_leaks[ARTIFACT_GRAPH]",
+          "status": "PASSED",
+          "seconds": 23.813
+        },
+        {
+          "id": "tests.test_generations::test_each_stage_survives_restart_without_private_reader_leaks[CONFIGURATION_GRAPH]",
+          "status": "PASSED",
+          "seconds": 25.782
+        },
+        {
+          "id": "tests.test_generations::test_each_stage_survives_restart_without_private_reader_leaks[FUNCTION_GRAPH]",
+          "status": "PASSED",
+          "seconds": 25.427
+        },
+        {
+          "id": "tests.test_generations::test_each_stage_survives_restart_without_private_reader_leaks[OWNERSHIP_GRAPH]",
+          "status": "PASSED",
+          "seconds": 24.597
+        },
+        {
+          "id": "tests.test_generations::test_each_stage_survives_restart_without_private_reader_leaks[POLICY]",
+          "status": "PASSED",
+          "seconds": 23.498
+        },
+        {
+          "id": "tests.test_generations::test_each_stage_survives_restart_without_private_reader_leaks[IMPACT]",
+          "status": "PASSED",
+          "seconds": 24.92
+        },
+        {
+          "id": "tests.test_generations::test_each_stage_survives_restart_without_private_reader_leaks[FINAL_OUTPUT]",
+          "status": "PASSED",
+          "seconds": 23.215
+        }
+      ]
+    },
+    "finding-red": {
+      "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-continuity-finding-red.xml",
+      "sha256": "7c4757d71e814079634bf8ec22b912d7a756bffcfeb803403f4e89734b17a2a4",
+      "counts": {
+        "PASSED": 0,
+        "FAILED": 1,
+        "ERROR": 0,
+        "SKIPPED": 0
+      },
+      "cases": [
+        {
+          "id": "tests.test_public_snapshot_continuity::test_existing_contradiction_finding_is_not_new_on_layout_change",
+          "status": "FAILED",
+          "seconds": 30.769
+        }
+      ]
+    },
+    "finding-fixed": {
+      "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-continuity-finding-fixed.xml",
+      "sha256": "9dfb0473023b141cb66105e2e5e0d7f4e216644cb052b339e955f33ddc1eb586",
+      "counts": {
+        "PASSED": 1,
+        "FAILED": 0,
+        "ERROR": 0,
+        "SKIPPED": 0
+      },
+      "cases": [
+        {
+          "id": "tests.test_public_snapshot_continuity::test_existing_contradiction_finding_is_not_new_on_layout_change",
+          "status": "PASSED",
+          "seconds": 32.598
+        }
+      ]
+    },
+    "focused-final": {
+      "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-continuity-focused-final.xml",
+      "sha256": "38cb05275b77018c7e1b98be8cf9bf893d1e3a790e63df1f0b52910a78fb650b",
+      "counts": {
+        "PASSED": 11,
+        "FAILED": 0,
+        "ERROR": 0,
+        "SKIPPED": 0
+      },
+      "cases": [
+        {
+          "id": "tests.test_public_snapshot_continuity::test_published_public_paths_preserve_identity_and_real_drift[True]",
+          "status": "PASSED",
+          "seconds": 42.131
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_published_public_paths_preserve_identity_and_real_drift[False]",
+          "status": "PASSED",
+          "seconds": 16.137
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch0-paths0]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch1-paths1]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch2-paths2]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch3-paths3]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch4-paths4]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch5-paths5]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_relative_basis_and_unknown_claim_schemas_do_not_alias_literal_git_paths",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_malformed_historical_provenance_reports_partial_without_inventing_removal",
+          "status": "PASSED",
+          "seconds": 15.484
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_inventory_scope_cannot_supply_a_relative_path_marker",
+          "status": "PASSED",
+          "seconds": 0.169
+        }
+      ]
+    },
+    "release": {
+      "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-continuity-release.xml",
+      "sha256": "957b8f82e0ec9dae98b603f13e281722b6e52e0b81c235ccb8927eafc7f9dd8b",
+      "counts": {
+        "PASSED": 46,
+        "FAILED": 0,
+        "ERROR": 0,
+        "SKIPPED": 0
+      },
+      "cases": [
+        {
+          "id": "tests.test_public_snapshot_continuity::test_published_public_paths_preserve_identity_and_real_drift[True]",
+          "status": "PASSED",
+          "seconds": 64.731
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_published_public_paths_preserve_identity_and_real_drift[False]",
+          "status": "PASSED",
+          "seconds": 64.507
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch0-paths0]",
+          "status": "PASSED",
+          "seconds": 0.004
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch1-paths1]",
+          "status": "PASSED",
+          "seconds": 0.007
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch2-paths2]",
+          "status": "PASSED",
+          "seconds": 0.004
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch3-paths3]",
+          "status": "PASSED",
+          "seconds": 0.005
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch4-paths4]",
+          "status": "PASSED",
+          "seconds": 0.004
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch5-paths5]",
+          "status": "PASSED",
+          "seconds": 0.005
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_relative_basis_and_unknown_claim_schemas_do_not_alias_literal_git_paths",
+          "status": "PASSED",
+          "seconds": 0.004
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_malformed_historical_provenance_reports_partial_without_inventing_removal",
+          "status": "PASSED",
+          "seconds": 26.385
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_inventory_scope_cannot_supply_a_relative_path_marker",
+          "status": "PASSED",
+          "seconds": 0.684
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_existing_contradiction_finding_is_not_new_on_layout_change",
+          "status": "PASSED",
+          "seconds": 32.465
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[http://github.com/a/b]",
+          "status": "PASSED",
+          "seconds": 0.004
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://evil.example/a/b]",
+          "status": "PASSED",
+          "seconds": 0.003
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com@127.0.0.1/a/b]",
+          "status": "PASSED",
+          "seconds": 0.003
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com/a/b?token=bad]",
+          "status": "PASSED",
+          "seconds": 0.003
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com/a/b#ref]",
+          "status": "PASSED",
+          "seconds": 0.005
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com/a/b/tree/main]",
+          "status": "PASSED",
+          "seconds": 0.003
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com/a/%2e%2e]",
+          "status": "PASSED",
+          "seconds": 0.004
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com:443/a/b]",
+          "status": "PASSED",
+          "seconds": 0.003
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[../main]",
+          "status": "PASSED",
+          "seconds": 0.006
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[refs//main]",
+          "status": "PASSED",
+          "seconds": 0.003
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[main@{1}]",
+          "status": "PASSED",
+          "seconds": 0.002
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[main\\\\x]",
+          "status": "PASSED",
+          "seconds": 0.005
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[bad ref]",
+          "status": "PASSED",
+          "seconds": 0.003
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[main:evil]",
+          "status": "PASSED",
+          "seconds": 0.003
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[x.lock]",
+          "status": "PASSED",
+          "seconds": 0.003
+        },
+        {
+          "id": "tests.test_public_github::test_public_archive_paths_are_pinned_and_legacy_hashes_compare_by_repo_path",
+          "status": "PASSED",
+          "seconds": 0.003
+        },
+        {
+          "id": "tests.test_public_github::test_public_resolution_is_exact_and_no_app_credentials_required",
+          "status": "PASSED",
+          "seconds": 0.009
+        },
+        {
+          "id": "tests.test_public_github::test_provider_errors_and_redirects_are_actionable[patch0-PUBLIC_GITHUB_PRIVATE]",
+          "status": "PASSED",
+          "seconds": 0.006
+        },
+        {
+          "id": "tests.test_public_github::test_provider_errors_and_redirects_are_actionable[patch1-PUBLIC_GITHUB_REDIRECT]",
+          "status": "PASSED",
+          "seconds": 0.007
+        },
+        {
+          "id": "tests.test_public_github::test_provider_errors_and_redirects_are_actionable[patch2-PUBLIC_GITHUB_RATE_LIMIT]",
+          "status": "PASSED",
+          "seconds": 0.005
+        },
+        {
+          "id": "tests.test_public_github::test_provider_errors_and_redirects_are_actionable[patch3-PUBLIC_GITHUB_UNAVAILABLE]",
+          "status": "PASSED",
+          "seconds": 0.008
+        },
+        {
+          "id": "tests.test_public_github::test_public_api_continuation_compares_pinned_snapshots_and_preserves_tenant_scope",
+          "status": "PASSED",
+          "seconds": 48.02
+        },
+        {
+          "id": "tests.test_public_github::test_public_explicit_base_remains_selected_when_a_newer_snapshot_exists",
+          "status": "PASSED",
+          "seconds": 7.731
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_uses_only_scoped_positive_configuration[resource \"aws_s3_bucket\" \"production\" { acl = \"public-read\" }-CONTRADICTED-True]",
+          "status": "PASSED",
+          "seconds": 0.641
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_uses_only_scoped_positive_configuration[resource \"aws_s3_bucket\" \"production\" { acl = \"private\" }-UNVERIFIED-False]",
+          "status": "PASSED",
+          "seconds": 0.733
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_uses_only_scoped_positive_configuration[resource \"aws_s3_bucket\" \"development\" { acl = \"public-read\" }-UNVERIFIED-False]",
+          "status": "PASSED",
+          "seconds": 1.137
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_uses_only_scoped_positive_configuration[# resource \"aws_s3_bucket\" \"production\" { acl = \"public-read\" }-UNVERIFIED-False]",
+          "status": "PASSED",
+          "seconds": 0.865
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_ignores_markdown_code_examples[~~~text\\nProduction storage is private.\\n~~~\\n]",
+          "status": "PASSED",
+          "seconds": 0.784
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_ignores_markdown_code_examples[````text\\nProduction storage is private.\\n```\\n~~~\\nProduction storage is private.\\n````\\n]",
+          "status": "PASSED",
+          "seconds": 0.697
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_ignores_markdown_code_examples[    Production storage is private.\\n]",
+          "status": "PASSED",
+          "seconds": 0.692
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_resumes_after_a_matching_markdown_fence",
+          "status": "PASSED",
+          "seconds": 0.814
+        },
+        {
+          "id": "tests.test_configuration_drift::test_captured_storage_configuration_drift_preserves_source_scope_and_tenant_isolation",
+          "status": "PASSED",
+          "seconds": 11.204
+        },
+        {
+          "id": "tests.test_engineering_changes::test_correlated_changes_use_explicit_baseline_graph_and_authorized_history",
+          "status": "PASSED",
+          "seconds": 11.163
+        },
+        {
+          "id": "tests.test_engineering_changes::test_claim_transitions_and_model_reevaluation_have_distinct_priority",
+          "status": "PASSED",
+          "seconds": 12.788
+        }
+      ]
+    },
+    "frozen": {
+      "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-continuity-frozen.xml",
+      "sha256": "97a21f5ed5539609637b1560713b89e7232653867a244cd08d22574796a81a0e",
+      "counts": {
+        "PASSED": 54,
+        "FAILED": 0,
+        "ERROR": 0,
+        "SKIPPED": 0
+      },
+      "cases": [
+        {
+          "id": "tests.test_public_snapshot_continuity::test_published_public_paths_preserve_identity_and_real_drift[True]",
+          "status": "PASSED",
+          "seconds": 78.451
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_published_public_paths_preserve_identity_and_real_drift[False]",
+          "status": "PASSED",
+          "seconds": 76.624
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch0-paths0]",
+          "status": "PASSED",
+          "seconds": 0.005
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch1-paths1]",
+          "status": "PASSED",
+          "seconds": 0.004
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch2-paths2]",
+          "status": "PASSED",
+          "seconds": 0.003
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch3-paths3]",
+          "status": "PASSED",
+          "seconds": 0.004
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch4-paths4]",
+          "status": "PASSED",
+          "seconds": 0.004
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch5-paths5]",
+          "status": "PASSED",
+          "seconds": 0.005
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_relative_basis_and_unknown_claim_schemas_do_not_alias_literal_git_paths",
+          "status": "PASSED",
+          "seconds": 0.003
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_malformed_historical_provenance_reports_partial_without_inventing_removal",
+          "status": "PASSED",
+          "seconds": 30.141
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_inventory_scope_cannot_supply_a_relative_path_marker",
+          "status": "PASSED",
+          "seconds": 0.756
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_existing_contradiction_finding_is_not_new_on_layout_change",
+          "status": "PASSED",
+          "seconds": 37.684
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_legacy_continuity_survives_private_stage_restart[CLAIMS]",
+          "status": "PASSED",
+          "seconds": 41.09
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_legacy_continuity_survives_private_stage_restart[CORRELATION]",
+          "status": "PASSED",
+          "seconds": 11.262
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[http://github.com/a/b]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://evil.example/a/b]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com@127.0.0.1/a/b]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com/a/b?token=bad]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com/a/b#ref]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com/a/b/tree/main]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com/a/%2e%2e]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com:443/a/b]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[../main]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[refs//main]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[main@{1}]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[main\\\\x]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[bad ref]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[main:evil]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[x.lock]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_archive_paths_are_pinned_and_legacy_hashes_compare_by_repo_path",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_resolution_is_exact_and_no_app_credentials_required",
+          "status": "PASSED",
+          "seconds": 0.002
+        },
+        {
+          "id": "tests.test_public_github::test_provider_errors_and_redirects_are_actionable[patch0-PUBLIC_GITHUB_PRIVATE]",
+          "status": "PASSED",
+          "seconds": 0.002
+        },
+        {
+          "id": "tests.test_public_github::test_provider_errors_and_redirects_are_actionable[patch1-PUBLIC_GITHUB_REDIRECT]",
+          "status": "PASSED",
+          "seconds": 0.002
+        },
+        {
+          "id": "tests.test_public_github::test_provider_errors_and_redirects_are_actionable[patch2-PUBLIC_GITHUB_RATE_LIMIT]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_provider_errors_and_redirects_are_actionable[patch3-PUBLIC_GITHUB_UNAVAILABLE]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_api_continuation_compares_pinned_snapshots_and_preserves_tenant_scope",
+          "status": "PASSED",
+          "seconds": 17.545
+        },
+        {
+          "id": "tests.test_public_github::test_public_explicit_base_remains_selected_when_a_newer_snapshot_exists",
+          "status": "PASSED",
+          "seconds": 3.029
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_uses_only_scoped_positive_configuration[resource \"aws_s3_bucket\" \"production\" { acl = \"public-read\" }-CONTRADICTED-True]",
+          "status": "PASSED",
+          "seconds": 0.525
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_uses_only_scoped_positive_configuration[resource \"aws_s3_bucket\" \"production\" { acl = \"private\" }-UNVERIFIED-False]",
+          "status": "PASSED",
+          "seconds": 0.495
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_uses_only_scoped_positive_configuration[resource \"aws_s3_bucket\" \"development\" { acl = \"public-read\" }-UNVERIFIED-False]",
+          "status": "PASSED",
+          "seconds": 0.573
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_uses_only_scoped_positive_configuration[# resource \"aws_s3_bucket\" \"production\" { acl = \"public-read\" }-UNVERIFIED-False]",
+          "status": "PASSED",
+          "seconds": 0.494
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_ignores_markdown_code_examples[~~~text\\nProduction storage is private.\\n~~~\\n]",
+          "status": "PASSED",
+          "seconds": 0.454
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_ignores_markdown_code_examples[````text\\nProduction storage is private.\\n```\\n~~~\\nProduction storage is private.\\n````\\n]",
+          "status": "PASSED",
+          "seconds": 0.493
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_ignores_markdown_code_examples[    Production storage is private.\\n]",
+          "status": "PASSED",
+          "seconds": 0.489
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_resumes_after_a_matching_markdown_fence",
+          "status": "PASSED",
+          "seconds": 0.491
+        },
+        {
+          "id": "tests.test_configuration_drift::test_captured_storage_configuration_drift_preserves_source_scope_and_tenant_isolation",
+          "status": "PASSED",
+          "seconds": 3.796
+        },
+        {
+          "id": "tests.test_engineering_changes::test_correlated_changes_use_explicit_baseline_graph_and_authorized_history",
+          "status": "PASSED",
+          "seconds": 3.4
+        },
+        {
+          "id": "tests.test_engineering_changes::test_claim_transitions_and_model_reevaluation_have_distinct_priority",
+          "status": "PASSED",
+          "seconds": 4.172
+        },
+        {
+          "id": "tests.test_generations::test_final_promotion_rejects_cancellation_replacement_and_access_revocation[CANCELLED]",
+          "status": "PASSED",
+          "seconds": 4.67
+        },
+        {
+          "id": "tests.test_generations::test_final_promotion_rejects_cancellation_replacement_and_access_revocation[REPLACED]",
+          "status": "PASSED",
+          "seconds": 4.844
+        },
+        {
+          "id": "tests.test_generations::test_final_promotion_rejects_cancellation_replacement_and_access_revocation[REVOKED]",
+          "status": "PASSED",
+          "seconds": 5.025
+        },
+        {
+          "id": "tests.test_generations::test_public_api_readers_never_return_unpublished_snapshot_or_source",
+          "status": "PASSED",
+          "seconds": 6.42
+        },
+        {
+          "id": "tests.test_generations::test_final_commit_failure_or_lost_acknowledgement_is_consistent[False]",
+          "status": "PASSED",
+          "seconds": 4.769
+        },
+        {
+          "id": "tests.test_generations::test_final_commit_failure_or_lost_acknowledgement_is_consistent[True]",
+          "status": "PASSED",
+          "seconds": 5.128
+        }
+      ]
+    },
+    "current": {
+      "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-continuity-current.xml",
+      "sha256": "1b81b0a1322cd737053528f414e6fa609e400c0882e1014ec8b6b95964488228",
+      "counts": {
+        "PASSED": 54,
+        "FAILED": 0,
+        "ERROR": 0,
+        "SKIPPED": 0
+      },
+      "cases": [
+        {
+          "id": "tests.test_public_snapshot_continuity::test_published_public_paths_preserve_identity_and_real_drift[True]",
+          "status": "PASSED",
+          "seconds": 62.924
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_published_public_paths_preserve_identity_and_real_drift[False]",
+          "status": "PASSED",
+          "seconds": 49.188
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch0-paths0]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch1-paths1]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch2-paths2]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch3-paths3]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch4-paths4]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch5-paths5]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_relative_basis_and_unknown_claim_schemas_do_not_alias_literal_git_paths",
+          "status": "PASSED",
+          "seconds": 0.002
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_malformed_historical_provenance_reports_partial_without_inventing_removal",
+          "status": "PASSED",
+          "seconds": 5.977
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_inventory_scope_cannot_supply_a_relative_path_marker",
+          "status": "PASSED",
+          "seconds": 0.256
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_existing_contradiction_finding_is_not_new_on_layout_change",
+          "status": "PASSED",
+          "seconds": 8.251
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_legacy_continuity_survives_private_stage_restart[CLAIMS]",
+          "status": "PASSED",
+          "seconds": 12.449
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_legacy_continuity_survives_private_stage_restart[CORRELATION]",
+          "status": "PASSED",
+          "seconds": 7.928
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[http://github.com/a/b]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://evil.example/a/b]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com@127.0.0.1/a/b]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com/a/b?token=bad]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com/a/b#ref]",
+          "status": "PASSED",
+          "seconds": 0.0
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com/a/b/tree/main]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com/a/%2e%2e]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com:443/a/b]",
+          "status": "PASSED",
+          "seconds": 0.0
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[../main]",
+          "status": "PASSED",
+          "seconds": 0.0
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[refs//main]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[main@{1}]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[main\\\\x]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[bad ref]",
+          "status": "PASSED",
+          "seconds": 0.002
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[main:evil]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[x.lock]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_archive_paths_are_pinned_and_legacy_hashes_compare_by_repo_path",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_resolution_is_exact_and_no_app_credentials_required",
+          "status": "PASSED",
+          "seconds": 0.002
+        },
+        {
+          "id": "tests.test_public_github::test_provider_errors_and_redirects_are_actionable[patch0-PUBLIC_GITHUB_PRIVATE]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_provider_errors_and_redirects_are_actionable[patch1-PUBLIC_GITHUB_REDIRECT]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_provider_errors_and_redirects_are_actionable[patch2-PUBLIC_GITHUB_RATE_LIMIT]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_provider_errors_and_redirects_are_actionable[patch3-PUBLIC_GITHUB_UNAVAILABLE]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_api_continuation_compares_pinned_snapshots_and_preserves_tenant_scope",
+          "status": "PASSED",
+          "seconds": 11.128
+        },
+        {
+          "id": "tests.test_public_github::test_public_explicit_base_remains_selected_when_a_newer_snapshot_exists",
+          "status": "PASSED",
+          "seconds": 2.248
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_uses_only_scoped_positive_configuration[resource \"aws_s3_bucket\" \"production\" { acl = \"public-read\" }-CONTRADICTED-True]",
+          "status": "PASSED",
+          "seconds": 0.553
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_uses_only_scoped_positive_configuration[resource \"aws_s3_bucket\" \"production\" { acl = \"private\" }-UNVERIFIED-False]",
+          "status": "PASSED",
+          "seconds": 0.517
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_uses_only_scoped_positive_configuration[resource \"aws_s3_bucket\" \"development\" { acl = \"public-read\" }-UNVERIFIED-False]",
+          "status": "PASSED",
+          "seconds": 0.646
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_uses_only_scoped_positive_configuration[# resource \"aws_s3_bucket\" \"production\" { acl = \"public-read\" }-UNVERIFIED-False]",
+          "status": "PASSED",
+          "seconds": 0.552
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_ignores_markdown_code_examples[~~~text\\nProduction storage is private.\\n~~~\\n]",
+          "status": "PASSED",
+          "seconds": 0.606
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_ignores_markdown_code_examples[````text\\nProduction storage is private.\\n```\\n~~~\\nProduction storage is private.\\n````\\n]",
+          "status": "PASSED",
+          "seconds": 0.524
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_ignores_markdown_code_examples[    Production storage is private.\\n]",
+          "status": "PASSED",
+          "seconds": 0.483
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_resumes_after_a_matching_markdown_fence",
+          "status": "PASSED",
+          "seconds": 0.478
+        },
+        {
+          "id": "tests.test_configuration_drift::test_captured_storage_configuration_drift_preserves_source_scope_and_tenant_isolation",
+          "status": "PASSED",
+          "seconds": 3.976
+        },
+        {
+          "id": "tests.test_engineering_changes::test_correlated_changes_use_explicit_baseline_graph_and_authorized_history",
+          "status": "PASSED",
+          "seconds": 3.618
+        },
+        {
+          "id": "tests.test_engineering_changes::test_claim_transitions_and_model_reevaluation_have_distinct_priority",
+          "status": "PASSED",
+          "seconds": 3.978
+        },
+        {
+          "id": "tests.test_generations::test_final_promotion_rejects_cancellation_replacement_and_access_revocation[CANCELLED]",
+          "status": "PASSED",
+          "seconds": 4.736
+        },
+        {
+          "id": "tests.test_generations::test_final_promotion_rejects_cancellation_replacement_and_access_revocation[REPLACED]",
+          "status": "PASSED",
+          "seconds": 5.419
+        },
+        {
+          "id": "tests.test_generations::test_final_promotion_rejects_cancellation_replacement_and_access_revocation[REVOKED]",
+          "status": "PASSED",
+          "seconds": 5.7
+        },
+        {
+          "id": "tests.test_generations::test_public_api_readers_never_return_unpublished_snapshot_or_source",
+          "status": "PASSED",
+          "seconds": 9.514
+        },
+        {
+          "id": "tests.test_generations::test_final_commit_failure_or_lost_acknowledgement_is_consistent[False]",
+          "status": "PASSED",
+          "seconds": 4.844
+        },
+        {
+          "id": "tests.test_generations::test_final_commit_failure_or_lost_acknowledgement_is_consistent[True]",
+          "status": "PASSED",
+          "seconds": 19.055
+        }
+      ]
+    }
+  },
+  "frontend": {
+    "numTotalTests": 53,
+    "numPassedTests": 53,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "success": true,
+    "command": "npm run test -- --reporter=json --outputFile=test-results/legacy-continuity-unit-20261031.json",
+    "raw_report": "frontend\\test-results\\legacy-continuity-unit-20261031.json"
+  },
+  "browser": {
+    "command": "npx playwright test e2e/configuration-drift.spec.ts e2e/public-base.spec.ts --output=test-results/legacy-continuity-browser-20261031",
+    "raw_report": "frontend\\test-results\\legacy-continuity-browser-20261031\\results.json",
+    "stats": {
+      "startTime": "2026-10-30T20:15:04.689Z",
+      "duration": 41010.095,
+      "expected": 2,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "scope": "Owned real-API documentation/configuration drift plus public-import UI/provider-failure fixture; no live GitHub provider qualification."
+  },
+  "build": {
+    "command": "npm run build",
+    "exit_code": 0,
+    "prerendered_routes": 42
+  },
+  "checks": {
+    "ruff": 0,
+    "py_compile": 0,
+    "git_diff_check": 0
+  },
+  "failures_explained": {
+    "red": "Fixture initially treated execute_analysis tuple as dict; corrected before product regression reproduction.",
+    "repro": "Real persisted unchanged claim lost previous_version_id across legacy-to-modern layout.",
+    "first-fix": "Persisted JSON list versus in-session tuple fixture equality; refreshed BASE before taking original snapshot copy.",
+    "final": "78 passed, 1 failed: existing cross-tenant write guard rejected invalid foreign-inventory fixture; fixture corrected with a real foreign repository. All 34 generation tests passed in this intermediate run.",
+    "finding-red": "Existing PT-CONSISTENCY-001 finding acquired a new identity solely from archive-layout change.",
+    "current": "Final frozen-source validation: 54 passed, zero failures/errors/skips; 227.97 seconds, one Starlette/httpx deprecation warning."
+  },
+  "historical_format": "Exact repository-name/full-40-hex-commit codeload ZIP wrapper, persisted verbatim by original public archive capture; ordinary ZIP/legacy.zip/short-SHA/URL-decoded aliases not inferred.",
+  "scope_limits": [
+    "Current-tree Linux/Docker not run",
+    "Live provider qualification not run",
+    "Full SCALE-001 cgroup/recovery matrix not run",
+    "Broader native finding/quality history continuity not comprehensively qualified"
+  ],
+  "raw_evidence": {
+    "path": "docs\\evidence\\COMMERCIAL_V1_LEGACY_CONTINUITY_20261031_RAW.json.gz",
+    "sha256": "1ccd69d8d80abc52663e5333195afcd5b482018801eca44d91071dda848a72fe",
+    "contents": "JUnit XML including initial failures; full owned frontend/browser reports. No database, source blobs or encryption keys."
+  },
+  "post_test_readonly_checks": [
+    {
+      "fixture": "test_published_public_paths_pr0",
+      "snapshots": 4,
+      "false_removals_on_unchanged_and_evidence_changed_heads": 0,
+      "integrity": "ok",
+      "foreign_key_violations": 0,
+      "generation_states": {
+        "PUBLISHED": 4
+      },
+      "published_pointers": 1
+    },
+    {
+      "fixture": "test_published_public_paths_pr1",
+      "snapshots": 4,
+      "false_removals_on_unchanged_and_evidence_changed_heads": 0,
+      "integrity": "ok",
+      "foreign_key_violations": 0,
+      "generation_states": {
+        "PUBLISHED": 4
+      },
+      "published_pointers": 1
+    }
+  ]
+}

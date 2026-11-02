@@ -1,0 +1,476 @@
+{
+  "date": "2026-10-31",
+  "branch": "codex/scale-001-local-continuation",
+  "head": "9e21509591bfa5457cc829ebd5637f95be68d573",
+  "source_sha256": {
+    "backend/main.py": "59bba43923939efc1077ec809639040f3932c407ca196567e393c3354a826321",
+    "frontend/src/WorkspaceApp.tsx": "037a75deae3d496650ab33ba47f5e477adb5565139dfc878feb2df1939c707c6",
+    "frontend/src/ImportFlow.test.tsx": "b6334c7ecade09e5e39f351bed51408876b054688856e1488c9be657a230d688",
+    "tests/test_public_github.py": "6f1cca44ed83d76403b53d57eb845c44d262e565adaa4ae0a87903df8c080e2c",
+    "frontend/e2e/public-base.spec.ts": "ab1730270b133a90f110219c428c917780c18c0c4f42cebbddf3be29a49a1346"
+  },
+  "pytest": {
+    "initial_combined": {
+      "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-explicit-base-20261031.xml",
+      "sha256": "e3edd6b552e069a46c6bd37ef0b19289d7d4bb9282b1e7164a8fa8fe109b16d3",
+      "cases": [
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[http://github.com/a/b]",
+          "seconds": 0.004,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://evil.example/a/b]",
+          "seconds": 0.005,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com@127.0.0.1/a/b]",
+          "seconds": 0.005,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com/a/b?token=bad]",
+          "seconds": 0.005,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com/a/b#ref]",
+          "seconds": 0.005,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com/a/b/tree/main]",
+          "seconds": 0.005,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com/a/%2e%2e]",
+          "seconds": 0.004,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com:443/a/b]",
+          "seconds": 0.003,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[../main]",
+          "seconds": 0.003,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[refs//main]",
+          "seconds": 0.003,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[main@{1}]",
+          "seconds": 0.003,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[main\\\\x]",
+          "seconds": 0.004,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[bad ref]",
+          "seconds": 0.004,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[main:evil]",
+          "seconds": 0.003,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[x.lock]",
+          "seconds": 0.003,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_public_archive_paths_are_pinned_and_legacy_hashes_compare_by_repo_path",
+          "seconds": 0.003,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_public_resolution_is_exact_and_no_app_credentials_required",
+          "seconds": 0.009,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_provider_errors_and_redirects_are_actionable[patch0-PUBLIC_GITHUB_PRIVATE]",
+          "seconds": 0.009,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_provider_errors_and_redirects_are_actionable[patch1-PUBLIC_GITHUB_REDIRECT]",
+          "seconds": 0.006,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_provider_errors_and_redirects_are_actionable[patch2-PUBLIC_GITHUB_RATE_LIMIT]",
+          "seconds": 0.009,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_provider_errors_and_redirects_are_actionable[patch3-PUBLIC_GITHUB_UNAVAILABLE]",
+          "seconds": 0.006,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_public_api_continuation_compares_pinned_snapshots_and_preserves_tenant_scope",
+          "seconds": 51.36,
+          "status": "FAILED"
+        },
+        {
+          "id": "tests.test_public_github::test_public_explicit_base_remains_selected_when_a_newer_snapshot_exists",
+          "seconds": 7.339,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_generations::test_visibility_scope_switches_in_one_session_and_rechecks_publication",
+          "seconds": 5.586,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_generations::test_actual_worker_exit_resumes_partial_stage_with_new_lease[BATCH]",
+          "seconds": 53.601,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_generations::test_actual_worker_exit_resumes_partial_stage_with_new_lease[HISTORY]",
+          "seconds": 52.878,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_generations::test_actual_worker_exit_resumes_partial_stage_with_new_lease[VALIDATED]",
+          "seconds": 48.875,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_generations::test_final_promotion_rejects_cancellation_replacement_and_access_revocation[CANCELLED]",
+          "seconds": 16.338,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_generations::test_final_promotion_rejects_cancellation_replacement_and_access_revocation[REPLACED]",
+          "seconds": 22.071,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_generations::test_final_promotion_rejects_cancellation_replacement_and_access_revocation[REVOKED]",
+          "seconds": 24.528,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_generations::test_publication_validation_rejects_corrupted_receipts_or_output[DIGEST]",
+          "seconds": 18.797,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_generations::test_publication_validation_rejects_corrupted_receipts_or_output[COUNT]",
+          "seconds": 16.966,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_generations::test_publication_validation_rejects_corrupted_receipts_or_output[REFERENCE]",
+          "seconds": 16.316,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_generations::test_publication_validation_rejects_corrupted_receipts_or_output[SOURCE]",
+          "seconds": 18.666,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_generations::test_publication_validation_rejects_corrupted_receipts_or_output[PAYLOAD]",
+          "seconds": 20.768,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_generations::test_publication_validation_rejects_corrupted_receipts_or_output[ASSOCIATION]",
+          "seconds": 17.395,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_generations::test_public_api_readers_never_return_unpublished_snapshot_or_source",
+          "seconds": 20.657,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_generations::test_final_commit_failure_or_lost_acknowledgement_is_consistent[False]",
+          "seconds": 17.7,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_generations::test_final_commit_failure_or_lost_acknowledgement_is_consistent[True]",
+          "seconds": 20.108,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_generations::test_expired_checkpoint_cleanup_is_bounded_and_preserves_published_history",
+          "seconds": 9.453,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_generations::test_duplicate_content_reuses_published_generation_without_new_output",
+          "seconds": 5.976,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_generations::test_duplicate_graph_relationship_is_reused_before_ownership_batch_commits",
+          "seconds": 0.473,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_generations::test_profile_changed_after_validation_cannot_publish_captured_old_decisions",
+          "seconds": 5.892,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_generations::test_each_stage_survives_restart_without_private_reader_leaks[SNAPSHOT]",
+          "seconds": 6.11,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_generations::test_each_stage_survives_restart_without_private_reader_leaks[EVIDENCE]",
+          "seconds": 6.207,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_generations::test_each_stage_survives_restart_without_private_reader_leaks[CLAIMS]",
+          "seconds": 6.023,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_generations::test_each_stage_survives_restart_without_private_reader_leaks[FINDINGS]",
+          "seconds": 6.355,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_generations::test_each_stage_survives_restart_without_private_reader_leaks[DEPENDENCIES]",
+          "seconds": 6.179,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_generations::test_each_stage_survives_restart_without_private_reader_leaks[CORRELATION]",
+          "seconds": 5.902,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_generations::test_each_stage_survives_restart_without_private_reader_leaks[HISTORY]",
+          "seconds": 6.525,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_generations::test_each_stage_survives_restart_without_private_reader_leaks[ARTIFACT_GRAPH]",
+          "seconds": 6.32,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_generations::test_each_stage_survives_restart_without_private_reader_leaks[CONFIGURATION_GRAPH]",
+          "seconds": 6.183,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_generations::test_each_stage_survives_restart_without_private_reader_leaks[FUNCTION_GRAPH]",
+          "seconds": 6.738,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_generations::test_each_stage_survives_restart_without_private_reader_leaks[OWNERSHIP_GRAPH]",
+          "seconds": 5.887,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_generations::test_each_stage_survives_restart_without_private_reader_leaks[POLICY]",
+          "seconds": 6.31,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_generations::test_each_stage_survives_restart_without_private_reader_leaks[IMPACT]",
+          "seconds": 6.464,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_generations::test_each_stage_survives_restart_without_private_reader_leaks[FINAL_OUTPUT]",
+          "seconds": 7.874,
+          "status": "PASSED"
+        }
+      ]
+    },
+    "final_public": {
+      "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-base-final-20261031.xml",
+      "sha256": "6deb5a2245ef835955d997718e00b5e3dd98133b667af5059be7833db4f3219c",
+      "cases": [
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[http://github.com/a/b]",
+          "seconds": 0.004,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://evil.example/a/b]",
+          "seconds": 0.005,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com@127.0.0.1/a/b]",
+          "seconds": 0.005,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com/a/b?token=bad]",
+          "seconds": 0.007,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com/a/b#ref]",
+          "seconds": 0.005,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com/a/b/tree/main]",
+          "seconds": 0.004,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com/a/%2e%2e]",
+          "seconds": 0.005,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com:443/a/b]",
+          "seconds": 0.004,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[../main]",
+          "seconds": 0.003,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[refs//main]",
+          "seconds": 0.003,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[main@{1}]",
+          "seconds": 0.003,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[main\\\\x]",
+          "seconds": 0.004,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[bad ref]",
+          "seconds": 0.005,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[main:evil]",
+          "seconds": 0.003,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[x.lock]",
+          "seconds": 0.003,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_public_archive_paths_are_pinned_and_legacy_hashes_compare_by_repo_path",
+          "seconds": 0.005,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_public_resolution_is_exact_and_no_app_credentials_required",
+          "seconds": 0.008,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_provider_errors_and_redirects_are_actionable[patch0-PUBLIC_GITHUB_PRIVATE]",
+          "seconds": 0.009,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_provider_errors_and_redirects_are_actionable[patch1-PUBLIC_GITHUB_REDIRECT]",
+          "seconds": 0.008,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_provider_errors_and_redirects_are_actionable[patch2-PUBLIC_GITHUB_RATE_LIMIT]",
+          "seconds": 0.006,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_provider_errors_and_redirects_are_actionable[patch3-PUBLIC_GITHUB_UNAVAILABLE]",
+          "seconds": 0.007,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_public_api_continuation_compares_pinned_snapshots_and_preserves_tenant_scope",
+          "seconds": 57.536,
+          "status": "PASSED"
+        },
+        {
+          "id": "tests.test_public_github::test_public_explicit_base_remains_selected_when_a_newer_snapshot_exists",
+          "seconds": 8.581,
+          "status": "PASSED"
+        }
+      ]
+    }
+  },
+  "initial_failure": "Expanded integration test hit existing request rate limit. Negative API cases moved to a separate fresh-client test; no rate guard changed. Final public suite passes. All 34 generation tests passed in the initial combined run.",
+  "browser": {
+    "real_api_drift": {
+      "path": "frontend/test-results/public-base-20261031/results.json",
+      "stats": {
+        "startTime": "2026-10-30T19:37:57.131Z",
+        "duration": 93807.564,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "scope": "real API ZIP BASE/HEAD documentation evidence",
+      "note": "Run also included an initially failed public UI fixture. Only the configuration-drift test passed in this report."
+    },
+    "public_ui_provider_fixture": {
+      "path": "frontend/test-results/public-base-complete-20261031/results.json",
+      "stats": {
+        "startTime": "2026-10-30T19:43:08.827Z",
+        "duration": 23854.577,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "scope": "real API baseline, mocked public-provider projection and failure response; not live GitHub qualification"
+    }
+  },
+  "linux_prior_source_digest": "e100b089ef6a5ddaa27327bed51097d94b81aa44d5cf2ff1484dfa27d857eb07",
+  "current_delta_linux": "NOT_RUN",
+  "scale001": "NOT QUALIFIED",
+  "commercial_v1": "DEVELOPMENT IN PROGRESS",
+  "frontend": {
+    "numTotalTests": 52,
+    "numPassedTests": 52,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "success": true,
+    "raw_report": "frontend/test-results/public-base-unit-20261031.json"
+  },
+  "build": {
+    "command": "npm run build",
+    "exit_code": 0,
+    "prerendered_routes": 42
+  },
+  "static_checks": {
+    "ruff": 0,
+    "py_compile": 0,
+    "git_diff_check": 0
+  }
+}

@@ -1,0 +1,175 @@
+{
+  "schema": "projecttrace-github-development-handoff-v1",
+  "date": "2026-11-02",
+  "repository": "https://github.com/maninani12/ProjectTrace",
+  "branch": "codex/scale-001-local-continuation",
+  "pre_backup_head": "9e21509591bfa5457cc829ebd5637f95be68d573",
+  "authorization": "Owner explicitly authorized safe project staging, consolidation commit(s), and normal push on this continuation branch for new-laptop handoff only. No force, merge, main/shared-branch update, PR, migration execution, deployment or manual workflow dispatch.",
+  "source_consolidation_commit": "Recorded by documentation-only follow-up after consolidation.",
+  "final_tip_command": "git ls-remote origin refs/heads/codex/scale-001-local-continuation",
+  "final_tip_receipt": "Exact final local/remote tip is reported in the originating chat and local external audit receipt; a commit cannot embed its own hash.",
+  "initial_inventory": {
+    "files": 692,
+    "bytes": 41775839,
+    "modified_tracked": 26,
+    "untracked": 110,
+    "ignored": 10411,
+    "ignored_groups": {
+      ".pytest_cache": 5,
+      ".ruff_cache": 16,
+      "analyzers": 35,
+      "backend": 100,
+      "data": 66,
+      "frontend": 9888,
+      "integration_tests": 10,
+      "integrations": 8,
+      "scripts": 36,
+      "tests": 236,
+      "work": 6,
+      "workers": 5
+    },
+    "nested_repositories": [],
+    "submodules": [],
+    "case_collisions": [],
+    "symlinks": [],
+    "largest_file_bytes": 3914200,
+    "git_lfs_required": false
+  },
+  "remote_preflight": {
+    "fetch": "PASS",
+    "ahead": 0,
+    "behind": 0,
+    "remote_head": "9e21509591bfa5457cc829ebd5637f95be68d573"
+  },
+  "secret_review": {
+    "method": "Focused local patterns + exact known local application-key comparison; no gitleaks/trufflehog binary installed. Not a guarantee that every secret format is detected.",
+    "stats": {
+      "files": 706,
+      "plain_bytes": 10899727,
+      "text_characters": 770321874,
+      "expanded_bytes": 694966555
+    },
+    "archive_members": 376,
+    "zip_fixture_members_reviewed": 12,
+    "reviewed_unique_groups": 76,
+    "reviewed_occurrences": 191,
+    "genuine_secrets_identified": 0,
+    "known_local_key_matches": 0,
+    "valid_private_keys_identified": 0,
+    "blocked_files": [],
+    "disposition": "Owned test/demo/sanitizer fixture values, CI-only service credentials, interpolation and noncredential expressions retained. Runtime keys/data/settings remain excluded.",
+    "limitations": "Focused pattern and exact-local-key checks are not a guarantee for every secret format. No gitleaks/trufflehog command was installed; none was installed for this task.",
+    "initial_attempt": "Slow unbounded identifier pattern was stopped; restarted bounded scan completed; final additional documents and bundle scanned separately."
+  },
+  "checks_executed": {
+    "ruff_all_owned_python": "PASS",
+    "compileall_all_owned_python": "PASS",
+    "alembic_heads": "0026",
+    "original_database_migration": "NOT_RUN",
+    "long_tests": "NOT_RUN_UNCHANGED_SOURCE"
+  },
+  "baseline_preservation": {
+    "original_files": 692,
+    "changed_only_requested_documents": [
+      "README.md",
+      "PROJECTTRACE_PROGRESS.md",
+      "docs/COMMERCIAL_V1_RELEASE_GATES.md"
+    ],
+    "native_13_source_hashes_match_prior_receipt": true,
+    "existing_source_discarded": false,
+    "additional_formatting_only_files": [
+      "docs/PROJECTTRACE_POST_SERIALIZATION_REGRESSION_REPORT.md",
+      "docs/SCALE001_AGGREGATE_GUARD_INVESTIGATION.md",
+      "docs/SCALE001_CHECKPOINT_POLICY_DECISION.md",
+      "docs/SCALE001_INTEGRATED_QUALIFICATION_GATE.md",
+      "docs/SCALE001_POLICY_AND_LINUX_READINESS.md",
+      "docs/SCALE001_SUPPORTED_INPUT_BOUNDARY_PROPOSAL.md",
+      "tests/test_checkpoint_source_match_manifest.py"
+    ],
+    "formatting_originals_retained": true
+  },
+  "portable_historical_evidence": {
+    "path": "docs/evidence/LINUX_PARSER_SEC002_HISTORICAL_20261030_PORTABLE.json.gz",
+    "sha256": "af143a0ad8b8655bb45496b04608c6e1e9de85d388b8a7995b1ad0361bfd1ef4",
+    "original_reports": 14,
+    "scope": "Historical 2026-10-30 source only; not current consolidated tree qualification. Original blocked records are retained; later same-source Docker receipt supersedes them."
+  },
+  "qualification": {
+    "commercial_v1": "DEVELOPMENT IN PROGRESS",
+    "scale001": "NOT QUALIFIED",
+    "current_linux_docker": "NOT_RUN",
+    "live_provider": "NOT_RUN",
+    "current_postgresql_broker": "NOT_RUN",
+    "full_workload": "NOT_RUN",
+    "prior_results": "See dated source-specific native/quality receipt: 59 backend, 54 frontend, 2 browser; not rerun for backup. Earlier Linux 81+9 / Docker PASS apply only to old tree digest."
+  },
+  "intentionally_excluded": [
+    ".env and operator credentials/settings",
+    "data databases, encrypted source/input blobs/uploads and original key ring",
+    "virtualenvs, node_modules, build outputs, caches and browser runtime results",
+    "raw profiling databases/temp logs and complete WSL source/virtualenv/image environments; locations in handoff guide"
+  ],
+  "handoff_guide": "docs/PROJECTTRACE_NEW_LAPTOP_HANDOFF.md",
+  "local_only_audit_root": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\github-handoff-20261102",
+  "git_line_endings": "Existing core.autocrlf=true is preserved; normal index text normalization may differ from historical Windows byte hashes. No source manifest is rewritten to claim a new test run.",
+  "staged_checks": {
+    "staged_files": 140,
+    "added": 113,
+    "modified": 27,
+    "deleted": 0,
+    "all_index_paths": 695,
+    "index_payload_matches_reviewed_working_tree": true,
+    "full_staged_diff_new_unreviewed_matches": 0,
+    "untracked_after_staging": [],
+    "normal_git_text_normalizations": 588
+  },
+  "whitespace_check": {
+    "initial": "FAILED on pre-existing newly staged whitespace",
+    "corrected_files": [
+      {
+        "file": "docs/PROJECTTRACE_POST_SERIALIZATION_REGRESSION_REPORT.md",
+        "before_sha256": "673497e717c52966272221969cc87a002aea8763c21f69188f5f704baf93a134",
+        "after_sha256": "da9d1d00446086973a1b5efe2eb2ed0127e38dfe711c5d78a373b1c649285f81",
+        "scope": "Markdown hard-break spaces replaced by backslash; extra EOF blank line removed. No application semantics changed."
+      },
+      {
+        "file": "docs/SCALE001_AGGREGATE_GUARD_INVESTIGATION.md",
+        "before_sha256": "fc363346fecc8814f4e5c6b7bb4f1705755fdcdd7c3ca794712b0441887749c0",
+        "after_sha256": "0c34c5bf18adba071c2ed76099b355bc2956d1c0880ba284984b59c0ee448b63",
+        "scope": "Markdown hard-break spaces replaced by backslash; extra EOF blank line removed. No application semantics changed."
+      },
+      {
+        "file": "docs/SCALE001_CHECKPOINT_POLICY_DECISION.md",
+        "before_sha256": "2a8637a7d8dc0ef689528e403931cf695b6d61291e59a412e8d37c2d9978a504",
+        "after_sha256": "72bf9205b790209c2f972a12a7fce4aca1388fe2f7ae2d9505f72f5ed076c573",
+        "scope": "Markdown hard-break spaces replaced by backslash; extra EOF blank line removed. No application semantics changed."
+      },
+      {
+        "file": "docs/SCALE001_INTEGRATED_QUALIFICATION_GATE.md",
+        "before_sha256": "15c6ef58280931691b0cb3e98305b9305f214ac32ee9a903a4f79e2a714f5268",
+        "after_sha256": "8406f721ee33d374d71ac21c402b558a94fa0920a7669358b9591b8d2da7a14c",
+        "scope": "Markdown hard-break spaces replaced by backslash; extra EOF blank line removed. No application semantics changed."
+      },
+      {
+        "file": "docs/SCALE001_POLICY_AND_LINUX_READINESS.md",
+        "before_sha256": "2f7c63f00670de8d8a3fce57b3e88df1e3cf5935582a5e849cd7667fe1d5ffd9",
+        "after_sha256": "a587bddd13f2e06dcdb3a4f73552ddf2e3ca1d4635478dfb62c6cd9929e5963f",
+        "scope": "Markdown hard-break spaces replaced by backslash; extra EOF blank line removed. No application semantics changed."
+      },
+      {
+        "file": "docs/SCALE001_SUPPORTED_INPUT_BOUNDARY_PROPOSAL.md",
+        "before_sha256": "a4602efd9d91e0668ea4b274e599d8524405dc32b8adf6d8869b4cb38b7bdb2a",
+        "after_sha256": "2436cd6abe6c6ee143b4ea226e457dec8de69b151038939ad4addd17272be498",
+        "scope": "Markdown hard-break spaces replaced by backslash; extra EOF blank line removed. No application semantics changed."
+      },
+      {
+        "file": "tests/test_checkpoint_source_match_manifest.py",
+        "before_sha256": "ae6a13b9a8f03ebd638d444e56a6625ed2572cd7187321699c5e17439c41f94d",
+        "after_sha256": "852f7c90595a5683dc26799ae7029a81e6f7887529d1208c0abe37472a9e00aa",
+        "scope": "Markdown hard-break spaces replaced by backslash; extra EOF blank line removed. No application semantics changed."
+      }
+    ],
+    "original_bytes_retained": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\github-handoff-20261102\\pre-whitespace-originals",
+    "final": "PASS: git diff --cached --check after formatting-only correction"
+  }
+}

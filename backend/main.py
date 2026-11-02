@@ -254,6 +254,8 @@ class PublicGitHubImport(StrictModel):
     url: str = Field(min_length=10, max_length=500)
     ref: str | None = Field(default=None, max_length=256)
     request_key: str | None = Field(default=None, min_length=8, max_length=100, pattern=r"^[A-Za-z0-9_-]+$")
+    repository_id: str | None = Field(default=None, min_length=1, max_length=80)
+    base_snapshot_id: str | None = Field(default=None, min_length=1, max_length=80)
 
 
 @app.post("/api/github/public/import")
@@ -277,7 +279,14 @@ async def import_public_github(body: PublicGitHubImport, request: Request):
         db.commit()
         lock(db)
         request_key = body.request_key or uid()
-        fingerprint = hashlib.sha256(json.dumps([adapter.repository, adapter.ref]).encode()).hexdigest()
+        if body.base_snapshot_id and not body.repository_id:
+            raise HTTPException(422, "An explicit BASE snapshot requires a target repository.")
+        fingerprint_source = [adapter.repository, adapter.ref]
+        if body.repository_id:
+            fingerprint_source.append(body.repository_id)
+        if body.base_snapshot_id:
+            fingerprint_source.append(body.base_snapshot_id)
+        fingerprint = hashlib.sha256(json.dumps(fingerprint_source).encode()).hexdigest()
         natural_key = "public-request:" + request_key
         existing = db.scalar(select(Record).where(Record.organization_id == user.organization_id,
                                                   Record.kind == "source_import", Record.natural_key == natural_key))
@@ -288,24 +297,43 @@ async def import_public_github(body: PublicGitHubImport, request: Request):
             job = db.get(Record, existing.data["job_id"])
             return JSONResponse({"repository_id": job.repository_id, "job_id": job.id,
                                  "snapshot_id": job.data.get("snapshot_id"), "state": job.data["state"], "duplicate": True}, status_code=202)
-        if len(allowed_repositories(db, user)) >= 20:
-            raise HTTPException(429, "Workspace repository quota (20) reached.")
-        repo = Repository(id=uid(), organization_id=user.organization_id, name=adapter.repository,
-                          system="Imported System", component=adapter.repository, owner="Engineering Team", provider="GITHUB_PUBLIC")
-        db.add(repo)
-        db.flush()
-        db.add(Grant(user_id=user.id, repository_id=repo.id))
-        db.flush()
+        base_snapshot = None
+        if body.repository_id:
+            repo = require_repo(db, user, body.repository_id)
+            if repo.provider != "GITHUB_PUBLIC":
+                raise HTTPException(409, "Public GitHub snapshots must stay in a public GitHub repository.")
+            if repo.name.casefold() != adapter.repository.casefold():
+                raise HTTPException(409, "The public GitHub URL must identify the selected repository.")
+            if body.base_snapshot_id:
+                base_snapshot = db.scalar(select(Record).where(
+                    Record.id == body.base_snapshot_id, Record.kind == "snapshot",
+                    Record.organization_id == user.organization_id, Record.repository_id == repo.id,
+                ))
+                if base_snapshot is None:
+                    raise HTTPException(404, "BASE snapshot not available in the selected repository.")
+            else:
+                base_snapshot = current_snapshots(db, user).get(repo.id)
+        else:
+            if len(allowed_repositories(db, user)) >= 20:
+                raise HTTPException(429, "Workspace repository quota (20) reached.")
+            repo = Repository(id=uid(), organization_id=user.organization_id, name=adapter.repository,
+                              system="Imported System", component=adapter.repository, owner="Engineering Team", provider="GITHUB_PUBLIC")
+            db.add(repo)
+            db.flush()
+            db.add(Grant(user_id=user.id, repository_id=repo.id))
+            db.flush()
         check_capacity(db, user, repo)
         job = add(db, user.organization_id, repo.id, "job", {
             "state": "QUEUED", "stage": "QUEUED", "source": "PUBLIC_GITHUB", "user_id": user.id,
             "public_url": "https://github.com/" + adapter.repository, "ref": adapter.ref, "queued_at": now(),
             "execution": "CELERY" if os.getenv("JOB_MODE") == "celery" else "LOCAL",
             "request_id": request.state.request_id, "errors": [], "warnings": [], "stages": [], "dispatch": "PENDING",
+            **({"base_id": base_snapshot.id} if base_snapshot else {}),
         })
         add(db, user.organization_id, repo.id, "source_import", {"request_fingerprint": fingerprint, "job_id": job.id}, natural_key)
         register(db, job)
-        audit(db, user, "PUBLIC_SOURCE_IMPORT_REQUESTED", job.id, {"source": "PUBLIC_GITHUB"}, repo.id)
+        audit(db, user, "PUBLIC_SOURCE_IMPORT_REQUESTED", job.id,
+              {"source": "PUBLIC_GITHUB", **({"base_snapshot_id": base_snapshot.id} if base_snapshot else {})}, repo.id)
         db.commit()
         dispatch(db, job)
         return JSONResponse({"repository_id": repo.id, "job_id": job.id, "snapshot_id": None,

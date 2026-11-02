@@ -3,7 +3,7 @@ import json
 import os
 import time
 import uuid
-from collections import defaultdict, deque
+from collections import Counter, defaultdict, deque
 from datetime import datetime, timezone
 from functools import lru_cache
 
@@ -290,7 +290,7 @@ def evidence_signature(item, evidence_by_id):
     )
 
 
-def graph_impact(base_records, head_records, changed_files, base_id, head_id):
+def graph_impact(base_records, head_records, changed_files, base_id, head_id, *, base_path=None):
     """Traverse observed dependency edges, including evidence removed in the head.
 
     These are static dependency/review impacts, not runtime reachability or a risk score.
@@ -329,7 +329,7 @@ def graph_impact(base_records, head_records, changed_files, base_id, head_id):
     }
     changed = set(changed_files)
     affected, visited = {}, set()
-    for records in [base_records, head_records]:
+    for is_base, records in [(True, base_records), (False, head_records)]:
         nodes = {r.id: r for r in records if r.kind in node_kinds}
         reverse = {}
         for record in records:
@@ -337,7 +337,8 @@ def graph_impact(base_records, head_records, changed_files, base_id, head_id):
                 source, target = record.data.get("source"), record.data.get("target")
                 if source in nodes and target in nodes:
                     reverse.setdefault(target, []).append((source, record.id))
-        queue = deque((r.id, []) for r in records if r.kind == "evidence" and r.data.get("path") in changed)
+        queue = deque((r.id, []) for r in records if r.kind == "evidence" and
+                      (base_path(r.data.get("path")) if is_base and base_path else r.data.get("path")) in changed)
         while queue:
             identifier, via = queue.popleft()
             if identifier in visited:
@@ -489,6 +490,13 @@ def persist_analysis(
     ):
         raise ValueError("Base snapshot does not belong to the selected repository.")
     base_data = base.data if base else {}
+    from backend.public_snapshot_paths import Paths, claim_index, for_snapshot
+
+    base_paths = for_snapshot(db, base_data, user.organization_id, repo.id, repo.name,
+                              public_expected=bool(base) and repo.provider == "GITHUB_PUBLIC")
+    head_paths = Paths({"source_provenance": files.data.get("provenance", {}),
+                        "hashes": files.entries}, repo.name, basis=files.data.get("path_basis"),
+                       public_expected=repo.provider == "GITHUB_PUBLIC") if stored_input else Paths({}, repo.name)
     if progress:
         progress("PARSING")
     checkpoint_signature = hash_text(key + ":" + str(getattr(files, "inventory_id", "")))
@@ -510,6 +518,11 @@ def persist_analysis(
             profile=profile,
         )
     saver = getattr(progress, "save_analysis_checkpoint", None)
+    if base and (base_paths.state.startswith("UNRESOLVED") or head_paths.state.startswith("UNRESOLVED")):
+        warning = {"analyzer": "PUBLIC_SNAPSHOT_IDENTITY", "state": "PARTIAL",
+                   "message": "Public snapshot path equivalence is unresolved; claim removals are not inferred across layouts."}
+        if warning not in result["warnings"]:
+            result["warnings"].append(warning)
     if saver and not resumed_analysis:
         saver(checkpoint_signature, result)
     drafts = None
@@ -539,7 +552,11 @@ def persist_analysis(
     if restored is None:
         previous_hashes = base_data.get("hashes", {})
         hashes = {p: files.hash_for(p) if stored_input else hash_text(files[p]) for p in files}
-        changed = sorted(p for p in set(hashes) | set(previous_hashes) if hashes.get(p) != previous_hashes.get(p))
+        changed = sorted(
+            head_paths.prefix + p
+            for p in {head_paths.path(p) for p in hashes} | {base_paths.path(p) for p in previous_hashes}
+            if hashes.get(head_paths.prefix + p) != previous_hashes.get(base_paths.prefix + p)
+        )
         base_parser = base_data.get("parser_signature") or next(
             (
                 item.get("parser_signature")
@@ -559,6 +576,7 @@ def persist_analysis(
             "hashes": hashes,
             "changed_files": changed,
             "comparison": {
+                "public_path_identity": {"base": base_paths.state, "head": head_paths.state},
                 "source_changed": bool(changed),
                 "analysis_model_changed": model_changed,
                 "base_analyzer_version": base_data.get("analyzer_version"),
@@ -681,6 +699,8 @@ def persist_analysis(
         base_evidence = {r.id: r.data for r in base_records if r.kind == "evidence"}
     base_claim_records = {r.id: r for r in base_records if r.kind == "claim"}
     base_findings = {r.data.get("fingerprint"): r for r in base_records if r.kind == "finding"}
+    for identity, item in base_evidence.items():
+        base_evidence[identity] = {**item, "path": head_paths.prefix + base_paths.path(item.get("path"))}
     previous_evidence_by_path = {item.get("path"): item for item in base_evidence.values()}
     publication_performance = getattr(progress, "performance", None)
     restored = generation.load('EVIDENCE') if generation else None
@@ -756,7 +776,15 @@ def persist_analysis(
         added_line_counts = restored['added_line_counts']
     publication_started = time.perf_counter()
     owner_rules = ownership_rules(files)
-    previous_claims = {c.get("claim_key") or claim_key(c): c for c in base_data.get("claims", [])}
+    previous_claims = claim_index(base_data.get("claims", []), base_paths)
+    unresolved_claims = sum(c is None or bool(c.get("claim_key") and c["claim_key"] != claim_key(c))
+                            for c in previous_claims.values()) if base_paths.public else 0
+    if unresolved_claims:
+        captured_snapshot_data["comparison"]["unresolved_claim_identities"] = unresolved_claims
+        warning = {"analyzer": "PUBLIC_SNAPSHOT_IDENTITY", "state": "PARTIAL",
+                   "message": "Ambiguous or unknown historical claim identities were not equated or classified as removed."}
+        if warning not in result["warnings"]:
+            result["warnings"].append(warning)
     restored = generation.load('CLAIMS') if generation else None
     if restored is None:
         matched_previous_ids = set()
@@ -772,12 +800,12 @@ def persist_analysis(
             signals = data.pop("signals")
             key = data.get("claim_key") or claim_key(data)
             identity_id = str(uuid.uuid5(uuid.NAMESPACE_URL, f"projecttrace:{user.organization_id}:{repo.id}:{key}"))
-            previous = previous_claims.get(key)
+            previous = previous_claims.get(head_paths.key(data))
             if not previous:
                 legacy = [
                     c
                     for c in previous_claims.values()
-                    if not c.get("claim_key")
+                    if c and not c.get("claim_key")
                     and (c.get("path"), c.get("category"), c.get("expected"), c.get("origin", "DOCUMENTATION"))
                     == (data.get("path"), data.get("category"), data.get("expected"), data.get("origin", "DOCUMENTATION"))
                 ]
@@ -786,6 +814,7 @@ def persist_analysis(
                     previous = legacy[0]
             if previous:
                 matched_previous_ids.add(previous.get("id"))
+                identity_id = previous.get("identity_id") or identity_id
             evidence_ids = list(dict.fromkeys([evidence[data["path"]]] + [evidence[s["path"]] for s in signals]))
             supporting = list(dict.fromkeys(evidence[s["path"]] for s in signals))
             previous_record = base_claim_records.get((previous or {}).get("id"))
@@ -931,10 +960,11 @@ def persist_analysis(
             )
         if publication_performance:
             publication_performance.record("PUBLISH_CLAIMS", time.perf_counter() - publication_started)
-        if base and changed:
-            current_keys = {c["claim_key"] for c in claims}
+        if base and changed and not (base_paths.state.startswith("UNRESOLVED") or head_paths.state.startswith("UNRESOLVED")):
+            current_keys = {head_paths.key(c) for c in claims}
             for key, previous in previous_claims.items():
-                if key not in current_keys and previous.get("id") not in matched_previous_ids:
+                if (previous and key not in current_keys and previous.get("id") not in matched_previous_ids
+                        and (not base_paths.public or not previous.get("claim_key") or previous["claim_key"] == claim_key(previous))):
                     record = add(
                         db,
                         user.organization_id,
@@ -1202,7 +1232,7 @@ def persist_analysis(
         prior_by_path = defaultdict(list)
         for prior in base_findings.values():
             output_checkpoint(db)
-            prior_by_path[prior.data.get("path")].append(prior)
+            prior_by_path[head_paths.prefix + base_paths.path(prior.data.get("path"))].append(prior)
         for path, priors in prior_by_path.items():
             output_checkpoint(db)
             lines = old_lines(path)
@@ -1211,7 +1241,7 @@ def persist_analysis(
                 item = prior.data
                 line = item.get("line", 1)
                 text = lines[line - 1].strip() if isinstance(line, int) and 0 < line <= len(lines) else ""
-                old_signatures.add(hash_text(str(item.get("rule")) + ":" + str(item.get("path")) + ":" + text))
+                old_signatures.add(hash_text(str(item.get("rule")) + ":" + path + ":" + text))
         findings_by_path = defaultdict(list)
         for item in findings:
             output_checkpoint(db)
@@ -1237,7 +1267,13 @@ def persist_analysis(
                 rec = finding_records[item["id"]]
                 rec.data = sanitize_metadata({**rec.data, "delta": item["delta"], "new_code": item["new_code"]})
 
-        identity_matches = finding_history.reconcile(db, findings, base, base_records, files)
+        identity_matches = finding_history.reconcile(db, findings, base, base_records, files,
+                                                      path_context=(base_paths, head_paths))
+        if any(f.get("identity_resolution") == "UNRESOLVED" for f in findings):
+            warning = {"analyzer": "NATIVE_HISTORY", "state": "PARTIAL",
+                       "message": "Native finding identity is unresolved; history does not establish introduction or resolution."}
+            if warning not in result["warnings"]:
+                result["warnings"].append(warning)
         comparison_previous = [dict(r.data, id=r.id) for r in base_records if r.kind == "finding"]
         comparison_by_id = {item["id"]: item for item in comparison_previous}
         for item in findings:
@@ -1248,7 +1284,8 @@ def persist_analysis(
                 if previous:
                     previous["fingerprint"] = item.get("fingerprint")
         quality_domain.apply_comparison(
-            db, result["code_quality"], findings, base, changed_lines, model_changed, comparison_previous
+            db, result["code_quality"], findings, base, changed_lines, model_changed, comparison_previous,
+            path_context=(base_paths, head_paths), identity_matches=identity_matches,
         )
         for item in findings:
             output_checkpoint(db)
@@ -1259,10 +1296,17 @@ def persist_analysis(
         # Reviews only
         # carry when the same issue still cites exactly the same source fingerprints.
         claims_by_id = {claim["id"]: claim for claim in claims}
+        prior_consistency = {}
+        for prior in base_findings.values():
+            if prior.data.get("rule") == "PT-CONSISTENCY-001" and prior.data.get("claim_id"):
+                association = (prior.data["claim_id"], prior.data["rule"])
+                prior_consistency[association] = None if association in prior_consistency else prior
         for packed_finding in findings:
             output_checkpoint(db)
             record = finding_records[packed_finding["id"]]
             data = record.data
+            if packed_finding.get("identity_resolution") == "UNRESOLVED":
+                data = {**data, "identity_resolution": "UNRESOLVED", "delta": "ANALYZER_BASELINE"}
             related_claim = claims_by_id.get(data.get("claim_id"))
             fingerprint = data.get("fingerprint") or hash_text(
                 f"{data['rule']}:{data['path']}:{(related_claim or {}).get('claim_key', data['title'])}"
@@ -1272,7 +1316,13 @@ def persist_analysis(
             )
             match = identity_matches.get(record.id)
             previous_finding = match[0] if match else base_findings.get(fingerprint)
-            if data.get("identity_confidence") == "AMBIGUOUS":
+            if (not previous_finding and related_claim and related_claim.get("previous_version_id")
+                    and data.get("rule") == "PT-CONSISTENCY-001"):
+                previous_finding = prior_consistency.pop((related_claim["previous_version_id"], data["rule"]), None)
+                if previous_finding:
+                    match = (previous_finding, "EXISTING")
+                    identity_matches[record.id] = match
+            if data.get("identity_confidence") == "AMBIGUOUS" or data.get("identity_resolution") == "UNRESOLVED":
                 previous_finding = None
                 identity_id = review_uid()
             previous_data = previous_finding.data if previous_finding else {}
@@ -1353,6 +1403,7 @@ def persist_analysis(
             packed_finding.update(record.data)
 
         quality_state = result["code_quality"]
+        quality_state["deltas"] = dict(Counter(f.get("delta") for f in findings if f.get("category") == "QUALITY"))
         if generation:
             generation.save('CORRELATION', {'changed_lines': changed_lines, 'findings': findings, 'finding_records': finding_records, 'identity_matches': identity_matches, 'comparison_by_id': comparison_by_id, 'claims_by_id': claims_by_id, 'quality_state': quality_state})
     else:
@@ -1364,6 +1415,11 @@ def persist_analysis(
         claims_by_id = restored['claims_by_id']
         quality_state = restored['quality_state']
         result["code_quality"] = quality_state
+    if quality_state.get("comparison_identity_unresolved"):
+        warning = {"analyzer": "NATIVE_HISTORY", "state": "PARTIAL",
+                   "message": "Native finding identity is unresolved; history does not establish introduction or resolution."}
+        if warning not in result["warnings"]:
+            result["warnings"].append(warning)
     if publication_performance:
         publication_performance.record("FINDING_CORRELATION", time.perf_counter() - correlation_started)
     correlation_started = time.perf_counter()
@@ -1378,6 +1434,7 @@ def persist_analysis(
             model_changed=model_changed,
             warnings=result["warnings"],
             files=files,
+            path_context=(base_paths, head_paths),
         )
         if generation:
             generation.save('HISTORY', {})
@@ -1704,11 +1761,14 @@ def persist_analysis(
                 shared.update(findings_by_evidence.get(evidence_id, ()))
             for fid in sorted(shared, key=finding_order.get)[:20]:
                 edge(fid, claim["id"], "RELATED_EVIDENCE")
-        for row in result["code_quality"]["inventory"]:
+        for position, row in enumerate(result["code_quality"]["inventory"]):
             output_checkpoint(db)
             if row["path"] not in owners_by_path:
                 owners_by_path[row["path"]] = ownership(row["path"], files, repo.owner, rules=owner_rules)
             row.update(owners_by_path[row["path"]])
+            from analyzers.observation_store import EncryptedRows
+            if isinstance(result["code_quality"]["inventory"], EncryptedRows):
+                result["code_quality"]["inventory"]._replace(position, row)
         for finding in findings:
             output_checkpoint(db)
             if finding.get("category") == "QUALITY":
@@ -1773,11 +1833,13 @@ def persist_analysis(
     if restored is None:
         if stored_input:
             head_records = scoped_snapshot_records(db, user.organization_id, repo.id, snapshot.id, core=True)
-            old_graph, old_partial = impact_graph_records(db, user.organization_id, repo.id, base_id, changed)
+            old_changed = [base_paths.prefix + head_paths.path(p) for p in changed]
+            old_graph, old_partial = impact_graph_records(db, user.organization_id, repo.id, base_id, old_changed)
             head_graph, head_partial = (
                 impact_graph_records(db, user.organization_id, repo.id, snapshot.id, changed) if base_id else ([], False)
             )
-            impact = graph_impact([*base_records, *old_graph], [*head_records, *head_graph], changed, base_id, snapshot.id)
+            impact = graph_impact([*base_records, *old_graph], [*head_records, *head_graph], changed, base_id, snapshot.id,
+                                  base_path=lambda p: head_paths.prefix + base_paths.path(p))
             impact["truncated"] = old_partial or head_partial
             impact["neighborhood_record_budget"] = 5000
             if impact["truncated"]:
@@ -1790,7 +1852,8 @@ def persist_analysis(
                 )
         else:
             head_records = scoped_snapshot_records(db, user.organization_id, repo.id, snapshot.id)
-            impact = graph_impact(base_records, head_records, changed, base_id, snapshot.id)
+            impact = graph_impact(base_records, head_records, changed, base_id, snapshot.id,
+                                  base_path=lambda p: head_paths.prefix + base_paths.path(p))
         impact["verification"] = {
             "reused": result.get("reused_verifications", 0),
             "reverified": result.get("reverified_claims", 0),
@@ -1813,6 +1876,7 @@ def persist_analysis(
         snapshot.data = sanitize_metadata({
             **snapshot.data,
             **captured_snapshot_data,
+            "warnings": result["warnings"],
             "claims": claims,
             "findings": findings,
             "dependencies": deps,

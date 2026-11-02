@@ -1,0 +1,2547 @@
+{
+  "date": "2026-10-27",
+  "scope": "DISPOSABLE_OWNED_WINDOWS_FULL_MEMBERSHIP_SCALAR_PROTOTYPE_ONLY",
+  "status": "NOT_QUALIFIED",
+  "candidate_decision": "REJECTED",
+  "head": "9e21509591bfa5457cc829ebd5637f95be68d573",
+  "branch": "codex/scale-001-local-continuation",
+  "production_or_migration_changed_this_task": false,
+  "fresh_process_attempts": 22,
+  "fresh_process_successful_exits": 21,
+  "fresh_process_failed_exits": 1,
+  "failed_pre_ddl_setup_forensics": {
+    "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-scalar-prototype-20261027\\measurements\\publish-validated_partial-0\\benchmark.db",
+    "sha256": "5c9dec1886cc01f5f2307ee1ea87f9b32a4cef0f8f9a2c68beebc558013bedab",
+    "bytes": 4096,
+    "tables": [],
+    "sqlite_integrity": "ok",
+    "qualification": "Pre-DDL ownership rejection; no workload or publication qualification receipt exists."
+  },
+  "preservation": {
+    "frozen_source_count": 275,
+    "all_frozen_sources_unchanged": true,
+    "original_four_databases_unchanged": true,
+    "original_tracked_diff_unchanged": true,
+    "frozen_assertions_and_historical_evidence_unchanged": true,
+    "original_report_prefix_unchanged": true
+  },
+  "test_caveats": [
+    "Three frozen mode labels bind ONE scalar design on independent databases; unchanged assertions.",
+    "Nine original guard-utility tests run unchanged old code; new reader does not use it.",
+    "The earlier scalar-compatibility.xml wider 20 tests used BASELINE mode; final candidate run is scalar-final.xml.",
+    "Original legacy assertion demands two triggers and partial-index WHERE clauses, contradicting full membership; assertions were not altered."
+  ],
+  "final_test_groups": {
+    "tests\\test_graph_scalar_reading.py": {
+      "passed": 10,
+      "failed": 2,
+      "errors": 0,
+      "skipped": 0,
+      "tests": 12
+    },
+    "tests\\test_graph_scalar_projection.py": {
+      "passed": 37,
+      "failed": 1,
+      "errors": 0,
+      "skipped": 0,
+      "tests": 38
+    },
+    "tests\\test_graph_pages.py": {
+      "passed": 2,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "tests": 2
+    },
+    "tests\\test_indexed_workspace_queries.py": {
+      "passed": 3,
+      "failed": 1,
+      "errors": 0,
+      "skipped": 0,
+      "tests": 4
+    },
+    "tests\\test_workspace_pagination.py": {
+      "passed": 6,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "tests": 6
+    },
+    "tests\\test_graph_impact.py": {
+      "passed": 8,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "tests": 8
+    },
+    "tests\\test_generations.py": {
+      "passed": 7,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "tests": 7
+    },
+    "FROZEN_22_UNCHANGED_ASSERTIONS_SCALAR_SUBJECT": {
+      "passed": 18,
+      "failed": 4,
+      "errors": 0,
+      "skipped": 0,
+      "tests": 22
+    }
+  },
+  "final_test_failures": [
+    {
+      "attributes": {
+        "classname": "",
+        "name": "test_complete_content_and_order_is_identical[partial]",
+        "file": "..\\..\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-prototype-20261027\\test_candidate_contract.py",
+        "line": "40",
+        "time": "34.846"
+      },
+      "outcome": "failed",
+      "failure": "candidates = {'baseline': {'queries': [{'name': 'node_page_0', 'sql': 'SELECT records.id, records.organization_id, records.reposito...{'outcome': 'OK', 'row': {'storage_type': 'text', 'value_type': 'str', 'value': '{}'}, 'in_transaction': True}}, ...]}}\nmode = 'partial'\n\n    @pytest.mark.parametrize(\"mode\", [\"partial\", \"validated_partial\", \"guarded\"])\n    def test_complete_content_and_order_is_identical(candidates, mode):\n        baseline = candidates[\"baseline\"][\"queries\"]\n        candidate = candidates[mode][\"queries\"]\n        for original, modified in zip(baseline, candidate):\n>           assert modified[\"rows\"] == original[\"rows\"], original[\"name\"] + \" changed full result sequence\"\nE           AssertionError: existing_mixed_implicit_order changed full result sequence\nE           assert [('compat-nod...}', ...), ...] == [('compat-nod...}', ...), ...]\nE             \nE             At index 49 diff: ('compat-edge-0001', 'owned-eq', 'owned-eq', 'edge', 'compat-edge-0001', '{\"snapshot_id\": \"compat-a\", \"source\": \"compat-node-0001\", \"target\": \"compat-node-0002\", \"relationship\": \"LINK\"}', '2026-10-27T00:00:00+00:00', 1) != ('compat-edge-0011', 'owned-eq', 'owned-eq', 'edge', 'compat-edge-0011', '{\"snapshot_id\": \"compat-a\", \"source\": \"compat-node-0011\", \"target\": \"compat-node-0000\", \"relationship\": \"LINK\"}', '2026-10-27T00:00:00+00:00', 1)\nE             Use -v to get more diff\n\n..\\..\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-prototype-20261027\\test_candidate_contract.py:46: AssertionError",
+      "error": null,
+      "skipped": null
+    },
+    {
+      "attributes": {
+        "classname": "",
+        "name": "test_complete_content_and_order_is_identical[validated_partial]",
+        "file": "..\\..\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-prototype-20261027\\test_candidate_contract.py",
+        "line": "40",
+        "time": "0.005"
+      },
+      "outcome": "failed",
+      "failure": "candidates = {'baseline': {'queries': [{'name': 'node_page_0', 'sql': 'SELECT records.id, records.organization_id, records.reposito...{'outcome': 'OK', 'row': {'storage_type': 'text', 'value_type': 'str', 'value': '{}'}, 'in_transaction': True}}, ...]}}\nmode = 'validated_partial'\n\n    @pytest.mark.parametrize(\"mode\", [\"partial\", \"validated_partial\", \"guarded\"])\n    def test_complete_content_and_order_is_identical(candidates, mode):\n        baseline = candidates[\"baseline\"][\"queries\"]\n        candidate = candidates[mode][\"queries\"]\n        for original, modified in zip(baseline, candidate):\n>           assert modified[\"rows\"] == original[\"rows\"], original[\"name\"] + \" changed full result sequence\"\nE           AssertionError: existing_mixed_implicit_order changed full result sequence\nE           assert [('compat-nod...}', ...), ...] == [('compat-nod...}', ...), ...]\nE             \nE             At index 49 diff: ('compat-edge-0001', 'owned-eq', 'owned-eq', 'edge', 'compat-edge-0001', '{\"snapshot_id\": \"compat-a\", \"source\": \"compat-node-0001\", \"target\": \"compat-node-0002\", \"relationship\": \"LINK\"}', '2026-10-27T00:00:00+00:00', 1) != ('compat-edge-0011', 'owned-eq', 'owned-eq', 'edge', 'compat-edge-0011', '{\"snapshot_id\": \"compat-a\", \"source\": \"compat-node-0011\", \"target\": \"compat-node-0000\", \"relationship\": \"LINK\"}', '2026-10-27T00:00:00+00:00', 1)\nE             Use -v to get more diff\n\n..\\..\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-prototype-20261027\\test_candidate_contract.py:46: AssertionError",
+      "error": null,
+      "skipped": null
+    },
+    {
+      "attributes": {
+        "classname": "",
+        "name": "test_complete_content_and_order_is_identical[guarded]",
+        "file": "..\\..\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-prototype-20261027\\test_candidate_contract.py",
+        "line": "40",
+        "time": "0.005"
+      },
+      "outcome": "failed",
+      "failure": "candidates = {'baseline': {'queries': [{'name': 'node_page_0', 'sql': 'SELECT records.id, records.organization_id, records.reposito...{'outcome': 'OK', 'row': {'storage_type': 'text', 'value_type': 'str', 'value': '{}'}, 'in_transaction': True}}, ...]}}\nmode = 'guarded'\n\n    @pytest.mark.parametrize(\"mode\", [\"partial\", \"validated_partial\", \"guarded\"])\n    def test_complete_content_and_order_is_identical(candidates, mode):\n        baseline = candidates[\"baseline\"][\"queries\"]\n        candidate = candidates[mode][\"queries\"]\n        for original, modified in zip(baseline, candidate):\n>           assert modified[\"rows\"] == original[\"rows\"], original[\"name\"] + \" changed full result sequence\"\nE           AssertionError: existing_mixed_implicit_order changed full result sequence\nE           assert [('compat-nod...}', ...), ...] == [('compat-nod...}', ...), ...]\nE             \nE             At index 49 diff: ('compat-edge-0001', 'owned-eq', 'owned-eq', 'edge', 'compat-edge-0001', '{\"snapshot_id\": \"compat-a\", \"source\": \"compat-node-0001\", \"target\": \"compat-node-0002\", \"relationship\": \"LINK\"}', '2026-10-27T00:00:00+00:00', 1) != ('compat-edge-0011', 'owned-eq', 'owned-eq', 'edge', 'compat-edge-0011', '{\"snapshot_id\": \"compat-a\", \"source\": \"compat-node-0011\", \"target\": \"compat-node-0000\", \"relationship\": \"LINK\"}', '2026-10-27T00:00:00+00:00', 1)\nE             Use -v to get more diff\n\n..\\..\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-prototype-20261027\\test_candidate_contract.py:46: AssertionError",
+      "error": null,
+      "skipped": null
+    },
+    {
+      "attributes": {
+        "classname": "",
+        "name": "test_legacy_schema_refusal_and_0016_upgrade",
+        "file": "..\\..\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-prototype-20261027\\test_candidate_contract.py",
+        "line": "126",
+        "time": "20.987"
+      },
+      "outcome": "failed",
+      "failure": "tmp_path = WindowsPath('C:/Users/sai krishna/Documents/Codex/2026-10-25/you-are-taking-over-projecttrace-development/work/graph-scalar-prototype-20261027/p104/test_legacy_schema_refusal_and0')\n\n    def test_legacy_schema_refusal_and_0016_upgrade(tmp_path):\n        path = tmp_path / \"legacy.db\"\n        env = {**os.environ, \"DATABASE_URL\": \"sqlite:///\" + path.as_posix()}\n        repo = Path(r\"C:\\Users\\sai krishna\\Projects\\ProjectTrace-local\")\n    \n        def upgrade(revision):\n            completed = subprocess.run(\n                [sys.executable, \"-m\", \"alembic\", \"upgrade\", revision], cwd=repo, env=env, capture_output=True, text=True\n            )\n            assert completed.returncode == 0, completed.stderr[-2000:]\n    \n        upgrade(\"0013\")\n        mark(path)\n        with sqlite3.connect(path) as db:\n            before = definitions(db)\n            with pytest.raises(ValueError, match=\"four original\"):\n                install(db, \"validated_partial\")\n            assert definitions(db) == before\n        upgrade(\"0016\")\n        with sqlite3.connect(path) as db:\n            db.execute(\"PRAGMA foreign_keys=ON\")\n            assert len(definitions(db)) == 4\n            import json\n    \n            manifest = json.loads((Path(__file__).parent / \"preserved.json\").read_text())\n            with sqlite3.connect(\"file:\" + Path(manifest[\"databases\"][\"147\"]).as_posix() + \"?mode=ro\", uri=True) as source:\n                db.execute(\"INSERT INTO organizations(id,name) VALUES('owned-eq','Owned')\")\n                columns = [row[1] for row in db.execute(\"PRAGMA table_info(repositories)\")]\n                row = source.execute(\"SELECT \" + \",\".join(columns) + \" FROM repositories WHERE id='owned-eq'\").fetchone()\n                db.execute(\n                    \"INSERT INTO repositories(\" + \",\".join(columns) + \") VALUES(\" + \",\".join(\"?\" for _ in columns) + \")\",\n                    row,\n                )\n            seed(db)\n            original_queries = query_results(db, repeats=1)\n            original_writes = writes(db)\n            result = install(db, \"validated_partial\")\n>           assert len(result[\"after\"]) == 4 and len(result[\"triggers\"]) == 2\nE           assert (4 == 4 and 8 == 2)\nE            +  where 4 = len({'ix_records_graph_class': 'CREATE INDEX \"ix_records_graph_class\" ON scale001_graph_scalar_keys(organization_id,reposi...le001_graph_scalar_keys(organization_id,repository_id,kind,CAST(key_snapshot AS VARCHAR),CAST(key_target AS VARCHAR))'})\nE            +  and   8 = len([('scale001_scalar_delete', 'CREATE TRIGGER scale001_scalar_delete AFTER DELETE ON records BEGIN DELETE FROM scale001_...ed.key_snapshot,key_source=excluded.key_source,key_target=excluded.key_target,key_class=excluded.key_class; END'), ...])\n\n..\\..\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-prototype-20261027\\test_candidate_contract.py:164: AssertionError",
+      "error": null,
+      "skipped": null
+    },
+    {
+      "attributes": {
+        "classname": "tests.test_graph_scalar_reading",
+        "name": "test_filtered_mixed_sequences_match_complete_baseline[version]",
+        "file": "tests\\test_graph_scalar_reading.py",
+        "line": "42",
+        "time": "6.018"
+      },
+      "outcome": "failed",
+      "failure": "owned = WindowsPath('C:/Users/sai krishna/Documents/Codex/2026-10-25/you-are-taking-over-projecttrace-development/work/graph-scalar-prototype-20261027/p104/test_filtered_mixed_sequences_0/owned.db')\nextra = 'version'\n\n    @pytest.mark.parametrize(\"extra\", [\"version\", \"id_in\", \"path\"])\n    def test_filtered_mixed_sequences_match_complete_baseline(owned, extra):\n        from backend.db import Record\n        from backend.domain import snapshot_record_query\n    \n        query = snapshot_record_query(\"owned-eq\", \"owned-eq\", \"compat-a\")\n        if extra == \"version\":\n            query = query.where(Record.version >= 1)\n        elif extra == \"id_in\":\n            query = query.where(Record.id.in_([\"compat-edge-0001\", \"compat-edge-0011\", \"compat-node-0000\"]))\n        else:\n            query = query.where(Record.data[\"path\"].as_string().like(\"owned/%\"))\n        with sqlite3.connect(owned) as db:\n            expected = db.execute(*compiled(query)).fetchall()\n            scalar.install(db, \"projection\")\n>           assert db.execute(*compiled(query, True)).fetchall() == expected\nE           assert [('compat-nod...}', ...), ...] == [('compat-nod...}', ...), ...]\nE             \nE             At index 49 diff: ('compat-edge-0001', 'owned-eq', 'owned-eq', 'edge', 'compat-edge-0001', '{\"snapshot_id\": \"compat-a\", \"source\": \"compat-node-0001\", \"target\": \"compat-node-0002\", \"relationship\": \"LINK\"}', '2026-10-27T00:00:00+00:00', 1) != ('compat-edge-0011', 'owned-eq', 'owned-eq', 'edge', 'compat-edge-0011', '{\"snapshot_id\": \"compat-a\", \"source\": \"compat-node-0011\", \"target\": \"compat-node-0000\", \"relationship\": \"LINK\"}', '2026-10-27T00:00:00+00:00', 1)\nE             Use -v to get more diff\n\ntests\\test_graph_scalar_reading.py:58: AssertionError",
+      "error": null,
+      "skipped": null
+    },
+    {
+      "attributes": {
+        "classname": "tests.test_graph_scalar_reading",
+        "name": "test_rowid_read_namespace_is_preserved",
+        "file": "tests\\test_graph_scalar_reading.py",
+        "line": "60",
+        "time": "5.112"
+      },
+      "outcome": "failed",
+      "failure": "owned = WindowsPath('C:/Users/sai krishna/Documents/Codex/2026-10-25/you-are-taking-over-projecttrace-development/work/graph-scalar-prototype-20261027/p104/test_rowid_read_namespace_is_p0/owned.db')\n\n    def test_rowid_read_namespace_is_preserved(owned):\n        query = (\n            select(literal_column(\"records.rowid\"), literal_column(\"records.id\"))\n            .select_from(__import__(\"backend.db\", fromlist=[\"Record\"]).Record)\n            .order_by(literal_column(\"records.id\"))\n            .limit(3)\n        )\n        with sqlite3.connect(owned) as db:\n            expected = db.execute(*compiled(query)).fetchall()\n            scalar.install(db, \"projection\")\n>           assert db.execute(*compiled(query, True)).fetchall() == expected\n                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE           sqlite3.OperationalError: no such column: records.rowid\n\ntests\\test_graph_scalar_reading.py:71: OperationalError",
+      "error": null,
+      "skipped": null
+    },
+    {
+      "attributes": {
+        "classname": "tests.test_graph_scalar_projection",
+        "name": "test_natural_key_only_update_preserves_projection_metadata",
+        "file": "tests\\test_graph_scalar_projection.py",
+        "line": "129",
+        "time": "1.386"
+      },
+      "outcome": "failed",
+      "failure": "paired = (WindowsPath('C:/Users/sai krishna/Documents/Codex/2026-10-25/you-are-taking-over-projecttrace-development/work/graph-...over-projecttrace-development/work/graph-scalar-prototype-20261027/p104/test_natural_key_only_update_p0/projected.db'))\n\n    def test_natural_key_only_update_preserves_projection_metadata(paired):\n        \"\"\"Retain this failure: REPLACE cleanup depends on current natural metadata.\"\"\"\n        with _connect(paired[0]) as baseline, _connect(paired[1]) as projected:\n            for db in (baseline, projected):\n                _insert(db, \"scalar-natural-only\", natural=\"scalar-natural-before\")\n                db.execute(\n                    \"UPDATE records SET natural_key=? WHERE id=?\",\n                    (\"scalar-natural-after\", \"scalar-natural-only\"),\n                )\n            assert (\n                projected.execute(\"SELECT id,natural_key FROM records WHERE id='scalar-natural-only'\").fetchall()\n                == baseline.execute(\"SELECT id,natural_key FROM records WHERE id='scalar-natural-only'\").fetchall()\n            )\n>           _coverage(projected)\n\ntests\\test_graph_scalar_projection.py:143: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ndb = <sqlite3.Connection object at 0x000001F270CDDC60>\n\n    def _coverage(db):\n        # Keep the original native JSON_QUOTE/CAST expression, not Python decoding\n        # or the candidate's own direct-path extraction, as the equality oracle.\n        expressions = [\n            \"CAST(json_extract(json_quote(json_extract(r.data,'$.\\\"scope\\\"')),'$.\\\"snapshot_id\\\"') AS VARCHAR)\",\n            *[\n                \"CAST(json_extract(r.data,'$.\\\"\" + key + \"\\\"') AS VARCHAR)\"\n                for key in (\"snapshot_id\", \"source\", \"target\", \"class\")\n            ],\n        ]\n        comparisons = [\n            \"p.rid IS r.rowid\",\n            \"p.id IS r.id\",\n            \"p.organization_id IS r.organization_id\",\n            \"p.repository_id IS r.repository_id\",\n            \"p.kind IS r.kind\",\n            \"p.natural_key IS r.natural_key\",\n        ]\n        comparisons += [\"p.\" + field + \" IS \" + expression for field, expression in zip(scalar.FIELDS, expressions)]\n        count = db.execute(\"SELECT count(*) FROM records\").fetchone()[0]\n        assert db.execute(\"SELECT count(*) FROM \" + scalar.TABLE).fetchone()[0] == count\n        mismatch = db.execute(\n            \"SELECT r.rowid FROM records r LEFT JOIN \"\n            + scalar.TABLE\n            + \" p ON p.rid=r.rowid WHERE NOT (\"\n            + \" AND \".join(comparisons)\n            + \") LIMIT 1\"\n        ).fetchone()\n>       assert mismatch is None, mismatch\nE       AssertionError: (5565,)\nE       assert (5565,) is None\n\ntests\\test_graph_scalar_projection.py:64: AssertionError",
+      "error": null,
+      "skipped": null
+    },
+    {
+      "attributes": {
+        "classname": "tests.test_indexed_workspace_queries",
+        "name": "test_summary_reads_use_small_covering_indexes",
+        "file": "tests\\test_indexed_workspace_queries.py",
+        "line": "12",
+        "time": "7.572"
+      },
+      "outcome": "failed",
+      "failure": "signed = <starlette.testclient.TestClient object at 0x000001F270F21A90>\n\n    def test_summary_reads_use_small_covering_indexes(signed):\n        repo, _ = current_scope(signed)\n        with main.Session() as db:\n            user = db.scalar(select(User).where(User.email == 'demo@projecttrace.local'))\n            repositories = main.allowed_repositories(db, user)\n            repositories = [item for item in repositories if item.id == repo['id']]\n            snapshots = main.workspace_snapshots(db, user, repositories)\n            for kind, field in (('claim', 'status'), ('finding', 'severity')):\n                value = indexed_text(Record.data, field)\n                query = scoped_current(user, repositories, snapshots, [kind]).with_only_columns(value, func.count()).group_by(value)\n                sql = str(query.compile(db.bind, compile_kwargs={'literal_binds': True}))\n                plan = db.execute(text('EXPLAIN QUERY PLAN ' + sql)).all()\n>               assert any('ix_records_' + kind + '_summary' in row[-1] for row in plan), plan\nE               AssertionError: [(8, 0, 53, 'SEARCH __pt_keys_0 USING COVERING INDEX ix_records_graph_class (organization_id=? AND repository_id=? AND...)'), (19, 0, 45, 'SEARCH __pt_base_0 USING INTEGER PRIMARY KEY (rowid=?)'), (31, 0, 0, 'USE TEMP B-TREE FOR GROUP BY')]\nE               assert False\nE                +  where False = any(<generator object test_summary_reads_use_small_covering_indexes.<locals>.<genexpr> at 0x000001F219E126C0>)\n\ntests\\test_indexed_workspace_queries.py:25: AssertionError",
+      "error": null,
+      "skipped": null
+    }
+  ],
+  "frozen_22": {
+    "passed": 18,
+    "failed": 4,
+    "errors": 0,
+    "skipped": 0,
+    "tests": 22
+  },
+  "corpus": {
+    "baseline": {
+      "query_count": 62,
+      "write_count": 229,
+      "differences": {
+        "queries": [],
+        "writes": []
+      },
+      "after_analyze_differences_from_frozen": [],
+      "integrity": "ok",
+      "foreign_keys": []
+    },
+    "validated_partial": {
+      "query_count": 62,
+      "write_count": 229,
+      "differences": {
+        "queries": [
+          "existing_mixed_implicit_order"
+        ],
+        "writes": []
+      },
+      "after_analyze_differences_from_frozen": [
+        "existing_core_implicit_order",
+        "existing_mixed_implicit_order"
+      ],
+      "integrity": "ok",
+      "foreign_keys": []
+    }
+  },
+  "selected_query_plans": {
+    "baseline": [
+      {
+        "name": "node_page_0",
+        "plan": [
+          [
+            8,
+            0,
+            61,
+            "SEARCH records USING INDEX ix_records_graph_snapshot (organization_id=? AND repository_id=? AND kind=? AND <expr>=?)"
+          ],
+          [
+            70,
+            0,
+            0,
+            "USE TEMP B-TREE FOR LAST TERM OF ORDER BY"
+          ]
+        ],
+        "median_seconds": 5.469999996421393e-05
+      },
+      {
+        "name": "neighborhood_compat-node-0000_0",
+        "plan": [
+          [
+            2,
+            0,
+            0,
+            "CO-ROUTINE anon_1"
+          ],
+          [
+            3,
+            2,
+            0,
+            "COMPOUND QUERY"
+          ],
+          [
+            4,
+            3,
+            0,
+            "LEFT-MOST SUBQUERY"
+          ],
+          [
+            8,
+            4,
+            57,
+            "SEARCH records USING INDEX ix_records_graph_source (organization_id=? AND repository_id=? AND kind=? AND <expr>=? AND <expr>=?)"
+          ],
+          [
+            27,
+            3,
+            0,
+            "UNION USING TEMP B-TREE"
+          ],
+          [
+            30,
+            27,
+            57,
+            "SEARCH records USING INDEX ix_records_graph_target (organization_id=? AND repository_id=? AND kind=? AND <expr>=? AND <expr>=?)"
+          ],
+          [
+            62,
+            0,
+            51,
+            "SCAN anon_1"
+          ],
+          [
+            65,
+            0,
+            46,
+            "SEARCH records USING INDEX sqlite_autoindex_records_1 (id=?)"
+          ],
+          [
+            87,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ],
+        "median_seconds": 0.0004935999986628303
+      },
+      {
+        "name": "neighbor_total_compat-node-0000",
+        "plan": [
+          [
+            2,
+            0,
+            0,
+            "CO-ROUTINE anon_1"
+          ],
+          [
+            3,
+            2,
+            0,
+            "COMPOUND QUERY"
+          ],
+          [
+            4,
+            3,
+            0,
+            "LEFT-MOST SUBQUERY"
+          ],
+          [
+            8,
+            4,
+            57,
+            "SEARCH records USING INDEX ix_records_graph_source (organization_id=? AND repository_id=? AND kind=? AND <expr>=? AND <expr>=?)"
+          ],
+          [
+            27,
+            3,
+            0,
+            "UNION USING TEMP B-TREE"
+          ],
+          [
+            30,
+            27,
+            57,
+            "SEARCH records USING INDEX ix_records_graph_target (organization_id=? AND repository_id=? AND kind=? AND <expr>=? AND <expr>=?)"
+          ],
+          [
+            56,
+            0,
+            51,
+            "SCAN anon_1"
+          ]
+        ],
+        "median_seconds": 0.0001477999994676793
+      },
+      {
+        "name": "existing_mixed_implicit_order",
+        "plan": [
+          [
+            3,
+            0,
+            61,
+            "SEARCH records USING INDEX ix_records_graph_target (organization_id=? AND repository_id=?)"
+          ]
+        ],
+        "median_seconds": 0.197581700000228
+      },
+      {
+        "name": "workspace_count_graph_node",
+        "plan": [
+          [
+            4,
+            0,
+            52,
+            "SEARCH records USING COVERING INDEX ix_records_graph_snapshot (organization_id=? AND repository_id=? AND kind=? AND <expr>=?)"
+          ]
+        ],
+        "median_seconds": 5.779999992228113e-05
+      }
+    ],
+    "validated_partial": [
+      {
+        "name": "node_page_0",
+        "plan": [
+          [
+            9,
+            0,
+            61,
+            "SEARCH __pt_keys_0 USING INDEX ix_records_graph_snapshot (organization_id=? AND repository_id=? AND kind=? AND <expr>=?)"
+          ],
+          [
+            51,
+            0,
+            45,
+            "SEARCH __pt_base_0 USING INTEGER PRIMARY KEY (rowid=?)"
+          ],
+          [
+            82,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ],
+        "median_seconds": 0.0008926999998948304
+      },
+      {
+        "name": "neighborhood_compat-node-0000_0",
+        "plan": [
+          [
+            2,
+            0,
+            0,
+            "CO-ROUTINE anon_1"
+          ],
+          [
+            3,
+            2,
+            0,
+            "COMPOUND QUERY"
+          ],
+          [
+            4,
+            3,
+            0,
+            "LEFT-MOST SUBQUERY"
+          ],
+          [
+            9,
+            4,
+            57,
+            "SEARCH __pt_keys_1 USING INDEX ix_records_graph_source (organization_id=? AND repository_id=? AND kind=? AND <expr>=? AND <expr>=?)"
+          ],
+          [
+            24,
+            4,
+            45,
+            "SEARCH __pt_base_1 USING INTEGER PRIMARY KEY (rowid=?)"
+          ],
+          [
+            40,
+            3,
+            0,
+            "UNION USING TEMP B-TREE"
+          ],
+          [
+            44,
+            40,
+            57,
+            "SEARCH __pt_keys_2 USING INDEX ix_records_graph_target (organization_id=? AND repository_id=? AND kind=? AND <expr>=? AND <expr>=?)"
+          ],
+          [
+            59,
+            40,
+            45,
+            "SEARCH __pt_base_2 USING INTEGER PRIMARY KEY (rowid=?)"
+          ],
+          [
+            89,
+            0,
+            47,
+            "SCAN anon_1"
+          ],
+          [
+            92,
+            0,
+            47,
+            "SEARCH __pt_base_0 USING INDEX sqlite_autoindex_records_1 (id=?)"
+          ],
+          [
+            98,
+            0,
+            45,
+            "SEARCH __pt_keys_0 USING INTEGER PRIMARY KEY (rowid=?)"
+          ],
+          [
+            129,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ],
+        "median_seconds": 0.0009630000004108297
+      },
+      {
+        "name": "neighbor_total_compat-node-0000",
+        "plan": [
+          [
+            2,
+            0,
+            0,
+            "CO-ROUTINE anon_1"
+          ],
+          [
+            3,
+            2,
+            0,
+            "COMPOUND QUERY"
+          ],
+          [
+            4,
+            3,
+            0,
+            "LEFT-MOST SUBQUERY"
+          ],
+          [
+            9,
+            4,
+            57,
+            "SEARCH __pt_keys_0 USING INDEX ix_records_graph_source (organization_id=? AND repository_id=? AND kind=? AND <expr>=? AND <expr>=?)"
+          ],
+          [
+            24,
+            4,
+            45,
+            "SEARCH __pt_base_0 USING INTEGER PRIMARY KEY (rowid=?)"
+          ],
+          [
+            40,
+            3,
+            0,
+            "UNION USING TEMP B-TREE"
+          ],
+          [
+            44,
+            40,
+            57,
+            "SEARCH __pt_keys_1 USING INDEX ix_records_graph_target (organization_id=? AND repository_id=? AND kind=? AND <expr>=? AND <expr>=?)"
+          ],
+          [
+            59,
+            40,
+            45,
+            "SEARCH __pt_base_1 USING INTEGER PRIMARY KEY (rowid=?)"
+          ],
+          [
+            82,
+            0,
+            47,
+            "SCAN anon_1"
+          ]
+        ],
+        "median_seconds": 0.0009165999999822816
+      },
+      {
+        "name": "existing_mixed_implicit_order",
+        "plan": [
+          [
+            4,
+            0,
+            62,
+            "SEARCH __pt_base_0 USING INDEX ix_records_scoped_current (organization_id=? AND repository_id=?)"
+          ],
+          [
+            23,
+            0,
+            45,
+            "SEARCH __pt_keys_0 USING INTEGER PRIMARY KEY (rowid=?)"
+          ]
+        ],
+        "median_seconds": 0.28432510000129696
+      },
+      {
+        "name": "workspace_count_graph_node",
+        "plan": [
+          [
+            5,
+            0,
+            53,
+            "SEARCH __pt_keys_0 USING COVERING INDEX ix_records_graph_class (organization_id=? AND repository_id=? AND kind=? AND <expr>=?)"
+          ],
+          [
+            18,
+            0,
+            45,
+            "SEARCH __pt_base_0 USING INTEGER PRIMARY KEY (rowid=?)"
+          ]
+        ],
+        "median_seconds": 3.0399998649954796e-05
+      }
+    ]
+  },
+  "measurements": [
+    {
+      "mode": "baseline",
+      "fresh_processes_per_operation": 3,
+      "owned_metrics": 30000,
+      "cold_seconds_median": 231.6936745999992,
+      "cold_seconds_all": [
+        47.76241830000072,
+        231.6936745999992,
+        366.5187695000004
+      ],
+      "cold_native_execute_seconds_all": [
+        1.4429042999090598,
+        6.35088269984044,
+        11.680517199934911
+      ],
+      "cold_sql_execute_aggregates": [
+        {
+          "setup:OTHER:PRAGMA": {
+            "calls": 130,
+            "seconds": 0.0026045000031444943,
+            "executemany_calls": 0
+          },
+          "setup:OTHER:CREATE": {
+            "calls": 161,
+            "seconds": 0.09944110000469664,
+            "executemany_calls": 0
+          },
+          "setup:OTHER:INSERT": {
+            "calls": 4,
+            "seconds": 0.0004199999984848546,
+            "executemany_calls": 0
+          },
+          "setup:OTHER:SELECT": {
+            "calls": 1,
+            "seconds": 5.559999954130035e-05,
+            "executemany_calls": 0
+          },
+          "cold:OTHER:INSERT": {
+            "calls": 21,
+            "seconds": 0.0010226000049442519,
+            "executemany_calls": 1
+          },
+          "cold:OTHER:SELECT": {
+            "calls": 26,
+            "seconds": 0.001032499998473213,
+            "executemany_calls": 0
+          },
+          "cold:OTHER:UPDATE": {
+            "calls": 1,
+            "seconds": 3.5400000342633575e-05,
+            "executemany_calls": 0
+          },
+          "cold:COMPLETE_ANALYSIS:SELECT": {
+            "calls": 29268,
+            "seconds": 0.9206841999639437,
+            "executemany_calls": 0
+          },
+          "cold:COMPLETE_ANALYSIS:INSERT": {
+            "calls": 1108,
+            "seconds": 0.11339949998910015,
+            "executemany_calls": 74
+          },
+          "cold:COMPLETE_ANALYSIS:UPDATE": {
+            "calls": 1033,
+            "seconds": 0.21730880000905017,
+            "executemany_calls": 0
+          },
+          "cold:COMPLETE_ANALYSIS:BEGIN": {
+            "calls": 604,
+            "seconds": 0.01713240000026417,
+            "executemany_calls": 0
+          },
+          "cold:COMPLETE_ANALYSIS:DELETE": {
+            "calls": 31,
+            "seconds": 0.001929599999130005,
+            "executemany_calls": 0
+          },
+          "cold:QUALITY_COMPARISON:SELECT": {
+            "calls": 122,
+            "seconds": 0.005729900005462696,
+            "executemany_calls": 0
+          },
+          "cold:QUALITY_PERSIST:SELECT": {
+            "calls": 1035,
+            "seconds": 0.01378539994948369,
+            "executemany_calls": 0
+          },
+          "cold:QUALITY_PERSIST:INSERT": {
+            "calls": 330,
+            "seconds": 0.011384100002032937,
+            "executemany_calls": 0
+          },
+          "cold:FINAL_RECEIPT_LOOKUP:SELECT": {
+            "calls": 2,
+            "seconds": 0.00010019999899668619,
+            "executemany_calls": 0
+          },
+          "cold:PROJECT_SNAPSHOT:INSERT": {
+            "calls": 1,
+            "seconds": 0.00010939999992842786,
+            "executemany_calls": 0
+          },
+          "cold:PROJECT_SNAPSHOT:SELECT": {
+            "calls": 1,
+            "seconds": 0.00016340000001946464,
+            "executemany_calls": 0
+          },
+          "cold:FINAL_RECEIPT_WRITE:SELECT": {
+            "calls": 188,
+            "seconds": 0.005229900003541843,
+            "executemany_calls": 0
+          },
+          "cold:FINAL_RECEIPT_WRITE:INSERT": {
+            "calls": 4,
+            "seconds": 0.00028450000172597356,
+            "executemany_calls": 0
+          },
+          "cold:FINAL_RECEIPT_WRITE:BEGIN": {
+            "calls": 3,
+            "seconds": 8.300000263261609e-05,
+            "executemany_calls": 0
+          },
+          "cold:FINAL_RECEIPT_WRITE:DELETE": {
+            "calls": 2,
+            "seconds": 3.2699999792384915e-05,
+            "executemany_calls": 0
+          },
+          "cold:DB_COMMIT:INSERT": {
+            "calls": 1,
+            "seconds": 2.5299999833805487e-05,
+            "executemany_calls": 0
+          },
+          "cold:VALIDATE_GENERATION:SELECT": {
+            "calls": 2624,
+            "seconds": 0.10949689997687528,
+            "executemany_calls": 0
+          },
+          "cold:VALIDATE_GENERATION:UPDATE": {
+            "calls": 2,
+            "seconds": 0.0019485000011627562,
+            "executemany_calls": 0
+          },
+          "cold:PROMOTE_GENERATION:SELECT": {
+            "calls": 26,
+            "seconds": 0.0005650999992212746,
+            "executemany_calls": 0
+          },
+          "cold:ATOMIC_PUBLICATION_COMMIT:SELECT": {
+            "calls": 2,
+            "seconds": 2.9400000130408444e-05,
+            "executemany_calls": 0
+          },
+          "cold:ATOMIC_PUBLICATION_COMMIT:UPDATE": {
+            "calls": 2,
+            "seconds": 0.00025660000210336875,
+            "executemany_calls": 0
+          },
+          "cold:ATOMIC_PUBLICATION_COMMIT:INSERT": {
+            "calls": 1,
+            "seconds": 8.549999984097667e-05,
+            "executemany_calls": 0
+          },
+          "cold:QUALITY_FULL_HYDRATION:SELECT": {
+            "calls": 1,
+            "seconds": 0.020813700000871904,
+            "executemany_calls": 0
+          },
+          "cold:FINDINGS_READ_TOTAL:SELECT": {
+            "calls": 1,
+            "seconds": 0.00023580000015499536,
+            "executemany_calls": 0
+          }
+        },
+        {
+          "setup:OTHER:PRAGMA": {
+            "calls": 130,
+            "seconds": 0.008226099980674917,
+            "executemany_calls": 0
+          },
+          "setup:OTHER:CREATE": {
+            "calls": 161,
+            "seconds": 0.14210370002001582,
+            "executemany_calls": 0
+          },
+          "setup:OTHER:INSERT": {
+            "calls": 4,
+            "seconds": 0.000760599998102407,
+            "executemany_calls": 0
+          },
+          "setup:OTHER:SELECT": {
+            "calls": 1,
+            "seconds": 0.00019040000006498303,
+            "executemany_calls": 0
+          },
+          "cold:OTHER:INSERT": {
+            "calls": 21,
+            "seconds": 0.0015853000004426576,
+            "executemany_calls": 1
+          },
+          "cold:OTHER:SELECT": {
+            "calls": 26,
+            "seconds": 0.004119999999602442,
+            "executemany_calls": 0
+          },
+          "cold:OTHER:UPDATE": {
+            "calls": 1,
+            "seconds": 3.1600000511389226e-05,
+            "executemany_calls": 0
+          },
+          "cold:COMPLETE_ANALYSIS:SELECT": {
+            "calls": 29312,
+            "seconds": 3.9698641997674713,
+            "executemany_calls": 0
+          },
+          "cold:COMPLETE_ANALYSIS:INSERT": {
+            "calls": 1108,
+            "seconds": 0.3618067000006704,
+            "executemany_calls": 74
+          },
+          "cold:COMPLETE_ANALYSIS:UPDATE": {
+            "calls": 1033,
+            "seconds": 0.8318195999636373,
+            "executemany_calls": 0
+          },
+          "cold:COMPLETE_ANALYSIS:BEGIN": {
+            "calls": 604,
+            "seconds": 0.06418059999305115,
+            "executemany_calls": 0
+          },
+          "cold:COMPLETE_ANALYSIS:DELETE": {
+            "calls": 31,
+            "seconds": 0.01280429999678745,
+            "executemany_calls": 0
+          },
+          "cold:QUALITY_COMPARISON:SELECT": {
+            "calls": 122,
+            "seconds": 0.03364470000087749,
+            "executemany_calls": 0
+          },
+          "cold:QUALITY_PERSIST:SELECT": {
+            "calls": 1078,
+            "seconds": 0.0863628000333847,
+            "executemany_calls": 0
+          },
+          "cold:QUALITY_PERSIST:INSERT": {
+            "calls": 330,
+            "seconds": 0.042606600027284,
+            "executemany_calls": 0
+          },
+          "cold:FINAL_RECEIPT_LOOKUP:SELECT": {
+            "calls": 2,
+            "seconds": 0.0006641000018134946,
+            "executemany_calls": 0
+          },
+          "cold:PROJECT_SNAPSHOT:INSERT": {
+            "calls": 1,
+            "seconds": 0.00046019999899726827,
+            "executemany_calls": 0
+          },
+          "cold:PROJECT_SNAPSHOT:SELECT": {
+            "calls": 1,
+            "seconds": 0.0007127000008040341,
+            "executemany_calls": 0
+          },
+          "cold:FINAL_RECEIPT_WRITE:SELECT": {
+            "calls": 188,
+            "seconds": 0.0334873000101652,
+            "executemany_calls": 0
+          },
+          "cold:FINAL_RECEIPT_WRITE:INSERT": {
+            "calls": 4,
+            "seconds": 0.0014573999997082865,
+            "executemany_calls": 0
+          },
+          "cold:FINAL_RECEIPT_WRITE:BEGIN": {
+            "calls": 3,
+            "seconds": 0.00048600000081933104,
+            "executemany_calls": 0
+          },
+          "cold:FINAL_RECEIPT_WRITE:DELETE": {
+            "calls": 2,
+            "seconds": 0.00024159999884432182,
+            "executemany_calls": 0
+          },
+          "cold:DB_COMMIT:INSERT": {
+            "calls": 1,
+            "seconds": 0.00015209999946819153,
+            "executemany_calls": 0
+          },
+          "cold:VALIDATE_GENERATION:SELECT": {
+            "calls": 2624,
+            "seconds": 0.7868238000464771,
+            "executemany_calls": 0
+          },
+          "cold:VALIDATE_GENERATION:UPDATE": {
+            "calls": 2,
+            "seconds": 0.005294500000672997,
+            "executemany_calls": 0
+          },
+          "cold:PROMOTE_GENERATION:SELECT": {
+            "calls": 26,
+            "seconds": 0.004620700001396472,
+            "executemany_calls": 0
+          },
+          "cold:ATOMIC_PUBLICATION_COMMIT:SELECT": {
+            "calls": 2,
+            "seconds": 0.00013690000014321413,
+            "executemany_calls": 0
+          },
+          "cold:ATOMIC_PUBLICATION_COMMIT:UPDATE": {
+            "calls": 2,
+            "seconds": 0.0008237000001827255,
+            "executemany_calls": 0
+          },
+          "cold:ATOMIC_PUBLICATION_COMMIT:INSERT": {
+            "calls": 1,
+            "seconds": 0.0002829999993991805,
+            "executemany_calls": 0
+          },
+          "cold:QUALITY_FULL_HYDRATION:SELECT": {
+            "calls": 1,
+            "seconds": 0.10558499999933701,
+            "executemany_calls": 0
+          },
+          "cold:FINDINGS_READ_TOTAL:SELECT": {
+            "calls": 1,
+            "seconds": 0.0008272999984910712,
+            "executemany_calls": 0
+          }
+        },
+        {
+          "setup:OTHER:PRAGMA": {
+            "calls": 130,
+            "seconds": 0.002982100002554944,
+            "executemany_calls": 0
+          },
+          "setup:OTHER:CREATE": {
+            "calls": 161,
+            "seconds": 0.3656578000063746,
+            "executemany_calls": 0
+          },
+          "setup:OTHER:INSERT": {
+            "calls": 4,
+            "seconds": 0.0021237000000837725,
+            "executemany_calls": 0
+          },
+          "setup:OTHER:SELECT": {
+            "calls": 1,
+            "seconds": 0.0007502000007661991,
+            "executemany_calls": 0
+          },
+          "cold:OTHER:INSERT": {
+            "calls": 21,
+            "seconds": 0.0056261999961861875,
+            "executemany_calls": 1
+          },
+          "cold:OTHER:SELECT": {
+            "calls": 26,
+            "seconds": 0.009097500003917958,
+            "executemany_calls": 0
+          },
+          "cold:OTHER:UPDATE": {
+            "calls": 1,
+            "seconds": 0.0005388000008679228,
+            "executemany_calls": 0
+          },
+          "cold:COMPLETE_ANALYSIS:SELECT": {
+            "calls": 29356,
+            "seconds": 8.347876100035137,
+            "executemany_calls": 0
+          },
+          "cold:COMPLETE_ANALYSIS:INSERT": {
+            "calls": 1108,
+            "seconds": 0.6812648999839439,
+            "executemany_calls": 74
+          },
+          "cold:COMPLETE_ANALYSIS:UPDATE": {
+            "calls": 1033,
+            "seconds": 0.9588315999662882,
+            "executemany_calls": 0
+          },
+          "cold:COMPLETE_ANALYSIS:BEGIN": {
+            "calls": 604,
+            "seconds": 0.12484999998196145,
+            "executemany_calls": 0
+          },
+          "cold:COMPLETE_ANALYSIS:DELETE": {
+            "calls": 31,
+            "seconds": 0.015123100005439483,
+            "executemany_calls": 0
+          },
+          "cold:QUALITY_COMPARISON:SELECT": {
+            "calls": 122,
+            "seconds": 0.03246680000484048,
+            "executemany_calls": 0
+          },
+          "cold:QUALITY_PERSIST:SELECT": {
+            "calls": 1035,
+            "seconds": 0.11173879999296332,
+            "executemany_calls": 0
+          },
+          "cold:QUALITY_PERSIST:INSERT": {
+            "calls": 330,
+            "seconds": 0.07766590000210272,
+            "executemany_calls": 0
+          },
+          "cold:FINAL_RECEIPT_LOOKUP:SELECT": {
+            "calls": 2,
+            "seconds": 0.001024699999106815,
+            "executemany_calls": 0
+          },
+          "cold:PROJECT_SNAPSHOT:INSERT": {
+            "calls": 1,
+            "seconds": 0.00044780000098398887,
+            "executemany_calls": 0
+          },
+          "cold:PROJECT_SNAPSHOT:SELECT": {
+            "calls": 1,
+            "seconds": 0.0011247999991610413,
+            "executemany_calls": 0
+          },
+          "cold:FINAL_RECEIPT_WRITE:SELECT": {
+            "calls": 188,
+            "seconds": 0.04044669999530015,
+            "executemany_calls": 0
+          },
+          "cold:FINAL_RECEIPT_WRITE:INSERT": {
+            "calls": 4,
+            "seconds": 0.0017186999994009966,
+            "executemany_calls": 0
+          },
+          "cold:FINAL_RECEIPT_WRITE:BEGIN": {
+            "calls": 3,
+            "seconds": 0.00038950000089243986,
+            "executemany_calls": 0
+          },
+          "cold:FINAL_RECEIPT_WRITE:DELETE": {
+            "calls": 2,
+            "seconds": 0.0005065000004833564,
+            "executemany_calls": 0
+          },
+          "cold:DB_COMMIT:INSERT": {
+            "calls": 1,
+            "seconds": 0.0002494000000297092,
+            "executemany_calls": 0
+          },
+          "cold:VALIDATE_GENERATION:SELECT": {
+            "calls": 2624,
+            "seconds": 1.1245321999667794,
+            "executemany_calls": 0
+          },
+          "cold:VALIDATE_GENERATION:UPDATE": {
+            "calls": 2,
+            "seconds": 0.005802800000310526,
+            "executemany_calls": 0
+          },
+          "cold:PROMOTE_GENERATION:SELECT": {
+            "calls": 26,
+            "seconds": 0.006693699999232194,
+            "executemany_calls": 0
+          },
+          "cold:ATOMIC_PUBLICATION_COMMIT:SELECT": {
+            "calls": 2,
+            "seconds": 0.0001526000014564488,
+            "executemany_calls": 0
+          },
+          "cold:ATOMIC_PUBLICATION_COMMIT:UPDATE": {
+            "calls": 2,
+            "seconds": 0.0010455999999976484,
+            "executemany_calls": 0
+          },
+          "cold:ATOMIC_PUBLICATION_COMMIT:INSERT": {
+            "calls": 1,
+            "seconds": 0.0004270999997970648,
+            "executemany_calls": 0
+          },
+          "cold:QUALITY_FULL_HYDRATION:SELECT": {
+            "calls": 1,
+            "seconds": 0.13006229999882635,
+            "executemany_calls": 0
+          },
+          "cold:FINDINGS_READ_TOTAL:SELECT": {
+            "calls": 1,
+            "seconds": 0.0008130999995046295,
+            "executemany_calls": 0
+          }
+        }
+      ],
+      "whole_process_peak_rss_max": 524480512,
+      "whole_process_peak_rss_all": [
+        523354112,
+        524480512,
+        523980800
+      ],
+      "snapshot_update_seconds_median": 0.46198809999987134,
+      "snapshot_update_native_peak_max": 350661728,
+      "final_path_seconds_median": 34.506148000000394,
+      "publication_io_update_and_commit": [
+        [
+          {
+            "name": "DB_EXECUTE_SNAPSHOT_WRITE",
+            "phase": "cold",
+            "io_delta": {
+              "read_operations": 2,
+              "write_operations": 0,
+              "other_operations": 0,
+              "read_bytes": 8192,
+              "write_bytes": 0,
+              "other_bytes": 0
+            }
+          },
+          {
+            "name": "ATOMIC_PUBLICATION_COMMIT",
+            "phase": "cold",
+            "io_delta": {
+              "read_operations": 2,
+              "write_operations": 108,
+              "other_operations": 1,
+              "read_bytes": 8192,
+              "write_bytes": 222480,
+              "other_bytes": 0
+            }
+          }
+        ],
+        [
+          {
+            "name": "DB_EXECUTE_SNAPSHOT_WRITE",
+            "phase": "cold",
+            "io_delta": {
+              "read_operations": 2,
+              "write_operations": 0,
+              "other_operations": 0,
+              "read_bytes": 8192,
+              "write_bytes": 0,
+              "other_bytes": 0
+            }
+          },
+          {
+            "name": "ATOMIC_PUBLICATION_COMMIT",
+            "phase": "cold",
+            "io_delta": {
+              "read_operations": 2,
+              "write_operations": 108,
+              "other_operations": 1,
+              "read_bytes": 8192,
+              "write_bytes": 222480,
+              "other_bytes": 0
+            }
+          }
+        ],
+        [
+          {
+            "name": "DB_EXECUTE_SNAPSHOT_WRITE",
+            "phase": "cold",
+            "io_delta": {
+              "read_operations": 2,
+              "write_operations": 0,
+              "other_operations": 0,
+              "read_bytes": 8192,
+              "write_bytes": 0,
+              "other_bytes": 0
+            }
+          },
+          {
+            "name": "ATOMIC_PUBLICATION_COMMIT",
+            "phase": "cold",
+            "io_delta": {
+              "read_operations": 2,
+              "write_operations": 108,
+              "other_operations": 1,
+              "read_bytes": 8192,
+              "write_bytes": 222480,
+              "other_bytes": 0
+            }
+          }
+        ]
+      ],
+      "micro_seconds_median": 0.21139039999980014,
+      "micro_native_peak_max": 347138552,
+      "micro_total_changes": [
+        1,
+        1,
+        1
+      ],
+      "micro_io_including_commit": [
+        {
+          "read_operations": 6411,
+          "write_operations": 11,
+          "other_operations": 2,
+          "read_bytes": 26259341,
+          "write_bytes": 20632,
+          "other_bytes": 0
+        },
+        {
+          "read_operations": 6411,
+          "write_operations": 11,
+          "other_operations": 2,
+          "read_bytes": 26259341,
+          "write_bytes": 20632,
+          "other_bytes": 0
+        },
+        {
+          "read_operations": 6411,
+          "write_operations": 11,
+          "other_operations": 2,
+          "read_bytes": 26259341,
+          "write_bytes": 20632,
+          "other_bytes": 0
+        }
+      ],
+      "micro_database_sizes": [
+        {
+          "page_size": 4096,
+          "page_count": 15866,
+          "freelist_count": 285,
+          "dbstat_unavailable": "no such table: dbstat"
+        },
+        {
+          "page_size": 4096,
+          "page_count": 15866,
+          "freelist_count": 285,
+          "dbstat_unavailable": "no such table: dbstat"
+        },
+        {
+          "page_size": 4096,
+          "page_count": 15866,
+          "freelist_count": 285,
+          "dbstat_unavailable": "no such table: dbstat"
+        }
+      ],
+      "mixed_seconds_median": 0.06981120000091323,
+      "mixed_peak_rss_max": 206057472,
+      "mixed_native_peak_max": 88310064,
+      "mixed_complete_row_hashes": [
+        "47cfa7ce1e124e900e00d76ba8d9df66e606447d240244d07d0443b17fce3bc1",
+        "47cfa7ce1e124e900e00d76ba8d9df66e606447d240244d07d0443b17fce3bc1",
+        "47cfa7ce1e124e900e00d76ba8d9df66e606447d240244d07d0443b17fce3bc1"
+      ],
+      "mixed_row_counts": [
+        1777,
+        1777,
+        1777
+      ],
+      "mixed_plans": [
+        [
+          [
+            3,
+            0,
+            61,
+            "SEARCH records USING INDEX ix_records_graph_target (organization_id=? AND repository_id=?)"
+          ]
+        ],
+        [
+          [
+            3,
+            0,
+            61,
+            "SEARCH records USING INDEX ix_records_graph_target (organization_id=? AND repository_id=?)"
+          ]
+        ],
+        [
+          [
+            3,
+            0,
+            61,
+            "SEARCH records USING INDEX ix_records_graph_target (organization_id=? AND repository_id=?)"
+          ]
+        ]
+      ],
+      "publication_database_sizes": [
+        {
+          "benchmark.db": 64987136,
+          "benchmark.db-shm": 32768,
+          "benchmark.db-wal": 0
+        },
+        {
+          "benchmark.db": 64974848,
+          "benchmark.db-shm": 32768,
+          "benchmark.db-wal": 0
+        },
+        {
+          "benchmark.db": 64974848,
+          "benchmark.db-shm": 32768,
+          "benchmark.db-wal": 0
+        }
+      ]
+    },
+    {
+      "mode": "validated_partial",
+      "fresh_processes_per_operation": 3,
+      "owned_metrics": 30000,
+      "cold_seconds_median": 334.6027460000005,
+      "cold_seconds_all": [
+        224.53716539999914,
+        346.80331619999924,
+        334.6027460000005
+      ],
+      "cold_native_execute_seconds_all": [
+        9.412222899783956,
+        13.666717199874256,
+        12.226845700199192
+      ],
+      "cold_sql_execute_aggregates": [
+        {
+          "setup:OTHER:PRAGMA": {
+            "calls": 130,
+            "seconds": 0.011045900011595222,
+            "executemany_calls": 0
+          },
+          "setup:OTHER:CREATE": {
+            "calls": 161,
+            "seconds": 0.12943290000293928,
+            "executemany_calls": 0
+          },
+          "setup:OTHER:INSERT": {
+            "calls": 4,
+            "seconds": 0.0002299999996466795,
+            "executemany_calls": 0
+          },
+          "setup:OTHER:SELECT": {
+            "calls": 1,
+            "seconds": 0.00011230000018258579,
+            "executemany_calls": 0
+          },
+          "cold:OTHER:INSERT": {
+            "calls": 21,
+            "seconds": 0.00103510000553797,
+            "executemany_calls": 1
+          },
+          "cold:OTHER:SELECT": {
+            "calls": 26,
+            "seconds": 0.004092100001798826,
+            "executemany_calls": 0
+          },
+          "cold:OTHER:UPDATE": {
+            "calls": 1,
+            "seconds": 3.769999966607429e-05,
+            "executemany_calls": 0
+          },
+          "cold:COMPLETE_ANALYSIS:SELECT": {
+            "calls": 29313,
+            "seconds": 5.140010899889603,
+            "executemany_calls": 0
+          },
+          "cold:COMPLETE_ANALYSIS:INSERT": {
+            "calls": 1108,
+            "seconds": 2.121672099960051,
+            "executemany_calls": 74
+          },
+          "cold:COMPLETE_ANALYSIS:UPDATE": {
+            "calls": 1033,
+            "seconds": 1.2425101999979233,
+            "executemany_calls": 0
+          },
+          "cold:COMPLETE_ANALYSIS:BEGIN": {
+            "calls": 604,
+            "seconds": 0.06774399998357694,
+            "executemany_calls": 0
+          },
+          "cold:COMPLETE_ANALYSIS:DELETE": {
+            "calls": 31,
+            "seconds": 0.006025399998179637,
+            "executemany_calls": 0
+          },
+          "cold:QUALITY_COMPARISON:SELECT": {
+            "calls": 122,
+            "seconds": 0.026482900000701193,
+            "executemany_calls": 0
+          },
+          "cold:QUALITY_PERSIST:SELECT": {
+            "calls": 1078,
+            "seconds": 0.11664729998483381,
+            "executemany_calls": 0
+          },
+          "cold:QUALITY_PERSIST:INSERT": {
+            "calls": 330,
+            "seconds": 0.07211029999598395,
+            "executemany_calls": 0
+          },
+          "cold:FINAL_RECEIPT_LOOKUP:SELECT": {
+            "calls": 2,
+            "seconds": 0.000760900000386755,
+            "executemany_calls": 0
+          },
+          "cold:PROJECT_SNAPSHOT:INSERT": {
+            "calls": 1,
+            "seconds": 0.0002997999999934109,
+            "executemany_calls": 0
+          },
+          "cold:PROJECT_SNAPSHOT:SELECT": {
+            "calls": 1,
+            "seconds": 0.0008373000000574393,
+            "executemany_calls": 0
+          },
+          "cold:FINAL_RECEIPT_WRITE:SELECT": {
+            "calls": 188,
+            "seconds": 0.021432499996080878,
+            "executemany_calls": 0
+          },
+          "cold:FINAL_RECEIPT_WRITE:INSERT": {
+            "calls": 4,
+            "seconds": 0.0007802000000083353,
+            "executemany_calls": 0
+          },
+          "cold:FINAL_RECEIPT_WRITE:BEGIN": {
+            "calls": 3,
+            "seconds": 0.0002420999990135897,
+            "executemany_calls": 0
+          },
+          "cold:FINAL_RECEIPT_WRITE:DELETE": {
+            "calls": 2,
+            "seconds": 0.0009353999994345941,
+            "executemany_calls": 0
+          },
+          "cold:DB_COMMIT:INSERT": {
+            "calls": 1,
+            "seconds": 8.829999933368526e-05,
+            "executemany_calls": 0
+          },
+          "cold:VALIDATE_GENERATION:SELECT": {
+            "calls": 2624,
+            "seconds": 0.45814859996062296,
+            "executemany_calls": 0
+          },
+          "cold:VALIDATE_GENERATION:UPDATE": {
+            "calls": 2,
+            "seconds": 0.0027911000015592435,
+            "executemany_calls": 0
+          },
+          "cold:PROMOTE_GENERATION:SELECT": {
+            "calls": 26,
+            "seconds": 0.0006536000073538162,
+            "executemany_calls": 0
+          },
+          "cold:ATOMIC_PUBLICATION_COMMIT:SELECT": {
+            "calls": 2,
+            "seconds": 2.9000000722589903e-05,
+            "executemany_calls": 0
+          },
+          "cold:ATOMIC_PUBLICATION_COMMIT:UPDATE": {
+            "calls": 2,
+            "seconds": 0.00021580000066023786,
+            "executemany_calls": 0
+          },
+          "cold:ATOMIC_PUBLICATION_COMMIT:INSERT": {
+            "calls": 1,
+            "seconds": 7.520000144722871e-05,
+            "executemany_calls": 0
+          },
+          "cold:QUALITY_FULL_HYDRATION:SELECT": {
+            "calls": 1,
+            "seconds": 0.12508919999891077,
+            "executemany_calls": 0
+          },
+          "cold:FINDINGS_READ_TOTAL:SELECT": {
+            "calls": 1,
+            "seconds": 0.0014759000005142298,
+            "executemany_calls": 0
+          }
+        },
+        {
+          "setup:OTHER:PRAGMA": {
+            "calls": 130,
+            "seconds": 0.0031340000095951837,
+            "executemany_calls": 0
+          },
+          "setup:OTHER:CREATE": {
+            "calls": 161,
+            "seconds": 0.14493999997830542,
+            "executemany_calls": 0
+          },
+          "setup:OTHER:INSERT": {
+            "calls": 4,
+            "seconds": 0.0003415000010136282,
+            "executemany_calls": 0
+          },
+          "setup:OTHER:SELECT": {
+            "calls": 1,
+            "seconds": 0.0001024999983201269,
+            "executemany_calls": 0
+          },
+          "cold:OTHER:INSERT": {
+            "calls": 21,
+            "seconds": 0.0011009000045305584,
+            "executemany_calls": 1
+          },
+          "cold:OTHER:SELECT": {
+            "calls": 26,
+            "seconds": 0.0035460999970382545,
+            "executemany_calls": 0
+          },
+          "cold:OTHER:UPDATE": {
+            "calls": 1,
+            "seconds": 5.1500001063686796e-05,
+            "executemany_calls": 0
+          },
+          "cold:COMPLETE_ANALYSIS:SELECT": {
+            "calls": 29356,
+            "seconds": 7.996358899845291,
+            "executemany_calls": 0
+          },
+          "cold:COMPLETE_ANALYSIS:INSERT": {
+            "calls": 1108,
+            "seconds": 2.19785920000686,
+            "executemany_calls": 74
+          },
+          "cold:COMPLETE_ANALYSIS:UPDATE": {
+            "calls": 1033,
+            "seconds": 1.3782257000093523,
+            "executemany_calls": 0
+          },
+          "cold:COMPLETE_ANALYSIS:BEGIN": {
+            "calls": 604,
+            "seconds": 0.1077924999735842,
+            "executemany_calls": 0
+          },
+          "cold:COMPLETE_ANALYSIS:DELETE": {
+            "calls": 31,
+            "seconds": 0.041006100002050516,
+            "executemany_calls": 0
+          },
+          "cold:QUALITY_COMPARISON:SELECT": {
+            "calls": 122,
+            "seconds": 0.027252699990640394,
+            "executemany_calls": 0
+          },
+          "cold:QUALITY_PERSIST:SELECT": {
+            "calls": 1121,
+            "seconds": 0.23923670000658603,
+            "executemany_calls": 0
+          },
+          "cold:QUALITY_PERSIST:INSERT": {
+            "calls": 330,
+            "seconds": 0.1021411000056105,
+            "executemany_calls": 0
+          },
+          "cold:FINAL_RECEIPT_LOOKUP:SELECT": {
+            "calls": 2,
+            "seconds": 0.0013598000005003996,
+            "executemany_calls": 0
+          },
+          "cold:PROJECT_SNAPSHOT:INSERT": {
+            "calls": 1,
+            "seconds": 0.0005858999993506586,
+            "executemany_calls": 0
+          },
+          "cold:PROJECT_SNAPSHOT:SELECT": {
+            "calls": 1,
+            "seconds": 0.0032543999986955896,
+            "executemany_calls": 0
+          },
+          "cold:FINAL_RECEIPT_WRITE:SELECT": {
+            "calls": 188,
+            "seconds": 0.04477380000571429,
+            "executemany_calls": 0
+          },
+          "cold:FINAL_RECEIPT_WRITE:INSERT": {
+            "calls": 4,
+            "seconds": 0.004930299997795373,
+            "executemany_calls": 0
+          },
+          "cold:FINAL_RECEIPT_WRITE:BEGIN": {
+            "calls": 3,
+            "seconds": 0.0004411999980220571,
+            "executemany_calls": 0
+          },
+          "cold:FINAL_RECEIPT_WRITE:DELETE": {
+            "calls": 2,
+            "seconds": 0.0013846000001649372,
+            "executemany_calls": 0
+          },
+          "cold:DB_COMMIT:INSERT": {
+            "calls": 1,
+            "seconds": 0.0001571000011608703,
+            "executemany_calls": 0
+          },
+          "cold:VALIDATE_GENERATION:SELECT": {
+            "calls": 2624,
+            "seconds": 1.3103924000279221,
+            "executemany_calls": 0
+          },
+          "cold:VALIDATE_GENERATION:UPDATE": {
+            "calls": 2,
+            "seconds": 0.05476739999903657,
+            "executemany_calls": 0
+          },
+          "cold:PROMOTE_GENERATION:SELECT": {
+            "calls": 26,
+            "seconds": 0.009822600000916282,
+            "executemany_calls": 0
+          },
+          "cold:ATOMIC_PUBLICATION_COMMIT:SELECT": {
+            "calls": 2,
+            "seconds": 0.00014760000158275943,
+            "executemany_calls": 0
+          },
+          "cold:ATOMIC_PUBLICATION_COMMIT:UPDATE": {
+            "calls": 2,
+            "seconds": 0.0012141999995947117,
+            "executemany_calls": 0
+          },
+          "cold:ATOMIC_PUBLICATION_COMMIT:INSERT": {
+            "calls": 1,
+            "seconds": 0.0015168999998422805,
+            "executemany_calls": 0
+          },
+          "cold:QUALITY_FULL_HYDRATION:SELECT": {
+            "calls": 1,
+            "seconds": 0.136340700000801,
+            "executemany_calls": 0
+          },
+          "cold:FINDINGS_READ_TOTAL:SELECT": {
+            "calls": 1,
+            "seconds": 0.0010569000005489215,
+            "executemany_calls": 0
+          }
+        },
+        {
+          "setup:OTHER:PRAGMA": {
+            "calls": 130,
+            "seconds": 0.023240800001076423,
+            "executemany_calls": 0
+          },
+          "setup:OTHER:CREATE": {
+            "calls": 161,
+            "seconds": 0.5313914999933331,
+            "executemany_calls": 0
+          },
+          "setup:OTHER:INSERT": {
+            "calls": 4,
+            "seconds": 0.0019410000004427275,
+            "executemany_calls": 0
+          },
+          "setup:OTHER:SELECT": {
+            "calls": 1,
+            "seconds": 0.0007080999985191738,
+            "executemany_calls": 0
+          },
+          "cold:OTHER:INSERT": {
+            "calls": 21,
+            "seconds": 0.006431600000723847,
+            "executemany_calls": 1
+          },
+          "cold:OTHER:SELECT": {
+            "calls": 26,
+            "seconds": 0.008583600003476022,
+            "executemany_calls": 0
+          },
+          "cold:OTHER:UPDATE": {
+            "calls": 1,
+            "seconds": 0.000316400000883732,
+            "executemany_calls": 0
+          },
+          "cold:COMPLETE_ANALYSIS:SELECT": {
+            "calls": 29356,
+            "seconds": 7.465998400148237,
+            "executemany_calls": 0
+          },
+          "cold:COMPLETE_ANALYSIS:INSERT": {
+            "calls": 1108,
+            "seconds": 2.1697516000131145,
+            "executemany_calls": 74
+          },
+          "cold:COMPLETE_ANALYSIS:UPDATE": {
+            "calls": 1033,
+            "seconds": 1.1625013000066247,
+            "executemany_calls": 0
+          },
+          "cold:COMPLETE_ANALYSIS:BEGIN": {
+            "calls": 604,
+            "seconds": 0.10704700000133016,
+            "executemany_calls": 0
+          },
+          "cold:COMPLETE_ANALYSIS:DELETE": {
+            "calls": 31,
+            "seconds": 0.013802900006339769,
+            "executemany_calls": 0
+          },
+          "cold:QUALITY_COMPARISON:SELECT": {
+            "calls": 122,
+            "seconds": 0.03445179999471293,
+            "executemany_calls": 0
+          },
+          "cold:QUALITY_PERSIST:SELECT": {
+            "calls": 1035,
+            "seconds": 0.09615110001686844,
+            "executemany_calls": 0
+          },
+          "cold:QUALITY_PERSIST:INSERT": {
+            "calls": 330,
+            "seconds": 0.06063050000011572,
+            "executemany_calls": 0
+          },
+          "cold:FINAL_RECEIPT_LOOKUP:SELECT": {
+            "calls": 2,
+            "seconds": 0.0004910999996354803,
+            "executemany_calls": 0
+          },
+          "cold:PROJECT_SNAPSHOT:INSERT": {
+            "calls": 1,
+            "seconds": 0.0003780999995797174,
+            "executemany_calls": 0
+          },
+          "cold:PROJECT_SNAPSHOT:SELECT": {
+            "calls": 1,
+            "seconds": 0.000517099999342463,
+            "executemany_calls": 0
+          },
+          "cold:FINAL_RECEIPT_WRITE:SELECT": {
+            "calls": 188,
+            "seconds": 0.03623299999344454,
+            "executemany_calls": 0
+          },
+          "cold:FINAL_RECEIPT_WRITE:INSERT": {
+            "calls": 4,
+            "seconds": 0.0013690000014321413,
+            "executemany_calls": 0
+          },
+          "cold:FINAL_RECEIPT_WRITE:BEGIN": {
+            "calls": 3,
+            "seconds": 0.0006278999990172451,
+            "executemany_calls": 0
+          },
+          "cold:FINAL_RECEIPT_WRITE:DELETE": {
+            "calls": 2,
+            "seconds": 0.0001900000006571645,
+            "executemany_calls": 0
+          },
+          "cold:DB_COMMIT:INSERT": {
+            "calls": 1,
+            "seconds": 0.00015659999917261302,
+            "executemany_calls": 0
+          },
+          "cold:VALIDATE_GENERATION:SELECT": {
+            "calls": 2624,
+            "seconds": 0.9734751000196411,
+            "executemany_calls": 0
+          },
+          "cold:VALIDATE_GENERATION:UPDATE": {
+            "calls": 2,
+            "seconds": 0.006146899999293964,
+            "executemany_calls": 0
+          },
+          "cold:PROMOTE_GENERATION:SELECT": {
+            "calls": 26,
+            "seconds": 0.004317699997045565,
+            "executemany_calls": 0
+          },
+          "cold:ATOMIC_PUBLICATION_COMMIT:SELECT": {
+            "calls": 2,
+            "seconds": 0.0001505999989603879,
+            "executemany_calls": 0
+          },
+          "cold:ATOMIC_PUBLICATION_COMMIT:UPDATE": {
+            "calls": 2,
+            "seconds": 0.0010171999983867863,
+            "executemany_calls": 0
+          },
+          "cold:ATOMIC_PUBLICATION_COMMIT:INSERT": {
+            "calls": 1,
+            "seconds": 0.0007808999998815125,
+            "executemany_calls": 0
+          },
+          "cold:QUALITY_FULL_HYDRATION:SELECT": {
+            "calls": 1,
+            "seconds": 0.07403669999985141,
+            "executemany_calls": 0
+          },
+          "cold:FINDINGS_READ_TOTAL:SELECT": {
+            "calls": 1,
+            "seconds": 0.0012916000014229212,
+            "executemany_calls": 0
+          }
+        }
+      ],
+      "whole_process_peak_rss_max": 444215296,
+      "whole_process_peak_rss_all": [
+        444215296,
+        443863040,
+        443625472
+      ],
+      "snapshot_update_seconds_median": 0.8231008000002475,
+      "snapshot_update_native_peak_max": 272699832,
+      "final_path_seconds_median": 32.85135780000019,
+      "publication_io_update_and_commit": [
+        [
+          {
+            "name": "DB_EXECUTE_SNAPSHOT_WRITE",
+            "phase": "cold",
+            "io_delta": {
+              "read_operations": 1,
+              "write_operations": 2,
+              "other_operations": 20,
+              "read_bytes": 4096,
+              "write_bytes": 65600,
+              "other_bytes": 0
+            }
+          },
+          {
+            "name": "ATOMIC_PUBLICATION_COMMIT",
+            "phase": "cold",
+            "io_delta": {
+              "read_operations": 2,
+              "write_operations": 114,
+              "other_operations": 1,
+              "read_bytes": 8192,
+              "write_bytes": 234840,
+              "other_bytes": 0
+            }
+          }
+        ],
+        [
+          {
+            "name": "DB_EXECUTE_SNAPSHOT_WRITE",
+            "phase": "cold",
+            "io_delta": {
+              "read_operations": 1,
+              "write_operations": 2,
+              "other_operations": 20,
+              "read_bytes": 4096,
+              "write_bytes": 65600,
+              "other_bytes": 0
+            }
+          },
+          {
+            "name": "ATOMIC_PUBLICATION_COMMIT",
+            "phase": "cold",
+            "io_delta": {
+              "read_operations": 2,
+              "write_operations": 114,
+              "other_operations": 1,
+              "read_bytes": 8192,
+              "write_bytes": 234840,
+              "other_bytes": 0
+            }
+          }
+        ],
+        [
+          {
+            "name": "DB_EXECUTE_SNAPSHOT_WRITE",
+            "phase": "cold",
+            "io_delta": {
+              "read_operations": 1,
+              "write_operations": 2,
+              "other_operations": 20,
+              "read_bytes": 4096,
+              "write_bytes": 65600,
+              "other_bytes": 0
+            }
+          },
+          {
+            "name": "ATOMIC_PUBLICATION_COMMIT",
+            "phase": "cold",
+            "io_delta": {
+              "read_operations": 2,
+              "write_operations": 114,
+              "other_operations": 1,
+              "read_bytes": 8192,
+              "write_bytes": 234840,
+              "other_bytes": 0
+            }
+          }
+        ]
+      ],
+      "micro_seconds_median": 0.08175599999958649,
+      "micro_native_peak_max": 170643360,
+      "micro_total_changes": [
+        1,
+        1,
+        1
+      ],
+      "micro_io_including_commit": [
+        {
+          "read_operations": 1,
+          "write_operations": 2,
+          "other_operations": 1,
+          "read_bytes": 4096,
+          "write_bytes": 4120,
+          "other_bytes": 0
+        },
+        {
+          "read_operations": 1,
+          "write_operations": 2,
+          "other_operations": 1,
+          "read_bytes": 4096,
+          "write_bytes": 4120,
+          "other_bytes": 0
+        },
+        {
+          "read_operations": 1,
+          "write_operations": 2,
+          "other_operations": 1,
+          "read_bytes": 4096,
+          "write_bytes": 4120,
+          "other_bytes": 0
+        }
+      ],
+      "micro_database_sizes": [
+        {
+          "page_size": 4096,
+          "page_count": 15866,
+          "freelist_count": 164,
+          "dbstat_unavailable": "no such table: dbstat"
+        },
+        {
+          "page_size": 4096,
+          "page_count": 15866,
+          "freelist_count": 164,
+          "dbstat_unavailable": "no such table: dbstat"
+        },
+        {
+          "page_size": 4096,
+          "page_count": 15866,
+          "freelist_count": 164,
+          "dbstat_unavailable": "no such table: dbstat"
+        }
+      ],
+      "mixed_seconds_median": 0.06485499999871536,
+      "mixed_peak_rss_max": 211337216,
+      "mixed_native_peak_max": 91852264,
+      "mixed_complete_row_hashes": [
+        "860d64b8e3f8d615340095c775eb5a52af871d6ee3f33d041732ac6035922781",
+        "860d64b8e3f8d615340095c775eb5a52af871d6ee3f33d041732ac6035922781",
+        "860d64b8e3f8d615340095c775eb5a52af871d6ee3f33d041732ac6035922781"
+      ],
+      "mixed_row_counts": [
+        1777,
+        1777,
+        1777
+      ],
+      "mixed_plans": [
+        [
+          [
+            4,
+            0,
+            62,
+            "SEARCH __pt_base_0 USING INDEX ix_records_scoped_current (organization_id=? AND repository_id=?)"
+          ],
+          [
+            23,
+            0,
+            45,
+            "SEARCH __pt_keys_0 USING INTEGER PRIMARY KEY (rowid=?)"
+          ]
+        ],
+        [
+          [
+            4,
+            0,
+            62,
+            "SEARCH __pt_base_0 USING INDEX ix_records_scoped_current (organization_id=? AND repository_id=?)"
+          ],
+          [
+            23,
+            0,
+            45,
+            "SEARCH __pt_keys_0 USING INTEGER PRIMARY KEY (rowid=?)"
+          ]
+        ],
+        [
+          [
+            4,
+            0,
+            62,
+            "SEARCH __pt_base_0 USING INDEX ix_records_scoped_current (organization_id=? AND repository_id=?)"
+          ],
+          [
+            23,
+            0,
+            45,
+            "SEARCH __pt_keys_0 USING INTEGER PRIMARY KEY (rowid=?)"
+          ]
+        ]
+      ],
+      "publication_database_sizes": [
+        {
+          "benchmark.db": 65572864,
+          "benchmark.db-shm": 32768,
+          "benchmark.db-wal": 0
+        },
+        {
+          "benchmark.db": 65568768,
+          "benchmark.db-shm": 32768,
+          "benchmark.db-wal": 0
+        },
+        {
+          "benchmark.db": 65568768,
+          "benchmark.db-shm": 32768,
+          "benchmark.db-wal": 0
+        }
+      ]
+    }
+  ],
+  "http_requests_per_mode": {
+    "baseline": 20,
+    "validated_partial": 20
+  },
+  "http_differences": [
+    "neighbors-0",
+    "neighbors-1"
+  ],
+  "http_database_checks": {
+    "baseline": {
+      "sqlite_integrity": "ok",
+      "foreign_key_violations": 0,
+      "audit_links_verified": 28,
+      "audit_event_ids_sha256": "9d3b6055fd44c269c2d9a967ac6e6a12b3d64fbbae3f64cf259ad8452b0963ed",
+      "edges_verified": 3694,
+      "unresolved_cross_tenant_cross_generation_or_duplicate_edges": 0,
+      "generation_states": [
+        [
+          "PUBLISHED",
+          3
+        ],
+        [
+          "STAGING",
+          1
+        ]
+      ],
+      "pointers": 2,
+      "graph_index_definitions": {
+        "ix_records_graph_class": "CREATE INDEX ix_records_graph_class ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"class\"') AS VARCHAR), id)",
+        "ix_records_graph_snapshot": "CREATE INDEX ix_records_graph_snapshot ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR))",
+        "ix_records_graph_source": "CREATE INDEX ix_records_graph_source ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"source\"') AS VARCHAR))",
+        "ix_records_graph_target": "CREATE INDEX ix_records_graph_target ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"target\"') AS VARCHAR))"
+      }
+    },
+    "validated_partial": {
+      "sqlite_integrity": "ok",
+      "foreign_key_violations": 0,
+      "audit_links_verified": 28,
+      "audit_event_ids_sha256": "9d3b6055fd44c269c2d9a967ac6e6a12b3d64fbbae3f64cf259ad8452b0963ed",
+      "edges_verified": 3694,
+      "unresolved_cross_tenant_cross_generation_or_duplicate_edges": 0,
+      "generation_states": [
+        [
+          "PUBLISHED",
+          3
+        ],
+        [
+          "STAGING",
+          1
+        ]
+      ],
+      "pointers": 2,
+      "graph_index_definitions": {
+        "ix_records_graph_class": "CREATE INDEX \"ix_records_graph_class\" ON scale001_graph_scalar_keys(organization_id,repository_id,kind,CAST(key_scope AS VARCHAR),CAST(key_class AS VARCHAR),id)",
+        "ix_records_graph_snapshot": "CREATE INDEX \"ix_records_graph_snapshot\" ON scale001_graph_scalar_keys(organization_id,repository_id,kind,CAST(key_scope AS VARCHAR))",
+        "ix_records_graph_source": "CREATE INDEX \"ix_records_graph_source\" ON scale001_graph_scalar_keys(organization_id,repository_id,kind,CAST(key_snapshot AS VARCHAR),CAST(key_source AS VARCHAR))",
+        "ix_records_graph_target": "CREATE INDEX \"ix_records_graph_target\" ON scale001_graph_scalar_keys(organization_id,repository_id,kind,CAST(key_snapshot AS VARCHAR),CAST(key_target AS VARCHAR))"
+      }
+    }
+  },
+  "publication_equivalence": [
+    {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-scalar-prototype-20261027\\equality-cold-0.json",
+      "equal": true
+    },
+    {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-scalar-prototype-20261027\\equality-cold-1.json",
+      "equal": true
+    },
+    {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-scalar-prototype-20261027\\equality-cold-2.json",
+      "equal": true
+    },
+    {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-scalar-prototype-20261027\\equality-three-phases.json",
+      "equal": true
+    }
+  ],
+  "publication_checks": {
+    "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-scalar-prototype-20261027\\measurements\\publish-baseline-0\\benchmark.db": {
+      "sqlite_integrity": "ok",
+      "foreign_key_violations": 0,
+      "audit_links_verified": 9,
+      "audit_event_ids_sha256": "c961602bcc3ff10be4bde88926efe949d362e7942fa8a24a9bca3225656f1f63",
+      "edges_verified": 1230,
+      "unresolved_cross_tenant_cross_generation_or_duplicate_edges": 0,
+      "generation_states": [
+        [
+          "PUBLISHED",
+          1
+        ]
+      ],
+      "pointers": 1,
+      "graph_index_definitions": {
+        "ix_records_graph_class": "CREATE INDEX ix_records_graph_class ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"class\"') AS VARCHAR), id)",
+        "ix_records_graph_snapshot": "CREATE INDEX ix_records_graph_snapshot ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR))",
+        "ix_records_graph_source": "CREATE INDEX ix_records_graph_source ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"source\"') AS VARCHAR))",
+        "ix_records_graph_target": "CREATE INDEX ix_records_graph_target ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"target\"') AS VARCHAR))"
+      },
+      "exact_projection_native_key_ownership_coverage": "NOT_APPLICABLE_BASELINE",
+      "record_count": 1777
+    },
+    "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-scalar-prototype-20261027\\measurements-resumed\\publish-baseline-1\\benchmark.db": {
+      "sqlite_integrity": "ok",
+      "foreign_key_violations": 0,
+      "audit_links_verified": 9,
+      "audit_event_ids_sha256": "c961602bcc3ff10be4bde88926efe949d362e7942fa8a24a9bca3225656f1f63",
+      "edges_verified": 1230,
+      "unresolved_cross_tenant_cross_generation_or_duplicate_edges": 0,
+      "generation_states": [
+        [
+          "PUBLISHED",
+          1
+        ]
+      ],
+      "pointers": 1,
+      "graph_index_definitions": {
+        "ix_records_graph_class": "CREATE INDEX ix_records_graph_class ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"class\"') AS VARCHAR), id)",
+        "ix_records_graph_snapshot": "CREATE INDEX ix_records_graph_snapshot ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR))",
+        "ix_records_graph_source": "CREATE INDEX ix_records_graph_source ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"source\"') AS VARCHAR))",
+        "ix_records_graph_target": "CREATE INDEX ix_records_graph_target ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"target\"') AS VARCHAR))"
+      },
+      "exact_projection_native_key_ownership_coverage": "NOT_APPLICABLE_BASELINE",
+      "record_count": 1777
+    },
+    "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-scalar-prototype-20261027\\measurements-resumed\\publish-baseline-2\\benchmark.db": {
+      "sqlite_integrity": "ok",
+      "foreign_key_violations": 0,
+      "audit_links_verified": 9,
+      "audit_event_ids_sha256": "c961602bcc3ff10be4bde88926efe949d362e7942fa8a24a9bca3225656f1f63",
+      "edges_verified": 1230,
+      "unresolved_cross_tenant_cross_generation_or_duplicate_edges": 0,
+      "generation_states": [
+        [
+          "PUBLISHED",
+          1
+        ]
+      ],
+      "pointers": 1,
+      "graph_index_definitions": {
+        "ix_records_graph_class": "CREATE INDEX ix_records_graph_class ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"class\"') AS VARCHAR), id)",
+        "ix_records_graph_snapshot": "CREATE INDEX ix_records_graph_snapshot ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR))",
+        "ix_records_graph_source": "CREATE INDEX ix_records_graph_source ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"source\"') AS VARCHAR))",
+        "ix_records_graph_target": "CREATE INDEX ix_records_graph_target ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"target\"') AS VARCHAR))"
+      },
+      "exact_projection_native_key_ownership_coverage": "NOT_APPLICABLE_BASELINE",
+      "record_count": 1777
+    },
+    "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-scalar-prototype-20261027\\measurements-resumed\\publish-validated_partial-0\\benchmark.db": {
+      "sqlite_integrity": "ok",
+      "foreign_key_violations": 0,
+      "audit_links_verified": 9,
+      "audit_event_ids_sha256": "c961602bcc3ff10be4bde88926efe949d362e7942fa8a24a9bca3225656f1f63",
+      "edges_verified": 1230,
+      "unresolved_cross_tenant_cross_generation_or_duplicate_edges": 0,
+      "generation_states": [
+        [
+          "PUBLISHED",
+          1
+        ]
+      ],
+      "pointers": 1,
+      "graph_index_definitions": {
+        "ix_records_graph_class": "CREATE INDEX \"ix_records_graph_class\" ON scale001_graph_scalar_keys(organization_id,repository_id,kind,CAST(key_scope AS VARCHAR),CAST(key_class AS VARCHAR),id)",
+        "ix_records_graph_snapshot": "CREATE INDEX \"ix_records_graph_snapshot\" ON scale001_graph_scalar_keys(organization_id,repository_id,kind,CAST(key_scope AS VARCHAR))",
+        "ix_records_graph_source": "CREATE INDEX \"ix_records_graph_source\" ON scale001_graph_scalar_keys(organization_id,repository_id,kind,CAST(key_snapshot AS VARCHAR),CAST(key_source AS VARCHAR))",
+        "ix_records_graph_target": "CREATE INDEX \"ix_records_graph_target\" ON scale001_graph_scalar_keys(organization_id,repository_id,kind,CAST(key_snapshot AS VARCHAR),CAST(key_target AS VARCHAR))"
+      },
+      "exact_projection_native_key_ownership_coverage": "VERIFIED",
+      "record_count": 1777
+    },
+    "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-scalar-prototype-20261027\\measurements-resumed\\publish-validated_partial-1\\benchmark.db": {
+      "sqlite_integrity": "ok",
+      "foreign_key_violations": 0,
+      "audit_links_verified": 9,
+      "audit_event_ids_sha256": "c961602bcc3ff10be4bde88926efe949d362e7942fa8a24a9bca3225656f1f63",
+      "edges_verified": 1230,
+      "unresolved_cross_tenant_cross_generation_or_duplicate_edges": 0,
+      "generation_states": [
+        [
+          "PUBLISHED",
+          1
+        ]
+      ],
+      "pointers": 1,
+      "graph_index_definitions": {
+        "ix_records_graph_class": "CREATE INDEX \"ix_records_graph_class\" ON scale001_graph_scalar_keys(organization_id,repository_id,kind,CAST(key_scope AS VARCHAR),CAST(key_class AS VARCHAR),id)",
+        "ix_records_graph_snapshot": "CREATE INDEX \"ix_records_graph_snapshot\" ON scale001_graph_scalar_keys(organization_id,repository_id,kind,CAST(key_scope AS VARCHAR))",
+        "ix_records_graph_source": "CREATE INDEX \"ix_records_graph_source\" ON scale001_graph_scalar_keys(organization_id,repository_id,kind,CAST(key_snapshot AS VARCHAR),CAST(key_source AS VARCHAR))",
+        "ix_records_graph_target": "CREATE INDEX \"ix_records_graph_target\" ON scale001_graph_scalar_keys(organization_id,repository_id,kind,CAST(key_snapshot AS VARCHAR),CAST(key_target AS VARCHAR))"
+      },
+      "exact_projection_native_key_ownership_coverage": "VERIFIED",
+      "record_count": 1777
+    },
+    "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-scalar-prototype-20261027\\measurements-resumed\\publish-validated_partial-2\\benchmark.db": {
+      "sqlite_integrity": "ok",
+      "foreign_key_violations": 0,
+      "audit_links_verified": 9,
+      "audit_event_ids_sha256": "c961602bcc3ff10be4bde88926efe949d362e7942fa8a24a9bca3225656f1f63",
+      "edges_verified": 1230,
+      "unresolved_cross_tenant_cross_generation_or_duplicate_edges": 0,
+      "generation_states": [
+        [
+          "PUBLISHED",
+          1
+        ]
+      ],
+      "pointers": 1,
+      "graph_index_definitions": {
+        "ix_records_graph_class": "CREATE INDEX \"ix_records_graph_class\" ON scale001_graph_scalar_keys(organization_id,repository_id,kind,CAST(key_scope AS VARCHAR),CAST(key_class AS VARCHAR),id)",
+        "ix_records_graph_snapshot": "CREATE INDEX \"ix_records_graph_snapshot\" ON scale001_graph_scalar_keys(organization_id,repository_id,kind,CAST(key_scope AS VARCHAR))",
+        "ix_records_graph_source": "CREATE INDEX \"ix_records_graph_source\" ON scale001_graph_scalar_keys(organization_id,repository_id,kind,CAST(key_snapshot AS VARCHAR),CAST(key_source AS VARCHAR))",
+        "ix_records_graph_target": "CREATE INDEX \"ix_records_graph_target\" ON scale001_graph_scalar_keys(organization_id,repository_id,kind,CAST(key_snapshot AS VARCHAR),CAST(key_target AS VARCHAR))"
+      },
+      "exact_projection_native_key_ownership_coverage": "VERIFIED",
+      "record_count": 1777
+    },
+    "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-scalar-prototype-20261027\\measurements-resumed\\all_phases-baseline-0\\benchmark.db": {
+      "sqlite_integrity": "ok",
+      "foreign_key_violations": 0,
+      "audit_links_verified": 28,
+      "audit_event_ids_sha256": "9d3b6055fd44c269c2d9a967ac6e6a12b3d64fbbae3f64cf259ad8452b0963ed",
+      "edges_verified": 3694,
+      "unresolved_cross_tenant_cross_generation_or_duplicate_edges": 0,
+      "generation_states": [
+        [
+          "PUBLISHED",
+          3
+        ]
+      ],
+      "pointers": 2,
+      "graph_index_definitions": {
+        "ix_records_graph_class": "CREATE INDEX ix_records_graph_class ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"class\"') AS VARCHAR), id)",
+        "ix_records_graph_snapshot": "CREATE INDEX ix_records_graph_snapshot ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR))",
+        "ix_records_graph_source": "CREATE INDEX ix_records_graph_source ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"source\"') AS VARCHAR))",
+        "ix_records_graph_target": "CREATE INDEX ix_records_graph_target ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"target\"') AS VARCHAR))"
+      },
+      "exact_projection_native_key_ownership_coverage": "NOT_APPLICABLE_BASELINE",
+      "record_count": 5337
+    },
+    "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-scalar-prototype-20261027\\measurements-resumed\\all_phases-validated_partial-0\\benchmark.db": {
+      "sqlite_integrity": "ok",
+      "foreign_key_violations": 0,
+      "audit_links_verified": 28,
+      "audit_event_ids_sha256": "9d3b6055fd44c269c2d9a967ac6e6a12b3d64fbbae3f64cf259ad8452b0963ed",
+      "edges_verified": 3694,
+      "unresolved_cross_tenant_cross_generation_or_duplicate_edges": 0,
+      "generation_states": [
+        [
+          "PUBLISHED",
+          3
+        ]
+      ],
+      "pointers": 2,
+      "graph_index_definitions": {
+        "ix_records_graph_class": "CREATE INDEX \"ix_records_graph_class\" ON scale001_graph_scalar_keys(organization_id,repository_id,kind,CAST(key_scope AS VARCHAR),CAST(key_class AS VARCHAR),id)",
+        "ix_records_graph_snapshot": "CREATE INDEX \"ix_records_graph_snapshot\" ON scale001_graph_scalar_keys(organization_id,repository_id,kind,CAST(key_scope AS VARCHAR))",
+        "ix_records_graph_source": "CREATE INDEX \"ix_records_graph_source\" ON scale001_graph_scalar_keys(organization_id,repository_id,kind,CAST(key_snapshot AS VARCHAR),CAST(key_source AS VARCHAR))",
+        "ix_records_graph_target": "CREATE INDEX \"ix_records_graph_target\" ON scale001_graph_scalar_keys(organization_id,repository_id,kind,CAST(key_snapshot AS VARCHAR),CAST(key_target AS VARCHAR))"
+      },
+      "exact_projection_native_key_ownership_coverage": "VERIFIED",
+      "record_count": 5337
+    }
+  },
+  "original_database_checks": {
+    "10000": {
+      "sqlite_integrity": "ok",
+      "foreign_key_violations": 0,
+      "audit_links_verified": 9,
+      "audit_event_ids_sha256": "c961602bcc3ff10be4bde88926efe949d362e7942fa8a24a9bca3225656f1f63",
+      "edges_verified": 1230,
+      "unresolved_cross_tenant_cross_generation_or_duplicate_edges": 0,
+      "generation_states": [
+        [
+          "PUBLISHED",
+          1
+        ]
+      ],
+      "pointers": 1,
+      "graph_index_definitions": {
+        "ix_records_graph_class": "CREATE INDEX ix_records_graph_class ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"class\"') AS VARCHAR), id)",
+        "ix_records_graph_snapshot": "CREATE INDEX ix_records_graph_snapshot ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR))",
+        "ix_records_graph_source": "CREATE INDEX ix_records_graph_source ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"source\"') AS VARCHAR))",
+        "ix_records_graph_target": "CREATE INDEX ix_records_graph_target ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"target\"') AS VARCHAR))"
+      }
+    },
+    "147": {
+      "sqlite_integrity": "ok",
+      "foreign_key_violations": 0,
+      "audit_links_verified": 28,
+      "audit_event_ids_sha256": "9d3b6055fd44c269c2d9a967ac6e6a12b3d64fbbae3f64cf259ad8452b0963ed",
+      "edges_verified": 3694,
+      "unresolved_cross_tenant_cross_generation_or_duplicate_edges": 0,
+      "generation_states": [
+        [
+          "PUBLISHED",
+          3
+        ]
+      ],
+      "pointers": 2,
+      "graph_index_definitions": {
+        "ix_records_graph_class": "CREATE INDEX ix_records_graph_class ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"class\"') AS VARCHAR), id)",
+        "ix_records_graph_snapshot": "CREATE INDEX ix_records_graph_snapshot ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR))",
+        "ix_records_graph_source": "CREATE INDEX ix_records_graph_source ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"source\"') AS VARCHAR))",
+        "ix_records_graph_target": "CREATE INDEX ix_records_graph_target ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"target\"') AS VARCHAR))"
+      }
+    },
+    "30000": {
+      "sqlite_integrity": "ok",
+      "foreign_key_violations": 0,
+      "audit_links_verified": 9,
+      "audit_event_ids_sha256": "c961602bcc3ff10be4bde88926efe949d362e7942fa8a24a9bca3225656f1f63",
+      "edges_verified": 1230,
+      "unresolved_cross_tenant_cross_generation_or_duplicate_edges": 0,
+      "generation_states": [
+        [
+          "PUBLISHED",
+          1
+        ]
+      ],
+      "pointers": 1,
+      "graph_index_definitions": {
+        "ix_records_graph_class": "CREATE INDEX ix_records_graph_class ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"class\"') AS VARCHAR), id)",
+        "ix_records_graph_snapshot": "CREATE INDEX ix_records_graph_snapshot ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR))",
+        "ix_records_graph_source": "CREATE INDEX ix_records_graph_source ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"source\"') AS VARCHAR))",
+        "ix_records_graph_target": "CREATE INDEX ix_records_graph_target ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"target\"') AS VARCHAR))"
+      }
+    },
+    "prior": {
+      "sqlite_integrity": "ok",
+      "foreign_key_violations": 0,
+      "audit_links_verified": 28,
+      "audit_event_ids_sha256": "9d3b6055fd44c269c2d9a967ac6e6a12b3d64fbbae3f64cf259ad8452b0963ed",
+      "edges_verified": 3694,
+      "unresolved_cross_tenant_cross_generation_or_duplicate_edges": 0,
+      "generation_states": [
+        [
+          "PUBLISHED",
+          3
+        ]
+      ],
+      "pointers": 2,
+      "graph_index_definitions": {
+        "ix_records_graph_class": "CREATE INDEX ix_records_graph_class ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"class\"') AS VARCHAR), id)",
+        "ix_records_graph_snapshot": "CREATE INDEX ix_records_graph_snapshot ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(JSON_QUOTE(JSON_EXTRACT(data, '$.\"scope\"')), '$.\"snapshot_id\"') AS VARCHAR))",
+        "ix_records_graph_source": "CREATE INDEX ix_records_graph_source ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"source\"') AS VARCHAR))",
+        "ix_records_graph_target": "CREATE INDEX ix_records_graph_target ON records (organization_id, repository_id, kind, CAST(JSON_EXTRACT(data, '$.\"snapshot_id\"') AS VARCHAR), CAST(JSON_EXTRACT(data, '$.\"target\"') AS VARCHAR))"
+      }
+    }
+  },
+  "validation_commands": {
+    "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-scalar-prototype-20261027\\validation-commands.json",
+    "sha256": "f5897dfa07dec8d0c493660fb0e04baa4ca378d7815cec38105c1c0d45a953b2",
+    "receipt": {
+      "environment": {
+        "APP_ENV": "demo",
+        "SCALE001_PROTOTYPE_ROOT": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-scalar-prototype-20261027",
+        "SCALE001_INDEX_TEST_MODE": "validated_partial",
+        "PYTHONHASHSEED": "0",
+        "PYTHONPATH": "C:\\Users\\sai krishna\\Projects\\ProjectTrace-local;C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work"
+      },
+      "runs": [
+        {
+          "command": [
+            "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+            "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-scalar-prototype-20261027\\final_compatibility.py"
+          ],
+          "exit_code": 1,
+          "seconds": 42.676815999999235,
+          "stdout": "{\"mode\": \"baseline\", \"differences\": {\"queries\": [], \"writes\": []}, \"after_analyze\": []}\n{\"mode\": \"validated_partial\", \"differences\": {\"queries\": [\"existing_mixed_implicit_order\"], \"writes\": []}, \"after_analyze\": [\"existing_core_implicit_order\", \"existing_mixed_implicit_order\"]}\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+            "scripts/compare_scale_outputs.py",
+            "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-scalar-prototype-20261027\\measurements\\publish-baseline-0\\benchmark.db",
+            "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-scalar-prototype-20261027\\measurements-resumed\\publish-validated_partial-0\\benchmark.db",
+            "--output",
+            "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-scalar-prototype-20261027\\equality-cold-0.json"
+          ],
+          "exit_code": 0,
+          "seconds": 11.704690999999002,
+          "stdout": "{\"equal\": true, \"snapshots\": 1}\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+            "scripts/compare_scale_outputs.py",
+            "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-scalar-prototype-20261027\\measurements-resumed\\publish-baseline-1\\benchmark.db",
+            "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-scalar-prototype-20261027\\measurements-resumed\\publish-validated_partial-1\\benchmark.db",
+            "--output",
+            "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-scalar-prototype-20261027\\equality-cold-1.json"
+          ],
+          "exit_code": 0,
+          "seconds": 12.739956600000369,
+          "stdout": "{\"equal\": true, \"snapshots\": 1}\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+            "scripts/compare_scale_outputs.py",
+            "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-scalar-prototype-20261027\\measurements-resumed\\publish-baseline-2\\benchmark.db",
+            "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-scalar-prototype-20261027\\measurements-resumed\\publish-validated_partial-2\\benchmark.db",
+            "--output",
+            "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-scalar-prototype-20261027\\equality-cold-2.json"
+          ],
+          "exit_code": 0,
+          "seconds": 14.25035939999907,
+          "stdout": "{\"equal\": true, \"snapshots\": 1}\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+            "scripts/compare_scale_outputs.py",
+            "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-scalar-prototype-20261027\\measurements-resumed\\all_phases-baseline-0\\benchmark.db",
+            "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-scalar-prototype-20261027\\measurements-resumed\\all_phases-validated_partial-0\\benchmark.db",
+            "--output",
+            "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-scalar-prototype-20261027\\equality-three-phases.json"
+          ],
+          "exit_code": 0,
+          "seconds": 10.908448899999712,
+          "stdout": "{\"equal\": true, \"snapshots\": 3}\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+            "-m",
+            "pytest",
+            "-q",
+            "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-prototype-20261027\\test_candidate_contract.py",
+            "tests/test_graph_scalar_reading.py",
+            "tests/test_graph_scalar_projection.py",
+            "tests/test_graph_pages.py",
+            "tests/test_indexed_workspace_queries.py",
+            "tests/test_workspace_pagination.py",
+            "tests/test_graph_impact.py",
+            "tests/test_generations.py::test_visibility_scope_switches_in_one_session_and_rechecks_publication",
+            "tests/test_generations.py::test_public_api_readers_never_return_unpublished_snapshot_or_source",
+            "tests/test_generations.py::test_final_promotion_rejects_cancellation_replacement_and_access_revocation",
+            "tests/test_generations.py::test_final_commit_failure_or_lost_acknowledgement_is_consistent",
+            "-p",
+            "tests.graph_scalar_plugin",
+            "-p",
+            "tests.graph_index_pytest_plugin",
+            "-p",
+            "short_test_ids",
+            "-o",
+            "junit_family=xunit1",
+            "--basetemp=C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-scalar-prototype-20261027\\p104",
+            "--junitxml=C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-scalar-prototype-20261027\\scalar-final.xml"
+          ],
+          "exit_code": 1,
+          "seconds": 590.9737295000014,
+          "stdout": "FFF..................FF..F.........F.................................... [ 72%]\n..F........................                                              [100%]\n================================== FAILURES ===================================\n____________ test_complete_content_and_order_is_identical[partial] ____________\n\ncandidates = {'baseline': {'queries': [{'name': 'node_page_0', 'sql': 'SELECT records.id, records.organization_id, records.reposito...{'outcome': 'OK', 'row': {'storage_type': 'text', 'value_type': 'str', 'value': '{}'}, 'in_transaction': True}}, ...]}}\nmode = 'partial'\n\n    @pytest.mark.parametrize(\"mode\", [\"partial\", \"validated_partial\", \"guarded\"])\n    def test_complete_content_and_order_is_identical(candidates, mode):\n        baseline = candidates[\"baseline\"][\"queries\"]\n        candidate = candidates[mode][\"queries\"]\n        for original, modified in zip(baseline, candidate):\n>           assert modified[\"rows\"] == original[\"rows\"], original[\"name\"] + \" changed full result sequence\"\nE           AssertionError: existing_mixed_implicit_order changed full result sequence\nE           assert [('compat-nod...}', ...), ...] == [('compat-nod...}', ...), ...]\nE             \nE             At index 49 diff: ('compat-edge-0001', 'owned-eq', 'owned-eq', 'edge', 'compat-edge-0001', '{\"snapshot_id\": \"compat-a\", \"source\": \"compat-node-0001\", \"target\": \"compat-node-0002\", \"relationship\": \"LINK\"}', '2026-10-27T00:00:00+00:00', 1) != ('compat-edge-0011', 'owned-eq', 'owned-eq', 'edge', 'compat-edge-0011', '{\"snapshot_id\": \"compat-a\", \"source\": \"compat-node-0011\", \"target\": \"compat-node-0000\", \"relationship\": \"LINK\"}', '2026-10-27T00:00:00+00:00', 1)\nE             Use -v to get more diff\n\n..\\..\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-prototype-20261027\\test_candidate_contract.py:46: AssertionError\n_______ test_complete_content_and_order_is_identical[validated_partial] _______\n\ncandidates = {'baseline': {'queries': [{'name': 'node_page_0', 'sql': 'SELECT records.id, records.organization_id, records.reposito...{'outcome': 'OK', 'row': {'storage_type': 'text', 'value_type': 'str', 'value': '{}'}, 'in_transaction': True}}, ...]}}\nmode = 'validated_partial'\n\n    @pytest.mark.parametrize(\"mode\", [\"partial\", \"validated_partial\", \"guarded\"])\n    def test_complete_content_and_order_is_identical(candidates, mode):\n        baseline = candidates[\"baseline\"][\"queries\"]\n        candidate = candidates[mode][\"queries\"]\n        for original, modified in zip(baseline, candidate):\n>           assert modified[\"rows\"] == original[\"rows\"], original[\"name\"] + \" changed full result sequence\"\nE           AssertionError: existing_mixed_implicit_order changed full result sequence\nE           assert [('compat-nod...}', ...), ...] == [('compat-nod...}', ...), ...]\nE             \nE             At index 49 diff: ('compat-edge-0001', 'owned-eq', 'owned-eq', 'edge', 'compat-edge-0001', '{\"snapshot_id\": \"compat-a\", \"source\": \"compat-node-0001\", \"target\": \"compat-node-0002\", \"relationship\": \"LINK\"}', '2026-10-27T00:00:00+00:00', 1) != ('compat-edge-0011', 'owned-eq', 'owned-eq', 'edge', 'compat-edge-0011', '{\"snapshot_id\": \"compat-a\", \"source\": \"compat-node-0011\", \"target\": \"compat-node-0000\", \"relationship\": \"LINK\"}', '2026-10-27T00:00:00+00:00', 1)\nE             Use -v to get more diff\n\n..\\..\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-prototype-20261027\\test_candidate_contract.py:46: AssertionError\n____________ test_complete_content_and_order_is_identical[guarded] ____________\n\ncandidates = {'baseline': {'queries': [{'name': 'node_page_0', 'sql': 'SELECT records.id, records.organization_id, records.reposito...{'outcome': 'OK', 'row': {'storage_type': 'text', 'value_type': 'str', 'value': '{}'}, 'in_transaction': True}}, ...]}}\nmode = 'guarded'\n\n    @pytest.mark.parametrize(\"mode\", [\"partial\", \"validated_partial\", \"guarded\"])\n    def test_complete_content_and_order_is_identical(candidates, mode):\n        baseline = candidates[\"baseline\"][\"queries\"]\n        candidate = candidates[mode][\"queries\"]\n        for original, modified in zip(baseline, candidate):\n>           assert modified[\"rows\"] == original[\"rows\"], original[\"name\"] + \" changed full result sequence\"\nE           AssertionError: existing_mixed_implicit_order changed full result sequence\nE           assert [('compat-nod...}', ...), ...] == [('compat-nod...}', ...), ...]\nE             \nE             At index 49 diff: ('compat-edge-0001', 'owned-eq', 'owned-eq', 'edge', 'compat-edge-0001', '{\"snapshot_id\": \"compat-a\", \"source\": \"compat-node-0001\", \"target\": \"compat-node-0002\", \"relationship\": \"LINK\"}', '2026-10-27T00:00:00+00:00', 1) != ('compat-edge-0011', 'owned-eq', 'owned-eq', 'edge', 'compat-edge-0011', '{\"snapshot_id\": \"compat-a\", \"source\": \"compat-node-0011\", \"target\": \"compat-node-0000\", \"relationship\": \"LINK\"}', '2026-10-27T00:00:00+00:00', 1)\nE             Use -v to get more diff\n\n..\\..\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-prototype-20261027\\test_candidate_contract.py:46: AssertionError\n_________________ test_legacy_schema_refusal_and_0016_upgrade _________________\n\ntmp_path = WindowsPath('C:/Users/sai krishna/Documents/Codex/2026-10-25/you-are-taking-over-projecttrace-development/work/graph-scalar-prototype-20261027/p104/test_legacy_schema_refusal_and0')\n\n    def test_legacy_schema_refusal_and_0016_upgrade(tmp_path):\n        path = tmp_path / \"legacy.db\"\n        env = {**os.environ, \"DATABASE_URL\": \"sqlite:///\" + path.as_posix()}\n        repo = Path(r\"C:\\Users\\sai krishna\\Projects\\ProjectTrace-local\")\n    \n        def upgrade(revision):\n            completed = subprocess.run(\n                [sys.executable, \"-m\", \"alembic\", \"upgrade\", revision], cwd=repo, env=env, capture_output=True, text=True\n            )\n            assert completed.returncode == 0, completed.stderr[-2000:]\n    \n        upgrade(\"0013\")\n        mark(path)\n        with sqlite3.connect(path) as db:\n            before = definitions(db)\n            with pytest.raises(ValueError, match=\"four original\"):\n                install(db, \"validated_partial\")\n            assert definitions(db) == before\n        upgrade(\"0016\")\n        with sqlite3.connect(path) as db:\n            db.execute(\"PRAGMA foreign_keys=ON\")\n            assert len(definitions(db)) == 4\n            import json\n    \n            manifest = json.loads((Path(__file__).parent / \"preserved.json\").read_text())\n            with sqlite3.connect(\"file:\" + Path(manifest[\"databases\"][\"147\"]).as_posix() + \"?mode=ro\", uri=True) as source:\n                db.execute(\"INSERT INTO organizations(id,name) VALUES('owned-eq','Owned')\")\n                columns = [row[1] for row in db.execute(\"PRAGMA table_info(repositories)\")]\n                row = source.execute(\"SELECT \" + \",\".join(columns) + \" FROM repositories WHERE id='owned-eq'\").fetchone()\n                db.execute(\n                    \"INSERT INTO repositories(\" + \",\".join(columns) + \") VALUES(\" + \",\".join(\"?\" for _ in columns) + \")\",\n                    row,\n                )\n            seed(db)\n            original_queries = query_results(db, repeats=1)\n            original_writes = writes(db)\n            result = install(db, \"validated_partial\")\n>           assert len(result[\"after\"]) == 4 and len(result[\"triggers\"]) == 2\nE           assert (4 == 4 and 8 == 2)\nE            +  where 4 = len({'ix_records_graph_class': 'CREATE INDEX \"ix_records_graph_class\" ON scale001_graph_scalar_keys(organization_id,reposi...le001_graph_scalar_keys(organization_id,repository_id,kind,CAST(key_snapshot AS VARCHAR),CAST(key_target AS VARCHAR))'})\nE            +  and   8 = len([('scale001_scalar_delete', 'CREATE TRIGGER scale001_scalar_delete AFTER DELETE ON records BEGIN DELETE FROM scale001_...ed.key_snapshot,key_source=excluded.key_source,key_target=excluded.key_target,key_class=excluded.key_class; END'), ...])\n\n..\\..\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-index-prototype-20261027\\test_candidate_contract.py:164: AssertionError\n_______ test_filtered_mixed_sequences_match_complete_baseline[version] ________\n\nowned = WindowsPath('C:/Users/sai krishna/Documents/Codex/2026-10-25/you-are-taking-over-projecttrace-development/work/graph-scalar-prototype-20261027/p104/test_filtered_mixed_sequences_0/owned.db')\nextra = 'version'\n\n    @pytest.mark.parametrize(\"extra\", [\"version\", \"id_in\", \"path\"])\n    def test_filtered_mixed_sequences_match_complete_baseline(owned, extra):\n        from backend.db import Record\n        from backend.domain import snapshot_record_query\n    \n        query = snapshot_record_query(\"owned-eq\", \"owned-eq\", \"compat-a\")\n        if extra == \"version\":\n            query = query.where(Record.version >= 1)\n        elif extra == \"id_in\":\n            query = query.where(Record.id.in_([\"compat-edge-0001\", \"compat-edge-0011\", \"compat-node-0000\"]))\n        else:\n            query = query.where(Record.data[\"path\"].as_string().like(\"owned/%\"))\n        with sqlite3.connect(owned) as db:\n            expected = db.execute(*compiled(query)).fetchall()\n            scalar.install(db, \"projection\")\n>           assert db.execute(*compiled(query, True)).fetchall() == expected\nE           assert [('compat-nod...}', ...), ...] == [('compat-nod...}', ...), ...]\nE             \nE             At index 49 diff: ('compat-edge-0001', 'owned-eq', 'owned-eq', 'edge', 'compat-edge-0001', '{\"snapshot_id\": \"compat-a\", \"source\": \"compat-node-0001\", \"target\": \"compat-node-0002\", \"relationship\": \"LINK\"}', '2026-10-27T00:00:00+00:00', 1) != ('compat-edge-0011', 'owned-eq', 'owned-eq', 'edge', 'compat-edge-0011', '{\"snapshot_id\": \"compat-a\", \"source\": \"compat-node-0011\", \"target\": \"compat-node-0000\", \"relationship\": \"LINK\"}', '2026-10-27T00:00:00+00:00', 1)\nE             Use -v to get more diff\n\ntests\\test_graph_scalar_reading.py:58: AssertionError\n___________________ test_rowid_read_namespace_is_preserved ____________________\n\nowned = WindowsPath('C:/Users/sai krishna/Documents/Codex/2026-10-25/you-are-taking-over-projecttrace-development/work/graph-scalar-prototype-20261027/p104/test_rowid_read_namespace_is_p0/owned.db')\n\n    def test_rowid_read_namespace_is_preserved(owned):\n        query = (\n            select(literal_column(\"records.rowid\"), literal_column(\"records.id\"))\n            .select_from(__import__(\"backend.db\", fromlist=[\"Record\"]).Record)\n            .order_by(literal_column(\"records.id\"))\n            .limit(3)\n        )\n        with sqlite3.connect(owned) as db:\n            expected = db.execute(*compiled(query)).fetchall()\n            scalar.install(db, \"projection\")\n>           assert db.execute(*compiled(query, True)).fetchall() == expected\n                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE           sqlite3.OperationalError: no such column: records.rowid\n\ntests\\test_graph_scalar_reading.py:71: OperationalError\n_________ test_natural_key_only_update_preserves_projection_metadata __________\n\npaired = (WindowsPath('C:/Users/sai krishna/Documents/Codex/2026-10-25/you-are-taking-over-projecttrace-development/work/graph-...over-projecttrace-development/work/graph-scalar-prototype-20261027/p104/test_natural_key_only_update_p0/projected.db'))\n\n    def test_natural_key_only_update_preserves_projection_metadata(paired):\n        \"\"\"Retain this failure: REPLACE cleanup depends on current natural metadata.\"\"\"\n        with _connect(paired[0]) as baseline, _connect(paired[1]) as projected:\n            for db in (baseline, projected):\n                _insert(db, \"scalar-natural-only\", natural=\"scalar-natural-before\")\n                db.execute(\n                    \"UPDATE records SET natural_key=? WHERE id=?\",\n                    (\"scalar-natural-after\", \"scalar-natural-only\"),\n                )\n            assert (\n                projected.execute(\"SELECT id,natural_key FROM records WHERE id='scalar-natural-only'\").fetchall()\n                == baseline.execute(\"SELECT id,natural_key FROM records WHERE id='scalar-natural-only'\").fetchall()\n            )\n>           _coverage(projected)\n\ntests\\test_graph_scalar_projection.py:143: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\ndb = <sqlite3.Connection object at 0x000001F270CDDC60>\n\n    def _coverage(db):\n        # Keep the original native JSON_QUOTE/CAST expression, not Python decoding\n        # or the candidate's own direct-path extraction, as the equality oracle.\n        expressions = [\n            \"CAST(json_extract(json_quote(json_extract(r.data,'$.\\\"scope\\\"')),'$.\\\"snapshot_id\\\"') AS VARCHAR)\",\n            *[\n                \"CAST(json_extract(r.data,'$.\\\"\" + key + \"\\\"') AS VARCHAR)\"\n                for key in (\"snapshot_id\", \"source\", \"target\", \"class\")\n            ],\n        ]\n        comparisons = [\n            \"p.rid IS r.rowid\",\n            \"p.id IS r.id\",\n            \"p.organization_id IS r.organization_id\",\n            \"p.repository_id IS r.repository_id\",\n            \"p.kind IS r.kind\",\n            \"p.natural_key IS r.natural_key\",\n        ]\n        comparisons += [\"p.\" + field + \" IS \" + expression for field, expression in zip(scalar.FIELDS, expressions)]\n        count = db.execute(\"SELECT count(*) FROM records\").fetchone()[0]\n        assert db.execute(\"SELECT count(*) FROM \" + scalar.TABLE).fetchone()[0] == count\n        mismatch = db.execute(\n            \"SELECT r.rowid FROM records r LEFT JOIN \"\n            + scalar.TABLE\n            + \" p ON p.rid=r.rowid WHERE NOT (\"\n            + \" AND \".join(comparisons)\n            + \") LIMIT 1\"\n        ).fetchone()\n>       assert mismatch is None, mismatch\nE       AssertionError: (5565,)\nE       assert (5565,) is None\n\ntests\\test_graph_scalar_projection.py:64: AssertionError\n________________ test_summary_reads_use_small_covering_indexes ________________\n\nsigned = <starlette.testclient.TestClient object at 0x000001F270F21A90>\n\n    def test_summary_reads_use_small_covering_indexes(signed):\n        repo, _ = current_scope(signed)\n        with main.Session() as db:\n            user = db.scalar(select(User).where(User.email == 'demo@projecttrace.local'))\n            repositories = main.allowed_repositories(db, user)\n            repositories = [item for item in repositories if item.id == repo['id']]\n            snapshots = main.workspace_snapshots(db, user, repositories)\n            for kind, field in (('claim', 'status'), ('finding', 'severity')):\n                value = indexed_text(Record.data, field)\n                query = scoped_current(user, repositories, snapshots, [kind]).with_only_columns(value, func.count()).group_by(value)\n                sql = str(query.compile(db.bind, compile_kwargs={'literal_binds': True}))\n                plan = db.execute(text('EXPLAIN QUERY PLAN ' + sql)).all()\n>               assert any('ix_records_' + kind + '_summary' in row[-1] for row in plan), plan\nE               AssertionError: [(8, 0, 53, 'SEARCH __pt_keys_0 USING COVERING INDEX ix_records_graph_class (organization_id=? AND repository_id=? AND...)'), (19, 0, 45, 'SEARCH __pt_base_0 USING INTEGER PRIMARY KEY (rowid=?)'), (31, 0, 0, 'USE TEMP B-TREE FOR GROUP BY')]\nE               assert False\nE                +  where False = any(<generator object test_summary_reads_use_small_covering_indexes.<locals>.<genexpr> at 0x000001F219E126C0>)\n\ntests\\test_indexed_workspace_queries.py:25: AssertionError\n============================== warnings summary ===============================\n..\\..\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\testclient.py:1\n  C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Lib\\site-packages\\fastapi\\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n    from starlette.testclient import TestClient as TestClient  # noqa\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ===========================\nFAILED ::test_complete_content_and_order_is_identical[partial] - AssertionErr...\nFAILED ::test_complete_content_and_order_is_identical[validated_partial] - As...\nFAILED ::test_complete_content_and_order_is_identical[guarded] - AssertionErr...\nFAILED ::test_legacy_schema_refusal_and_0016_upgrade - assert (4 == 4 and 8 =...\nFAILED tests/test_graph_scalar_reading.py::test_filtered_mixed_sequences_match_complete_baseline[version]\nFAILED tests/test_graph_scalar_reading.py::test_rowid_read_namespace_is_preserved\nFAILED tests/test_graph_scalar_projection.py::test_natural_key_only_update_preserves_projection_metadata\nFAILED tests/test_indexed_workspace_queries.py::test_summary_reads_use_small_covering_indexes\n8 failed, 91 passed, 1 warning in 570.60s (0:09:30)\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+            "-m",
+            "ruff",
+            "check",
+            "backend",
+            "analyzers",
+            "tests",
+            "scripts"
+          ],
+          "exit_code": 0,
+          "seconds": 0.8038937999990594,
+          "stdout": "All checks passed!\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+            "-m",
+            "ruff",
+            "check",
+            "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-scalar-prototype-20261027"
+          ],
+          "exit_code": 0,
+          "seconds": 0.7018752000003587,
+          "stdout": "All checks passed!\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+            "-m",
+            "ruff",
+            "format",
+            "--check",
+            "tests/graph_scalar_prototype.py",
+            "tests/graph_scalar_plugin.py",
+            "tests/graph_scalar_probe.py",
+            "tests/test_graph_scalar_projection.py",
+            "tests/test_graph_scalar_reading.py",
+            "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-scalar-prototype-20261027\\alternative_probe.py",
+            "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-scalar-prototype-20261027\\append_report.py",
+            "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-scalar-prototype-20261027\\final_compatibility.py",
+            "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-scalar-prototype-20261027\\finish_validation.py",
+            "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-scalar-prototype-20261027\\package_evidence.py",
+            "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-scalar-prototype-20261027\\resume_measurements.py",
+            "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-scalar-prototype-20261027\\run_measurements.py"
+          ],
+          "exit_code": 0,
+          "seconds": 0.7610428000007232,
+          "stdout": "12 files already formatted\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+            "-m",
+            "compileall",
+            "-q",
+            "backend",
+            "analyzers",
+            "tests",
+            "scripts",
+            "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\graph-scalar-prototype-20261027"
+          ],
+          "exit_code": 0,
+          "seconds": 5.608701799999835,
+          "stdout": "",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "exit_code": 0,
+          "seconds": 0.8561392999999953,
+          "stdout": "",
+          "stderr": ""
+        }
+      ]
+    }
+  },
+  "new_repo_files": [
+    "tests\\graph_scalar_plugin.py",
+    "tests\\graph_scalar_probe.py",
+    "tests\\graph_scalar_prototype.py",
+    "tests\\test_graph_scalar_projection.py",
+    "tests\\test_graph_scalar_reading.py"
+  ],
+  "raw_archive": {
+    "path": "docs\\evidence\\SCALE001_GRAPH_SCALAR_PROTOTYPE_RAW.json.gz",
+    "bytes": 533434,
+    "sha256": "59829dae010ff09113a1fa7a772045e85564258e7050ebf9d97a0feb190f347f"
+  },
+  "remaining_gates": [
+    "Candidate rejected for observable sequence, rowid namespace and covering-index regressions.",
+    "Frozen implementation-specific legacy gate conflicts with full membership; retained without weakening.",
+    "Portable planner/rowid/VACUUM behavior, production migration/rollback and SQLite-version matrix NOT_RUN.",
+    "50k sanitizer, whole-snapshot materialization and downgrade/expiry remain separate unresolved issues.",
+    "Pinned full-workload Linux cgroup 768000000 bytes, zero swap, and complete acceptance/recovery matrix NOT_RUN."
+  ]
+}

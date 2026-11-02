@@ -4164,14 +4164,33 @@ export function ImportDialog({
   const destinations = repositories.filter((r) =>
     ["ZIP", "LOCAL"].includes(r.provider),
   );
+  const publicDestinations = repositories.filter(
+    (r) => r.provider === "GITHUB_PUBLIC",
+  );
+  const initialPublicRepository = publicDestinations.find(
+    (r) => r.id === initialTarget,
+  );
   const [target, setTarget] = useState(
     destinations.some((r) => r.id === initialTarget) ? initialTarget : "NEW",
   );
-  const [mode, setMode] = useState<"ZIP" | "PUBLIC">(
-    access?.features.zip_import.allowed === false ? "PUBLIC" : "ZIP",
+  const [publicTarget, setPublicTarget] = useState(
+    initialPublicRepository?.id || "NEW",
   );
-  const [url, setUrl] = useState("");
+  const [mode, setMode] = useState<"ZIP" | "PUBLIC">(() =>
+    initialPublicRepository || access?.features.zip_import.allowed === false
+      ? "PUBLIC"
+      : "ZIP",
+  );
+  const [url, setUrl] = useState(
+    initialPublicRepository
+      ? `https://github.com/${initialPublicRepository.name}`
+      : "",
+  );
   const [ref, setRef] = useState("");
+  const [publicBases] = useState(() =>
+    new Map(publicDestinations.map((r) => [r.id, r.snapshot])),
+  );
+  const publicBase = publicBases.get(publicTarget);
   const requestKey = useRef(crypto.randomUUID());
   const [name, setName] = useState("");
   const [file, setFile] = useState<File | null>(null);
@@ -4197,6 +4216,10 @@ export function ImportDialog({
               url,
               ref: ref || null,
               request_key: requestKey.current,
+              ...(publicTarget !== "NEW"
+                ? { repository_id: publicTarget }
+                : {}),
+              ...(publicBase ? { base_snapshot_id: publicBase.id } : {}),
             })
           : await api<{ repository_id: string; state?: string }>(
               target === "NEW"
@@ -4254,12 +4277,48 @@ export function ImportDialog({
         <p>
           {mode === "ZIP"
             ? "Upload source files for a separate ZIP snapshot."
-            : "Import a public repository once, pinned to its resolved Git commit. No GitHub App or webhook is required."}{" "}
+            : publicTarget === "NEW"
+              ? "Import a public repository as its baseline, pinned to the resolved Git commit. Later imports can compare new snapshots with that baseline. No GitHub App or webhook is required."
+              : "Import a new pinned snapshot into this public GitHub repository and compare with the captured BASE shown below."}{" "}
           ProjectTrace inspects source as untrusted data and stores redacted
           evidence.
         </p>
         {mode === "PUBLIC" ? (
           <>
+            <label>
+              Destination
+              <select
+                aria-label="Public import destination"
+                value={publicTarget}
+                onChange={(e) => {
+                  const next = e.target.value;
+                  setPublicTarget(next);
+                  const repository = publicDestinations.find(
+                    (candidate) => candidate.id === next,
+                  );
+                  setUrl(
+                    repository
+                      ? `https://github.com/${repository.name}`
+                      : "",
+                  );
+                  requestKey.current = crypto.randomUUID();
+                }}
+              >
+                <option value="NEW">New public repository</option>
+                {publicDestinations.map((r) => (
+                  <option key={r.id} value={r.id}>
+                    {r.name} · new snapshot
+                  </option>
+                ))}
+              </select>
+            </label>
+            {publicTarget !== "NEW" && (
+              <p role="note" aria-label="Public comparison BASE">
+                {publicBase
+                  ? `BASE ${publicBase.id} · ${publicBase.branch} · ${publicBase.commit}. This exact snapshot is retained even if another import finishes. HEAD may use a different ref; this is an explicit snapshot comparison.`
+                  : "No captured BASE is shown. Refresh after any active analysis finishes; otherwise the latest available snapshot will be used, or a baseline created if none exists."}
+              </p>
+            )}
             <label>
               Public repository URL
               <input
@@ -4360,7 +4419,9 @@ export function ImportDialog({
               ? "Requesting public snapshot…"
               : "Uploading and capturing source…"
             : mode === "PUBLIC"
-              ? "Import public snapshot"
+              ? publicTarget === "NEW"
+                ? "Import public snapshot"
+                : "Analyze and compare public snapshot"
               : target === "NEW"
                 ? "Analyze source snapshot"
                 : "Analyze and compare snapshot"}

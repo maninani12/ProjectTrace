@@ -18,7 +18,7 @@ def run_public_import(self, job_id, *, session_factory=None):
     from backend.repository_store import RepositoryFiles, archive_items, capture, limits
     from backend.scheduling import JobCancelled, claim, ensure_current, owns, release
     from backend.security import require_repo
-    from integrations.github.public import PublicGitHub
+    from integrations.github.public import PublicGitHub, repository_archive_items
 
     with (session_factory or Session)() as db:
         job = db.get(Record, job_id)
@@ -32,6 +32,14 @@ def run_public_import(self, job_id, *, session_factory=None):
         try:
             user = job_principal(db,job)
             repo = db.get(Repository, job.repository_id)
+            if not repo or repo.provider != "GITHUB_PUBLIC":
+                raise ValueError("Public import target repository is unavailable or has a different source type.")
+            base_id = job.data.get("base_id")
+            if base_id:
+                base = db.get(Record, base_id)
+                if (not base or base.kind != "snapshot" or
+                        (base.organization_id, base.repository_id) != (job.organization_id, repo.id)):
+                    raise ValueError("Public import BASE is outside its authorized repository.")
 
             def authorized():
                 ensure_current(db, job, renew_seconds=inventory_time_budget())
@@ -59,14 +67,22 @@ def run_public_import(self, job_id, *, session_factory=None):
                 with EncryptedArchive(policy["archive_bytes"]) as spool:
                     adapter.download(provenance, spool, lambda: ensure_current(db, job))
                     list(archive_items(spool, policy, validate_only=True))
-                    inventory = capture(db, user.organization_id, repo, archive_items(spool, policy),
+                    inventory = capture(db, user.organization_id, repo,
+                                        repository_archive_items(archive_items(spool, policy), provenance),
                                         source="GITHUB_PUBLIC_ARCHIVE", quota=policy, checkpoint=authorized)
-                    inventory.data = {**inventory.data, "provenance": provenance}
+                    inventory.data = {
+                        **inventory.data,
+                        "provenance": provenance,
+                        "path_basis": "GITHUB_REPOSITORY_RELATIVE",
+                    }
                     job.data = {**job.data, "inventory_id": inventory.id, "provenance": provenance}
                     db.commit()
             files = RepositoryFiles(db, user.organization_id, repo.id, inventory.id)
             authorized()
-            execute_analysis(db, user, repo, files, job=job, branch=provenance["ref"], git_commit=provenance["commit"])
+            execute_analysis(
+                db, user, repo, files, job=job, branch=provenance["ref"],
+                git_commit=provenance["commit"], base_id=base_id,
+            )
         except Exception as error:
             db.rollback()
             if not owns(db, job_id, claimed["token"]):

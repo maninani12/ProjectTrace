@@ -1,7 +1,6 @@
 """Authorized, paged quality reads and audited profile/report mutations."""
 import csv
 import io
-import json
 from datetime import datetime, timedelta
 from urllib.parse import quote
 
@@ -9,6 +8,7 @@ from fastapi import APIRouter, HTTPException, Query, Request, Response
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import func, or_, select
 from sqlalchemy.exc import IntegrityError
+from starlette.responses import StreamingResponse
 
 from analyzers.code_quality import VERSION
 from analyzers.code_quality.core import gate, hotspot_rows, summary
@@ -17,6 +17,7 @@ from analyzers.code_quality.rules import config, registry
 from backend.db import NativeProfile, QualityAnalysis, QualityOccurrence, Record, now
 from backend.domain import add, audit, uid
 from backend.governance import require_permission
+from backend.json_export import iter_bytes
 from backend.quality_domain import current_findings, eligible_findings
 from backend.quality_profiles import effective, merge, scope_key
 from backend.security import authenticate, require_repo
@@ -145,6 +146,7 @@ def overview(repo_id: str, request: Request, snapshot_id: str | None = None):
                     "scope_counts",
                     "languages",
                     "history_scope",
+                    "comparison_identity_unresolved",
                     "limitations",
                     "performance",
                     "parser_signature",
@@ -732,13 +734,14 @@ def json_export(repo_id: str, request: Request, snapshot_id: str | None = None):
     with session() as db:
         _, _, snapshot, projection = context(db, request, repo_id, snapshot_id)
         rows = current_findings(db, projection) if projection else []
-        return Response(
-            json.dumps(
-                {"analyzer_version": VERSION, "snapshot_id": snapshot.id if snapshot else None, "findings": rows}
-            ),
-            media_type="application/json",
-            headers={"Content-Disposition": 'attachment; filename="ProjectTrace-quality.json"'},
-        )
+        payload = {"analyzer_version": VERSION, "snapshot_id": snapshot.id if snapshot else None, "findings": rows}
+    # Authorization and scoped retrieval complete before response headers. Rows
+    # are detached JSON here; streaming does not hold a database session open.
+    # The finding query itself still returns a list, a separate producer cost.
+    return StreamingResponse(
+        iter_bytes(payload), media_type="application/json",
+        headers={"Content-Disposition": 'attachment; filename="ProjectTrace-quality.json"'},
+    )
 
 
 # Specific routes must precede the generic read-view path.

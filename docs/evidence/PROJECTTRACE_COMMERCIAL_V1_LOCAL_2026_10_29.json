@@ -1,0 +1,1231 @@
+{
+  "date": "2026-10-29",
+  "branch": "codex/scale-001-local-continuation",
+  "head": "9e21509591bfa5457cc829ebd5637f95be68d573",
+  "scope": "LOCAL_WINDOWS_DEVELOPMENT_ONLY",
+  "commercial_v1": "DEVELOPMENT_IN_PROGRESS_NOT_RELEASE_QUALIFIED",
+  "scale001": "NOT_QUALIFIED",
+  "remote_workflows_run_for_dirty_tree": false,
+  "proposed_adr_0007": "PROPOSED_USER_REQUESTED_REVIEW_FIRST_NO_IMPLEMENTATION_AUTHORIZED",
+  "new_configuration_drift_tests": {
+    "focused_pytest_exit": 0,
+    "focused_pytest_result": "7 passed",
+    "browser_exit": 0,
+    "browser_stdout": "\nRunning 1 test using 1 worker\n\n  ok 1 [chromium] \u203a e2e\\configuration-drift.spec.ts:13:1 \u203a configuration drift shows scoped BASE and HEAD source evidence (18.8s)\n\n  1 passed (22.7s)\n",
+    "pytest_initial_temp_failure": 1,
+    "pytest_first_assertion_failure": 1
+  },
+  "test_reports": {
+    "baseline-tests": {
+      "tests": 67,
+      "passed": 67,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "skipped_cases": [],
+      "seconds": 532.113,
+      "sha256": "030eecd2b9278d61d8a06f847cc8fc4ca325b425ee956b50af639a83a0ac6bca"
+    },
+    "checkpoint-regressions": {
+      "tests": 60,
+      "passed": 60,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "skipped_cases": [],
+      "seconds": 75.598,
+      "sha256": "3decd2959da59a4aa52b9d51465d31cce168ce4895c1c7f7afbb5f1c6c21bfa6"
+    },
+    "commercial-rules": {
+      "tests": 95,
+      "passed": 95,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "skipped_cases": [],
+      "seconds": 49.254,
+      "sha256": "487643f9844d6cd27273a9fbd6f52d6cabb61082fea3cda8639daa4e209c8d58"
+    },
+    "generation-regressions": {
+      "tests": 34,
+      "passed": 34,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "skipped_cases": [],
+      "seconds": 204.73,
+      "sha256": "c843c7461aa5b78ef8d789c13c7b66aa1e9c687e32da90a3b7082dfa35601c21"
+    },
+    "maps-and-exports": {
+      "tests": 87,
+      "passed": 87,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "skipped_cases": [],
+      "seconds": 122.288,
+      "sha256": "c85d8fce674414f0bf4289338c980346948d3a5dedca150cde7f795af197ba4e"
+    },
+    "retention-after": {
+      "tests": 21,
+      "passed": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "skipped_cases": [],
+      "seconds": 15.875,
+      "sha256": "87f5b1c88055eddf6f0cf44711797e22f215c31a258e8eaf8a1a3250bc7a4e8b"
+    },
+    "retention-before-valid-fixtures": {
+      "tests": 21,
+      "passed": 12,
+      "failures": 9,
+      "errors": 0,
+      "skipped": 0,
+      "skipped_cases": [],
+      "seconds": 17.881,
+      "sha256": "c3d82f153ba6c1c1661026026e478e0a23353c2123c99014368e4b51a0f2ea8a"
+    },
+    "retention-before": {
+      "tests": 21,
+      "passed": 9,
+      "failures": 12,
+      "errors": 0,
+      "skipped": 0,
+      "skipped_cases": [],
+      "seconds": 23.191,
+      "sha256": "3312a3a4159907eee9f96f94d70ce3c8595b2c692e2827218e51b5137c6de542"
+    },
+    "retention-expanded": {
+      "tests": 55,
+      "passed": 54,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1,
+      "skipped_cases": [
+        "tests.test_retention_postgresql::test_expiry_skips_locked_renewal_without_deleting_recovery_input"
+      ],
+      "seconds": 92.449,
+      "sha256": "5d33b5be6db366473b35bb5bd159070621074f54ee296878d00138963ac41fb8"
+    },
+    "retention-final": {
+      "tests": 29,
+      "passed": 29,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "skipped_cases": [],
+      "seconds": 13.17,
+      "sha256": "3cb64206f3a901102f0c1e342ca9e1806dd85c12af9d8032045560cf4e6127d2"
+    },
+    "retention-races-and-queue": {
+      "tests": 54,
+      "passed": 52,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 1,
+      "skipped_cases": [
+        "tests.test_retention_postgresql::test_expiry_skips_locked_renewal_without_deleting_recovery_input"
+      ],
+      "seconds": 122.089,
+      "sha256": "463a3caad0a2ec89c46ad4f8f349e735529b85938455a35af3ab82e10b144d0c"
+    },
+    "security-and-graph": {
+      "tests": 29,
+      "passed": 29,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "skipped_cases": [],
+      "seconds": 51.115,
+      "sha256": "fc0174f9856fe1b43401a3a1159fd67c7d4dcd3d7f35737c4d9249fa4aa53568"
+    }
+  },
+  "local_command_receipts": {
+    "baseline-tests": {
+      "exit_code": 0,
+      "seconds": 545.4790644999994,
+      "command": [
+        "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_migrations.py",
+        "tests/test_generation_context.py",
+        "tests/test_generation_map_iteration.py",
+        "tests/test_auth_drift.py",
+        "-p",
+        "short_test_ids",
+        "--tb=short",
+        "--basetemp=C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\t01",
+        "--junitxml=C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\baseline-tests.xml"
+      ],
+      "scope": "LOCAL_WINDOWS_DEVELOPMENT_ONLY"
+    },
+    "browser-command": {
+      "exit_code": 0,
+      "seconds": null,
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "e2e/auth-drift.spec.ts",
+        "--output=C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\browser-artifacts"
+      ],
+      "scope": "OWNED_WINDOWS_BROWSER_DEVELOPMENT_ONLY"
+    },
+    "browser-final-command": {
+      "exit_code": 0,
+      "seconds": null,
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "e2e/auth-drift.spec.ts",
+        "e2e/real-import.spec.ts",
+        "--output=C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\browser-final-artifacts"
+      ],
+      "scope": "OWNED_WINDOWS_BROWSER_DEVELOPMENT_ONLY"
+    },
+    "checkpoint-regressions": {
+      "exit_code": 0,
+      "seconds": 90.2978996999991,
+      "command": [
+        "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_checkpoint_pages.py",
+        "tests/test_analysis_checkpoints.py",
+        "tests/test_publication_units.py",
+        "tests/test_generation_context.py",
+        "--tb=short",
+        "-p",
+        "short_test_ids",
+        "-o",
+        "junit_family=xunit1",
+        "--basetemp=C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\t07",
+        "--junitxml=C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\checkpoint-regressions.xml"
+      ],
+      "scope": "LOCAL_WINDOWS_DEVELOPMENT_ONLY"
+    },
+    "commercial-rules": {
+      "exit_code": 0,
+      "seconds": 53.921979400001874,
+      "command": [
+        "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_auth_drift.py",
+        "tests/test_analyzer_evolution.py",
+        "tests/test_analyzers.py",
+        "tests/test_engineering_changes.py",
+        "tests/test_accuracy_hardening.py",
+        "tests/test_openapi_batches.py",
+        "--tb=short",
+        "-p",
+        "short_test_ids",
+        "-o",
+        "junit_family=xunit1",
+        "--basetemp=C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\t09",
+        "--junitxml=C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\commercial-rules.xml"
+      ],
+      "scope": "LOCAL_WINDOWS_DEVELOPMENT_ONLY"
+    },
+    "compile-final": {
+      "exit_code": 0,
+      "seconds": 1.216807000000017,
+      "command": [
+        "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+        "-m",
+        "compileall",
+        "-q",
+        "backend",
+        "analyzers",
+        "integrations",
+        "workers",
+        "tests",
+        "scripts",
+        "integration_tests"
+      ],
+      "scope": "LOCAL_WINDOWS_DEVELOPMENT_ONLY"
+    },
+    "configuration-drift-browser-command": {
+      "exit_code": 0,
+      "seconds": null,
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "e2e/configuration-drift.spec.ts",
+        "--output=C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\configuration-drift-browser-artifacts"
+      ],
+      "scope": "OWNED_WINDOWS_BROWSER_DEVELOPMENT_ONLY"
+    },
+    "configuration-drift-final": {
+      "exit_code": 0,
+      "seconds": 20.883100299999967,
+      "command": [
+        "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "--basetemp",
+        "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\runtime\\configuration-drift-final\\pytest",
+        "tests/test_configuration_drift.py",
+        "tests/test_native_platform.py::test_storage_claim_contradiction_uses_structured_hcl_evidence",
+        "tests/test_engineering_changes.py::test_claim_transitions_and_model_reevaluation_have_distinct_priority",
+        "-q"
+      ],
+      "scope": "LOCAL_WINDOWS_DEVELOPMENT_ONLY"
+    },
+    "configuration-drift-focused": {
+      "exit_code": 1,
+      "seconds": 17.11767869999997,
+      "command": [
+        "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "tests/test_configuration_drift.py",
+        "tests/test_native_platform.py::test_storage_claim_contradiction_uses_structured_hcl_evidence",
+        "tests/test_engineering_changes.py::test_claim_transitions_and_model_reevaluation_have_distinct_priority",
+        "-q"
+      ],
+      "scope": "LOCAL_WINDOWS_DEVELOPMENT_ONLY"
+    },
+    "configuration-drift-focused2": {
+      "exit_code": 1,
+      "seconds": 18.237244799999985,
+      "command": [
+        "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "--basetemp",
+        "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\runtime\\configuration-drift-focused2\\pytest",
+        "tests/test_configuration_drift.py",
+        "tests/test_native_platform.py::test_storage_claim_contradiction_uses_structured_hcl_evidence",
+        "tests/test_engineering_changes.py::test_claim_transitions_and_model_reevaluation_have_distinct_priority",
+        "-q"
+      ],
+      "scope": "LOCAL_WINDOWS_DEVELOPMENT_ONLY"
+    },
+    "configuration-drift-focused3": {
+      "exit_code": 1,
+      "seconds": 29.034655799999996,
+      "command": [
+        "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "--basetemp",
+        "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\runtime\\configuration-drift-focused3\\pytest",
+        "tests/test_configuration_drift.py",
+        "tests/test_native_platform.py::test_storage_claim_contradiction_uses_structured_hcl_evidence",
+        "tests/test_engineering_changes.py::test_claim_transitions_and_model_reevaluation_have_distinct_priority",
+        "-q"
+      ],
+      "scope": "LOCAL_WINDOWS_DEVELOPMENT_ONLY"
+    },
+    "frontend-build": {
+      "exit_code": 0,
+      "seconds": 30.523381599999993,
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+        "run",
+        "build"
+      ],
+      "scope": "LOCAL_WINDOWS_DEVELOPMENT_ONLY"
+    },
+    "frontend-install": {
+      "exit_code": 0,
+      "seconds": 69.27428280000095,
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+        "ci",
+        "--ignore-scripts",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "scope": "LOCAL_WINDOWS_DEVELOPMENT_ONLY"
+    },
+    "frontend-unit-command": {
+      "exit_code": 0,
+      "seconds": 81.38121669999964,
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--reporter=json",
+        "--outputFile=C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\frontend-unit.json"
+      ],
+      "scope": "LOCAL_WINDOWS_DEVELOPMENT_ONLY"
+    },
+    "generation-regressions": {
+      "exit_code": 0,
+      "seconds": 209.71687290000045,
+      "command": [
+        "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_generations.py",
+        "--tb=short",
+        "-p",
+        "short_test_ids",
+        "-o",
+        "junit_family=xunit1",
+        "--basetemp=C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\t08",
+        "--junitxml=C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\generation-regressions.xml"
+      ],
+      "scope": "LOCAL_WINDOWS_DEVELOPMENT_ONLY"
+    },
+    "maps-and-exports": {
+      "exit_code": 0,
+      "seconds": 125.6938087999988,
+      "command": [
+        "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_generation_maps.py",
+        "tests/test_json_export.py",
+        "--tb=short",
+        "-p",
+        "short_test_ids",
+        "-o",
+        "junit_family=xunit1",
+        "--basetemp=C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\t11",
+        "--junitxml=C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\maps-and-exports.xml"
+      ],
+      "scope": "LOCAL_WINDOWS_DEVELOPMENT_ONLY"
+    },
+    "outputs-cpu-command": {
+      "exit_code": 0,
+      "seconds": 1.6755863999969733,
+      "command": [
+        "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+        "scripts/compare_scale_outputs.py",
+        "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\cold-original-147\\benchmark.db",
+        "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\cpu-original-147\\benchmark.db",
+        "--output",
+        "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\outputs-cpu.json"
+      ],
+      "scope": "LOCAL_WINDOWS_DEVELOPMENT_ONLY"
+    },
+    "outputs-cpu-quiet-command": {
+      "exit_code": 0,
+      "seconds": 1.6771709000022383,
+      "command": [
+        "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+        "scripts/compare_scale_outputs.py",
+        "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\cold-original-147\\benchmark.db",
+        "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\cpu-original-147-quiet\\benchmark.db",
+        "--output",
+        "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\outputs-cpu-quiet.json"
+      ],
+      "scope": "LOCAL_WINDOWS_DEVELOPMENT_ONLY"
+    },
+    "outputs-three-phases-command": {
+      "exit_code": 0,
+      "seconds": 3.4971941000003426,
+      "command": [
+        "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+        "scripts/compare_scale_outputs.py",
+        "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\p74\\test_owned_final_snapshot_prof0\\owned\\benchmark.db",
+        "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\owned-three-phases\\benchmark.db",
+        "--output",
+        "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\outputs-three-phases.json"
+      ],
+      "scope": "LOCAL_WINDOWS_DEVELOPMENT_ONLY"
+    },
+    "owned-three-phases": {
+      "exit_code": 0,
+      "seconds": 40.61733439999807,
+      "command": [
+        "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+        "-m",
+        "tests.snapshot_materialization_probe",
+        "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\owned-three-phases",
+        "--all-phases"
+      ],
+      "scope": "LOCAL_WINDOWS_DEVELOPMENT_ONLY"
+    },
+    "retention-after": {
+      "exit_code": 0,
+      "seconds": 23.098377099999198,
+      "command": [
+        "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_retention_recovery.py",
+        "--tb=short",
+        "--basetemp=C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\t04",
+        "--junitxml=C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\retention-after.xml"
+      ],
+      "scope": "LOCAL_WINDOWS_DEVELOPMENT_ONLY"
+    },
+    "retention-before-valid-fixtures": {
+      "exit_code": 1,
+      "seconds": 27.052826399998594,
+      "command": [
+        "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_retention_recovery.py",
+        "--tb=short",
+        "--basetemp=C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\t03",
+        "--junitxml=C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\retention-before-valid-fixtures.xml"
+      ],
+      "scope": "LOCAL_WINDOWS_DEVELOPMENT_ONLY"
+    },
+    "retention-before": {
+      "exit_code": 1,
+      "seconds": 34.41442719999759,
+      "command": [
+        "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_retention_recovery.py",
+        "--tb=short",
+        "--basetemp=C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\t02",
+        "--junitxml=C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\retention-before.xml"
+      ],
+      "scope": "LOCAL_WINDOWS_DEVELOPMENT_ONLY"
+    },
+    "retention-expanded": {
+      "exit_code": 0,
+      "seconds": 105.1462935999989,
+      "command": [
+        "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_retention_recovery.py",
+        "tests/test_retention_downgrade.py",
+        "tests/test_retention_postgresql.py",
+        "tests/test_queue.py",
+        "tests/test_fair_scheduling.py",
+        "tests/test_timeout_recovery.py",
+        "tests/test_recovery_boundaries.py",
+        "--tb=short",
+        "-o",
+        "junit_family=xunit1",
+        "--basetemp=C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\t06",
+        "--junitxml=C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\retention-expanded.xml"
+      ],
+      "scope": "LOCAL_WINDOWS_DEVELOPMENT_ONLY"
+    },
+    "retention-final": {
+      "exit_code": 0,
+      "seconds": 19.47987429999921,
+      "command": [
+        "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_retention_recovery.py",
+        "tests/test_retention_downgrade.py",
+        "--tb=short",
+        "-o",
+        "junit_family=xunit1",
+        "--basetemp=C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\t10",
+        "--junitxml=C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\retention-final.xml"
+      ],
+      "scope": "LOCAL_WINDOWS_DEVELOPMENT_ONLY"
+    },
+    "retention-races-and-queue": {
+      "exit_code": 1,
+      "seconds": 132.47678459999952,
+      "command": [
+        "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_retention_recovery.py",
+        "tests/test_retention_postgresql.py",
+        "tests/test_queue.py",
+        "tests/test_fair_scheduling.py",
+        "tests/test_timeout_recovery.py",
+        "tests/test_recovery_boundaries.py",
+        "--tb=short",
+        "-o",
+        "junit_family=xunit1",
+        "--basetemp=C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\t05",
+        "--junitxml=C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\retention-races-and-queue.xml"
+      ],
+      "scope": "LOCAL_WINDOWS_DEVELOPMENT_ONLY"
+    },
+    "ruff-final": {
+      "exit_code": 0,
+      "seconds": 1.4820058000000245,
+      "command": [
+        "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+        "-m",
+        "ruff",
+        "check",
+        "backend",
+        "analyzers",
+        "integrations",
+        "workers",
+        "tests",
+        "scripts",
+        "integration_tests"
+      ],
+      "scope": "LOCAL_WINDOWS_DEVELOPMENT_ONLY"
+    },
+    "security-and-graph": {
+      "exit_code": 0,
+      "seconds": 54.59390580000036,
+      "command": [
+        "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_security_hardening.py",
+        "tests/test_graph_pages.py",
+        "tests/test_indexed_workspace_queries.py",
+        "tests/test_workspace_pagination.py",
+        "tests/test_graph_impact.py",
+        "--tb=short",
+        "-p",
+        "short_test_ids",
+        "-o",
+        "junit_family=xunit1",
+        "--basetemp=C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\t12",
+        "--junitxml=C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\security-and-graph.xml"
+      ],
+      "scope": "LOCAL_WINDOWS_DEVELOPMENT_ONLY"
+    },
+    "snapshot-cpu-quiet": {
+      "exit_code": 0,
+      "seconds": 156.73154559999966,
+      "command": [
+        "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+        "-m",
+        "tests.commercial_snapshot_profile",
+        "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\cpu-original-147-quiet",
+        "--cpu-only"
+      ],
+      "scope": "LOCAL_WINDOWS_DEVELOPMENT_ONLY"
+    },
+    "snapshot-cpu": {
+      "exit_code": 0,
+      "seconds": 138.46871459999966,
+      "command": [
+        "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+        "-m",
+        "tests.commercial_snapshot_profile",
+        "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\cpu-original-147"
+      ],
+      "scope": "LOCAL_WINDOWS_DEVELOPMENT_ONLY"
+    }
+  },
+  "output_equivalence": {
+    "outputs-three-phases.json": {
+      "equal": true,
+      "snapshot_count": 3
+    },
+    "outputs-cpu.json": {
+      "equal": true,
+      "snapshot_count": 1
+    },
+    "outputs-cpu-quiet.json": {
+      "equal": true,
+      "snapshot_count": 1
+    }
+  },
+  "owned_cold_warm_incremental": {
+    "scope": "OWNED_WINDOWS_FINAL_SNAPSHOT_PROFILE_ONLY",
+    "metrics_override": null,
+    "states": [
+      {
+        "phase": "cold",
+        "state": "PARTIAL",
+        "snapshot_id": "995211f8-b224-5117-aaa0-a27451858558",
+        "metrics": 147,
+        "findings": 336,
+        "snapshot_nodes": 54340,
+        "producer_findings": 330
+      },
+      {
+        "phase": "warm",
+        "state": "PARTIAL",
+        "snapshot_id": "62bfd2d6-e451-5d5a-9f2a-72e0628e0925",
+        "metrics": 147,
+        "findings": 336,
+        "snapshot_nodes": 54240,
+        "producer_findings": 330
+      },
+      {
+        "phase": "incremental",
+        "state": "PARTIAL",
+        "snapshot_id": "2ad1c375-83d3-59b6-9405-78447677bf63",
+        "metrics": 147,
+        "findings": 337,
+        "snapshot_nodes": 55207,
+        "producer_findings": 331
+      }
+    ],
+    "generation_states": [
+      [
+        "PUBLISHED",
+        3
+      ]
+    ],
+    "pointers": 2,
+    "integrity": {
+      "sqlite_integrity": "ok",
+      "foreign_key_violations": 0
+    }
+  },
+  "preservation_audit": {
+    "branch": "codex/scale-001-local-continuation",
+    "head": "9e21509591bfa5457cc829ebd5637f95be68d573",
+    "expected_head": "9e21509591bfa5457cc829ebd5637f95be68d573",
+    "baseline_files_checked": 632,
+    "changed_baseline_files": [
+      {
+        "path": "backend/analysis_checkpoints.py",
+        "change": "content_changed",
+        "sha256": "7bed5a0360c4b1fe9ab1b16091c4f5370380958ffa4afe028a9a0b813f799000"
+      },
+      {
+        "path": "backend/generations.py",
+        "change": "content_changed",
+        "sha256": "bc238cf93dda9e97924d75b49c579a4aa1a3b51e96177d6d1d90bf5be4359857"
+      },
+      {
+        "path": "backend/publication_units.py",
+        "change": "content_changed",
+        "sha256": "05ab99f4ad0543d82fd53afff8412479e615688494711e94f47aa81cff8cc8cd"
+      },
+      {
+        "path": "backend/queue.py",
+        "change": "content_changed",
+        "sha256": "a4da2e0dfe49974b058255049d1a56739208a0eb09ea4e9b7a0eece05a726ae3"
+      }
+    ],
+    "unexpected_baseline_file_changes": [],
+    "new_nonignored_paths": [
+      "PROJECTTRACE_PROGRESS.md",
+      "backend/retention.py",
+      "docs/CHECKPOINT_RETENTION_AND_ROLLBACK.md",
+      "docs/COMMERCIAL_V1_RELEASE_GATES.md",
+      "docs/adr/0007-bounded-published-snapshot-segments.md",
+      "frontend/e2e/configuration-drift.spec.ts",
+      "samples/configuration-drift.json",
+      "tests/commercial_snapshot_profile.py",
+      "tests/test_configuration_drift.py",
+      "tests/test_retention_downgrade.py",
+      "tests/test_retention_postgresql.py",
+      "tests/test_retention_recovery.py"
+    ],
+    "original_databases": {
+      "10000": {
+        "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\p74\\test_owned_final_snapshot_prof1\\owned\\benchmark.db",
+        "sha256_before": "465441f1dfd2c7d6ca3d7427c79dd55e57c350bee451b60a66b8e0e92f5a1d1b",
+        "sha256_after": "465441f1dfd2c7d6ca3d7427c79dd55e57c350bee451b60a66b8e0e92f5a1d1b",
+        "same_as_captured_baseline": true,
+        "integrity": "ok",
+        "foreign_key_violations": 0,
+        "generation_states": [
+          [
+            "PUBLISHED",
+            1
+          ]
+        ],
+        "published_pointers": 1
+      },
+      "147": {
+        "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\p74\\test_owned_final_snapshot_prof0\\owned\\benchmark.db",
+        "sha256_before": "97aeda34f1cb1b1d67784926c2140c3c27063585ae135fbb39e22643edce94d6",
+        "sha256_after": "97aeda34f1cb1b1d67784926c2140c3c27063585ae135fbb39e22643edce94d6",
+        "same_as_captured_baseline": true,
+        "integrity": "ok",
+        "foreign_key_violations": 0,
+        "generation_states": [
+          [
+            "PUBLISHED",
+            3
+          ]
+        ],
+        "published_pointers": 2
+      },
+      "30000": {
+        "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\p77\\test_owned_final_snapshot_prof0\\owned\\benchmark.db",
+        "sha256_before": "c7313fd66baa9e23ec5f5a7e9bdb8003554d086796c101be14f8d02d6ee5e9a4",
+        "sha256_after": "c7313fd66baa9e23ec5f5a7e9bdb8003554d086796c101be14f8d02d6ee5e9a4",
+        "same_as_captured_baseline": true,
+        "integrity": "ok",
+        "foreign_key_violations": 0,
+        "generation_states": [
+          [
+            "PUBLISHED",
+            1
+          ]
+        ],
+        "published_pointers": 1
+      },
+      "prior": {
+        "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\vp-json-export-final\\benchmark.db",
+        "sha256_before": "14a15885488462c687ce2581807ea56ecb2145b98bc58d67f6e2aad3ba9a5627",
+        "sha256_after": "14a15885488462c687ce2581807ea56ecb2145b98bc58d67f6e2aad3ba9a5627",
+        "same_as_captured_baseline": true,
+        "integrity": "ok",
+        "foreign_key_violations": 0,
+        "generation_states": [
+          [
+            "PUBLISHED",
+            3
+          ]
+        ],
+        "published_pointers": 2
+      }
+    },
+    "tracked_diff_sha256_now": "ec79724dbe5405e6b0a7cded5a3bd8505f060383e490bda097d9bf739bd7eaec",
+    "scope": "LOCAL_READ_ONLY_PRESERVATION_AUDIT",
+    "pass": true
+  },
+  "scale_report_append": {
+    "path": "C:\\Users\\sai krishna\\Projects\\ProjectTrace-local\\docs\\SCALE001_GENERATION_MAPS_LOCAL_TECHNICAL_REPORT.md",
+    "previous_prefix_bytes": 144884,
+    "previous_prefix_sha256": "2219061eb24ceb88d45500177e08349214fcdfbdb1f5d3bd7cc4559688121197",
+    "prefix_unchanged": true,
+    "appendix_bytes": 4739,
+    "final_bytes": 149623,
+    "final_sha256": "55ecae39b06cf459e3552bbac59b3d2bd33369e6aad5fe30f808b254282237b1",
+    "branch": "codex/scale-001-local-continuation",
+    "head": "9e21509591bfa5457cc829ebd5637f95be68d573"
+  },
+  "qualification_blockers": [
+    "50k complete snapshot still hits the unchanged 1,000,000-node sanitizer guard",
+    "PostgreSQL row-lock integration test skipped because no disposable service was configured",
+    "Docker desktop-linux daemon unavailable; no local Linux cgroup run",
+    "full pinned Linux 768000000-byte zero-swap workload and recovery matrix not run",
+    "ADR 0007 segmented snapshot format awaits user proposal review"
+  ],
+  "archive": {
+    "path": "docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_RAW.tar.gz",
+    "members": [
+      {
+        "path": "work-root/append_scale_report.py",
+        "bytes": 6780,
+        "sha256": "ab189d1a8993b185db81e06d69e151724fcf2634e30c26a79976bd35b8374a37"
+      },
+      {
+        "path": "work-root/baseline-tests.json",
+        "bytes": 2056,
+        "sha256": "e1344d94f438369058e0bfb709ca45939b95d827ee5b83984c2079bc91fc5de9"
+      },
+      {
+        "path": "work-root/baseline-tests.xml",
+        "bytes": 22352,
+        "sha256": "030eecd2b9278d61d8a06f847cc8fc4ca325b425ee956b50af639a83a0ac6bca"
+      },
+      {
+        "path": "work-root/baseline.json",
+        "bytes": 74773,
+        "sha256": "459d00324df8f023a17f9e21e70ca46a9f92483e452fc0582f8b4ecc9262459b"
+      },
+      {
+        "path": "work-root/baseline.py",
+        "bytes": 2673,
+        "sha256": "243e4a1fab10a868612f2a703310eb1f81cf2490eaf1244313050e28659bcde1"
+      },
+      {
+        "path": "work-root/browser-command.json",
+        "bytes": 866,
+        "sha256": "944de1295f200f44179e804e71b777ae5ea47a424ad672fce504422fa36c8b2d"
+      },
+      {
+        "path": "work-root/browser-final-command.json",
+        "bytes": 1055,
+        "sha256": "fc228017c54c37383792aaf1fbb9b2fe6d7ca103de92c8f2489527a4f0d2211c"
+      },
+      {
+        "path": "work-root/browser-final-results.json",
+        "bytes": 4771,
+        "sha256": "0edda9442cef971fe6d74e6f2975c12045377c064e7ab38d6c57c8b3ad6f5a09"
+      },
+      {
+        "path": "work-root/browser-results.json",
+        "bytes": 3489,
+        "sha256": "3891b7afd2535bcf06398441904f5c55abbd6d326f950ce4084d087dea133142"
+      },
+      {
+        "path": "work-root/browser_workflow.py",
+        "bytes": 3598,
+        "sha256": "5f3df7bedcddcddf0dfe5432cc3355e6dab8efe1a43c065e040f18a1769062aa"
+      },
+      {
+        "path": "work-root/checkpoint-regressions.json",
+        "bytes": 1706,
+        "sha256": "83a6eb9aa9337ed8a8f6cb39c005ceefb453dbe4e96956db59258660e0e64959"
+      },
+      {
+        "path": "work-root/checkpoint-regressions.xml",
+        "bytes": 11270,
+        "sha256": "3decd2959da59a4aa52b9d51465d31cce168ce4895c1c7f7afbb5f1c6c21bfa6"
+      },
+      {
+        "path": "work-root/cold-original-147/profile.json",
+        "bytes": 40691,
+        "sha256": "d3ff296a80033084f312f1454b52cecd4d2eeb1b40188cf651f09f50f4e70224"
+      },
+      {
+        "path": "work-root/commercial-rules.json",
+        "bytes": 1837,
+        "sha256": "4fb4b8283e535cde7336691e6b787dfdc5b8e9a4afa722122069158722b5edd8"
+      },
+      {
+        "path": "work-root/commercial-rules.xml",
+        "bytes": 18748,
+        "sha256": "487643f9844d6cd27273a9fbd6f52d6cabb61082fea3cda8639daa4e209c8d58"
+      },
+      {
+        "path": "work-root/compile-final.json",
+        "bytes": 579,
+        "sha256": "32c3e75eb06f9d6a948b237e4520e45e7495ae944788246e7bde6a6ac59d8677"
+      },
+      {
+        "path": "work-root/component-commands.json",
+        "bytes": 14333,
+        "sha256": "7f1f8411e9531b09bdfcdf0a537ff163bfc2627b60a4775b9580e757000b7f18"
+      },
+      {
+        "path": "work-root/configuration-drift-browser-command.json",
+        "bytes": 880,
+        "sha256": "a38be4763d03949395e816c09642745c7854a54a840b81bfe758858073a3b230"
+      },
+      {
+        "path": "work-root/configuration-drift-browser-results.json",
+        "bytes": 3561,
+        "sha256": "fb3f25650827e43022e79fec26d678b3266814a9c4bcb0702b14fd48899ecb8a"
+      },
+      {
+        "path": "work-root/configuration-drift-final.json",
+        "bytes": 1565,
+        "sha256": "3639c0a9482e3764785f1cd4dbacd25f3fc2054b6fbba1cb0df74e7b1be4b8ac"
+      },
+      {
+        "path": "work-root/configuration-drift-focused.json",
+        "bytes": 18514,
+        "sha256": "946455f0c5032a31cb32572668679ab7bf5274e5c952d1faea7e9d8109dd2764"
+      },
+      {
+        "path": "work-root/configuration-drift-focused2.json",
+        "bytes": 3841,
+        "sha256": "2f815a45ba739e2922c7e9d2d9f40bda21c93a7dec4607b61a99483985c220bf"
+      },
+      {
+        "path": "work-root/configuration-drift-focused3.json",
+        "bytes": 4273,
+        "sha256": "6576b412ef12e713de0af09d8ebbbcbc28668abd33a745181b43f25835d13409"
+      },
+      {
+        "path": "work-root/cpu-original-147-quiet/cpu-attribution.json",
+        "bytes": 1488435,
+        "sha256": "4ce5313ea704c266b114edcc83245965619d180552c7f7508f39d8c5aaab2477"
+      },
+      {
+        "path": "work-root/cpu-original-147-quiet/profile.json",
+        "bytes": 40847,
+        "sha256": "92e91900d9f4505199a746bca8e9d0e0e1acee67d5b3baa813f893f205c598a3"
+      },
+      {
+        "path": "work-root/cpu-original-147/cpu-attribution.json",
+        "bytes": 1489455,
+        "sha256": "5ba9d4ddb870fd118cb330ddbb1ef09093119eeee4aa820543f73668a0c8f5eb"
+      },
+      {
+        "path": "work-root/cpu-original-147/profile.json",
+        "bytes": 40848,
+        "sha256": "cc284bb831a5e3678a7cd63f9bcbe6a678abee4bae21cb13c011da6e69668ed0"
+      },
+      {
+        "path": "work-root/frontend-build.json",
+        "bytes": 5868,
+        "sha256": "a7ad2ba1293da2c31c02585980742adb7ab5b0e7926167e5fa4c7480c90132f1"
+      },
+      {
+        "path": "work-root/frontend-install.json",
+        "bytes": 667,
+        "sha256": "36b109b21517b12b5e0e9da56b44e055b7ab2e16c53b0abff3ff196e18b10f8c"
+      },
+      {
+        "path": "work-root/frontend-unit-command.json",
+        "bytes": 788,
+        "sha256": "ca2cc1ab932cd00036780111838500ad2c84762b25bff13acb090bc76aeb1419"
+      },
+      {
+        "path": "work-root/frontend-unit.json",
+        "bytes": 18220,
+        "sha256": "52dcb90247a6966dcb4fcfa10c87e2374d1c26208ed594a19ed54766cb8c73f1"
+      },
+      {
+        "path": "work-root/generation-regressions.json",
+        "bytes": 1580,
+        "sha256": "ae6095f03e4707f37966c504dcf978797836ea732069d8ee60ecd7d24cdc51d8"
+      },
+      {
+        "path": "work-root/generation-regressions.xml",
+        "bytes": 6559,
+        "sha256": "c843c7461aa5b78ef8d789c13c7b66aa1e9c687e32da90a3b7082dfa35601c21"
+      },
+      {
+        "path": "work-root/hash_stream.json",
+        "bytes": 2191,
+        "sha256": "cd4b50db848b659658637410b9269aab371548cb8bd5d81a28f55a60b3cef052"
+      },
+      {
+        "path": "work-root/hash_whole.json",
+        "bytes": 2190,
+        "sha256": "f93a3fe49abd57e3fb7333e1d55b962f586dc4b2c28f64acb58dc2780ae954f2"
+      },
+      {
+        "path": "work-root/maps-and-exports.json",
+        "bytes": 1692,
+        "sha256": "1478e7b8db8c2dbdfd0224a11e66f93000c03dd9a9f4ffb9d97f17c276a0b428"
+      },
+      {
+        "path": "work-root/maps-and-exports.xml",
+        "bytes": 25341,
+        "sha256": "c85d8fce674414f0bf4289338c980346948d3a5dedca150cde7f795af197ba4e"
+      },
+      {
+        "path": "work-root/outputs-cpu-command.json",
+        "bytes": 1010,
+        "sha256": "b930e170e8c84947ef65346825a94e76c2fd28f35831b41fb09716b8a58c330c"
+      },
+      {
+        "path": "work-root/outputs-cpu-quiet-command.json",
+        "bytes": 1022,
+        "sha256": "ce973e31d6f7c8b8cb45547b8b3df8452bb12989e59a3c539a0f100bb702a227"
+      },
+      {
+        "path": "work-root/outputs-cpu-quiet.json",
+        "bytes": 4959,
+        "sha256": "26d492341445d5030e1b770358435594ebf5dc9ed126c25756fb75cb5203cfe9"
+      },
+      {
+        "path": "work-root/outputs-cpu.json",
+        "bytes": 4959,
+        "sha256": "26d492341445d5030e1b770358435594ebf5dc9ed126c25756fb75cb5203cfe9"
+      },
+      {
+        "path": "work-root/outputs-three-phases-command.json",
+        "bytes": 1020,
+        "sha256": "82bbdefb0a628265438839ad678d4f2ea8adaa6d8bae10629860ca558bcfc5fa"
+      },
+      {
+        "path": "work-root/outputs-three-phases.json",
+        "bytes": 11637,
+        "sha256": "6895c74889dca10c4ea807844cd20818ae3a68e77197d2aa1dde6911aa83f448"
+      },
+      {
+        "path": "work-root/owned-three-phases.json",
+        "bytes": 1491,
+        "sha256": "d250977cfabfa5c34cf8ab62e64c0837fdc127b4a0061e218803041b8ada93dd"
+      },
+      {
+        "path": "work-root/package_evidence.py",
+        "bytes": 8266,
+        "sha256": "e5f4ad1e984746114ac4e33ea0afdcaa9d775535dbf27033ce4f748dedf91ca8"
+      },
+      {
+        "path": "work-root/preservation-final.json",
+        "bytes": 4217,
+        "sha256": "f51d874b04eb514bee67502324c21596a786057a94e2d192a107fc5b762436ea"
+      },
+      {
+        "path": "work-root/preservation_final.py",
+        "bytes": 3735,
+        "sha256": "0ef8961d1e0f6372c80fc3cf3b949112b95a5f1925088d6fbab4c1b7812edcfe"
+      },
+      {
+        "path": "work-root/retention-after.json",
+        "bytes": 1496,
+        "sha256": "e1935ba355fe9df07f26c418fdebcc3d250f9605e1524b343d04a9fb7b643c36"
+      },
+      {
+        "path": "work-root/retention-after.xml",
+        "bytes": 3543,
+        "sha256": "87f5b1c88055eddf6f0cf44711797e22f215c31a258e8eaf8a1a3250bc7a4e8b"
+      },
+      {
+        "path": "work-root/retention-before-valid-fixtures.json",
+        "bytes": 9318,
+        "sha256": "9935377c88cf58dd075c3a14802e6463a918503990809c4e4a031d40cc7dff0d"
+      },
+      {
+        "path": "work-root/retention-before-valid-fixtures.xml",
+        "bytes": 13953,
+        "sha256": "c3d82f153ba6c1c1661026026e478e0a23353c2123c99014368e4b51a0f2ea8a"
+      },
+      {
+        "path": "work-root/retention-before.json",
+        "bytes": 16962,
+        "sha256": "a742c703885f8883086e1993e63c176b18869b6117305b87680e21decf5d5ac2"
+      },
+      {
+        "path": "work-root/retention-before.xml",
+        "bytes": 21031,
+        "sha256": "3312a3a4159907eee9f96f94d70ce3c8595b2c692e2827218e51b5137c6de542"
+      },
+      {
+        "path": "work-root/retention-expanded.json",
+        "bytes": 1790,
+        "sha256": "3410896e5451df608cb89e2b7a7be77fe6984acf068ee85366bf9fb15fc78e22"
+      },
+      {
+        "path": "work-root/retention-expanded.xml",
+        "bytes": 10979,
+        "sha256": "5d33b5be6db366473b35bb5bd159070621074f54ee296878d00138963ac41fb8"
+      },
+      {
+        "path": "work-root/retention-final.json",
+        "bytes": 1576,
+        "sha256": "cfa892d895e641c14a3fa82a2b3dc547101c1febaca49108d0b7b2b0eb1fe48d"
+      },
+      {
+        "path": "work-root/retention-final.xml",
+        "bytes": 6104,
+        "sha256": "3cb64206f3a901102f0c1e342ca9e1806dd85c12af9d8032045560cf4e6127d2"
+      },
+      {
+        "path": "work-root/retention-races-and-queue.json",
+        "bytes": 2457,
+        "sha256": "9e54782e393fdbfad83849a99380676c7ca34d74f5e9b15a68bd7954320cbebc"
+      },
+      {
+        "path": "work-root/retention-races-and-queue.xml",
+        "bytes": 11364,
+        "sha256": "463a3caad0a2ec89c46ad4f8f349e735529b85938455a35af3ab82e10b144d0c"
+      },
+      {
+        "path": "work-root/ruff-final.json",
+        "bytes": 597,
+        "sha256": "6755a727b0377b0ca2c910546d62e53a7d386d5f0bd0f42607e3b5b630dcbd3f"
+      },
+      {
+        "path": "work-root/run_command.py",
+        "bytes": 3401,
+        "sha256": "940996c1a3ca6e8c85750a1a3ecbf12b3ef0201c66d9528fe42a9905db146eac"
+      },
+      {
+        "path": "work-root/run_components.py",
+        "bytes": 2001,
+        "sha256": "f7e106ed90f0e698393de2a92810dd4474ddc3abcf0bd53d192db4259914a2ab"
+      },
+      {
+        "path": "work-root/scale-report-append-receipt.json",
+        "bytes": 536,
+        "sha256": "20fbfae91adcebcd1742111a029a5ce18c25a3433fceb126a082c8f053d33ad3"
+      },
+      {
+        "path": "work-root/security-and-graph.json",
+        "bytes": 1731,
+        "sha256": "2f093ed6e6efd5fe9af927b9670177c55940994ad67742745225dfd0cd80d335"
+      },
+      {
+        "path": "work-root/security-and-graph.xml",
+        "bytes": 5674,
+        "sha256": "fc0174f9856fe1b43401a3a1159fd67c7d4dcd3d7f35737c4d9249fa4aa53568"
+      },
+      {
+        "path": "work-root/snapshot-cpu-quiet.json",
+        "bytes": 1668,
+        "sha256": "7929da342c4414630be7a749cc1bc0b23fec71f9a8a9fd6cc84e03f2b97a318d"
+      },
+      {
+        "path": "work-root/snapshot-cpu.json",
+        "bytes": 1645,
+        "sha256": "1a4187b6341d421c80f62efbebd397ca771e6c8d73adb67effec875de4235204"
+      },
+      {
+        "path": "work-root/sqlite_indexes.json",
+        "bytes": 3344,
+        "sha256": "aee191e2d826152b319640ca4869d3e0a850930ac2dbe14ab9153195b1ab1f58"
+      },
+      {
+        "path": "work-root/sqlite_json.json",
+        "bytes": 2143,
+        "sha256": "dab0e4567ac36cbc1321223cfefdd276797104732b0599cf8d90078a0c9e38eb"
+      },
+      {
+        "path": "work-root/sqlite_length.json",
+        "bytes": 2117,
+        "sha256": "f15520c1c6d039943b89b7622f18cf86773e1dd9aee3d42a49b7504e52cdce47"
+      },
+      {
+        "path": "work-root/structural-50k.json",
+        "bytes": 791,
+        "sha256": "ae70859b8fd139c0f98a00f76d657803b85e94e226d58c173c04e923a05d5a4b"
+      },
+      {
+        "path": "work-root/structural_repro.py",
+        "bytes": 1856,
+        "sha256": "858f452395bc5ed226a4b830f6522b5fb5222fb6e81dc1d49342eeb2c59ff5ba"
+      },
+      {
+        "path": "repository/docs/adr/0007-bounded-published-snapshot-segments.md",
+        "bytes": 5347,
+        "sha256": "b183dcac40e095d2d73a7c6a13bed0754badb3c9b3f6815460debdc90b9ba451"
+      },
+      {
+        "path": "repository/docs/CHECKPOINT_RETENTION_AND_ROLLBACK.md",
+        "bytes": 3391,
+        "sha256": "e9e77b654686c9e2a5679248455037494c90b613e799e91ee670bc3066eeba99"
+      },
+      {
+        "path": "repository/docs/COMMERCIAL_V1_RELEASE_GATES.md",
+        "bytes": 8701,
+        "sha256": "bfd3347f4b0090b37079da5dc9b1cb385db90739f259d064d3f8d8216b12882f"
+      },
+      {
+        "path": "repository/docs/SCALE001_GENERATION_MAPS_LOCAL_TECHNICAL_REPORT.md",
+        "bytes": 149623,
+        "sha256": "55ecae39b06cf459e3552bbac59b3d2bd33369e6aad5fe30f808b254282237b1"
+      },
+      {
+        "path": "repository/frontend/e2e/configuration-drift.spec.ts",
+        "bytes": 2733,
+        "sha256": "a623b927b030828ff1b1758c28832c80a5e88437ba1cadb6e86c169aae26a7ab"
+      },
+      {
+        "path": "repository/PROJECTTRACE_PROGRESS.md",
+        "bytes": 12419,
+        "sha256": "4fc528508354ada16d12c241dbd5989ab3deb4fd2a7cb024f77b257b944e5b6c"
+      },
+      {
+        "path": "repository/samples/configuration-drift.json",
+        "bytes": 557,
+        "sha256": "f6dd58bc356c983f219f9038c790cb12484ac1c1a7c051feb6e6191b83d39d30"
+      },
+      {
+        "path": "repository/tests/commercial_snapshot_profile.py",
+        "bytes": 3654,
+        "sha256": "bf006ae788b195e038d1f53d004fdcc4c17516df4b171e6b1cd2edaffc3ea729"
+      },
+      {
+        "path": "repository/tests/test_configuration_drift.py",
+        "bytes": 3729,
+        "sha256": "5de6db48a69b6b77b2949579428a00fa20fdf82114bd2aa0f7d88e92c39202d7"
+      }
+    ],
+    "member_count": 81,
+    "excluded": [
+      "database files",
+      "encryption keys",
+      "source blobs",
+      "browser screenshots",
+      "process logs"
+    ],
+    "bytes": 413094,
+    "sha256": "2c10055d3faead4aca157f319bdb3afee8d0ccda4f527b3dec1d24434258211d"
+  }
+}

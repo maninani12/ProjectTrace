@@ -20,9 +20,10 @@ def claim_comparisons(db, organization_id, repository_id, before, after):
     into this projection. Legacy captures without references remain readable.
     """
     previous = {c.get("claim_key", c.get("text")): c for c in before.get("claims", [])}
+    previous_ids = {c.get("id"): c for c in before.get("claims", []) if c.get("id")}
     changed = []
     for claim in after.get("claims", []):
-        prior = previous.get(claim.get("claim_key", claim.get("text")))
+        prior = previous_ids.get(claim.get("previous_version_id")) or previous.get(claim.get("claim_key", claim.get("text")))
         if prior and claim.get("origin", "DOCUMENTATION") == "DOCUMENTATION" and prior.get("status") != claim.get("status"):
             changed.append((prior, claim))
     pairs = changed[:50]
@@ -80,8 +81,9 @@ def persist(db, user, repo, snapshot, base, pr_number=None):
         )
 
     old_claims = {c.get("claim_key", c.get("text")): c for c in old.get("claims", [])}
+    old_claim_ids = {c.get("id"): c for c in old.get("claims", []) if c.get("id")}
     for claim in head.get("claims", []):
-        prior = old_claims.get(claim.get("claim_key", claim.get("text")))
+        prior = old_claim_ids.get(claim.get("previous_version_id")) or old_claims.get(claim.get("claim_key", claim.get("text")))
         if prior and prior.get("status") != claim.get("status"):
             change(
                 "CLAIM_STATUS_CHANGE",
@@ -105,12 +107,18 @@ def persist(db, user, repo, snapshot, base, pr_number=None):
         )
     quality = quality_fields(db, snapshot, ("metrics", "inventory"))
     previous_quality = quality_fields(db, base, ("metrics", "inventory"))
+    from backend.public_snapshot_paths import for_snapshot
+
+    base_paths = for_snapshot(db, old, user.organization_id, repo.id, repo.name,
+                              public_expected=repo.provider == "GITHUB_PUBLIC")
+    head_paths = for_snapshot(db, head, user.organization_id, repo.id, repo.name,
+                              public_expected=repo.provider == "GITHUB_PUBLIC")
     previous_metrics = {
-        (m["path"], m.get("qualified_name", m["name"])): m
+        (base_paths.path(m["path"]), m.get("qualified_name", m["name"])): m
         for m in previous_quality.get("metrics", [])
     }
     for metric in quality.get("metrics", []):
-        prior = previous_metrics.get((metric["path"], metric.get("qualified_name", metric["name"])))
+        prior = previous_metrics.get((head_paths.path(metric["path"]), metric.get("qualified_name", metric["name"])))
         if prior:
             for name in ("cyclomatic", "nesting", "parameters", "length", "cognitive_approximation"):
                 if metric.get(name, 0) > prior.get(name, 0):

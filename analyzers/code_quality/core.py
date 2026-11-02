@@ -671,6 +671,12 @@ def gate(quality, findings, coverage=None):
                 "remediation": "Choose an accepted snapshot in Rules & Profiles, then analyze HEAD.",
             }
         )
+    if quality.get("comparison_identity_unresolved"):
+        results.append({
+            "policy": "Quality: comparison identity", "version": VERSION, "result": "REVIEW_REQUIRED",
+            "reason": "Snapshot identity comparison is unresolved; introduction and resolution are not established.",
+            "remediation": "Inspect captured provenance and identity ambiguity before accepting this comparison.",
+        })
     if quality.get("comparison_model_changed"):
         results.append(
             {

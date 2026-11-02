@@ -1,0 +1,3222 @@
+{
+  "schema": "projecttrace-native-quality-continuity-local-v1",
+  "date": "2026-10-31",
+  "branch": "codex/scale-001-local-continuation",
+  "head": "9e21509591bfa5457cc829ebd5637f95be68d573",
+  "scale001": "NOT QUALIFIED",
+  "commercial_v1": "DEVELOPMENT IN PROGRESS",
+  "current_linux_docker": "NOT_RUN",
+  "live_provider": "NOT_RUN",
+  "pre_replay_source_sha256": {
+    "analyzers/code_quality/core.py": "43e485052b8f23170efde4372c8152f5eb79967c7bcad3b61d7dc40d09ae50a6",
+    "backend/public_snapshot_paths.py": "274229c9d1c54af244d1ed2ac37277b3212b2f453b38eb038c427493161bd2bc",
+    "backend/finding_history.py": "7f9e1206635749682fad1bd542fd870c20c93a027be561f1309113b1f5749bcb",
+    "backend/domain.py": "f281d31c117d55e2789691f94d8e7930d8de70db7bd17d2a34304d63b9c4090f",
+    "backend/quality_domain.py": "dba9bf96503bdb0ac7f5890cc26de54c28d1ad19c1603d8190d89c59eedcb8b2",
+    "backend/engineering_changes.py": "6683073fb70b7ea6d757c05fd14442e80f7ef294ee8254fa2d1fc1a3aae30731",
+    "backend/quality_api.py": "24b636daf815c04388e3b3f6c9fd0d3f3ff356222d0e398120cdc9cf331faa63",
+    "frontend/src/CodeQuality.tsx": "ccd67cdff1af015307709c8ab0642b61f924c66bc0a502399d237308420e3e03",
+    "frontend/src/QualityHistory.test.tsx": "d85426f8bcc4a872696db749cabc5ab2abd117a707826cd9d3b665a395e032bf",
+    "frontend/e2e/native-history.spec.ts": "a0b2a668bab7a4f2029f5cf8501fc74dd9759971dbed5b3f23350bf19b6ab5e7",
+    "tests/test_native_snapshot_continuity.py": "67971ebe3b7da9c06c6dae528fc5864dea87c5872ce20ebf23fbf4ebab81d47b",
+    "tests/test_native_history_uncertain_layouts.py": "a5c670ba12755396cfef4471e4af0224e262fc097acc538644d25380b8c0d374"
+  },
+  "source_sha256": {
+    "analyzers/code_quality/core.py": "43e485052b8f23170efde4372c8152f5eb79967c7bcad3b61d7dc40d09ae50a6",
+    "backend/public_snapshot_paths.py": "274229c9d1c54af244d1ed2ac37277b3212b2f453b38eb038c427493161bd2bc",
+    "backend/finding_history.py": "7f9e1206635749682fad1bd542fd870c20c93a027be561f1309113b1f5749bcb",
+    "backend/domain.py": "6f927830168a5d0def63a08e553d7e0b398c239d7a7f194b0d2833c6fea7ec65",
+    "backend/quality_domain.py": "dba9bf96503bdb0ac7f5890cc26de54c28d1ad19c1603d8190d89c59eedcb8b2",
+    "backend/engineering_changes.py": "6683073fb70b7ea6d757c05fd14442e80f7ef294ee8254fa2d1fc1a3aae30731",
+    "backend/quality_api.py": "24b636daf815c04388e3b3f6c9fd0d3f3ff356222d0e398120cdc9cf331faa63",
+    "frontend/src/CodeQuality.tsx": "ccd67cdff1af015307709c8ab0642b61f924c66bc0a502399d237308420e3e03",
+    "frontend/src/QualityHistory.test.tsx": "d85426f8bcc4a872696db749cabc5ab2abd117a707826cd9d3b665a395e032bf",
+    "frontend/e2e/native-history.spec.ts": "a0b2a668bab7a4f2029f5cf8501fc74dd9759971dbed5b3f23350bf19b6ab5e7",
+    "tests/test_native_snapshot_continuity.py": "67971ebe3b7da9c06c6dae528fc5864dea87c5872ce20ebf23fbf4ebab81d47b",
+    "tests/test_native_history_uncertain_layouts.py": "a5c670ba12755396cfef4471e4af0224e262fc097acc538644d25380b8c0d374",
+    "tests/test_native_history_recovery.py": "7dc8e880d2702a82ef616d8443755e79bf140195c96a6ac173d5fe8f0161ace6"
+  },
+  "source_scope": "Milestone implementation and tests; existing dirty source preserved; not a clean Git checkout.",
+  "frontend_unit": {
+    "path": "frontend/test-results/native-history-unit-20261031.json",
+    "sha256": "179b8f59c65a938abc0e9f224c4631d85eca2d8b7f37fb6c74eee5857452f9c0",
+    "passed": 54,
+    "failed": 0,
+    "pending": 0,
+    "source_scope": "Final frontend source; backend counter/replay fixes came later.",
+    "command": "npm run test -- --reporter=json --outputFile=test-results/native-history-unit-20261031.json",
+    "cwd": "frontend"
+  },
+  "browser": {
+    "path": "frontend/test-results/native-history-browser-20261031/results.json",
+    "sha256": "77d895c4b744e9a727220bc3c3afe968de7fa60753a30f0d4f0f01e29a04a130",
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "seconds": 69.5958,
+    "source_scope": "Final frontend source, backend before final counter/replay fixes; real API native baseline/history plus controlled unresolved overview view fixture and real API configuration drift. Not live-provider or historical-provider browser qualification.",
+    "command": "npx playwright test e2e/native-history.spec.ts e2e/configuration-drift.spec.ts --output=test-results/native-history-browser-20261031",
+    "cwd": "frontend",
+    "environment": {
+      "PROJECTTRACE_E2E_ISOLATED_API": "1",
+      "PROJECTTRACE_PYTHON": "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+      "PROJECTTRACE_E2E_RESULTS": "test-results/native-history-browser-20261031/results.json"
+    }
+  },
+  "backend": {
+    "defensive": {
+      "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-defensive.xml",
+      "sha256": "024b1b35080ba75f759e8f5b16faea718a49e47f1cb760ed0bf202d864aa24ea",
+      "counts": {
+        "PASSED": 3,
+        "FAILED": 0,
+        "ERROR": 0,
+        "SKIPPED": 0
+      },
+      "seconds_xml": 31.4,
+      "source_scope": "Reproduction/intermediate validation; not final source.",
+      "cases": [
+        {
+          "id": "tests.test_native_snapshot_continuity::test_ambiguous_and_unsupported_native_identities_are_not_verified_transitions[False]",
+          "status": "PASSED",
+          "seconds": 8.934
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_ambiguous_and_unsupported_native_identities_are_not_verified_transitions[True]",
+          "status": "PASSED",
+          "seconds": 8.922
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_real_history_and_quality_api_keep_old_paths_and_tenant_scope",
+          "status": "PASSED",
+          "seconds": 13.426
+        }
+      ]
+    },
+    "expanded": {
+      "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-expanded.xml",
+      "sha256": "5f9f12d4c4627fe31ef8315951d2fbbf1814c68193312f4d596fd5a89bc6b58f",
+      "counts": {
+        "PASSED": 16,
+        "FAILED": 0,
+        "ERROR": 0,
+        "SKIPPED": 0
+      },
+      "seconds_xml": 224.81,
+      "source_scope": "Reproduction/intermediate validation; not final source.",
+      "cases": [
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.py-def work(items=[]):\\n    return items\\n-PT-QUALITY-011-True]",
+          "status": "PASSED",
+          "seconds": 6.145
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.py-def work(items=[]):\\n    return items\\n-PT-QUALITY-011-False]",
+          "status": "PASSED",
+          "seconds": 7.086
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.js-function work(value) { eval(value); }\\n-PT-SAST-005-True]",
+          "status": "PASSED",
+          "seconds": 8.412
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.js-function work(value) { eval(value); }\\n-PT-SAST-005-False]",
+          "status": "PASSED",
+          "seconds": 8.525
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.py-import subprocess\\ndef work(command):\\n    subprocess.run(command, shell=True)\\n-PT-SAST-002-True]",
+          "status": "PASSED",
+          "seconds": 7.205
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.py-import subprocess\\ndef work(command):\\n    subprocess.run(command, shell=True)\\n-PT-SAST-002-False]",
+          "status": "PASSED",
+          "seconds": 7.147
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[compose.yaml-services:\\n  app:\\n    privileged: true\\n-PT-IAC-001-True]",
+          "status": "PASSED",
+          "seconds": 7.773
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[compose.yaml-services:\\n  app:\\n    privileged: true\\n-PT-IAC-001-False]",
+          "status": "PASSED",
+          "seconds": 7.792
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[Dockerfile-FROM ubuntu:latest\\nUSER root\\n-PT-IAC-002-True]",
+          "status": "PASSED",
+          "seconds": 8.436
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[Dockerfile-FROM ubuntu:latest\\nUSER root\\n-PT-IAC-002-False]",
+          "status": "PASSED",
+          "seconds": 9.055
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_actual_metric_regression_is_visible_across_layout_change[True]",
+          "status": "PASSED",
+          "seconds": 8.168
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_actual_metric_regression_is_visible_across_layout_change[False]",
+          "status": "PASSED",
+          "seconds": 10.009
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_quality_resolution_introduction_context_and_reopening[True]",
+          "status": "PASSED",
+          "seconds": 16.157
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_quality_resolution_introduction_context_and_reopening[False]",
+          "status": "PASSED",
+          "seconds": 52.603
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unresolved_provenance_does_not_establish_introduction_or_resolution",
+          "status": "PASSED",
+          "seconds": 30.307
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_severity_profile_change_keeps_concept_and_invalidates_review_context",
+          "status": "PASSED",
+          "seconds": 29.87
+        }
+      ]
+    },
+    "final": {
+      "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-final.xml",
+      "sha256": "8954560093fe55f600a8b0bb98f1ec94c7d919ec1bb27dd315ac5880a495a29c",
+      "counts": {
+        "PASSED": 57,
+        "FAILED": 0,
+        "ERROR": 0,
+        "SKIPPED": 0
+      },
+      "seconds_xml": 422.079,
+      "source_scope": "After counter refresh, before replay-warning fix.",
+      "cases": [
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.py-def work(items=[]):\\n    return items\\n-PT-QUALITY-011-True]",
+          "status": "PASSED",
+          "seconds": 27.574
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.py-def work(items=[]):\\n    return items\\n-PT-QUALITY-011-False]",
+          "status": "PASSED",
+          "seconds": 7.469
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.js-function work(value) { eval(value); }\\n-PT-SAST-005-True]",
+          "status": "PASSED",
+          "seconds": 10.538
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.js-function work(value) { eval(value); }\\n-PT-SAST-005-False]",
+          "status": "PASSED",
+          "seconds": 26.899
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.py-import subprocess\\ndef work(command):\\n    subprocess.run(command, shell=True)\\n-PT-SAST-002-True]",
+          "status": "PASSED",
+          "seconds": 31.708
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.py-import subprocess\\ndef work(command):\\n    subprocess.run(command, shell=True)\\n-PT-SAST-002-False]",
+          "status": "PASSED",
+          "seconds": 9.971
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[compose.yaml-services:\\n  app:\\n    privileged: true\\n-PT-IAC-001-True]",
+          "status": "PASSED",
+          "seconds": 7.25
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[compose.yaml-services:\\n  app:\\n    privileged: true\\n-PT-IAC-001-False]",
+          "status": "PASSED",
+          "seconds": 8.396
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[Dockerfile-FROM ubuntu:latest\\nUSER root\\n-PT-IAC-002-True]",
+          "status": "PASSED",
+          "seconds": 8.223
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[Dockerfile-FROM ubuntu:latest\\nUSER root\\n-PT-IAC-002-False]",
+          "status": "PASSED",
+          "seconds": 8.268
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.ts-function work(value: string) { eval(value); }\\n-PT-SAST-005-True]",
+          "status": "PASSED",
+          "seconds": 8.408
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.ts-function work(value: string) { eval(value); }\\n-PT-SAST-005-False]",
+          "status": "PASSED",
+          "seconds": 8.447
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[App.java-class App { void work() { try { run(); } catch(Exception error) {} } }\\n-PT-QUALITY-006-True]",
+          "status": "PASSED",
+          "seconds": 9.616
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[App.java-class App { void work() { try { run(); } catch(Exception error) {} } }\\n-PT-QUALITY-006-False]",
+          "status": "PASSED",
+          "seconds": 8.669
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.py-api_key = 'owned-fixture-credential-123456789012345'\\n-PT-SECRET-001-True]",
+          "status": "PASSED",
+          "seconds": 6.569
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.py-api_key = 'owned-fixture-credential-123456789012345'\\n-PT-SECRET-001-False]",
+          "status": "PASSED",
+          "seconds": 6.499
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_actual_metric_regression_is_visible_across_layout_change[True]",
+          "status": "PASSED",
+          "seconds": 6.923
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_actual_metric_regression_is_visible_across_layout_change[False]",
+          "status": "PASSED",
+          "seconds": 6.816
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_quality_resolution_introduction_context_and_reopening[True]",
+          "status": "PASSED",
+          "seconds": 12.343
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_quality_resolution_introduction_context_and_reopening[False]",
+          "status": "PASSED",
+          "seconds": 13.525
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unresolved_provenance_does_not_establish_introduction_or_resolution",
+          "status": "PASSED",
+          "seconds": 7.178
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_severity_profile_change_keeps_concept_and_invalidates_review_context",
+          "status": "PASSED",
+          "seconds": 7.164
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_ambiguous_and_unsupported_native_identities_are_not_verified_transitions[False]",
+          "status": "PASSED",
+          "seconds": 7.338
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_ambiguous_and_unsupported_native_identities_are_not_verified_transitions[True]",
+          "status": "PASSED",
+          "seconds": 7.327
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_real_history_and_quality_api_keep_old_paths_and_tenant_scope",
+          "status": "PASSED",
+          "seconds": 10.392
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_native_history_private_replay_and_duplicate_delivery[CORRELATION]",
+          "status": "PASSED",
+          "seconds": 8.343
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_native_history_private_replay_and_duplicate_delivery[POLICY]",
+          "status": "PASSED",
+          "seconds": 9.176
+        },
+        {
+          "id": "tests.test_native_history_uncertain_layouts::test_uncertain_stored_layout_does_not_verify_history[MISSING_PROVENANCE]",
+          "status": "PASSED",
+          "seconds": 8.354
+        },
+        {
+          "id": "tests.test_native_history_uncertain_layouts::test_uncertain_stored_layout_does_not_verify_history[MIXED_ROOTS]",
+          "status": "PASSED",
+          "seconds": 8.631
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_published_public_paths_preserve_identity_and_real_drift[True]",
+          "status": "PASSED",
+          "seconds": 18.111
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_published_public_paths_preserve_identity_and_real_drift[False]",
+          "status": "PASSED",
+          "seconds": 19.345
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch0-paths0]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch1-paths1]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch2-paths2]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch3-paths3]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch4-paths4]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch5-paths5]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_relative_basis_and_unknown_claim_schemas_do_not_alias_literal_git_paths",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_malformed_historical_provenance_reports_partial_without_inventing_removal",
+          "status": "PASSED",
+          "seconds": 6.804
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_inventory_scope_cannot_supply_a_relative_path_marker",
+          "status": "PASSED",
+          "seconds": 0.307
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_existing_contradiction_finding_is_not_new_on_layout_change",
+          "status": "PASSED",
+          "seconds": 9.872
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_legacy_continuity_survives_private_stage_restart[CLAIMS]",
+          "status": "PASSED",
+          "seconds": 10.029
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_legacy_continuity_survives_private_stage_restart[CORRELATION]",
+          "status": "PASSED",
+          "seconds": 9.348
+        },
+        {
+          "id": "tests.test_quality_spill::test_metric_owner_index_preserves_order_ties_annotations_and_encryption",
+          "status": "PASSED",
+          "seconds": 0.002
+        },
+        {
+          "id": "tests.test_quality_spill::test_derived_output_owner_checks_scope_and_closes_both_vectors",
+          "status": "PASSED",
+          "seconds": 0.002
+        },
+        {
+          "id": "tests.test_quality_spill::test_metric_owner_index_rejects_path_substitution",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_quality_spill::test_spooled_quality_preserves_complete_output_tokens_gate_and_hotspots",
+          "status": "PASSED",
+          "seconds": 0.021
+        },
+        {
+          "id": "tests.test_quality_spill::test_failed_quality_build_closes_new_outputs_without_mutating_input",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_quality_spill::test_quality_checkpoint_cancellation_propagates_without_partial_output",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_quality_spill::test_post_analysis_failure_closes_outputs_and_replays_complete_checkpoint",
+          "status": "PASSED",
+          "seconds": 4.157
+        },
+        {
+          "id": "tests.test_quality_spill::test_computation_checks_leave_queue_unlocked_and_observe_cancellation",
+          "status": "PASSED",
+          "seconds": 0.251
+        },
+        {
+          "id": "tests.test_generations::test_final_promotion_rejects_cancellation_replacement_and_access_revocation[CANCELLED]",
+          "status": "PASSED",
+          "seconds": 4.958
+        },
+        {
+          "id": "tests.test_generations::test_final_promotion_rejects_cancellation_replacement_and_access_revocation[REPLACED]",
+          "status": "PASSED",
+          "seconds": 5.404
+        },
+        {
+          "id": "tests.test_generations::test_final_promotion_rejects_cancellation_replacement_and_access_revocation[REVOKED]",
+          "status": "PASSED",
+          "seconds": 5.331
+        },
+        {
+          "id": "tests.test_generations::test_public_api_readers_never_return_unpublished_snapshot_or_source",
+          "status": "PASSED",
+          "seconds": 6.935
+        },
+        {
+          "id": "tests.test_generations::test_final_commit_failure_or_lost_acknowledgement_is_consistent[False]",
+          "status": "PASSED",
+          "seconds": 5.75
+        },
+        {
+          "id": "tests.test_generations::test_final_commit_failure_or_lost_acknowledgement_is_consistent[True]",
+          "status": "PASSED",
+          "seconds": 5.176
+        }
+      ]
+    },
+    "fix1": {
+      "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-fix1.xml",
+      "sha256": "de3c5e745ec632f1977532c148a85fc306736927aba60958f9c1fbc0e15c69d6",
+      "counts": {
+        "PASSED": 12,
+        "FAILED": 0,
+        "ERROR": 0,
+        "SKIPPED": 0
+      },
+      "seconds_xml": 88.89,
+      "source_scope": "Reproduction/intermediate validation; not final source.",
+      "cases": [
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.py-def work(items=[]):\\n    return items\\n-PT-QUALITY-011-True]",
+          "status": "PASSED",
+          "seconds": 6.365
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.py-def work(items=[]):\\n    return items\\n-PT-QUALITY-011-False]",
+          "status": "PASSED",
+          "seconds": 6.482
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.js-function work(value) { eval(value); }\\n-PT-SAST-005-True]",
+          "status": "PASSED",
+          "seconds": 7.797
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.js-function work(value) { eval(value); }\\n-PT-SAST-005-False]",
+          "status": "PASSED",
+          "seconds": 7.918
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.py-import subprocess\\ndef work(command):\\n    subprocess.run(command, shell=True)\\n-PT-SAST-002-True]",
+          "status": "PASSED",
+          "seconds": 7.109
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.py-import subprocess\\ndef work(command):\\n    subprocess.run(command, shell=True)\\n-PT-SAST-002-False]",
+          "status": "PASSED",
+          "seconds": 6.998
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[compose.yaml-services:\\n  app:\\n    privileged: true\\n-PT-IAC-001-True]",
+          "status": "PASSED",
+          "seconds": 7.917
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[compose.yaml-services:\\n  app:\\n    privileged: true\\n-PT-IAC-001-False]",
+          "status": "PASSED",
+          "seconds": 7.498
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[Dockerfile-FROM ubuntu:latest\\nUSER root\\n-PT-IAC-002-True]",
+          "status": "PASSED",
+          "seconds": 8.383
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[Dockerfile-FROM ubuntu:latest\\nUSER root\\n-PT-IAC-002-False]",
+          "status": "PASSED",
+          "seconds": 8.384
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_actual_metric_regression_is_visible_across_layout_change[True]",
+          "status": "PASSED",
+          "seconds": 6.794
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_actual_metric_regression_is_visible_across_layout_change[False]",
+          "status": "PASSED",
+          "seconds": 7.142
+        }
+      ]
+    },
+    "language": {
+      "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-language.xml",
+      "sha256": "d113dbd50ed94fd834c958e397c669e874dee34d14281ddf9a9b4b0d57a00e81",
+      "counts": {
+        "PASSED": 6,
+        "FAILED": 0,
+        "ERROR": 0,
+        "SKIPPED": 0
+      },
+      "seconds_xml": 201.084,
+      "source_scope": "Reproduction/intermediate validation; not final source.",
+      "cases": [
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.ts-function work(value: string) { eval(value); }\\n-PT-SAST-005-True]",
+          "status": "PASSED",
+          "seconds": 32.204
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.ts-function work(value: string) { eval(value); }\\n-PT-SAST-005-False]",
+          "status": "PASSED",
+          "seconds": 35.121
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[App.java-class App { void work() { try { run(); } catch(Exception error) {} } }\\n-PT-QUALITY-006-True]",
+          "status": "PASSED",
+          "seconds": 35.66
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[App.java-class App { void work() { try { run(); } catch(Exception error) {} } }\\n-PT-QUALITY-006-False]",
+          "status": "PASSED",
+          "seconds": 35.284
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.py-api_key = 'owned-fixture-credential-123456789012345'\\n-PT-SECRET-001-True]",
+          "status": "PASSED",
+          "seconds": 31.113
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.py-api_key = 'owned-fixture-credential-123456789012345'\\n-PT-SECRET-001-False]",
+          "status": "PASSED",
+          "seconds": 31.068
+        }
+      ]
+    },
+    "recovery-fixed": {
+      "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-recovery-fixed.xml",
+      "sha256": "ca10a65585be07afcd074c730e61465eb9b062d332317e19d9fb9b794da28d7c",
+      "counts": {
+        "PASSED": 2,
+        "FAILED": 0,
+        "ERROR": 0,
+        "SKIPPED": 0
+      },
+      "seconds_xml": 12.769,
+      "source_scope": "Final implementation; focused replay regression.",
+      "cases": [
+        {
+          "id": "tests.test_native_history_recovery::test_unresolved_native_replay_retains_partial_status_and_explanation[CORRELATION]",
+          "status": "PASSED",
+          "seconds": 5.954
+        },
+        {
+          "id": "tests.test_native_history_recovery::test_unresolved_native_replay_retains_partial_status_and_explanation[POLICY]",
+          "status": "PASSED",
+          "seconds": 6.745
+        }
+      ]
+    },
+    "recovery-red": {
+      "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-recovery-red.xml",
+      "sha256": "d079f98ca9496fa5f0cfcbc3fca9e638174f9c481ac12e915b8fa645bd93d3ed",
+      "counts": {
+        "PASSED": 0,
+        "FAILED": 2,
+        "ERROR": 0,
+        "SKIPPED": 0
+      },
+      "seconds_xml": 13.174,
+      "source_scope": "Reproduction/intermediate validation; not final source.",
+      "cases": [
+        {
+          "id": "tests.test_native_history_recovery::test_unresolved_native_replay_retains_partial_status_and_explanation[CORRELATION]",
+          "status": "FAILED",
+          "seconds": 5.928
+        },
+        {
+          "id": "tests.test_native_history_recovery::test_unresolved_native_replay_retains_partial_status_and_explanation[POLICY]",
+          "status": "FAILED",
+          "seconds": 6.892
+        }
+      ]
+    },
+    "red": {
+      "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-red.xml",
+      "sha256": "60606f67f223b5dc37fee437b944ee484dfecb6d65b314425e2116df1842e92e",
+      "counts": {
+        "PASSED": 0,
+        "FAILED": 12,
+        "ERROR": 0,
+        "SKIPPED": 0
+      },
+      "seconds_xml": 93.549,
+      "source_scope": "Reproduction/intermediate validation; not final source.",
+      "cases": [
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.py-def work(items=[]):\\n    return items\\n-PT-QUALITY-011-True]",
+          "status": "FAILED",
+          "seconds": 6.169
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.py-def work(items=[]):\\n    return items\\n-PT-QUALITY-011-False]",
+          "status": "FAILED",
+          "seconds": 6.435
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.js-function work(value) { eval(value); }\\n-PT-SAST-005-True]",
+          "status": "FAILED",
+          "seconds": 8.133
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.js-function work(value) { eval(value); }\\n-PT-SAST-005-False]",
+          "status": "FAILED",
+          "seconds": 8.119
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.py-import subprocess\\ndef work(command):\\n    subprocess.run(command, shell=True)\\n-PT-SAST-002-True]",
+          "status": "FAILED",
+          "seconds": 6.594
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.py-import subprocess\\ndef work(command):\\n    subprocess.run(command, shell=True)\\n-PT-SAST-002-False]",
+          "status": "FAILED",
+          "seconds": 7.004
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[compose.yaml-services:\\n  app:\\n    privileged: true\\n-PT-IAC-001-True]",
+          "status": "FAILED",
+          "seconds": 7.638
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[compose.yaml-services:\\n  app:\\n    privileged: true\\n-PT-IAC-001-False]",
+          "status": "FAILED",
+          "seconds": 7.803
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[Dockerfile-FROM ubuntu:latest\\nUSER root\\n-PT-IAC-002-True]",
+          "status": "FAILED",
+          "seconds": 8.624
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[Dockerfile-FROM ubuntu:latest\\nUSER root\\n-PT-IAC-002-False]",
+          "status": "FAILED",
+          "seconds": 8.305
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_actual_metric_regression_is_visible_across_layout_change[True]",
+          "status": "FAILED",
+          "seconds": 7.225
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_actual_metric_regression_is_visible_across_layout_change[False]",
+          "status": "FAILED",
+          "seconds": 11.053
+        }
+      ]
+    },
+    "regression": {
+      "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-regression.xml",
+      "sha256": "a52a115a9dbdda82b842714df5d986a8fe7dab09c9ce7540eb0754d3b455fd14",
+      "counts": {
+        "PASSED": 101,
+        "FAILED": 0,
+        "ERROR": 0,
+        "SKIPPED": 0
+      },
+      "seconds_xml": 647.554,
+      "source_scope": "Intermediate implementation, before final counter/replay fixes; not final-current-source coverage.",
+      "cases": [
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.py-def work(items=[]):\\n    return items\\n-PT-QUALITY-011-True]",
+          "status": "PASSED",
+          "seconds": 36.783
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.py-def work(items=[]):\\n    return items\\n-PT-QUALITY-011-False]",
+          "status": "PASSED",
+          "seconds": 36.735
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.js-function work(value) { eval(value); }\\n-PT-SAST-005-True]",
+          "status": "PASSED",
+          "seconds": 37.87
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.js-function work(value) { eval(value); }\\n-PT-SAST-005-False]",
+          "status": "PASSED",
+          "seconds": 33.524
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.py-import subprocess\\ndef work(command):\\n    subprocess.run(command, shell=True)\\n-PT-SAST-002-True]",
+          "status": "PASSED",
+          "seconds": 35.109
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.py-import subprocess\\ndef work(command):\\n    subprocess.run(command, shell=True)\\n-PT-SAST-002-False]",
+          "status": "PASSED",
+          "seconds": 33.066
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[compose.yaml-services:\\n  app:\\n    privileged: true\\n-PT-IAC-001-True]",
+          "status": "PASSED",
+          "seconds": 34.235
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[compose.yaml-services:\\n  app:\\n    privileged: true\\n-PT-IAC-001-False]",
+          "status": "PASSED",
+          "seconds": 18.967
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[Dockerfile-FROM ubuntu:latest\\nUSER root\\n-PT-IAC-002-True]",
+          "status": "PASSED",
+          "seconds": 9.832
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[Dockerfile-FROM ubuntu:latest\\nUSER root\\n-PT-IAC-002-False]",
+          "status": "PASSED",
+          "seconds": 13.546
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.ts-function work(value: string) { eval(value); }\\n-PT-SAST-005-True]",
+          "status": "PASSED",
+          "seconds": 40.734
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.ts-function work(value: string) { eval(value); }\\n-PT-SAST-005-False]",
+          "status": "PASSED",
+          "seconds": 17.294
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[App.java-class App { void work() { try { run(); } catch(Exception error) {} } }\\n-PT-QUALITY-006-True]",
+          "status": "PASSED",
+          "seconds": 8.378
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[App.java-class App { void work() { try { run(); } catch(Exception error) {} } }\\n-PT-QUALITY-006-False]",
+          "status": "PASSED",
+          "seconds": 9.123
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.py-api_key = 'owned-fixture-credential-123456789012345'\\n-PT-SECRET-001-True]",
+          "status": "PASSED",
+          "seconds": 6.686
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.py-api_key = 'owned-fixture-credential-123456789012345'\\n-PT-SECRET-001-False]",
+          "status": "PASSED",
+          "seconds": 6.515
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_actual_metric_regression_is_visible_across_layout_change[True]",
+          "status": "PASSED",
+          "seconds": 6.731
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_actual_metric_regression_is_visible_across_layout_change[False]",
+          "status": "PASSED",
+          "seconds": 6.724
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_quality_resolution_introduction_context_and_reopening[True]",
+          "status": "PASSED",
+          "seconds": 11.299
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_quality_resolution_introduction_context_and_reopening[False]",
+          "status": "PASSED",
+          "seconds": 12.347
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unresolved_provenance_does_not_establish_introduction_or_resolution",
+          "status": "PASSED",
+          "seconds": 6.943
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_severity_profile_change_keeps_concept_and_invalidates_review_context",
+          "status": "PASSED",
+          "seconds": 6.703
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_ambiguous_and_unsupported_native_identities_are_not_verified_transitions[False]",
+          "status": "PASSED",
+          "seconds": 7.087
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_ambiguous_and_unsupported_native_identities_are_not_verified_transitions[True]",
+          "status": "PASSED",
+          "seconds": 6.86
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_real_history_and_quality_api_keep_old_paths_and_tenant_scope",
+          "status": "PASSED",
+          "seconds": 9.194
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_native_history_private_replay_and_duplicate_delivery[CORRELATION]",
+          "status": "PASSED",
+          "seconds": 9.769
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_native_history_private_replay_and_duplicate_delivery[POLICY]",
+          "status": "PASSED",
+          "seconds": 9.535
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_published_public_paths_preserve_identity_and_real_drift[True]",
+          "status": "PASSED",
+          "seconds": 16.977
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_published_public_paths_preserve_identity_and_real_drift[False]",
+          "status": "PASSED",
+          "seconds": 18.099
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch0-paths0]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch1-paths1]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch2-paths2]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch3-paths3]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch4-paths4]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch5-paths5]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_relative_basis_and_unknown_claim_schemas_do_not_alias_literal_git_paths",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_malformed_historical_provenance_reports_partial_without_inventing_removal",
+          "status": "PASSED",
+          "seconds": 6.746
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_inventory_scope_cannot_supply_a_relative_path_marker",
+          "status": "PASSED",
+          "seconds": 0.23
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_existing_contradiction_finding_is_not_new_on_layout_change",
+          "status": "PASSED",
+          "seconds": 9.352
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_legacy_continuity_survives_private_stage_restart[CLAIMS]",
+          "status": "PASSED",
+          "seconds": 10.407
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_legacy_continuity_survives_private_stage_restart[CORRELATION]",
+          "status": "PASSED",
+          "seconds": 10.191
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[http://github.com/a/b]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://evil.example/a/b]",
+          "status": "PASSED",
+          "seconds": 0.002
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com@127.0.0.1/a/b]",
+          "status": "PASSED",
+          "seconds": 0.002
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com/a/b?token=bad]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com/a/b#ref]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com/a/b/tree/main]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com/a/%2e%2e]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_url_rejects_unsupported_or_unsafe_inputs[https://github.com:443/a/b]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[../main]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[refs//main]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[main@{1}]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[main\\\\x]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[bad ref]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[main:evil]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_ref_validation[x.lock]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_archive_paths_are_pinned_and_legacy_hashes_compare_by_repo_path",
+          "status": "PASSED",
+          "seconds": 0.0
+        },
+        {
+          "id": "tests.test_public_github::test_public_resolution_is_exact_and_no_app_credentials_required",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_provider_errors_and_redirects_are_actionable[patch0-PUBLIC_GITHUB_PRIVATE]",
+          "status": "PASSED",
+          "seconds": 0.002
+        },
+        {
+          "id": "tests.test_public_github::test_provider_errors_and_redirects_are_actionable[patch1-PUBLIC_GITHUB_REDIRECT]",
+          "status": "PASSED",
+          "seconds": 0.002
+        },
+        {
+          "id": "tests.test_public_github::test_provider_errors_and_redirects_are_actionable[patch2-PUBLIC_GITHUB_RATE_LIMIT]",
+          "status": "PASSED",
+          "seconds": 0.002
+        },
+        {
+          "id": "tests.test_public_github::test_provider_errors_and_redirects_are_actionable[patch3-PUBLIC_GITHUB_UNAVAILABLE]",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_public_github::test_public_api_continuation_compares_pinned_snapshots_and_preserves_tenant_scope",
+          "status": "PASSED",
+          "seconds": 13.815
+        },
+        {
+          "id": "tests.test_public_github::test_public_explicit_base_remains_selected_when_a_newer_snapshot_exists",
+          "status": "PASSED",
+          "seconds": 2.819
+        },
+        {
+          "id": "tests.test_finding_identity::test_structural_anchor_formatting_movement_context_and_duplicates",
+          "status": "PASSED",
+          "seconds": 0.08
+        },
+        {
+          "id": "tests.test_finding_identity::test_identity_rename_review_context_resolution_reopening_and_authorization",
+          "status": "PASSED",
+          "seconds": 4.453
+        },
+        {
+          "id": "tests.test_finding_identity::test_copy_is_not_rename_and_ambiguous_matches_do_not_inherit_reviews",
+          "status": "PASSED",
+          "seconds": 3.09
+        },
+        {
+          "id": "tests.test_finding_identity::test_native_structural_anchor_survives_comments_and_line_movement[app.js-function work(value) { eval(value); }-PT-SAST-005]",
+          "status": "PASSED",
+          "seconds": 1.581
+        },
+        {
+          "id": "tests.test_finding_identity::test_native_structural_anchor_survives_comments_and_line_movement[app.ts-function work(value: string) { eval(value); }-PT-SAST-005]",
+          "status": "PASSED",
+          "seconds": 1.463
+        },
+        {
+          "id": "tests.test_finding_identity::test_native_structural_anchor_survives_comments_and_line_movement[App.java-class App { void work() { try { run(); } catch(Exception error) {} } }-PT-QUALITY-006]",
+          "status": "PASSED",
+          "seconds": 2.081
+        },
+        {
+          "id": "tests.test_finding_identity::test_native_structural_anchor_survives_comments_and_line_movement[app.py-import subprocess\\ndef work(command):\\n    subprocess.run(\\n        command,\\n        shell=True\\n    )\\n-PT-SAST-002]",
+          "status": "PASSED",
+          "seconds": 0.052
+        },
+        {
+          "id": "tests.test_finding_identity::test_native_structural_anchor_survives_comments_and_line_movement[compose.yaml-services:\\n  app:\\n    privileged: true\\n-PT-IAC-001]",
+          "status": "PASSED",
+          "seconds": 1.552
+        },
+        {
+          "id": "tests.test_finding_identity::test_native_structural_anchor_survives_comments_and_line_movement[Dockerfile-FROM ubuntu:latest\\nUSER root\\n-PT-IAC-002]",
+          "status": "PASSED",
+          "seconds": 1.165
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_uses_only_scoped_positive_configuration[resource \"aws_s3_bucket\" \"production\" { acl = \"public-read\" }-CONTRADICTED-True]",
+          "status": "PASSED",
+          "seconds": 0.579
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_uses_only_scoped_positive_configuration[resource \"aws_s3_bucket\" \"production\" { acl = \"private\" }-UNVERIFIED-False]",
+          "status": "PASSED",
+          "seconds": 0.575
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_uses_only_scoped_positive_configuration[resource \"aws_s3_bucket\" \"development\" { acl = \"public-read\" }-UNVERIFIED-False]",
+          "status": "PASSED",
+          "seconds": 0.62
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_uses_only_scoped_positive_configuration[# resource \"aws_s3_bucket\" \"production\" { acl = \"public-read\" }-UNVERIFIED-False]",
+          "status": "PASSED",
+          "seconds": 0.667
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_ignores_markdown_code_examples[~~~text\\nProduction storage is private.\\n~~~\\n]",
+          "status": "PASSED",
+          "seconds": 0.677
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_ignores_markdown_code_examples[````text\\nProduction storage is private.\\n```\\n~~~\\nProduction storage is private.\\n````\\n]",
+          "status": "PASSED",
+          "seconds": 0.837
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_ignores_markdown_code_examples[    Production storage is private.\\n]",
+          "status": "PASSED",
+          "seconds": 0.614
+        },
+        {
+          "id": "tests.test_configuration_drift::test_storage_privacy_resumes_after_a_matching_markdown_fence",
+          "status": "PASSED",
+          "seconds": 0.622
+        },
+        {
+          "id": "tests.test_configuration_drift::test_captured_storage_configuration_drift_preserves_source_scope_and_tenant_isolation",
+          "status": "PASSED",
+          "seconds": 4.498
+        },
+        {
+          "id": "tests.test_engineering_changes::test_correlated_changes_use_explicit_baseline_graph_and_authorized_history",
+          "status": "PASSED",
+          "seconds": 5.64
+        },
+        {
+          "id": "tests.test_engineering_changes::test_claim_transitions_and_model_reevaluation_have_distinct_priority",
+          "status": "PASSED",
+          "seconds": 4.686
+        },
+        {
+          "id": "tests.test_code_quality::test_history_movement_reviews_resolution_reopen_and_rename",
+          "status": "PASSED",
+          "seconds": 3.895
+        },
+        {
+          "id": "tests.test_code_quality::test_worsened_existing_complexity_is_new_code_and_model_upgrade_is_not_resolution",
+          "status": "PASSED",
+          "seconds": 3.52
+        },
+        {
+          "id": "tests.test_code_quality::test_authorized_profiles_pagination_reports_gate_and_sarif",
+          "status": "PASSED",
+          "seconds": 3.326
+        },
+        {
+          "id": "tests.test_quality_spill::test_metric_owner_index_preserves_order_ties_annotations_and_encryption",
+          "status": "PASSED",
+          "seconds": 0.004
+        },
+        {
+          "id": "tests.test_quality_spill::test_derived_output_owner_checks_scope_and_closes_both_vectors",
+          "status": "PASSED",
+          "seconds": 0.002
+        },
+        {
+          "id": "tests.test_quality_spill::test_metric_owner_index_rejects_path_substitution",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_quality_spill::test_spooled_quality_preserves_complete_output_tokens_gate_and_hotspots",
+          "status": "PASSED",
+          "seconds": 0.026
+        },
+        {
+          "id": "tests.test_quality_spill::test_failed_quality_build_closes_new_outputs_without_mutating_input",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_quality_spill::test_quality_checkpoint_cancellation_propagates_without_partial_output",
+          "status": "PASSED",
+          "seconds": 0.001
+        },
+        {
+          "id": "tests.test_quality_spill::test_post_analysis_failure_closes_outputs_and_replays_complete_checkpoint",
+          "status": "PASSED",
+          "seconds": 4.085
+        },
+        {
+          "id": "tests.test_quality_spill::test_computation_checks_leave_queue_unlocked_and_observe_cancellation",
+          "status": "PASSED",
+          "seconds": 0.318
+        },
+        {
+          "id": "tests.test_generations::test_final_promotion_rejects_cancellation_replacement_and_access_revocation[CANCELLED]",
+          "status": "PASSED",
+          "seconds": 5.167
+        },
+        {
+          "id": "tests.test_generations::test_final_promotion_rejects_cancellation_replacement_and_access_revocation[REPLACED]",
+          "status": "PASSED",
+          "seconds": 5.122
+        },
+        {
+          "id": "tests.test_generations::test_final_promotion_rejects_cancellation_replacement_and_access_revocation[REVOKED]",
+          "status": "PASSED",
+          "seconds": 5.114
+        },
+        {
+          "id": "tests.test_generations::test_public_api_readers_never_return_unpublished_snapshot_or_source",
+          "status": "PASSED",
+          "seconds": 7.034
+        },
+        {
+          "id": "tests.test_generations::test_final_commit_failure_or_lost_acknowledgement_is_consistent[False]",
+          "status": "PASSED",
+          "seconds": 5.081
+        },
+        {
+          "id": "tests.test_generations::test_final_commit_failure_or_lost_acknowledgement_is_consistent[True]",
+          "status": "PASSED",
+          "seconds": 5.073
+        }
+      ]
+    },
+    "uncertain": {
+      "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-uncertain.xml",
+      "sha256": "39ca01ea1752645d9a84d8098915bdc6a74054af73a89a67dada38bfa73bf62e",
+      "counts": {
+        "PASSED": 2,
+        "FAILED": 0,
+        "ERROR": 0,
+        "SKIPPED": 0
+      },
+      "seconds_xml": 71.115,
+      "source_scope": "Reproduction/intermediate validation; not final source.",
+      "cases": [
+        {
+          "id": "tests.test_native_history_uncertain_layouts::test_uncertain_stored_layout_does_not_verify_history[MISSING_PROVENANCE]",
+          "status": "PASSED",
+          "seconds": 35.127
+        },
+        {
+          "id": "tests.test_native_history_uncertain_layouts::test_uncertain_stored_layout_does_not_verify_history[MIXED_ROOTS]",
+          "status": "PASSED",
+          "seconds": 35.375
+        }
+      ]
+    },
+    "unknown-red": {
+      "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-unknown-red.xml",
+      "sha256": "289d2b249b59f6b14933adcee7c1fb4414248d2d756fd99da5a63f4dbd466575",
+      "counts": {
+        "PASSED": 0,
+        "FAILED": 1,
+        "ERROR": 0,
+        "SKIPPED": 0
+      },
+      "seconds_xml": 6.277,
+      "source_scope": "Reproduction/intermediate validation; not final source.",
+      "cases": [
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unresolved_provenance_does_not_establish_introduction_or_resolution",
+          "status": "FAILED",
+          "seconds": 5.952
+        }
+      ]
+    },
+    "current": {
+      "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current.xml",
+      "sha256": "160472443d567ef90970eda2a179e476b7bf8f7b8fb751e171a72702516028f1",
+      "counts": {
+        "PASSED": 59,
+        "FAILED": 0,
+        "ERROR": 0,
+        "SKIPPED": 0
+      },
+      "seconds_xml": 665.683,
+      "seconds_console": 665.75,
+      "exit_code": 0,
+      "warnings": 1,
+      "source_scope": "Final implementation and recorded 13 milestone-source hashes; all unchanged after run.",
+      "cases": [
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.py-def work(items=[]):\\n    return items\\n-PT-QUALITY-011-True]",
+          "status": "PASSED",
+          "seconds": 6.324
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.py-def work(items=[]):\\n    return items\\n-PT-QUALITY-011-False]",
+          "status": "PASSED",
+          "seconds": 6.447
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.js-function work(value) { eval(value); }\\n-PT-SAST-005-True]",
+          "status": "PASSED",
+          "seconds": 8.282
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.js-function work(value) { eval(value); }\\n-PT-SAST-005-False]",
+          "status": "PASSED",
+          "seconds": 8.867
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.py-import subprocess\\ndef work(command):\\n    subprocess.run(command, shell=True)\\n-PT-SAST-002-True]",
+          "status": "PASSED",
+          "seconds": 7.272
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.py-import subprocess\\ndef work(command):\\n    subprocess.run(command, shell=True)\\n-PT-SAST-002-False]",
+          "status": "PASSED",
+          "seconds": 7.993
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[compose.yaml-services:\\n  app:\\n    privileged: true\\n-PT-IAC-001-True]",
+          "status": "PASSED",
+          "seconds": 8.58
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[compose.yaml-services:\\n  app:\\n    privileged: true\\n-PT-IAC-001-False]",
+          "status": "PASSED",
+          "seconds": 8.106
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[Dockerfile-FROM ubuntu:latest\\nUSER root\\n-PT-IAC-002-True]",
+          "status": "PASSED",
+          "seconds": 8.661
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[Dockerfile-FROM ubuntu:latest\\nUSER root\\n-PT-IAC-002-False]",
+          "status": "PASSED",
+          "seconds": 8.453
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.ts-function work(value: string) { eval(value); }\\n-PT-SAST-005-True]",
+          "status": "PASSED",
+          "seconds": 8.627
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.ts-function work(value: string) { eval(value); }\\n-PT-SAST-005-False]",
+          "status": "PASSED",
+          "seconds": 8.745
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[App.java-class App { void work() { try { run(); } catch(Exception error) {} } }\\n-PT-QUALITY-006-True]",
+          "status": "PASSED",
+          "seconds": 8.761
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[App.java-class App { void work() { try { run(); } catch(Exception error) {} } }\\n-PT-QUALITY-006-False]",
+          "status": "PASSED",
+          "seconds": 8.897
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.py-api_key = 'owned-fixture-credential-123456789012345'\\n-PT-SECRET-001-True]",
+          "status": "PASSED",
+          "seconds": 6.856
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unchanged_native_findings_in_distinct_nested_files[app.py-api_key = 'owned-fixture-credential-123456789012345'\\n-PT-SECRET-001-False]",
+          "status": "PASSED",
+          "seconds": 6.973
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_actual_metric_regression_is_visible_across_layout_change[True]",
+          "status": "PASSED",
+          "seconds": 6.943
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_actual_metric_regression_is_visible_across_layout_change[False]",
+          "status": "PASSED",
+          "seconds": 6.682
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_quality_resolution_introduction_context_and_reopening[True]",
+          "status": "PASSED",
+          "seconds": 11.798
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_quality_resolution_introduction_context_and_reopening[False]",
+          "status": "PASSED",
+          "seconds": 11.295
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_unresolved_provenance_does_not_establish_introduction_or_resolution",
+          "status": "PASSED",
+          "seconds": 7.565
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_severity_profile_change_keeps_concept_and_invalidates_review_context",
+          "status": "PASSED",
+          "seconds": 7.138
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_ambiguous_and_unsupported_native_identities_are_not_verified_transitions[False]",
+          "status": "PASSED",
+          "seconds": 7.286
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_ambiguous_and_unsupported_native_identities_are_not_verified_transitions[True]",
+          "status": "PASSED",
+          "seconds": 7.318
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_real_history_and_quality_api_keep_old_paths_and_tenant_scope",
+          "status": "PASSED",
+          "seconds": 9.647
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_native_history_private_replay_and_duplicate_delivery[CORRELATION]",
+          "status": "PASSED",
+          "seconds": 7.555
+        },
+        {
+          "id": "tests.test_native_snapshot_continuity::test_native_history_private_replay_and_duplicate_delivery[POLICY]",
+          "status": "PASSED",
+          "seconds": 8.292
+        },
+        {
+          "id": "tests.test_native_history_uncertain_layouts::test_uncertain_stored_layout_does_not_verify_history[MISSING_PROVENANCE]",
+          "status": "PASSED",
+          "seconds": 8.016
+        },
+        {
+          "id": "tests.test_native_history_uncertain_layouts::test_uncertain_stored_layout_does_not_verify_history[MIXED_ROOTS]",
+          "status": "PASSED",
+          "seconds": 7.887
+        },
+        {
+          "id": "tests.test_native_history_recovery::test_unresolved_native_replay_retains_partial_status_and_explanation[CORRELATION]",
+          "status": "PASSED",
+          "seconds": 7.844
+        },
+        {
+          "id": "tests.test_native_history_recovery::test_unresolved_native_replay_retains_partial_status_and_explanation[POLICY]",
+          "status": "PASSED",
+          "seconds": 26.041
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_published_public_paths_preserve_identity_and_real_drift[True]",
+          "status": "PASSED",
+          "seconds": 65.455
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_published_public_paths_preserve_identity_and_real_drift[False]",
+          "status": "PASSED",
+          "seconds": 67.013
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch0-paths0]",
+          "status": "PASSED",
+          "seconds": 0.003
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch1-paths1]",
+          "status": "PASSED",
+          "seconds": 0.002
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch2-paths2]",
+          "status": "PASSED",
+          "seconds": 0.002
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch3-paths3]",
+          "status": "PASSED",
+          "seconds": 0.002
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch4-paths4]",
+          "status": "PASSED",
+          "seconds": 0.003
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_ambiguous_public_layouts_never_strip_or_merge[patch5-paths5]",
+          "status": "PASSED",
+          "seconds": 0.003
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_relative_basis_and_unknown_claim_schemas_do_not_alias_literal_git_paths",
+          "status": "PASSED",
+          "seconds": 0.002
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_malformed_historical_provenance_reports_partial_without_inventing_removal",
+          "status": "PASSED",
+          "seconds": 24.325
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_inventory_scope_cannot_supply_a_relative_path_marker",
+          "status": "PASSED",
+          "seconds": 0.703
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_existing_contradiction_finding_is_not_new_on_layout_change",
+          "status": "PASSED",
+          "seconds": 33.025
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_legacy_continuity_survives_private_stage_restart[CLAIMS]",
+          "status": "PASSED",
+          "seconds": 36.13
+        },
+        {
+          "id": "tests.test_public_snapshot_continuity::test_legacy_continuity_survives_private_stage_restart[CORRELATION]",
+          "status": "PASSED",
+          "seconds": 34.939
+        },
+        {
+          "id": "tests.test_quality_spill::test_metric_owner_index_preserves_order_ties_annotations_and_encryption",
+          "status": "PASSED",
+          "seconds": 0.012
+        },
+        {
+          "id": "tests.test_quality_spill::test_derived_output_owner_checks_scope_and_closes_both_vectors",
+          "status": "PASSED",
+          "seconds": 0.007
+        },
+        {
+          "id": "tests.test_quality_spill::test_metric_owner_index_rejects_path_substitution",
+          "status": "PASSED",
+          "seconds": 0.007
+        },
+        {
+          "id": "tests.test_quality_spill::test_spooled_quality_preserves_complete_output_tokens_gate_and_hotspots",
+          "status": "PASSED",
+          "seconds": 0.116
+        },
+        {
+          "id": "tests.test_quality_spill::test_failed_quality_build_closes_new_outputs_without_mutating_input",
+          "status": "PASSED",
+          "seconds": 0.006
+        },
+        {
+          "id": "tests.test_quality_spill::test_quality_checkpoint_cancellation_propagates_without_partial_output",
+          "status": "PASSED",
+          "seconds": 0.005
+        },
+        {
+          "id": "tests.test_quality_spill::test_post_analysis_failure_closes_outputs_and_replays_complete_checkpoint",
+          "status": "PASSED",
+          "seconds": 15.325
+        },
+        {
+          "id": "tests.test_quality_spill::test_computation_checks_leave_queue_unlocked_and_observe_cancellation",
+          "status": "PASSED",
+          "seconds": 0.776
+        },
+        {
+          "id": "tests.test_generations::test_final_promotion_rejects_cancellation_replacement_and_access_revocation[CANCELLED]",
+          "status": "PASSED",
+          "seconds": 18.556
+        },
+        {
+          "id": "tests.test_generations::test_final_promotion_rejects_cancellation_replacement_and_access_revocation[REPLACED]",
+          "status": "PASSED",
+          "seconds": 18.546
+        },
+        {
+          "id": "tests.test_generations::test_final_promotion_rejects_cancellation_replacement_and_access_revocation[REVOKED]",
+          "status": "PASSED",
+          "seconds": 19.119
+        },
+        {
+          "id": "tests.test_generations::test_public_api_readers_never_return_unpublished_snapshot_or_source",
+          "status": "PASSED",
+          "seconds": 23.465
+        },
+        {
+          "id": "tests.test_generations::test_final_commit_failure_or_lost_acknowledgement_is_consistent[False]",
+          "status": "PASSED",
+          "seconds": 18.631
+        },
+        {
+          "id": "tests.test_generations::test_final_commit_failure_or_lost_acknowledgement_is_consistent[True]",
+          "status": "PASSED",
+          "seconds": 20.045
+        }
+      ]
+    }
+  },
+  "frontend_build": {
+    "command": "npm run build",
+    "cwd": "frontend",
+    "exit_code": 0,
+    "routes_prerendered": 42,
+    "source_scope": "Frontend unchanged since this recorded execution; not Linux/browser deployment qualification."
+  },
+  "runtime": {
+    "platform": "Windows local; owned disposable SQLite fixtures",
+    "python": "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+    "warning": "Starlette/httpx deprecation warning; no skipped backend cases in retained selections."
+  },
+  "defects": [
+    {
+      "failure": "Native identity reset and hidden cyclomatic regression across archive layout",
+      "reproduction": "red: 12 failures"
+    },
+    {
+      "failure": "Unknown provenance history still allowed quality PASS",
+      "reproduction": "unknown-red: 1 failure"
+    },
+    {
+      "failure": "Final published quality counters disagreed with final finding deltas",
+      "reproduction": "Read-only mixed-root fixture: ANALYZER_BASELINE 1 / EXISTING 1 vs actual ANALYZER_BASELINE 2; final Counter assertion added."
+    },
+    {
+      "failure": "Stage replay lost uncertainty warning and could publish COMPLETED",
+      "reproduction": "recovery-red: 2 failures; recovery-fixed: 2 passes"
+    }
+  ],
+  "invariants": [
+    "Immutable BASE data and original paths/citations retained",
+    "Scope: provenance, full SHA, repository, tenant; no basename/URL-decoding matching",
+    "Unproven native transitions remain NOT_OBSERVED / ANALYZER_BASELINE / REVIEW_REQUIRED",
+    "Existing receipt formats, admission/resource guards and cryptographic boundaries unchanged",
+    "No migrations, commits, pushes, branch/HEAD changes or remote workflows"
+  ],
+  "tested_rules": [
+    "PT-QUALITY-011 Python",
+    "PT-QUALITY-006 Java",
+    "PT-SAST-005 JavaScript/TypeScript",
+    "PT-SAST-002 Python",
+    "PT-SECRET-001 Python owned synthetic credential",
+    "PT-IAC-001 Compose",
+    "PT-IAC-002 Dockerfile"
+  ],
+  "not_qualified_cases": [
+    "Entire native registry and all language/rule variants",
+    "External CLOUD/SCA/LICENSE/vendor identities",
+    "Repository rename equivalence",
+    "Cross-version in-flight semantic receipt upgrades",
+    "Live GitHub provider and historical-provider browser",
+    "Current-tree Linux/Docker and PostgreSQL/Redis/Celery",
+    "Full pinned SCALE-001 cold/warm/incremental/cancellation/exhaustion/recovery matrix",
+    "Commercial release accuracy/complete customer corpus"
+  ],
+  "gates": {
+    "VERIFIED": [
+      "Owned persisted native/quality continuity for tested families",
+      "Genuine changes/reopen/metric regressions in owned corpus",
+      "Tenant/API denial and selected publication guards",
+      "Component tests and controlled browser presentation",
+      "Final 59-case backend selection: no failures/errors/skips",
+      "Read-only fixture SQLite/FK/pointer integrity and published delta-counter agreement"
+    ],
+    "NOT_RUN": [
+      "Entire native registry and all language/rule variants",
+      "External CLOUD/SCA/LICENSE/vendor identities",
+      "Repository rename equivalence",
+      "Cross-version in-flight semantic receipt upgrades",
+      "Live GitHub provider and historical-provider browser",
+      "Current-tree Linux/Docker and PostgreSQL/Redis/Celery",
+      "Full pinned SCALE-001 cold/warm/incremental/cancellation/exhaustion/recovery matrix",
+      "Commercial release accuracy/complete customer corpus"
+    ],
+    "FAILED": []
+  },
+  "raw_evidence": {
+    "path": "docs/evidence/COMMERCIAL_V1_NATIVE_QUALITY_CONTINUITY_20261031_RAW.json.gz",
+    "sha256": "9141afae84d7c7917967a7fd9e5e83b94eb8ac710b8637dd55a7de05c6e5432e",
+    "scope": "Owned JUnit and frontend/browser reports only. No databases, source blobs, credentials or keys."
+  },
+  "commands": {
+    "regression": "& \"C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe\" -m pytest -q tests/test_native_snapshot_continuity.py tests/test_public_snapshot_continuity.py tests/test_public_github.py tests/test_finding_identity.py tests/test_configuration_drift.py tests/test_engineering_changes.py tests/test_code_quality.py::test_history_movement_reviews_resolution_reopen_and_rename tests/test_code_quality.py::test_worsened_existing_complexity_is_new_code_and_model_upgrade_is_not_resolution tests/test_code_quality.py::test_authorized_profiles_pagination_reports_gate_and_sarif tests/test_quality_spill.py tests/test_generations.py::test_final_promotion_rejects_cancellation_replacement_and_access_revocation tests/test_generations.py::test_public_api_readers_never_return_unpublished_snapshot_or_source tests/test_generations.py::test_final_commit_failure_or_lost_acknowledgement_is_consistent --basetemp C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-regression --junitxml=C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-regression.xml",
+    "final": "& \"C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe\" -m pytest -q tests/test_native_snapshot_continuity.py tests/test_native_history_uncertain_layouts.py tests/test_public_snapshot_continuity.py tests/test_quality_spill.py tests/test_generations.py::test_final_promotion_rejects_cancellation_replacement_and_access_revocation tests/test_generations.py::test_public_api_readers_never_return_unpublished_snapshot_or_source tests/test_generations.py::test_final_commit_failure_or_lost_acknowledgement_is_consistent --basetemp C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-final --junitxml=C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-final.xml",
+    "recovery-red": "& \"C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe\" -m pytest -q tests/test_native_history_recovery.py --basetemp C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-recovery-red --junitxml=C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-recovery-red.xml",
+    "recovery-fixed": "& \"C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe\" -m pytest -q tests/test_native_history_recovery.py --basetemp C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-recovery-fixed --junitxml=C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-recovery-fixed.xml",
+    "current": "& \"C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe\" -m pytest -q tests/test_native_snapshot_continuity.py tests/test_native_history_uncertain_layouts.py tests/test_native_history_recovery.py tests/test_public_snapshot_continuity.py tests/test_quality_spill.py tests/test_generations.py::test_final_promotion_rejects_cancellation_replacement_and_access_revocation tests/test_generations.py::test_public_api_readers_never_return_unpublished_snapshot_or_source tests/test_generations.py::test_final_commit_failure_or_lost_acknowledgement_is_consistent --basetemp C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current --junitxml=C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current.xml",
+    "source_scope_note": "Exact complete command retained for broad/final/replay selections. Other reproduction/intermediate outcomes are retained by individual JUnit identifiers; their full shell invocation was not separately saved."
+  },
+  "checks": [
+    {
+      "command": "ruff check analyzers/code_quality/core.py backend/public_snapshot_paths.py backend/finding_history.py backend/domain.py backend/quality_domain.py backend/engineering_changes.py backend/quality_api.py tests/test_native_snapshot_continuity.py tests/test_native_history_uncertain_layouts.py tests/test_native_history_recovery.py",
+      "exit_code": 0
+    },
+    {
+      "command": "python -m py_compile analyzers/code_quality/core.py backend/public_snapshot_paths.py backend/finding_history.py backend/domain.py backend/quality_domain.py backend/engineering_changes.py backend/quality_api.py tests/test_native_snapshot_continuity.py tests/test_native_history_uncertain_layouts.py tests/test_native_history_recovery.py",
+      "exit_code": 0
+    },
+    {
+      "command": "git diff --check",
+      "exit_code": 0
+    },
+    {
+      "command": "JSON/gzip parse, raw SHA-256 and final source/branch/HEAD verification",
+      "exit_code": 0
+    }
+  ],
+  "source_hashes_match_after_final_tests": true,
+  "milestone_manifest_sha256": "a9c79646cecdae8678b4e9326e1b2fb2c1560f88c99a3e5dacfee0074dfc9946",
+  "database_checks": {
+    "access": "Read-only SQLite URI mode=ro&immutable=1, after pytest completion; owned disposable fixtures only. Intentional STAGING/ABANDONED generations in failure fixtures are retained.",
+    "databases": [
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_actual_metric_regression_0\\source.db",
+        "sha256": "e282c96f49d7dc6dc5294dae10b6a940092759dbf41f8f4e519bb47d24fcfb9d",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "PUBLISHED": 2
+        },
+        "pointer_count": 1,
+        "quality_counter_checks": [
+          {
+            "snapshot_id": "b7575ce4-6118-531d-a527-aafac8c074fe",
+            "recorded": {
+              "INITIAL": 1
+            },
+            "actual": {
+              "INITIAL": 1
+            },
+            "equal": true
+          },
+          {
+            "snapshot_id": "f5f992df-153b-55e2-9616-2ec5a8efe5ad",
+            "recorded": {
+              "EXISTING": 1
+            },
+            "actual": {
+              "EXISTING": 1
+            },
+            "equal": true
+          }
+        ]
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_actual_metric_regression_1\\source.db",
+        "sha256": "724b4310f461daaf6cc9db637509ee43a427d9f5a6db4530dd8691e32707bd31",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "PUBLISHED": 2
+        },
+        "pointer_count": 1,
+        "quality_counter_checks": [
+          {
+            "snapshot_id": "bc794c77-a4dc-594f-b11d-7e120f14a7b7",
+            "recorded": {
+              "INITIAL": 1
+            },
+            "actual": {
+              "INITIAL": 1
+            },
+            "equal": true
+          },
+          {
+            "snapshot_id": "9a087d9a-06f7-5716-a3bb-1507b4396948",
+            "recorded": {
+              "EXISTING": 1
+            },
+            "actual": {
+              "EXISTING": 1
+            },
+            "equal": true
+          }
+        ]
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_ambiguous_and_unsupported0\\source.db",
+        "sha256": "5b44c0b06830bd25b2699ff75e16446565b6cb590bb99b6782fc38d102139782",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "PUBLISHED": 2
+        },
+        "pointer_count": 1,
+        "quality_counter_checks": [
+          {
+            "snapshot_id": "a8f5cde5-d002-51db-b989-6c4c36b1c614",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          },
+          {
+            "snapshot_id": "31e6ce72-c6f9-551a-afc9-47d6dcd67b94",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          }
+        ]
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_ambiguous_and_unsupported1\\source.db",
+        "sha256": "6f91477af5f0aef012dde24f19c88ebedc11652ddccb264577b1bec254222951",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "PUBLISHED": 2
+        },
+        "pointer_count": 1,
+        "quality_counter_checks": [
+          {
+            "snapshot_id": "4d309dff-5d9a-5192-a4ea-4c1f0f78b669",
+            "recorded": {
+              "INITIAL": 1
+            },
+            "actual": {
+              "INITIAL": 1
+            },
+            "equal": true
+          },
+          {
+            "snapshot_id": "4938ac45-2d5d-5c71-8b48-9e509972fc25",
+            "recorded": {
+              "ANALYZER_BASELINE": 1
+            },
+            "actual": {
+              "ANALYZER_BASELINE": 1
+            },
+            "equal": true
+          }
+        ]
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_computation_checks_leave_0\\source.db",
+        "sha256": "6abc67036ecbb02c26fb872ff92e78cbf634d23cfedd181d86f056c278d33e79",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {},
+        "pointer_count": 0,
+        "quality_counter_checks": []
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_existing_contradiction_fi0\\source.db",
+        "sha256": "75421e9d7b333efc465c8f95ced10d07d3ba0dae26f5308f1d754b021b07d31c",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "PUBLISHED": 2
+        },
+        "pointer_count": 1,
+        "quality_counter_checks": [
+          {
+            "snapshot_id": "e8bb4e3e-df84-5160-abb1-0edee0f96115",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          },
+          {
+            "snapshot_id": "73d69025-5f3e-5bfb-a9a0-583e47d090f4",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          }
+        ]
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_final_commit_failure_or_l0\\source.db",
+        "sha256": "29467429d8b6a8367c06360dbd878ef0f6eb3655a26b0db9eebab536bdecadb1",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "VALIDATED": 1
+        },
+        "pointer_count": 0,
+        "quality_counter_checks": []
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_final_commit_failure_or_l1\\source.db",
+        "sha256": "1b0a20b8975a8e808e222c1bbbbcf0e8f06d0a34efc35e45e7364897baa92894",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "PUBLISHED": 1
+        },
+        "pointer_count": 1,
+        "quality_counter_checks": [
+          {
+            "snapshot_id": "1ff9d715-1c32-59ed-b90c-10820a0f59f9",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          }
+        ]
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_final_promotion_rejects_c0\\source.db",
+        "sha256": "d20c6386651246025990a3f853fac602a1ac1e6dbca9f1b76cda78adcf66b29d",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "VALIDATED": 1
+        },
+        "pointer_count": 0,
+        "quality_counter_checks": []
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_final_promotion_rejects_c1\\source.db",
+        "sha256": "9cc6be3e5f476036579567b048752ca72894e6979a129ffbc7fb390dc8c54377",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "VALIDATED": 1
+        },
+        "pointer_count": 0,
+        "quality_counter_checks": []
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_final_promotion_rejects_c2\\source.db",
+        "sha256": "060af3fe1bf1ba059faaa90cace61e698013510d7358d0e1d2a78b366a2745a9",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "VALIDATED": 1
+        },
+        "pointer_count": 0,
+        "quality_counter_checks": []
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_inventory_scope_cannot_su0\\source.db",
+        "sha256": "6895f21a094cdb6032604a89e4417fa676af78619930ff1065432d3196874a9b",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {},
+        "pointer_count": 0,
+        "quality_counter_checks": []
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_legacy_continuity_survive0\\source.db",
+        "sha256": "c4f74856f52f15dc88da479ba109c784c3f7c12e898cbd65be6e7240e3fc47ee",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "PUBLISHED": 2
+        },
+        "pointer_count": 1,
+        "quality_counter_checks": [
+          {
+            "snapshot_id": "8cef2fc7-eb50-514e-8c22-4b56343f8149",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          },
+          {
+            "snapshot_id": "e97b25bc-6115-5571-b8cd-da401ee4fcf1",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          }
+        ]
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_legacy_continuity_survive1\\source.db",
+        "sha256": "7122024845d92d125fe23a11cfedb1895cfcdf667cb1de122cd7778ad121397d",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "PUBLISHED": 2
+        },
+        "pointer_count": 1,
+        "quality_counter_checks": [
+          {
+            "snapshot_id": "7d4ddf6a-2b77-56f7-904f-3b1c805bd25e",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          },
+          {
+            "snapshot_id": "d1dda1ef-7404-5f11-8fe6-b2f525687b42",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          }
+        ]
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_malformed_historical_prov0\\source.db",
+        "sha256": "349195b1088fff4c0e57f8527fd3799706516e7542e80f05d2e2400a0ff543a7",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "PUBLISHED": 2
+        },
+        "pointer_count": 1,
+        "quality_counter_checks": [
+          {
+            "snapshot_id": "f0743446-617a-54d3-978a-1302808800ef",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          },
+          {
+            "snapshot_id": "0c33b650-8175-5320-8673-f50d78a420a3",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          }
+        ]
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_native_history_private_re0\\source.db",
+        "sha256": "9a62be759d66f125153a114f357a4aca3ef70a6a295df63eb45477b8597eedf6",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "PUBLISHED": 2
+        },
+        "pointer_count": 1,
+        "quality_counter_checks": [
+          {
+            "snapshot_id": "2b9209f2-7915-57cf-b6fe-8b1fcbc0d0c7",
+            "recorded": {
+              "INITIAL": 2
+            },
+            "actual": {
+              "INITIAL": 2
+            },
+            "equal": true
+          },
+          {
+            "snapshot_id": "c510d18d-19a9-5852-8023-5863b9f04d4a",
+            "recorded": {
+              "EXISTING": 2
+            },
+            "actual": {
+              "EXISTING": 2
+            },
+            "equal": true
+          }
+        ]
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_native_history_private_re1\\source.db",
+        "sha256": "6e45373196ee6c32d690dc496895fc94f1ca49f0cda42c738c3a7b5e28d7ec0a",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "PUBLISHED": 2
+        },
+        "pointer_count": 1,
+        "quality_counter_checks": [
+          {
+            "snapshot_id": "0cd65096-bb1c-5047-b11c-1bb42b88afac",
+            "recorded": {
+              "INITIAL": 2
+            },
+            "actual": {
+              "INITIAL": 2
+            },
+            "equal": true
+          },
+          {
+            "snapshot_id": "06e14e88-517c-5eee-804a-be83c4ed5dd7",
+            "recorded": {
+              "EXISTING": 2
+            },
+            "actual": {
+              "EXISTING": 2
+            },
+            "equal": true
+          }
+        ]
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_post_analysis_failure_clo0\\source.db",
+        "sha256": "bcc83c052e0ef168489342bc491d90107a2c711275ec5fd00dc1ea89892c6ce1",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "PUBLISHED": 1
+        },
+        "pointer_count": 1,
+        "quality_counter_checks": [
+          {
+            "snapshot_id": "c992974e-5214-5791-a094-4ea5f7f28e3e",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          }
+        ]
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_published_public_paths_pr0\\source.db",
+        "sha256": "aa5f5a3cdb6dd65ed6be03fee3211dd139deda84cd600deafa2fd3f2fec91cf9",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "PUBLISHED": 4
+        },
+        "pointer_count": 1,
+        "quality_counter_checks": [
+          {
+            "snapshot_id": "20834213-c0c2-50b6-857b-94e502534617",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          },
+          {
+            "snapshot_id": "600c83c4-1b4d-5bb2-ba78-8498ccccdf46",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          },
+          {
+            "snapshot_id": "02e3a3d4-0324-5689-9537-ca69f6030199",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          },
+          {
+            "snapshot_id": "f6c51055-ce26-5ba5-8d97-2a0424495d32",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          }
+        ]
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_published_public_paths_pr1\\source.db",
+        "sha256": "1f6b5284b1f4f5b5cda8e1badd402c8aed775c4df4362ab03896c5c9f1298f56",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "PUBLISHED": 4
+        },
+        "pointer_count": 1,
+        "quality_counter_checks": [
+          {
+            "snapshot_id": "c6c33b79-03b8-5b01-bc1e-5ac6ac298146",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          },
+          {
+            "snapshot_id": "7d953b43-8b28-5cab-9969-fb5346510f2e",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          },
+          {
+            "snapshot_id": "28b85686-7df4-5143-9142-96b8d59a56e9",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          },
+          {
+            "snapshot_id": "5fa545c4-06c1-5551-bb78-9294bfbb0b02",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          }
+        ]
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_quality_resolution_introd0\\source.db",
+        "sha256": "ce75221efcda9efd765a77c0ff783770e871a607fddd53da6a1daf0af0a3414e",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "PUBLISHED": 3
+        },
+        "pointer_count": 1,
+        "quality_counter_checks": [
+          {
+            "snapshot_id": "5d0cc3a4-eb61-532c-ba6e-fd26c7557cdd",
+            "recorded": {
+              "INITIAL": 2
+            },
+            "actual": {
+              "INITIAL": 2
+            },
+            "equal": true
+          },
+          {
+            "snapshot_id": "4a6792bd-2bb7-517d-840d-d71f4975a360",
+            "recorded": {
+              "NEW": 1,
+              "EXISTING": 1
+            },
+            "actual": {
+              "NEW": 1,
+              "EXISTING": 1
+            },
+            "equal": true
+          },
+          {
+            "snapshot_id": "68fb8c28-058f-5f94-ba75-cf8b98145609",
+            "recorded": {
+              "EXISTING": 2,
+              "REOPENED": 1
+            },
+            "actual": {
+              "EXISTING": 2,
+              "REOPENED": 1
+            },
+            "equal": true
+          }
+        ]
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_quality_resolution_introd1\\source.db",
+        "sha256": "a4ba9553072480cfd73315db57115c86a34c4a2d1bcd8b157c066e7f0401c979",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "PUBLISHED": 3
+        },
+        "pointer_count": 1,
+        "quality_counter_checks": [
+          {
+            "snapshot_id": "5dffb757-8038-50f1-8bfb-462c762edada",
+            "recorded": {
+              "INITIAL": 2
+            },
+            "actual": {
+              "INITIAL": 2
+            },
+            "equal": true
+          },
+          {
+            "snapshot_id": "eb3f68ed-209a-518d-ae22-527ae79e8ace",
+            "recorded": {
+              "NEW": 1,
+              "EXISTING": 1
+            },
+            "actual": {
+              "NEW": 1,
+              "EXISTING": 1
+            },
+            "equal": true
+          },
+          {
+            "snapshot_id": "3cb7b850-d85e-513f-9958-f90754236149",
+            "recorded": {
+              "EXISTING": 2,
+              "REOPENED": 1
+            },
+            "actual": {
+              "EXISTING": 2,
+              "REOPENED": 1
+            },
+            "equal": true
+          }
+        ]
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_real_history_and_quality_0\\source.db",
+        "sha256": "6f3c71d1e373429dec334afd887386eb1a8ec8dfd0152b11f723c6fad8aaae1a",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "PUBLISHED": 2
+        },
+        "pointer_count": 1,
+        "quality_counter_checks": [
+          {
+            "snapshot_id": "ae0e7bbe-59f0-5a2a-b929-ec2a2430779a",
+            "recorded": {
+              "INITIAL": 1
+            },
+            "actual": {
+              "INITIAL": 1
+            },
+            "equal": true
+          },
+          {
+            "snapshot_id": "259a31d5-a3a5-5bfd-8e14-43a1d10c1be0",
+            "recorded": {
+              "EXISTING": 1
+            },
+            "actual": {
+              "EXISTING": 1
+            },
+            "equal": true
+          }
+        ]
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_severity_profile_change_k0\\source.db",
+        "sha256": "6c8db0e3d48d80ae7cc4d2b1145aeb421a84efc278b054d5ee1810f692e8beb2",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "PUBLISHED": 2
+        },
+        "pointer_count": 1,
+        "quality_counter_checks": [
+          {
+            "snapshot_id": "3aeebb55-eedc-567b-9958-9c7943e83d18",
+            "recorded": {
+              "INITIAL": 1
+            },
+            "actual": {
+              "INITIAL": 1
+            },
+            "equal": true
+          },
+          {
+            "snapshot_id": "3489a04f-14e7-5ce3-b9e8-fb4cff26e537",
+            "recorded": {
+              "EXISTING": 1
+            },
+            "actual": {
+              "EXISTING": 1
+            },
+            "equal": true
+          }
+        ]
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_uncertain_stored_layout_d0\\source.db",
+        "sha256": "d2aef03b952bb483cf9d17394a9acee9b3c999feec2d83ade29656d779a33897",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "PUBLISHED": 2
+        },
+        "pointer_count": 1,
+        "quality_counter_checks": [
+          {
+            "snapshot_id": "f67a5eae-0fd4-5c0d-a7d5-36ee50753509",
+            "recorded": {
+              "INITIAL": 2
+            },
+            "actual": {
+              "INITIAL": 2
+            },
+            "equal": true
+          },
+          {
+            "snapshot_id": "5703e004-4c07-5e63-9bdf-cee7ed145b02",
+            "recorded": {
+              "ANALYZER_BASELINE": 2
+            },
+            "actual": {
+              "ANALYZER_BASELINE": 2
+            },
+            "equal": true
+          }
+        ]
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_uncertain_stored_layout_d1\\source.db",
+        "sha256": "90394f0297d18ed1d0842f5434205b4c1aa981f197aa02e268ca979343c67da1",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "PUBLISHED": 2
+        },
+        "pointer_count": 1,
+        "quality_counter_checks": [
+          {
+            "snapshot_id": "905d0588-d3df-53cd-ac09-f7c925ef80ec",
+            "recorded": {
+              "INITIAL": 2
+            },
+            "actual": {
+              "INITIAL": 2
+            },
+            "equal": true
+          },
+          {
+            "snapshot_id": "6f2c7592-84ba-525e-b7ff-31cdb4ddbed6",
+            "recorded": {
+              "ANALYZER_BASELINE": 2
+            },
+            "actual": {
+              "ANALYZER_BASELINE": 2
+            },
+            "equal": true
+          }
+        ]
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_unchanged_native_findings0\\source.db",
+        "sha256": "1bb7d59b4d8620ef4cd15ac7fb4a559504ef6232e5307c13ed703c82fc5ea209",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "PUBLISHED": 2
+        },
+        "pointer_count": 1,
+        "quality_counter_checks": [
+          {
+            "snapshot_id": "428fab07-7dfa-597a-8af9-66f2abad24ef",
+            "recorded": {
+              "INITIAL": 2
+            },
+            "actual": {
+              "INITIAL": 2
+            },
+            "equal": true
+          },
+          {
+            "snapshot_id": "277db30a-2dae-5dad-91c4-1a87c8a66aee",
+            "recorded": {
+              "EXISTING": 2
+            },
+            "actual": {
+              "EXISTING": 2
+            },
+            "equal": true
+          }
+        ],
+        "unchanged_metric_values_equal": true,
+        "metric_rows_per_snapshot": [
+          2,
+          2
+        ]
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_unchanged_native_findings1\\source.db",
+        "sha256": "e73df2b3a8b25414aadd0e17bd859a4e959cec844360070623f0b06f675f8451",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "PUBLISHED": 2
+        },
+        "pointer_count": 1,
+        "quality_counter_checks": [
+          {
+            "snapshot_id": "cd76d2fc-7cbd-5058-9737-0f81956b7a0e",
+            "recorded": {
+              "INITIAL": 2
+            },
+            "actual": {
+              "INITIAL": 2
+            },
+            "equal": true
+          },
+          {
+            "snapshot_id": "f06087c5-ccc6-58df-b0ac-58fc4b65d1c3",
+            "recorded": {
+              "EXISTING": 2
+            },
+            "actual": {
+              "EXISTING": 2
+            },
+            "equal": true
+          }
+        ],
+        "unchanged_metric_values_equal": true,
+        "metric_rows_per_snapshot": [
+          2,
+          2
+        ]
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_unchanged_native_findings10\\source.db",
+        "sha256": "f4c3b246cba866264a11a138e98e236016dc4e8a9f8c8f5c4642c01c6d6f0f90",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "PUBLISHED": 2
+        },
+        "pointer_count": 1,
+        "quality_counter_checks": [
+          {
+            "snapshot_id": "c42ccc4c-febb-5f5f-9837-1cd551c97f63",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          },
+          {
+            "snapshot_id": "01b566d3-c7b5-5735-a372-2f4bf09fc3ba",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          }
+        ],
+        "unchanged_metric_values_equal": true,
+        "metric_rows_per_snapshot": [
+          2,
+          2
+        ]
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_unchanged_native_findings11\\source.db",
+        "sha256": "250e03558f1d91daceed40b3f8c951cd975178f6c482b25db32f862a4e20de29",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "PUBLISHED": 2
+        },
+        "pointer_count": 1,
+        "quality_counter_checks": [
+          {
+            "snapshot_id": "045fef31-ac01-5f66-9c78-1dc675843df4",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          },
+          {
+            "snapshot_id": "9012ca37-e60e-5ac1-b087-d2544567cde4",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          }
+        ],
+        "unchanged_metric_values_equal": true,
+        "metric_rows_per_snapshot": [
+          2,
+          2
+        ]
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_unchanged_native_findings12\\source.db",
+        "sha256": "a69ee760edc3bd012d16a735808b1cfac79cc8a279b1572974a858531d729205",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "PUBLISHED": 2
+        },
+        "pointer_count": 1,
+        "quality_counter_checks": [
+          {
+            "snapshot_id": "77c307bb-340a-5fc1-a169-0829a5d99f0d",
+            "recorded": {
+              "INITIAL": 2
+            },
+            "actual": {
+              "INITIAL": 2
+            },
+            "equal": true
+          },
+          {
+            "snapshot_id": "45abdb42-1329-5d35-af71-78897b0d6814",
+            "recorded": {
+              "EXISTING": 2
+            },
+            "actual": {
+              "EXISTING": 2
+            },
+            "equal": true
+          }
+        ],
+        "unchanged_metric_values_equal": true,
+        "metric_rows_per_snapshot": [
+          2,
+          2
+        ]
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_unchanged_native_findings13\\source.db",
+        "sha256": "2419cb93c53bf9da6bba4f7db94d19721e2f7d142529ef7dad6fc5826f7e3748",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "PUBLISHED": 2
+        },
+        "pointer_count": 1,
+        "quality_counter_checks": [
+          {
+            "snapshot_id": "b767536b-0a9a-5aaf-b5bf-26c9b4e54a50",
+            "recorded": {
+              "INITIAL": 2
+            },
+            "actual": {
+              "INITIAL": 2
+            },
+            "equal": true
+          },
+          {
+            "snapshot_id": "e83f7851-ca0d-530f-8da2-4dee22057794",
+            "recorded": {
+              "EXISTING": 2
+            },
+            "actual": {
+              "EXISTING": 2
+            },
+            "equal": true
+          }
+        ],
+        "unchanged_metric_values_equal": true,
+        "metric_rows_per_snapshot": [
+          2,
+          2
+        ]
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_unchanged_native_findings14\\source.db",
+        "sha256": "53e02b91191299b87ddcee5745434a34bbae0f17ce619a70f07be999851af590",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "PUBLISHED": 2
+        },
+        "pointer_count": 1,
+        "quality_counter_checks": [
+          {
+            "snapshot_id": "075be49a-f553-51e7-ac2b-d59816c11703",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          },
+          {
+            "snapshot_id": "136b752c-a3bd-54ea-a455-2ef5e27cd942",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          }
+        ],
+        "unchanged_metric_values_equal": true,
+        "metric_rows_per_snapshot": [
+          0,
+          0
+        ]
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_unchanged_native_findings15\\source.db",
+        "sha256": "f2a2735d745a61b19f75cd8e4c7af01c3b0088180d2ed4f6d842fbc45025ba23",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "PUBLISHED": 2
+        },
+        "pointer_count": 1,
+        "quality_counter_checks": [
+          {
+            "snapshot_id": "fcdd3ebc-839e-5246-9879-fb261b6202fe",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          },
+          {
+            "snapshot_id": "bebc345f-9ee1-513f-a5f3-ff9d78a58efc",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          }
+        ],
+        "unchanged_metric_values_equal": true,
+        "metric_rows_per_snapshot": [
+          0,
+          0
+        ]
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_unchanged_native_findings2\\source.db",
+        "sha256": "3648407dda3d6a569110d61f47a288183c2b015133614722c7c367879aadf5bc",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "PUBLISHED": 2
+        },
+        "pointer_count": 1,
+        "quality_counter_checks": [
+          {
+            "snapshot_id": "06f8fde5-78be-537b-91db-da716144d435",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          },
+          {
+            "snapshot_id": "a4216f40-8bdd-5e49-8b60-7a77e96ca2d7",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          }
+        ],
+        "unchanged_metric_values_equal": true,
+        "metric_rows_per_snapshot": [
+          2,
+          2
+        ]
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_unchanged_native_findings3\\source.db",
+        "sha256": "3b6653288c5abfa4680872fb6ef8030f2d09210ae889fcdcf9551189a82fa1ff",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "PUBLISHED": 2
+        },
+        "pointer_count": 1,
+        "quality_counter_checks": [
+          {
+            "snapshot_id": "4f809fa4-00e1-5caf-ad69-8fb27e71fa35",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          },
+          {
+            "snapshot_id": "41347e6f-577d-52d9-b2b5-181d06038a54",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          }
+        ],
+        "unchanged_metric_values_equal": true,
+        "metric_rows_per_snapshot": [
+          2,
+          2
+        ]
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_unchanged_native_findings4\\source.db",
+        "sha256": "c4976fbcde7eb4b9e1d86fdcca2d7560f8060667ed9d248b7ad42149cc42f25c",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "PUBLISHED": 2
+        },
+        "pointer_count": 1,
+        "quality_counter_checks": [
+          {
+            "snapshot_id": "f262d738-d2f3-5113-a7e5-400e2cfdff79",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          },
+          {
+            "snapshot_id": "e83b9300-9c41-5246-9a1a-8b22633433b8",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          }
+        ],
+        "unchanged_metric_values_equal": true,
+        "metric_rows_per_snapshot": [
+          2,
+          2
+        ]
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_unchanged_native_findings5\\source.db",
+        "sha256": "687d98641d6bb6210bbf3547c61d8c751666382c2e99ce9dab3cd8ce41cfd6a1",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "PUBLISHED": 2
+        },
+        "pointer_count": 1,
+        "quality_counter_checks": [
+          {
+            "snapshot_id": "8ea104db-d893-5c11-b39a-857545b2f0d7",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          },
+          {
+            "snapshot_id": "be63a230-859f-5093-8836-0dc35490a5e4",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          }
+        ],
+        "unchanged_metric_values_equal": true,
+        "metric_rows_per_snapshot": [
+          2,
+          2
+        ]
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_unchanged_native_findings6\\source.db",
+        "sha256": "baacc63338e16eae99356375f62eeba1551bf8c3021e4c5d7377c4fc2d97440f",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "PUBLISHED": 2
+        },
+        "pointer_count": 1,
+        "quality_counter_checks": [
+          {
+            "snapshot_id": "c7bed98c-3c01-557a-b937-d476bbf4c64c",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          },
+          {
+            "snapshot_id": "e05c1429-5a85-5002-808a-7f193746f883",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          }
+        ],
+        "unchanged_metric_values_equal": true,
+        "metric_rows_per_snapshot": [
+          0,
+          0
+        ]
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_unchanged_native_findings7\\source.db",
+        "sha256": "5e7e1c9bd0ec261157aaeceef8b2c8ad3e49a96c2f6f796d27a93767facb6dd5",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "PUBLISHED": 2
+        },
+        "pointer_count": 1,
+        "quality_counter_checks": [
+          {
+            "snapshot_id": "2fe7fd50-d949-5a05-85d8-b8a2ca03b41c",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          },
+          {
+            "snapshot_id": "9332ce0e-db71-5b8d-bbb0-9801bd1e83b9",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          }
+        ],
+        "unchanged_metric_values_equal": true,
+        "metric_rows_per_snapshot": [
+          0,
+          0
+        ]
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_unchanged_native_findings8\\source.db",
+        "sha256": "56cc3a677dae4932cfedf76d5d140190b2327db32a4d10ae7d278c71377b1b7e",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "PUBLISHED": 2
+        },
+        "pointer_count": 1,
+        "quality_counter_checks": [
+          {
+            "snapshot_id": "1e5672a4-5919-543c-99eb-d0ddd7244fdf",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          },
+          {
+            "snapshot_id": "ab20382b-d434-5093-9712-1f6060e17103",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          }
+        ],
+        "unchanged_metric_values_equal": true,
+        "metric_rows_per_snapshot": [
+          0,
+          0
+        ]
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_unchanged_native_findings9\\source.db",
+        "sha256": "27ed88ad44ad5d541a6faf2a2e12dcc07dcd7c6eda7f84ddc5984bb8d18fafe6",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "PUBLISHED": 2
+        },
+        "pointer_count": 1,
+        "quality_counter_checks": [
+          {
+            "snapshot_id": "d6c995ec-e0b9-5a5a-bd4e-d747e34ce4e0",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          },
+          {
+            "snapshot_id": "530786e0-13eb-5d6e-a10f-82a2d0b13eb0",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          }
+        ],
+        "unchanged_metric_values_equal": true,
+        "metric_rows_per_snapshot": [
+          0,
+          0
+        ]
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_unresolved_native_replay_0\\source.db",
+        "sha256": "4c3554786bd0d1258203e49e70648db277d2212b59f6a0334365d99afb36cdb6",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "PUBLISHED": 2
+        },
+        "pointer_count": 1,
+        "quality_counter_checks": [
+          {
+            "snapshot_id": "23635a6b-c974-555b-8722-a84b9889b281",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          },
+          {
+            "snapshot_id": "6fd69a6d-13f2-5bfe-b66f-ac3c67d55135",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          }
+        ]
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_unresolved_native_replay_1\\source.db",
+        "sha256": "8cea1d081a00243d1923a711e60761a902a55444f4ab34ce7b8793c9fa7dd881",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "PUBLISHED": 2
+        },
+        "pointer_count": 1,
+        "quality_counter_checks": [
+          {
+            "snapshot_id": "f7aa165a-21cd-5c8f-b4df-d6ec2d8c7139",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          },
+          {
+            "snapshot_id": "e61f9a90-7f43-5d6b-bbc1-03ddf754de67",
+            "recorded": {},
+            "actual": {},
+            "equal": true
+          }
+        ]
+      },
+      {
+        "path": "C:\\Users\\SAIKRI~1\\AppData\\Local\\Temp\\pt-native-current\\test_unresolved_provenance_doe0\\source.db",
+        "sha256": "bf7c401e507d1fe6c40d95b8fcbd40cb351fefd7658df092b0296a876be3519c",
+        "integrity": [
+          [
+            "ok"
+          ]
+        ],
+        "foreign_key_violations": 0,
+        "invalid_published_pointers": 0,
+        "generation_states": {
+          "PUBLISHED": 2
+        },
+        "pointer_count": 1,
+        "quality_counter_checks": [
+          {
+            "snapshot_id": "466edfea-8467-5bb5-85a8-88991733db40",
+            "recorded": {
+              "INITIAL": 1
+            },
+            "actual": {
+              "INITIAL": 1
+            },
+            "equal": true
+          },
+          {
+            "snapshot_id": "d2d8e014-60f6-5c42-9639-44047fead837",
+            "recorded": {
+              "ANALYZER_BASELINE": 1
+            },
+            "actual": {
+              "ANALYZER_BASELINE": 1
+            },
+            "equal": true
+          }
+        ]
+      }
+    ],
+    "total_databases": 45,
+    "published_quality_counter_checks": 82,
+    "unchanged_metric_direction_checks": 16
+  },
+  "historical_reproductions": [
+    "Initial 12-case reproduction; corrected",
+    "Unknown-provenance quality PASS; corrected",
+    "Counter inconsistency; corrected",
+    "Two stage-replay warning/status cases; corrected"
+  ],
+  "modified_files": [
+    "analyzers/code_quality/core.py",
+    "backend/public_snapshot_paths.py",
+    "backend/finding_history.py",
+    "backend/domain.py",
+    "backend/quality_domain.py",
+    "backend/engineering_changes.py",
+    "backend/quality_api.py",
+    "frontend/src/CodeQuality.tsx",
+    "frontend/src/QualityHistory.test.tsx",
+    "frontend/e2e/native-history.spec.ts",
+    "tests/test_native_snapshot_continuity.py",
+    "tests/test_native_history_uncertain_layouts.py",
+    "tests/test_native_history_recovery.py",
+    "PROJECTTRACE_PROGRESS.md",
+    "docs/COMMERCIAL_V1_RELEASE_GATES.md",
+    "docs/evidence/COMMERCIAL_V1_NATIVE_QUALITY_CONTINUITY_20261031.json",
+    "docs/evidence/COMMERCIAL_V1_NATIVE_QUALITY_CONTINUITY_20261031_RAW.json.gz"
+  ],
+  "documentation_sha256": {
+    "PROJECTTRACE_PROGRESS.md": "c4fbcd545c611547abfaf56146319c3c407f24f53d4ec037fd5e6824a41c8b42",
+    "docs/COMMERCIAL_V1_RELEASE_GATES.md": "e82c1925c8db8523486f5338eb48302f0e843e47a7f0a46df071e11ce3bda470"
+  }
+}

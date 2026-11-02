@@ -1,0 +1,126 @@
+{
+  "scope": "OWNED_WINDOWS_CHECKPOINT_ONLY",
+  "base_head": "9e21509591bfa5457cc829ebd5637f95be68d573",
+  "profiles": [
+    {
+      "scope": "OWNED_CHECKPOINT_ONLY",
+      "mode": "legacy",
+      "logical": {
+        "sha256": "f735a9a9b08c668cda4be224877fff4915c41a5d68ba0f7331572228ee0f07ee",
+        "bytes": 161787896
+      },
+      "saved": false,
+      "seconds": 1.428669800003263,
+      "samples": [
+        {
+          "at": "initial",
+          "process": {
+            "cpu_seconds": 0.703125,
+            "rss_bytes": 72585216,
+            "peak_rss_bytes": 72585216
+          }
+        },
+        {
+          "at": "input_ready",
+          "process": {
+            "cpu_seconds": 2.078125,
+            "rss_bytes": 86474752,
+            "peak_rss_bytes": 87412736
+          }
+        },
+        {
+          "at": "save_complete",
+          "process": {
+            "cpu_seconds": 3.390625,
+            "rss_bytes": 91123712,
+            "peak_rss_bytes": 208044032
+          }
+        }
+      ]
+    },
+    {
+      "scope": "OWNED_CHECKPOINT_ONLY",
+      "mode": "write",
+      "logical": {
+        "sha256": "f735a9a9b08c668cda4be224877fff4915c41a5d68ba0f7331572228ee0f07ee",
+        "bytes": 161787896
+      },
+      "saved": true,
+      "seconds": 9.69417170000088,
+      "samples": [
+        {
+          "at": "initial",
+          "process": {
+            "cpu_seconds": 0.65625,
+            "rss_bytes": 72552448,
+            "peak_rss_bytes": 72552448
+          }
+        },
+        {
+          "at": "input_ready",
+          "process": {
+            "cpu_seconds": 2.09375,
+            "rss_bytes": 86437888,
+            "peak_rss_bytes": 87359488
+          }
+        },
+        {
+          "at": "save_complete",
+          "process": {
+            "cpu_seconds": 10.8125,
+            "rss_bytes": 99217408,
+            "peak_rss_bytes": 99979264
+          }
+        }
+      ],
+      "encrypted_payload_bytes": 1568540,
+      "pages": 322
+    },
+    {
+      "scope": "OWNED_CHECKPOINT_ONLY",
+      "mode": "recover",
+      "logical": {
+        "sha256": "f735a9a9b08c668cda4be224877fff4915c41a5d68ba0f7331572228ee0f07ee",
+        "bytes": 161787896
+      },
+      "complete_output_equal": true,
+      "metrics": 12000,
+      "seconds": 1.6416937000030885,
+      "samples": [
+        {
+          "at": "initial",
+          "process": {
+            "cpu_seconds": 0.59375,
+            "rss_bytes": 70225920,
+            "peak_rss_bytes": 70225920
+          }
+        },
+        {
+          "at": "replay_complete",
+          "process": {
+            "cpu_seconds": 2.140625,
+            "rss_bytes": 98533376,
+            "peak_rss_bytes": 98533376
+          }
+        }
+      ],
+      "integrity": "ok",
+      "foreign_key_violations": 0
+    }
+  ],
+  "limits_changed": false,
+  "limits": {
+    "aggregate_encrypted_checkpoint_bytes": 64000000,
+    "decoded_page_bytes": 256000,
+    "row_bytes": 32000000,
+    "scope_envelope_reserve_bytes": 4096,
+    "existing_replay_spill_budget": "ANALYSIS_OBSERVATION_SPILL_BYTES; unchanged"
+  },
+  "limitations": [
+    "No Linux cgroup qualification, parser workload or publication in this experiment.",
+    "Structured repeated owned text; compression ratio is not assumed for OpenMetadata.",
+    "Timings were collected alongside regression work; do not infer whole-workload speedup.",
+    "Raw logical byte counts use complete sorted JSON including both public metric projections; v2 stores shared collections once.",
+    "Earlier scratch setup missing an owned Record natural_key failed before measurement; that directory is preserved and not a passing run."
+  ]
+}

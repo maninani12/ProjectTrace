@@ -82,3 +82,14 @@ it("allows legacy changes without comparison references", () => {
   render(<ClaimComparisons items={[]} onInspect={vi.fn()} />);
   expect(screen.queryByRole("table")).not.toBeInTheDocument();
 });
+
+it("keeps literal legacy document paths and original evidence IDs inspectable", () => {
+  const inspect = vi.fn();
+  const path = `repo-${"a".repeat(40)}/docs/a%20b.md`;
+  render(<ClaimComparisons items={[{ ...comparison, path,
+    document: { ...comparison.document!, path, id: "legacy-document" },
+  }]} onInspect={inspect} />);
+  expect(screen.getByText(`${path}:2`)).toBeVisible();
+  fireEvent.click(screen.getByRole("button", { name: "Inspect original documentation" }));
+  expect(inspect).toHaveBeenCalledWith("legacy-document");
+});

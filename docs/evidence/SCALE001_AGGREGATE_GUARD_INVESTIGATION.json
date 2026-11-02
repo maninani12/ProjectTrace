@@ -1,0 +1,194 @@
+{
+  "schema": "projecttrace-scale001-aggregate-guard-investigation-v1",
+  "date": "2026-10-29",
+  "decision": "STOP",
+  "qualification": "SCALE-001 \u2014 NOT QUALIFIED",
+  "commercial_v1": "DEVELOPMENT IN PROGRESS",
+  "repository": "C:\\Users\\sai krishna\\Projects\\ProjectTrace-local",
+  "entry_git_state": {
+    "branch": "codex/scale-001-local-continuation",
+    "head": "9e21509591bfa5457cc829ebd5637f95be68d573",
+    "expected_head_match": true,
+    "short_status_at_entry": " M backend/analysis_checkpoints.py\n M backend/db.py\n M backend/domain.py\n M backend/generation_models.py\n M backend/generations.py\n M backend/jobs.py\n M backend/publication_units.py\n M backend/quality_api.py\n M backend/queue.py\n M tests/test_migrations.py\n?? PROJECTTRACE_PROGRESS.md\n?? backend/checkpoint_pages.py\n?? backend/context_json.py\n?? backend/context_maps.py\n?? backend/generation_context.py\n?? backend/json_export.py\n?? backend/migrations/versions/0026_checkpoint_parts.py\n?? backend/retention.py\n?? docs/CHECKPOINT_RETENTION_AND_ROLLBACK.md\n?? docs/COMMERCIAL_V1_RELEASE_GATES.md\n?? docs/SCALE001_CHECKPOINT_ARCHITECTURE.md\n?? docs/SCALE001_GENERATION_MAPS_LOCAL_TECHNICAL_REPORT.md\n?? docs/SCALE001_GRAPH_ORDERING_CONTRACT.md\n?? docs/adr/0007-bounded-published-snapshot-segments.md\n?? docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29.json\n?? docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_FINAL.json\n?? docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_FINAL_RAW.tar.gz\n?? docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_RAW.tar.gz\n?? docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_REVIEWED.json\n?? docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_REVIEWED_RAW.tar.gz\n?? docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_REVIEWED_V2.json\n?? docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_REVIEWED_V2_RAW.tar.gz\n?? docs/evidence/SCALE001_CGROUP_40280429009.json\n?? docs/evidence/SCALE001_CGROUP_40280429009_MEMORY.jsonl.gz\n?? docs/evidence/SCALE001_CHECKPOINT_PAGES_EQUIVALENCE.json\n?? docs/evidence/SCALE001_CHECKPOINT_PAGES_OWNED.json\n?? docs/evidence/SCALE001_FINAL_SNAPSHOT_PROFILE.json\n?? docs/evidence/SCALE001_FINAL_SNAPSHOT_PROFILE_RAW.json.gz\n?? docs/evidence/SCALE001_GENERATION_JSON_EXPORT.json\n?? docs/evidence/SCALE001_GENERATION_MAPS_OWNED.json\n?? docs/evidence/SCALE001_GENERATION_MAP_ITERATION.json\n?? docs/evidence/SCALE001_GRAPH_INDEX_PROTOTYPE.json\n?? docs/evidence/SCALE001_GRAPH_INDEX_PROTOTYPE_RAW.json.gz\n?? docs/evidence/SCALE001_GRAPH_INDEX_RECOVERY.json\n?? docs/evidence/SCALE001_GRAPH_INDEX_RECOVERY_RAW.json.gz\n?? docs/evidence/SCALE001_GRAPH_SCALAR_PROTOTYPE.json\n?? docs/evidence/SCALE001_GRAPH_SCALAR_PROTOTYPE_RAW.json.gz\n?? frontend/e2e/configuration-drift.spec.ts\n?? samples/configuration-drift.json\n?? tests/commercial_snapshot_profile.py\n?? tests/generation_json_export_probe.py\n?? tests/generation_map_iteration_probe.py\n?? tests/graph_index_api_probe.py\n?? tests/graph_index_compatibility.py\n?? tests/graph_index_measure.py\n?? tests/graph_index_prototype.py\n?? tests/graph_index_publication_probe.py\n?? tests/graph_index_pytest_plugin.py\n?? tests/graph_index_recovery.py\n?? tests/graph_index_recovery_plugin.py\n?? tests/graph_index_recovery_probe.py\n?? tests/graph_scalar_plugin.py\n?? tests/graph_scalar_probe.py\n?? tests/graph_scalar_prototype.py\n?? tests/snapshot_component_probe.py\n?? tests/snapshot_materialization_probe.py\n?? tests/sqlite_memory_probe.py\n?? tests/test_checkpoint_pages.py\n?? tests/test_configuration_drift.py\n?? tests/test_generation_context.py\n?? tests/test_generation_map_iteration.py\n?? tests/test_generation_maps.py\n?? tests/test_graph_index_recovery.py\n?? tests/test_graph_scalar_projection.py\n?? tests/test_graph_scalar_reading.py\n?? tests/test_json_export.py\n?? tests/test_retention_downgrade.py\n?? tests/test_retention_postgresql.py\n?? tests/test_retention_recovery.py\n?? tests/test_snapshot_materialization_profile.py",
+    "tracked_diff_stat_at_entry": "10 tracked files changed, 287 insertions(+), 86 deletions(-)",
+    "staged_diff_stat_at_entry": "",
+    "tracked_diff_sha256_at_entry": "ec79724dbe5405e6b0a7cded5a3bd8505f060383e490bda097d9bf739bd7eaec",
+    "preexisting_work_preserved": true
+  },
+  "environment": {
+    "os": "Windows 11 / win32",
+    "python": "3.14.3 (tags/v3.14.3:323c59a, Feb  3 2026, 16:04:56) [MSC v.1944 64 bit (AMD64)]",
+    "sqlite": "3.50.4 (from existing owned profile environment record)",
+    "pytest_available": false,
+    "pytest_probe": "C:\\Users\\sai krishna\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe -m pytest --version",
+    "pytest_probe_exit_code": 1,
+    "pytest_probe_stderr": "C:\\Users\\sai krishna\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe: No module named pytest"
+  },
+  "preserved_databases": {
+    "10000": {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\p74\\test_owned_final_snapshot_prof1\\owned\\benchmark.db",
+      "baseline_sha256": "465441f1dfd2c7d6ca3d7427c79dd55e57c350bee451b60a66b8e0e92f5a1d1b",
+      "current_sha256": "465441f1dfd2c7d6ca3d7427c79dd55e57c350bee451b60a66b8e0e92f5a1d1b",
+      "matches": true
+    },
+    "147": {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\p74\\test_owned_final_snapshot_prof0\\owned\\benchmark.db",
+      "baseline_sha256": "97aeda34f1cb1b1d67784926c2140c3c27063585ae135fbb39e22643edce94d6",
+      "current_sha256": "97aeda34f1cb1b1d67784926c2140c3c27063585ae135fbb39e22643edce94d6",
+      "matches": true
+    },
+    "30000": {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\p77\\test_owned_final_snapshot_prof0\\owned\\benchmark.db",
+      "baseline_sha256": "c7313fd66baa9e23ec5f5a7e9bdb8003554d086796c101be14f8d02d6ee5e9a4",
+      "current_sha256": "c7313fd66baa9e23ec5f5a7e9bdb8003554d086796c101be14f8d02d6ee5e9a4",
+      "matches": true
+    },
+    "prior": {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\vp-json-export-final\\benchmark.db",
+      "baseline_sha256": "14a15885488462c687ce2581807ea56ecb2145b98bc58d67f6e2aad3ba9a5627",
+      "current_sha256": "14a15885488462c687ce2581807ea56ecb2145b98bc58d67f6e2aad3ba9a5627",
+      "matches": true
+    }
+  },
+  "admission_policy": {
+    "function": "analyzers.sanitization.metadata",
+    "default_maximum_nodes": 1000000,
+    "count_semantics": "Root and every visited container/value count; dictionary keys do not; sensitive non-null values are replaced without recursively visiting contents; one local count per invocation.",
+    "limit_override_parameter": "maximum_nodes",
+    "production_final_snapshot_call_uses_default": true,
+    "final_snapshot_callsite": "backend/domain.py:persist_analysis line 1816"
+  },
+  "boundary_measurements": {
+    "command": "py -3.14 C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\guard_boundary_runner.py",
+    "fresh_processes": [
+      {
+        "logical_nodes": 999999,
+        "accepted": true,
+        "error": null,
+        "seconds": 0.15889969999989262,
+        "peak_rss_bytes": 40550400
+      },
+      {
+        "logical_nodes": 1000000,
+        "accepted": true,
+        "error": null,
+        "seconds": 0.17182640000009997,
+        "peak_rss_bytes": 40755200
+      },
+      {
+        "logical_nodes": 1000001,
+        "accepted": false,
+        "error": "Sanitization structure budget exceeded",
+        "seconds": 0.17053720000012618,
+        "peak_rss_bytes": 40771584
+      }
+    ],
+    "assertions_passed": 3
+  },
+  "complete_50k_fixture": {
+    "fixture_method": "Preserved complete 30k snapshot with complete metric rows cycled to 50,000; all other snapshot fields retained.",
+    "source_database_sha256": "c7313fd66baa9e23ec5f5a7e9bdb8003554d086796c101be14f8d02d6ee5e9a4",
+    "source_snapshot_raw_bytes": 26197173,
+    "metric_rows": 50000,
+    "logical_node_count": 1115947,
+    "maximum_nodes": 1000000,
+    "excess_nodes": 115947,
+    "direct_sanitizer_outcome": {
+      "failure": "ValueError",
+      "message": "Sanitization structure budget exceeded"
+    },
+    "direct_sanitizer_seconds": 2.463442899999791,
+    "direct_sanitizer_process_peak_rss_bytes": 126091264,
+    "direct_reproduction_scope": "OWNED_DIRECT_50K_SNAPSHOT_SANITIZER_REPRODUCTION_NOT_FULL_ANALYSIS",
+    "publication_run": "NOT_RUN; direct sanitizer reproduction only.",
+    "count_command": "PYTHONPATH=<project root> py -3.14 C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\count_50k_nodes.py"
+  },
+  "existing_measurements": {
+    "30k_full_snapshot_nodes": 681257,
+    "30k_final_path_profile_variants_seconds": [
+      5.2146974,
+      12.956045,
+      8.673265
+    ],
+    "30k_sampled_peak_rss_bytes_variants": [
+      523485184,
+      522592256,
+      502472704
+    ],
+    "30k_profile_caveat": "Different instrumentation variants; not a controlled timing comparison.",
+    "50k_map_iteration": {
+      "entries": 50000,
+      "logical": {
+        "sha256": "b3c66416c2976176f65c22ccd0a7637c6317ed50fe2c171e6834fcc7b107abdc",
+        "bytes": 19088891
+      },
+      "before_decryptions": 150000,
+      "after_decryptions": 50000,
+      "before_median_iteration_seconds": 47.44379939999635,
+      "after_median_iteration_seconds": 5.7003117999993265,
+      "before_max_process_peak_rss_bytes": 129028096,
+      "after_max_process_peak_rss_bytes": 128094208
+    },
+    "sqlite_snapshot_update_peak_malloc_bytes": 350664352,
+    "sqlite_snapshot_update_sampled_rss_bytes": 502472704,
+    "evidence_provenance": {
+      "direct_50k_guard": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\commercial-v1-20261027-01\\structural-50k.json",
+      "complete_path_profile": "docs/evidence/SCALE001_FINAL_SNAPSHOT_PROFILE.json",
+      "map_iteration": "docs/evidence/SCALE001_GENERATION_MAP_ITERATION.json"
+    }
+  },
+  "tests": {
+    "direct_guard_boundary_runner": {
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0
+    },
+    "new_pytest_file": "tests/test_sanitization_aggregate_guard.py",
+    "new_pytest_execution": "NOT RUN: pytest is not installed in available Python 3.14 or 3.11 environments.",
+    "existing_regression_suites": "NOT RUN for this no-candidate investigation; prior profile and regression receipts are historical, not retested here.",
+    "failed_tests": [],
+    "skipped_tests": [
+      "new pytest file unavailable due missing pytest; no suites otherwise attempted"
+    ]
+  },
+  "production_changes": {
+    "production_files": false,
+    "schema": false,
+    "migration": false,
+    "sanitizer_limit": false,
+    "admission_behavior": false
+  },
+  "test_and_measurement_artifact_sha256": {
+    "docs/evidence/SCALE001_FINAL_SNAPSHOT_PROFILE.json": "699d2f976a8c7c823c7f80afd166609d910eee482b2ebb030405496f00995345",
+    "docs/evidence/SCALE001_GENERATION_MAPS_OWNED.json": "df2265b064f09651498fc0bcd6a3846b34f770d990e0dfcf1f1ec6f9ccfaabd4",
+    "docs/evidence/SCALE001_GENERATION_MAP_ITERATION.json": "8c8e7b42c4320bc3d9287d78a2856d69db9f6d655501a1b9badc6ffcf24f1526",
+    "docs/adr/0007-bounded-published-snapshot-segments.md": "d38f27bf16882d7095b03407966d5479bc8fb8c100e9fa684b33354f414ac45a",
+    "PROJECTTRACE_PROGRESS.md": "163cbd396ba86b794a1f22610dcc48184591af2e3df9e636760e9e6d0b0f39f7",
+    "docs/COMMERCIAL_V1_RELEASE_GATES.md": "1608016634ef1309579a3398717ddcb9e84e02cc8321be94ffbeabd5c4745b30",
+    "docs/SCALE001_GENERATION_MAPS_LOCAL_TECHNICAL_REPORT.md": "b483e596e14cad876a5ce135e5db02587c4cbeec5a1d1428bec1e55bb2c35bb0"
+  },
+  "new_output_artifact_sha256": {
+    "docs/SCALE001_AGGREGATE_GUARD_INVESTIGATION.md": "bc9a98b7249ec27cdcb5b58c64a9be18d4294996070c67537f43f8e64f942e5a",
+    "docs/adr/0007-bounded-published-snapshot-segments.md": "d38f27bf16882d7095b03407966d5479bc8fb8c100e9fa684b33354f414ac45a",
+    "PROJECTTRACE_PROGRESS.md": "163cbd396ba86b794a1f22610dcc48184591af2e3df9e636760e9e6d0b0f39f7",
+    "tests/test_sanitization_aggregate_guard.py": "36fefb3b8e28c70604aa2fc6c5b5b041e3339e8b7a6317d5cb87f43ead49d0da"
+  },
+  "exact_commands": [
+    "py -3.14 C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\guard_boundary_runner.py",
+    "$env:PYTHONPATH=<project root>; py -3.14 C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-29\\files-pasted-by-the-user-projecttrace\\work\\count_50k_nodes.py",
+    "py -3.14 -m pytest --version  # unavailable: No module named pytest"
+  ],
+  "final_policy_choices": [
+    "Keep the 1,000,000-node aggregate cap and explicitly mark larger logical snapshots unsupported.",
+    "Seek explicit product/security policy to change or redefine the limit, then perform resource-budget analysis, threat review, and new acceptance tests."
+  ],
+  "relevant_entry_hashes": {
+    "docs/adr/0007-bounded-published-snapshot-segments.md": "214112C04FC5A96345C52838702710F903D91E077C5873115E40DECAE15F36F3",
+    "PROJECTTRACE_PROGRESS.md": "438092BC1A401EE31CDD6BB4CE0BCB3F970387B69A23CF2503027E062174F6CD",
+    "docs/COMMERCIAL_V1_RELEASE_GATES.md": "1608016634EF1309579A339871DDCB9E84E02CC8321BE94FFBEABD5C4745B30",
+    "docs/SCALE001_GENERATION_MAPS_LOCAL_TECHNICAL_REPORT.md": "B483E596E14CAD876A5CE135E5DB02587C4CBEEC5A1D1428BEC1E55BB2C35BB0",
+    "docs/evidence/SCALE001_GENERATION_MAPS_OWNED.json": "DF2265B064F09651498FC0BCD6A3846B34F770D990E0DFCF1F1EC6F9CCFAABD4",
+    "docs/evidence/SCALE001_GENERATION_MAP_ITERATION.json": "8C8E7B42C4320BC3D9287D78A2856D69DB9F6D655501A1B9BADC6FFCF24F1526",
+    "docs/evidence/SCALE001_CHECKPOINT_PAGES_OWNED.json": "194AFCED1379D3B308A5E4FD4A8E58806E8FF8936210D2C52598F7E1035762B3"
+  }
+}

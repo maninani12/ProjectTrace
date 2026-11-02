@@ -1,0 +1,263 @@
+{
+  "schema": "projecttrace-scale001-v1-checkpoint-counter-preflight-evidence-v1",
+  "assessment_date": "2026-10-29",
+  "release_status": {
+    "scale001": "NOT QUALIFIED",
+    "commercial_v1": "DEVELOPMENT IN PROGRESS"
+  },
+  "scope": "Payload-free v1 checkpoint byte counter tests and local manual-only Linux cgroup preflight preparation; no production checkpoint integration or workload qualification.",
+  "authorization": {
+    "full_pinned_workload": "NOT AUTHORIZED; NOT RUN",
+    "github_workflow_dispatch": "NOT AUTHORIZED; NOT DISPATCHED",
+    "commit_push_pr_main_changes": "NOT AUTHORIZED; NONE"
+  },
+  "repository_state": {
+    "root": "C:\\Users\\sai krishna\\Projects\\ProjectTrace-local",
+    "branch": "codex/scale-001-local-continuation",
+    "head": "9e21509591bfa5457cc829ebd5637f95be68d573",
+    "expected_head": "9e21509591bfa5457cc829ebd5637f95be68d573",
+    "remote_origin": "https://github.com/maninani12/ProjectTrace.git",
+    "worktree_dirty": true,
+    "status_entry_count": 108,
+    "tracked_modified_count": 11,
+    "untracked_count": 97,
+    "status_porcelain_sha256": "22102f8457d2d67939dbc8e04857c947e9426eb4d95f3a35f95684a68dfa6a4e",
+    "tracked_diff_binary_sha256": "ff1e7d19812fdbdfed216a6c64ab650b126d01a72889c0d656045c8e3c847e40",
+    "preexisting_dirty_work_preserved": true,
+    "note": "No reset, clean, stash, revert, branch switch, commit, push, PR change or main change. Tracked diff hash matches the previously recorded pre-existing hash ff1e7d19812fdbdfed216a6c64ab650b126d01a72889c0d656045c8e3c847e40."
+  },
+  "v1_contract": {
+    "published_serializer": "json.JSONEncoder(sort_keys=True).iterencode(envelope)",
+    "default_settings_asserted": [
+      "sort_keys=true",
+      "ensure_ascii=true",
+      "indent=null",
+      "check_circular=true",
+      "allow_nan=true",
+      "skipkeys=false",
+      "item_separator=\", \"",
+      "key_separator=\": \""
+    ],
+    "envelope": "schema, job_id, organization_id, repository_id, signature, result",
+    "files_normalization": "list(result[\"files\"]) when files exists",
+    "size_unit": "sum of emitted ASCII fragment characters, equal to UTF-8 bytes because ensure_ascii is asserted true; measured before encryption",
+    "published_limit_bytes": 64000000,
+    "limit_changed": false,
+    "counter": "backend.checkpoint_diagnostics.count_v1_envelope_bytes",
+    "receipt_schema": "projecttrace-checkpoint-size-diagnostic-v1",
+    "receipt_fields": [
+      "schema",
+      "actual_bytes",
+      "limit_bytes",
+      "over_budget"
+    ],
+    "payload_logging_or_persistence": false,
+    "runtime_integration": "NONE; helper-only",
+    "integration_reason": "Dirty worktree save path delegates to encrypted checkpoint_pages.save, whose aggregate quota is encrypted storage and which may consume files before returning a boolean. A post-failure v1 recount could consume a one-shot iterable or misstate the v2 quota result. No env flag or jobs.py hook is installed.",
+    "default_runtime_behavior_changed": false,
+    "memory_limits": "Not constant-memory. The v1 files normalization is retained as a complete list; JSONEncoder builds sorted mapping item temporaries and may emit a large scalar as one fragment."
+  },
+  "synthetic_benchmark": {
+    "scope": "Owned synthetic result, 10,000 metric rows; not the historical failed workload, not the pinned OpenMetadata input, not qualification.",
+    "fixture": "Metrics, aliased code_quality.metrics, symbol lists, 10,000 file records; generator variant creates file dictionaries lazily. Same JSON result semantics and raw bytes for counter and reference bytearray writer.",
+    "raw_json_bytes_all_runs": 3413103,
+    "measurement_method": "Fresh Python process per mode; fixture created before measurement; tracemalloc peak reset before serializer operation; Windows WorkingSetSize polled every 1 ms. RSS is sampled incremental peak, not OS high-water RSS; timings include serialization/count only, not process startup, fixture construction, encryption, DB I/O or write.",
+    "python": "3.14.3 (tags/v3.14.3:323c59a, Feb  3 2026, 16:04:56) [MSC v.1944 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "script_path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\checkpoint-counter-20261029\\measure.py",
+    "script_sha256": "3d0702c831bb58c04889f8e67f3830c756774ad5925e21559624ab14c1e8a7d6",
+    "runs": [
+      {
+        "mode": "counter_list_files",
+        "wall_seconds": 0.68009,
+        "cpu_seconds": 0.609375,
+        "tracemalloc_incremental_peak_bytes": 99391,
+        "sampled_rss_before_bytes": 39129088,
+        "sampled_rss_peak_bytes": 39456768,
+        "sampled_rss_incremental_peak_bytes": 327680,
+        "raw_json_bytes": 3413103
+      },
+      {
+        "mode": "v1_bytearray_list_files",
+        "wall_seconds": 1.664262,
+        "cpu_seconds": 1.640625,
+        "tracemalloc_incremental_peak_bytes": 3730544,
+        "sampled_rss_before_bytes": 38252544,
+        "sampled_rss_peak_bytes": 41820160,
+        "sampled_rss_incremental_peak_bytes": 3567616,
+        "raw_json_bytes": 3413103
+      },
+      {
+        "mode": "counter_generator_files",
+        "wall_seconds": 0.726588,
+        "cpu_seconds": 0.71875,
+        "tracemalloc_incremental_peak_bytes": 2615431,
+        "sampled_rss_before_bytes": 34705408,
+        "sampled_rss_peak_bytes": 38625280,
+        "sampled_rss_incremental_peak_bytes": 3919872,
+        "raw_json_bytes": 3413103
+      },
+      {
+        "mode": "v1_bytearray_generator_files",
+        "wall_seconds": 1.6973,
+        "cpu_seconds": 1.6875,
+        "tracemalloc_incremental_peak_bytes": 6250720,
+        "sampled_rss_before_bytes": 35348480,
+        "sampled_rss_peak_bytes": 42110976,
+        "sampled_rss_incremental_peak_bytes": 6762496,
+        "raw_json_bytes": 3413103
+      }
+    ],
+    "interpretation": "In this synthetic serializer-only sample, counter time was 2.45x faster for list files and 2.34x for generator files. Traced transient peak was about 97.3% lower for list files and 58.2% lower for generator files; sampled RSS increments were about 90.8% and 42.0% lower. These are one-run Windows measurements and do not establish pinned-workload CPU, RSS, cgroup or end-to-end behavior.",
+    "commands": [
+      "& 'C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe' 'C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\checkpoint-counter-20261029\\measure.py' counter",
+      "& 'C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe' 'C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\checkpoint-counter-20261029\\measure.py' v1-bytearray",
+      "& 'C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe' 'C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\checkpoint-counter-20261029\\measure.py' counter-iterable",
+      "& 'C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe' 'C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\checkpoint-counter-20261029\\measure.py' v1-bytearray-iterable"
+    ]
+  },
+  "local_validation": {
+    "scope": "Current dirty Windows worktree, not GitHub CI or Linux qualification.",
+    "python_environment": "C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe",
+    "tests": [
+      {
+        "command": "& 'C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe' -m pytest -q --basetemp 'C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\checkpoint-counter-20261029\\pytest-final-counter-v2' tests/test_checkpoint_diagnostics.py",
+        "exit_code": 0,
+        "passed": 9,
+        "failed": 0,
+        "skipped": 0,
+        "warnings": 1,
+        "seconds": 0.07
+      },
+      {
+        "command": "& 'C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe' -m pytest -q --basetemp 'C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\checkpoint-counter-20261029\\pytest-final-checkpoint-v2' tests/test_analysis_checkpoints.py tests/test_checkpoint_pages.py tests/test_checkpoint_field_attribution.py tests/test_checkpoint_source_match_manifest.py tests/test_sanitization_aggregate_guard.py tests/test_generation_context.py tests/test_generation_maps.py",
+        "exit_code": 0,
+        "passed": 82,
+        "failed": 0,
+        "skipped": 0,
+        "warnings": 1,
+        "seconds": 47.28
+      }
+    ],
+    "ruff": "PASS: python -m ruff check backend/checkpoint_diagnostics.py tests/test_checkpoint_diagnostics.py",
+    "compileall": "PASS: python -m compileall -q backend/checkpoint_diagnostics.py tests/test_checkpoint_diagnostics.py",
+    "git_diff_check": "PASS: git diff --check (tracked diff; new files separately linted and syntax checked)",
+    "workflow_yaml": "PASS: PyYAML BaseLoader assertions; workflow_dispatch only, contents read, pinned action/image identity present.",
+    "workflow_shell": "PASS: bash -n for both extracted run blocks.",
+    "full_linux_workload": "NOT RUN; explicitly prohibited.",
+    "ruff_command": "& 'C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe' -m ruff check backend/checkpoint_diagnostics.py tests/test_checkpoint_diagnostics.py",
+    "compileall_command": "& 'C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe' -m compileall -q backend/checkpoint_diagnostics.py tests/test_checkpoint_diagnostics.py",
+    "diff_check_command": "git diff --check",
+    "workflow_static_commands": [
+      "PyYAML BaseLoader parse plus assertions for workflow_dispatch-only trigger, contents:read, pinned checkout and image; script supplied on stdin to python.exe.",
+      "& 'C:\\Program Files\\Git\\bin\\bash.exe' -n 'C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\checkpoint-counter-20261029\\preflight-final-1.sh'",
+      "& 'C:\\Program Files\\Git\\bin\\bash.exe' -n 'C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\checkpoint-counter-20261029\\preflight-final-2.sh'"
+    ]
+  },
+  "preflight": {
+    "workflow": ".github/workflows/scale-cgroup-preflight.yml",
+    "trigger": "workflow_dispatch only",
+    "permissions": {
+      "contents": "read"
+    },
+    "secrets": "none required",
+    "checkout_action_sha": "11d5960a326750d5838078e36cf38b85af677262",
+    "container_image": "python:3.14.9-slim-bookworm@sha256:7dff173021016c8829ae58d5ce112ffc388073ebe67f351aeb6ba2909e35f847 (linux/amd64; digest previously verified in existing evidence, not historical run identity)",
+    "resource_assertions": "memory.max=768000000; memory.swap.max=0; 2 CPUs; 64 PIDs; private cgroup; network none; non-root; cap-drop ALL; no-new-privileges. Existing owned probe deliberately OOM-kills child allocations to validate kernel enforcement, distinctly labeled and not an application OOM.",
+    "runtime_identity_records": "GitHub runner ImageOS/ImageVersion, OS release, uname, host Python, requirements.lock SHA-256; Docker Engine/cgroup; container image id, Python, OS and dpkg package-manifest digest. Workflow fails closed when runner ImageOS/ImageVersion is unavailable or Docker does not report a Linux engine with cgroup v2.",
+    "dependency_limit": "requirements.lock hash is identity evidence only; lock pins versions without wheel hashes and workflow does not install application dependencies.",
+    "service_limit": "No PostgreSQL/Redis/Celery services are configured or exercised in this cgroup-only preflight; separate disposable service qualification remains required.",
+    "dispatch_status": "NOT DISPATCHED; workflow exists only in the local continuation worktree. GitHub requires the workflow_dispatch file on the default branch before it can be manually run.",
+    "static_validation": "PASS after final change: YAML parsed and manual-only/read-only/pinned-image assertions passed; both embedded Bash run blocks passed bash -n.",
+    "runtime_identity_current": "NOT AVAILABLE because the manual GitHub workflow was not dispatched.",
+    "default_branch_prerequisite": {
+      "status": "BLOCKED_BY_TASK_SCOPE",
+      "detail": "The workflow must first be present on the repository default branch; this task forbids modifying main or the shared PR, so no remote path is authorized here.",
+      "official_reference": "https://docs.github.com/en/actions/how-tos/manage-workflow-runs/manually-run-a-workflow"
+    }
+  },
+  "local_environment": {
+    "docker_client": "Docker version 29.8.2",
+    "docker_context": "desktop-linux",
+    "docker_engine": "UNAVAILABLE; daemon pipe absent; docker info exit 1",
+    "docker_service": "com.docker.service Stopped / Manual",
+    "wsl": "docker-desktop only; stopped after read-only check; WSL cgroup v2 exists but memory.max=max and memory.swap.max=max",
+    "service_variables": {
+      "DATABASE_URL": "UNSET",
+      "REDIS_URL": "UNSET",
+      "CELERY_BROKER_URL": "UNSET"
+    },
+    "runtime_changes": "The docker-desktop WSL distribution was started for read-only cgroup inspection and then terminated to restore its original stopped state; Docker service remains stopped."
+  },
+  "historical_failure": {
+    "run": "https://github.com/maninani12/ProjectTrace/actions/runs/40280429009",
+    "candidate_failure": "GLOBAL_CHECKPOINT_BUDGET in VERIFYING; 1,875.465 sec; no OOM kill; no publication; SQLite integrity ok; FK 0; exact actual byte count remains null.",
+    "baseline_failure": "Exit 137 kernel OOM kill in ANALYZING; no publication.",
+    "source_match_counts": {
+      "verified_match": 9,
+      "verified_mismatch": 4,
+      "not_available": 9
+    },
+    "historical_result_checkpoint_database_ciphertext": "NOT AVAILABLE; no synthetic replacement is represented as remeasurement.",
+    "historical_evidence": "docs/evidence/SCALE001_CP_B_SP_B_INVESTIGATION_20261029.json (left unchanged)"
+  },
+  "original_databases_read_only": {
+    "10000": {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\p74\\test_owned_final_snapshot_prof1\\owned\\benchmark.db",
+      "sha256": "465441f1dfd2c7d6ca3d7427c79dd55e57c350bee451b60a66b8e0e92f5a1d1b",
+      "sha256_current": "465441f1dfd2c7d6ca3d7427c79dd55e57c350bee451b60a66b8e0e92f5a1d1b",
+      "hash_matches": true,
+      "sqlite_integrity": "ok",
+      "foreign_key_violations": 0,
+      "opened_mode": "read-only URI; PRAGMA query_only=ON"
+    },
+    "147": {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\p74\\test_owned_final_snapshot_prof0\\owned\\benchmark.db",
+      "sha256": "97aeda34f1cb1b1d67784926c2140c3c27063585ae135fbb39e22643edce94d6",
+      "sha256_current": "97aeda34f1cb1b1d67784926c2140c3c27063585ae135fbb39e22643edce94d6",
+      "hash_matches": true,
+      "sqlite_integrity": "ok",
+      "foreign_key_violations": 0,
+      "opened_mode": "read-only URI; PRAGMA query_only=ON"
+    },
+    "30000": {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\p77\\test_owned_final_snapshot_prof0\\owned\\benchmark.db",
+      "sha256": "c7313fd66baa9e23ec5f5a7e9bdb8003554d086796c101be14f8d02d6ee5e9a4",
+      "sha256_current": "c7313fd66baa9e23ec5f5a7e9bdb8003554d086796c101be14f8d02d6ee5e9a4",
+      "hash_matches": true,
+      "sqlite_integrity": "ok",
+      "foreign_key_violations": 0,
+      "opened_mode": "read-only URI; PRAGMA query_only=ON"
+    },
+    "prior": {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\vp-json-export-final\\benchmark.db",
+      "sha256": "14a15885488462c687ce2581807ea56ecb2145b98bc58d67f6e2aad3ba9a5627",
+      "sha256_current": "14a15885488462c687ce2581807ea56ecb2145b98bc58d67f6e2aad3ba9a5627",
+      "hash_matches": true,
+      "sqlite_integrity": "ok",
+      "foreign_key_violations": 0,
+      "opened_mode": "read-only URI; PRAGMA query_only=ON"
+    }
+  },
+  "context7_documentation": {
+    "context7_available": false,
+    "fallback": "Official CPython 3.14.3 source; no payload or ProjectTrace source sent to external documentation.",
+    "reference": "https://github.com/python/cpython/blob/v3.14.3/Lib/json/encoder.py",
+    "verified_behavior": "JSONEncoder.iterencode yields fragments, but an individual scalar fragment may be large; therefore fragment iteration alone is not a constant-memory bound."
+  },
+  "file_sha256": {
+    "backend/checkpoint_diagnostics.py": "0fe2cd40eef46996360313737ebc9c8462f78dbbece96da317ca65cbf9a71177",
+    "tests/test_checkpoint_diagnostics.py": "030420cf54d85a1832f68e441825c07300e9b799225c135ba2f93bfff7a97868",
+    ".github/workflows/scale-cgroup-preflight.yml": "1e158c0d5efe9ae527eb6282010b07262b2e10c18656cb3d68bd351427fbe69b",
+    "requirements.lock": "0331753af6ba66329bbb3be218c94da7e0634b8013b91d83ecbcb5f27c5b95aa",
+    "external_benchmark_script": "3d0702c831bb58c04889f8e67f3830c756774ad5925e21559624ab14c1e8a7d6"
+  },
+  "unresolved": [
+    "No opt-in runtime receipt integration: safe integration requires a stable replayable result contract or instrumentation before the current v2 saver consumes data, with semantics reviewed separately.",
+    "Exact size of historical failed result remains unknown; historical actual=null stays unchanged.",
+    "The pinned source-matched workload, full cold/warm/incremental/recovery/cancellation/exhaustion matrix, dependency artifact hashes, immutable runner identity and disposable services remain unqualified.",
+    "Do not adopt the dirty paged checkpoint candidate; its v1 restore types/aliasing and quota unit differ.",
+    "The 50,000-metric sanitizer fixture remains rejected at the unchanged 1,000,000-node guard; no policy decision is made here.",
+    "The manual preflight workflow cannot be dispatched until its file exists on the repository default branch; this task prohibits changing main or PR #4, so it remains local and undispatched."
+  ]
+}

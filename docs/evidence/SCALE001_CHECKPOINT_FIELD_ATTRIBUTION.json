@@ -1,0 +1,1563 @@
+{
+  "schema": "projecttrace-scale001-checkpoint-field-attribution-v1",
+  "fixture_scope": "synthetic schema-shaped values only; no repository payloads",
+  "base_head": "9e21509591bfa5457cc829ebd5637f95be68d573",
+  "v1_source_sha256": "52d6bf8ac730a25103c0d9b727319d5671a505141e662f2ba6f2806578bafdaf",
+  "encoder": {
+    "class": "json.JSONEncoder",
+    "sort_keys": true,
+    "ensure_ascii": "default true",
+    "separators": "default Python JSONEncoder separators",
+    "chunk_encoding": "chunk.encode() UTF-8",
+    "files_normalization": "list(result['files']) when the field exists",
+    "payload_values_or_hashes_recorded": false
+  },
+  "measurements": {
+    "small_synthetic": {
+      "raw_json_bytes": 825,
+      "configured_maximum_bytes": 64000000,
+      "remaining_budget_bytes": 63999175,
+      "budget_outcome": "WITHIN",
+      "result_object_bytes": 582,
+      "result_object_punctuation_bytes": 34,
+      "result_member_bytes_sum": 548,
+      "result_reconciled_bytes": 582,
+      "result_reconciled": true,
+      "result_fields": [
+        {
+          "field": "analysis_cache",
+          "member_bytes": 20,
+          "value_bytes": 2,
+          "value_type": "object",
+          "collection_entries": 0,
+          "nested_fields": null,
+          "percent_of_result_bytes": 3.436426
+        },
+        {
+          "field": "analysis_coverage",
+          "member_bytes": 81,
+          "value_bytes": 60,
+          "value_type": "object",
+          "collection_entries": 2,
+          "nested_fields": null,
+          "percent_of_result_bytes": 13.917526
+        },
+        {
+          "field": "claims",
+          "member_bytes": 12,
+          "value_bytes": 2,
+          "value_type": "list",
+          "collection_entries": 0,
+          "nested_fields": null,
+          "percent_of_result_bytes": 2.061856
+        },
+        {
+          "field": "cloud_assets",
+          "member_bytes": 18,
+          "value_bytes": 2,
+          "value_type": "list",
+          "collection_entries": 0,
+          "nested_fields": null,
+          "percent_of_result_bytes": 3.092784
+        },
+        {
+          "field": "code_quality",
+          "member_bytes": 111,
+          "value_bytes": 95,
+          "value_type": "object",
+          "collection_entries": 3,
+          "nested_fields": [
+            {
+              "field": "inventory",
+              "member_bytes": 15,
+              "value_bytes": 2,
+              "value_type": "list",
+              "collection_entries": 0
+            },
+            {
+              "field": "metrics",
+              "member_bytes": 13,
+              "value_bytes": 2,
+              "value_type": "list",
+              "collection_entries": 0
+            },
+            {
+              "field": "summary",
+              "member_bytes": 61,
+              "value_bytes": 50,
+              "value_type": "object",
+              "collection_entries": 3
+            }
+          ],
+          "percent_of_result_bytes": 19.072165
+        },
+        {
+          "field": "dependencies",
+          "member_bytes": 18,
+          "value_bytes": 2,
+          "value_type": "list",
+          "collection_entries": 0,
+          "nested_fields": null,
+          "percent_of_result_bytes": 3.092784
+        },
+        {
+          "field": "documentation_files",
+          "member_bytes": 24,
+          "value_bytes": 1,
+          "value_type": "number",
+          "collection_entries": null,
+          "nested_fields": null,
+          "percent_of_result_bytes": 4.123711
+        },
+        {
+          "field": "engines",
+          "member_bytes": 35,
+          "value_bytes": 24,
+          "value_type": "object",
+          "collection_entries": 1,
+          "nested_fields": null,
+          "percent_of_result_bytes": 6.013746
+        },
+        {
+          "field": "files",
+          "member_bytes": 45,
+          "value_bytes": 36,
+          "value_type": "list",
+          "collection_entries": 2,
+          "nested_fields": null,
+          "percent_of_result_bytes": 7.731959
+        },
+        {
+          "field": "findings",
+          "member_bytes": 14,
+          "value_bytes": 2,
+          "value_type": "list",
+          "collection_entries": 0,
+          "nested_fields": null,
+          "percent_of_result_bytes": 2.405498
+        },
+        {
+          "field": "quality_metrics",
+          "member_bytes": 21,
+          "value_bytes": 2,
+          "value_type": "list",
+          "collection_entries": 0,
+          "nested_fields": null,
+          "percent_of_result_bytes": 3.608247
+        },
+        {
+          "field": "reused_files",
+          "member_bytes": 17,
+          "value_bytes": 1,
+          "value_type": "number",
+          "collection_entries": null,
+          "nested_fields": null,
+          "percent_of_result_bytes": 2.920962
+        },
+        {
+          "field": "reused_verifications",
+          "member_bytes": 25,
+          "value_bytes": 1,
+          "value_type": "number",
+          "collection_entries": null,
+          "nested_fields": null,
+          "percent_of_result_bytes": 4.295533
+        },
+        {
+          "field": "reverified_claims",
+          "member_bytes": 22,
+          "value_bytes": 1,
+          "value_type": "number",
+          "collection_entries": null,
+          "nested_fields": null,
+          "percent_of_result_bytes": 3.780069
+        },
+        {
+          "field": "signals",
+          "member_bytes": 13,
+          "value_bytes": 2,
+          "value_type": "list",
+          "collection_entries": 0,
+          "nested_fields": null,
+          "percent_of_result_bytes": 2.233677
+        },
+        {
+          "field": "verification_cache",
+          "member_bytes": 58,
+          "value_bytes": 36,
+          "value_type": "object",
+          "collection_entries": 2,
+          "nested_fields": null,
+          "percent_of_result_bytes": 9.965636
+        },
+        {
+          "field": "warnings",
+          "member_bytes": 14,
+          "value_bytes": 2,
+          "value_type": "list",
+          "collection_entries": 0,
+          "nested_fields": null,
+          "percent_of_result_bytes": 2.405498
+        }
+      ],
+      "fixed_envelope_member_bytes": {
+        "schema": 47,
+        "job_id": 23,
+        "organization_id": 35,
+        "repository_id": 37,
+        "signature": 79
+      },
+      "result_envelope_member_bytes": 592,
+      "envelope_punctuation_bytes": 12,
+      "envelope_reconciled_bytes": 825,
+      "envelope_reconciled": true,
+      "files_materialized_count": 2
+    },
+    "representative_synthetic": {
+      "raw_json_bytes": 320873,
+      "configured_maximum_bytes": 64000000,
+      "remaining_budget_bytes": 63679127,
+      "budget_outcome": "WITHIN",
+      "result_object_bytes": 320630,
+      "result_object_punctuation_bytes": 34,
+      "result_member_bytes_sum": 320596,
+      "result_reconciled_bytes": 320630,
+      "result_reconciled": true,
+      "result_fields": [
+        {
+          "field": "analysis_cache",
+          "member_bytes": 1280,
+          "value_bytes": 1262,
+          "value_type": "object",
+          "collection_entries": 24,
+          "nested_fields": null,
+          "percent_of_result_bytes": 0.399214
+        },
+        {
+          "field": "analysis_coverage",
+          "member_bytes": 81,
+          "value_bytes": 60,
+          "value_type": "object",
+          "collection_entries": 2,
+          "nested_fields": null,
+          "percent_of_result_bytes": 0.025263
+        },
+        {
+          "field": "claims",
+          "member_bytes": 10220,
+          "value_bytes": 10210,
+          "value_type": "list",
+          "collection_entries": 240,
+          "nested_fields": null,
+          "percent_of_result_bytes": 3.187475
+        },
+        {
+          "field": "cloud_assets",
+          "member_bytes": 2502,
+          "value_bytes": 2486,
+          "value_type": "list",
+          "collection_entries": 64,
+          "nested_fields": null,
+          "percent_of_result_bytes": 0.780339
+        },
+        {
+          "field": "code_quality",
+          "member_bytes": 144509,
+          "value_bytes": 144493,
+          "value_type": "object",
+          "collection_entries": 3,
+          "nested_fields": [
+            {
+              "field": "inventory",
+              "member_bytes": 17823,
+              "value_bytes": 17810,
+              "value_type": "list",
+              "collection_entries": 256
+            },
+            {
+              "field": "metrics",
+              "member_bytes": 126603,
+              "value_bytes": 126592,
+              "value_type": "list",
+              "collection_entries": 800
+            },
+            {
+              "field": "summary",
+              "member_bytes": 61,
+              "value_bytes": 50,
+              "value_type": "object",
+              "collection_entries": 3
+            }
+          ],
+          "percent_of_result_bytes": 45.07033
+        },
+        {
+          "field": "dependencies",
+          "member_bytes": 4406,
+          "value_bytes": 4390,
+          "value_type": "list",
+          "collection_entries": 100,
+          "nested_fields": null,
+          "percent_of_result_bytes": 1.37417
+        },
+        {
+          "field": "documentation_files",
+          "member_bytes": 24,
+          "value_bytes": 1,
+          "value_type": "number",
+          "collection_entries": null,
+          "nested_fields": null,
+          "percent_of_result_bytes": 0.007485
+        },
+        {
+          "field": "engines",
+          "member_bytes": 35,
+          "value_bytes": 24,
+          "value_type": "object",
+          "collection_entries": 1,
+          "nested_fields": null,
+          "percent_of_result_bytes": 0.010916
+        },
+        {
+          "field": "files",
+          "member_bytes": 10761,
+          "value_bytes": 10752,
+          "value_type": "list",
+          "collection_entries": 512,
+          "nested_fields": null,
+          "percent_of_result_bytes": 3.356205
+        },
+        {
+          "field": "findings",
+          "member_bytes": 8822,
+          "value_bytes": 8810,
+          "value_type": "list",
+          "collection_entries": 160,
+          "nested_fields": null,
+          "percent_of_result_bytes": 2.751458
+        },
+        {
+          "field": "quality_metrics",
+          "member_bytes": 126611,
+          "value_bytes": 126592,
+          "value_type": "list",
+          "collection_entries": 800,
+          "nested_fields": null,
+          "percent_of_result_bytes": 39.488195
+        },
+        {
+          "field": "reused_files",
+          "member_bytes": 17,
+          "value_bytes": 1,
+          "value_type": "number",
+          "collection_entries": null,
+          "nested_fields": null,
+          "percent_of_result_bytes": 0.005302
+        },
+        {
+          "field": "reused_verifications",
+          "member_bytes": 25,
+          "value_bytes": 1,
+          "value_type": "number",
+          "collection_entries": null,
+          "nested_fields": null,
+          "percent_of_result_bytes": 0.007797
+        },
+        {
+          "field": "reverified_claims",
+          "member_bytes": 22,
+          "value_bytes": 1,
+          "value_type": "number",
+          "collection_entries": null,
+          "nested_fields": null,
+          "percent_of_result_bytes": 0.006861
+        },
+        {
+          "field": "signals",
+          "member_bytes": 8303,
+          "value_bytes": 8292,
+          "value_type": "list",
+          "collection_entries": 240,
+          "nested_fields": null,
+          "percent_of_result_bytes": 2.589589
+        },
+        {
+          "field": "verification_cache",
+          "member_bytes": 2646,
+          "value_bytes": 2624,
+          "value_type": "object",
+          "collection_entries": 2,
+          "nested_fields": null,
+          "percent_of_result_bytes": 0.82525
+        },
+        {
+          "field": "warnings",
+          "member_bytes": 332,
+          "value_bytes": 320,
+          "value_type": "list",
+          "collection_entries": 16,
+          "nested_fields": null,
+          "percent_of_result_bytes": 0.103546
+        }
+      ],
+      "fixed_envelope_member_bytes": {
+        "schema": 47,
+        "job_id": 23,
+        "organization_id": 35,
+        "repository_id": 37,
+        "signature": 79
+      },
+      "result_envelope_member_bytes": 320640,
+      "envelope_punctuation_bytes": 12,
+      "envelope_reconciled_bytes": 320873,
+      "envelope_reconciled": true,
+      "files_materialized_count": 512,
+      "shared_metric_projection": {
+        "same_input_object": true,
+        "quality_metrics_value_bytes": 126592,
+        "code_quality_metrics_value_bytes": 126592,
+        "v1_serializes_both_values": true
+      }
+    },
+    "same_fixture_v1_vs_candidate": {
+      "logical_values_equal_after_materialization": true,
+      "v1_raw_json_bytes": 320876,
+      "v1_ciphertext_bytes": 427916,
+      "candidate_logical_v1_json_bytes": 320876,
+      "candidate_manifest_ciphertext_bytes": 16740,
+      "candidate_page_ciphertext_bytes": 26764,
+      "candidate_aggregate_ciphertext_bytes": 43504,
+      "candidate_page_count": 9,
+      "v1_files_container_type": "list",
+      "candidate_files_container_type": "ReplayRows",
+      "v1_metric_projection_alias": false,
+      "candidate_metric_projection_alias": true,
+      "mutation_semantics": {
+        "v1_mutating_quality_metrics_changes_code_quality_metrics": false,
+        "candidate_mutating_quality_metrics_changes_code_quality_metrics": true
+      },
+      "semantic_note": "Values compare equal after materialization; v1 JSON decode returns independent lists while candidate replay preserves shared collection aliases and lazy container types, changing identity and mutation propagation."
+    }
+  },
+  "v1_boundary_at_1mb": {
+    "configured_maximum_bytes": 1000000,
+    "cases": {
+      "999999": {
+        "raw_json_bytes": 999999,
+        "save_result": true,
+        "ciphertext_bytes": 1333412,
+        "field_contributions": [
+          {
+            "field": "analysis_cache",
+            "member_bytes": 20,
+            "value_bytes": 2,
+            "value_type": "object",
+            "collection_entries": 0,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.002
+          },
+          {
+            "field": "analysis_coverage",
+            "member_bytes": 81,
+            "value_bytes": 60,
+            "value_type": "object",
+            "collection_entries": 2,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.008102
+          },
+          {
+            "field": "claims",
+            "member_bytes": 12,
+            "value_bytes": 2,
+            "value_type": "list",
+            "collection_entries": 0,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.0012
+          },
+          {
+            "field": "cloud_assets",
+            "member_bytes": 18,
+            "value_bytes": 2,
+            "value_type": "list",
+            "collection_entries": 0,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.0018
+          },
+          {
+            "field": "code_quality",
+            "member_bytes": 111,
+            "value_bytes": 95,
+            "value_type": "object",
+            "collection_entries": 3,
+            "nested_fields": [
+              {
+                "field": "inventory",
+                "member_bytes": 15,
+                "value_bytes": 2,
+                "value_type": "list",
+                "collection_entries": 0
+              },
+              {
+                "field": "metrics",
+                "member_bytes": 13,
+                "value_bytes": 2,
+                "value_type": "list",
+                "collection_entries": 0
+              },
+              {
+                "field": "summary",
+                "member_bytes": 61,
+                "value_bytes": 50,
+                "value_type": "object",
+                "collection_entries": 3
+              }
+            ],
+            "percent_of_result_bytes": 0.011103
+          },
+          {
+            "field": "dependencies",
+            "member_bytes": 18,
+            "value_bytes": 2,
+            "value_type": "list",
+            "collection_entries": 0,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.0018
+          },
+          {
+            "field": "documentation_files",
+            "member_bytes": 24,
+            "value_bytes": 1,
+            "value_type": "number",
+            "collection_entries": null,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.002401
+          },
+          {
+            "field": "engines",
+            "member_bytes": 35,
+            "value_bytes": 24,
+            "value_type": "object",
+            "collection_entries": 1,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.003501
+          },
+          {
+            "field": "files",
+            "member_bytes": 11,
+            "value_bytes": 2,
+            "value_type": "list",
+            "collection_entries": 0,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.0011
+          },
+          {
+            "field": "findings",
+            "member_bytes": 14,
+            "value_bytes": 2,
+            "value_type": "list",
+            "collection_entries": 0,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.0014
+          },
+          {
+            "field": "quality_metrics",
+            "member_bytes": 21,
+            "value_bytes": 2,
+            "value_type": "list",
+            "collection_entries": 0,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.002101
+          },
+          {
+            "field": "reused_files",
+            "member_bytes": 17,
+            "value_bytes": 1,
+            "value_type": "number",
+            "collection_entries": null,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.0017
+          },
+          {
+            "field": "reused_verifications",
+            "member_bytes": 25,
+            "value_bytes": 1,
+            "value_type": "number",
+            "collection_entries": null,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.002501
+          },
+          {
+            "field": "reverified_claims",
+            "member_bytes": 22,
+            "value_bytes": 1,
+            "value_type": "number",
+            "collection_entries": null,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.002201
+          },
+          {
+            "field": "signals",
+            "member_bytes": 13,
+            "value_bytes": 2,
+            "value_type": "list",
+            "collection_entries": 0,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.0013
+          },
+          {
+            "field": "verification_cache",
+            "member_bytes": 58,
+            "value_bytes": 36,
+            "value_type": "object",
+            "collection_entries": 2,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.005801
+          },
+          {
+            "field": "warnings",
+            "member_bytes": 999219,
+            "value_bytes": 999207,
+            "value_type": "list",
+            "collection_entries": 1,
+            "nested_fields": null,
+            "percent_of_result_bytes": 99.946587
+          }
+        ],
+        "result_reconciled": true,
+        "envelope_reconciled": true
+      },
+      "1000000": {
+        "raw_json_bytes": 1000000,
+        "save_result": true,
+        "ciphertext_bytes": 1333432,
+        "field_contributions": [
+          {
+            "field": "analysis_cache",
+            "member_bytes": 20,
+            "value_bytes": 2,
+            "value_type": "object",
+            "collection_entries": 0,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.002
+          },
+          {
+            "field": "analysis_coverage",
+            "member_bytes": 81,
+            "value_bytes": 60,
+            "value_type": "object",
+            "collection_entries": 2,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.008102
+          },
+          {
+            "field": "claims",
+            "member_bytes": 12,
+            "value_bytes": 2,
+            "value_type": "list",
+            "collection_entries": 0,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.0012
+          },
+          {
+            "field": "cloud_assets",
+            "member_bytes": 18,
+            "value_bytes": 2,
+            "value_type": "list",
+            "collection_entries": 0,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.0018
+          },
+          {
+            "field": "code_quality",
+            "member_bytes": 111,
+            "value_bytes": 95,
+            "value_type": "object",
+            "collection_entries": 3,
+            "nested_fields": [
+              {
+                "field": "inventory",
+                "member_bytes": 15,
+                "value_bytes": 2,
+                "value_type": "list",
+                "collection_entries": 0
+              },
+              {
+                "field": "metrics",
+                "member_bytes": 13,
+                "value_bytes": 2,
+                "value_type": "list",
+                "collection_entries": 0
+              },
+              {
+                "field": "summary",
+                "member_bytes": 61,
+                "value_bytes": 50,
+                "value_type": "object",
+                "collection_entries": 3
+              }
+            ],
+            "percent_of_result_bytes": 0.011103
+          },
+          {
+            "field": "dependencies",
+            "member_bytes": 18,
+            "value_bytes": 2,
+            "value_type": "list",
+            "collection_entries": 0,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.0018
+          },
+          {
+            "field": "documentation_files",
+            "member_bytes": 24,
+            "value_bytes": 1,
+            "value_type": "number",
+            "collection_entries": null,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.002401
+          },
+          {
+            "field": "engines",
+            "member_bytes": 35,
+            "value_bytes": 24,
+            "value_type": "object",
+            "collection_entries": 1,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.003501
+          },
+          {
+            "field": "files",
+            "member_bytes": 11,
+            "value_bytes": 2,
+            "value_type": "list",
+            "collection_entries": 0,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.0011
+          },
+          {
+            "field": "findings",
+            "member_bytes": 14,
+            "value_bytes": 2,
+            "value_type": "list",
+            "collection_entries": 0,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.0014
+          },
+          {
+            "field": "quality_metrics",
+            "member_bytes": 21,
+            "value_bytes": 2,
+            "value_type": "list",
+            "collection_entries": 0,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.002101
+          },
+          {
+            "field": "reused_files",
+            "member_bytes": 17,
+            "value_bytes": 1,
+            "value_type": "number",
+            "collection_entries": null,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.0017
+          },
+          {
+            "field": "reused_verifications",
+            "member_bytes": 25,
+            "value_bytes": 1,
+            "value_type": "number",
+            "collection_entries": null,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.002501
+          },
+          {
+            "field": "reverified_claims",
+            "member_bytes": 22,
+            "value_bytes": 1,
+            "value_type": "number",
+            "collection_entries": null,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.002201
+          },
+          {
+            "field": "signals",
+            "member_bytes": 13,
+            "value_bytes": 2,
+            "value_type": "list",
+            "collection_entries": 0,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.0013
+          },
+          {
+            "field": "verification_cache",
+            "member_bytes": 58,
+            "value_bytes": 36,
+            "value_type": "object",
+            "collection_entries": 2,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.005801
+          },
+          {
+            "field": "warnings",
+            "member_bytes": 999220,
+            "value_bytes": 999208,
+            "value_type": "list",
+            "collection_entries": 1,
+            "nested_fields": null,
+            "percent_of_result_bytes": 99.946587
+          }
+        ],
+        "result_reconciled": true,
+        "envelope_reconciled": true
+      },
+      "1000001": {
+        "raw_json_bytes": 1000001,
+        "save_result": false,
+        "ciphertext_bytes": 0,
+        "field_contributions": [
+          {
+            "field": "analysis_cache",
+            "member_bytes": 20,
+            "value_bytes": 2,
+            "value_type": "object",
+            "collection_entries": 0,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.002
+          },
+          {
+            "field": "analysis_coverage",
+            "member_bytes": 81,
+            "value_bytes": 60,
+            "value_type": "object",
+            "collection_entries": 2,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.008102
+          },
+          {
+            "field": "claims",
+            "member_bytes": 12,
+            "value_bytes": 2,
+            "value_type": "list",
+            "collection_entries": 0,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.0012
+          },
+          {
+            "field": "cloud_assets",
+            "member_bytes": 18,
+            "value_bytes": 2,
+            "value_type": "list",
+            "collection_entries": 0,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.0018
+          },
+          {
+            "field": "code_quality",
+            "member_bytes": 111,
+            "value_bytes": 95,
+            "value_type": "object",
+            "collection_entries": 3,
+            "nested_fields": [
+              {
+                "field": "inventory",
+                "member_bytes": 15,
+                "value_bytes": 2,
+                "value_type": "list",
+                "collection_entries": 0
+              },
+              {
+                "field": "metrics",
+                "member_bytes": 13,
+                "value_bytes": 2,
+                "value_type": "list",
+                "collection_entries": 0
+              },
+              {
+                "field": "summary",
+                "member_bytes": 61,
+                "value_bytes": 50,
+                "value_type": "object",
+                "collection_entries": 3
+              }
+            ],
+            "percent_of_result_bytes": 0.011103
+          },
+          {
+            "field": "dependencies",
+            "member_bytes": 18,
+            "value_bytes": 2,
+            "value_type": "list",
+            "collection_entries": 0,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.0018
+          },
+          {
+            "field": "documentation_files",
+            "member_bytes": 24,
+            "value_bytes": 1,
+            "value_type": "number",
+            "collection_entries": null,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.002401
+          },
+          {
+            "field": "engines",
+            "member_bytes": 35,
+            "value_bytes": 24,
+            "value_type": "object",
+            "collection_entries": 1,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.003501
+          },
+          {
+            "field": "files",
+            "member_bytes": 11,
+            "value_bytes": 2,
+            "value_type": "list",
+            "collection_entries": 0,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.0011
+          },
+          {
+            "field": "findings",
+            "member_bytes": 14,
+            "value_bytes": 2,
+            "value_type": "list",
+            "collection_entries": 0,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.0014
+          },
+          {
+            "field": "quality_metrics",
+            "member_bytes": 21,
+            "value_bytes": 2,
+            "value_type": "list",
+            "collection_entries": 0,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.002101
+          },
+          {
+            "field": "reused_files",
+            "member_bytes": 17,
+            "value_bytes": 1,
+            "value_type": "number",
+            "collection_entries": null,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.0017
+          },
+          {
+            "field": "reused_verifications",
+            "member_bytes": 25,
+            "value_bytes": 1,
+            "value_type": "number",
+            "collection_entries": null,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.002501
+          },
+          {
+            "field": "reverified_claims",
+            "member_bytes": 22,
+            "value_bytes": 1,
+            "value_type": "number",
+            "collection_entries": null,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.002201
+          },
+          {
+            "field": "signals",
+            "member_bytes": 13,
+            "value_bytes": 2,
+            "value_type": "list",
+            "collection_entries": 0,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.0013
+          },
+          {
+            "field": "verification_cache",
+            "member_bytes": 58,
+            "value_bytes": 36,
+            "value_type": "object",
+            "collection_entries": 2,
+            "nested_fields": null,
+            "percent_of_result_bytes": 0.005801
+          },
+          {
+            "field": "warnings",
+            "member_bytes": 999221,
+            "value_bytes": 999209,
+            "value_type": "list",
+            "collection_entries": 1,
+            "nested_fields": null,
+            "percent_of_result_bytes": 99.946587
+          }
+        ],
+        "result_reconciled": true,
+        "envelope_reconciled": true
+      }
+    },
+    "limit_increased": false
+  },
+  "candidate_storage_integrity": {
+    "sqlite_integrity": "ok",
+    "foreign_key_violations": 0
+  },
+  "fixture_provenance": {
+    "small_synthetic": "Generated minimal schema-shaped result; no repository data.",
+    "representative_synthetic": "Generated all 17 top-level result fields; 800 metric entries, 256 inventory entries, 240 claims, 160 findings, 240 signals, 100 dependencies, 512 generated file keys; no source content or real file paths.",
+    "boundary": "Synthetic warnings member around isolated 1,000,000-byte store configuration; application default remains 64,000,000.",
+    "pinned_workload": "Not reproduced. Historical receipt actual=null; field sizes remain unknown.",
+    "privacy": "No payload values, raw JSON, source content, real paths, ciphertext contents, credentials, or arbitrary payload hashes retained."
+  },
+  "v1_contract_verified": {
+    "schema": "projecttrace-analysis-checkpoint-v1",
+    "envelope_fields": [
+      "schema",
+      "job_id",
+      "organization_id",
+      "repository_id",
+      "signature",
+      "result"
+    ],
+    "serializer": "json.JSONEncoder(sort_keys=True), default ensure_ascii and default separators; UTF-8 encoding of serialized chunks.",
+    "files_normalization": "shallow copy and list(result['files']) when present",
+    "admission_unit": "Complete raw JSON envelope bytes before encryption/persistence",
+    "default_maximum_bytes": 64000000,
+    "over_budget": "Fail closed, no truncation or durable checkpoint write.",
+    "loader": "Decrypt; validate digest and envelope scope/signature; return decoded result.",
+    "historical_source_sha256": "52d6bf8ac730a25103c0d9b727319d5671a505141e662f2ba6f2806578bafdaf",
+    "current_dirty_source_sha256": "7bed5a0360c4b1fe9ab1b16091c4f5370380958ffa4afe028a9a0b813f799000"
+  },
+  "candidate_compatibility_assessment": {
+    "materialized_values_equal": true,
+    "exact_v1_restore_equivalence": false,
+    "differences": [
+      {
+        "property": "files container",
+        "v1": "list",
+        "candidate": "ReplayRows"
+      },
+      {
+        "property": "metric projection alias",
+        "v1": "independent decoded lists",
+        "candidate": "shared alias"
+      },
+      {
+        "property": "mutation propagation",
+        "v1": false,
+        "candidate": true
+      }
+    ],
+    "admission_unit_equivalent": false,
+    "candidate_budget_unit": "Aggregate encrypted page and manifest bytes; differs from v1 raw JSON byte admission.",
+    "candidate_qualified": false
+  },
+  "prior_owned_candidate_profile": {
+    "evidence": "docs/evidence/SCALE001_CHECKPOINT_PAGES_OWNED.json",
+    "evidence_sha256": "194afced1379d3b308a5e4fd4a8e58806e8ff8936210d2c52598f7e1035762b3",
+    "scope": "Synthetic repeated-text Windows owned checkpoint profile; not pinned workload or Linux qualification.",
+    "logical_raw_json_bytes": 161787896,
+    "v1_saved": false,
+    "candidate_saved": true,
+    "candidate_encrypted_bytes": 1568540,
+    "candidate_pages": 322,
+    "v1_writer_peak_rss_bytes": 208044032,
+    "candidate_writer_peak_rss_bytes": 99979264,
+    "candidate_replay_peak_rss_bytes": 98533376,
+    "v1_attempt_seconds": 1.4286698,
+    "candidate_write_seconds": 9.6941717,
+    "limit_changed": false,
+    "payload_hash_included": false
+  },
+  "repository_state": {
+    "root": "C:/Users/sai krishna/Projects/ProjectTrace-local",
+    "branch": "codex/scale-001-local-continuation",
+    "head": "9e21509591bfa5457cc829ebd5637f95be68d573",
+    "status_porcelain_v1_before_evidence_append": [
+      " M backend/analysis_checkpoints.py",
+      " M backend/db.py",
+      " M backend/domain.py",
+      " M backend/generation_models.py",
+      " M backend/generations.py",
+      " M backend/jobs.py",
+      " M backend/publication_units.py",
+      " M backend/quality_api.py",
+      " M backend/queue.py",
+      " M tests/test_migrations.py",
+      " M tests/test_parser_sandbox.py",
+      "?? PROJECTTRACE_PROGRESS.md",
+      "?? backend/checkpoint_pages.py",
+      "?? backend/context_json.py",
+      "?? backend/context_maps.py",
+      "?? backend/generation_context.py",
+      "?? backend/json_export.py",
+      "?? backend/migrations/versions/0026_checkpoint_parts.py",
+      "?? backend/retention.py",
+      "?? docs/CHECKPOINT_RETENTION_AND_ROLLBACK.md",
+      "?? docs/COMMERCIAL_V1_RELEASE_GATES.md",
+      "?? docs/PROJECTTRACE_POST_SERIALIZATION_REGRESSION_REPORT.md",
+      "?? docs/SCALE001_AGGREGATE_GUARD_INVESTIGATION.md",
+      "?? docs/SCALE001_CHECKPOINT_ARCHITECTURE.md",
+      "?? docs/SCALE001_GENERATION_MAPS_LOCAL_TECHNICAL_REPORT.md",
+      "?? docs/SCALE001_GRAPH_ORDERING_CONTRACT.md",
+      "?? docs/SCALE001_INTEGRATED_QUALIFICATION_GATE.md",
+      "?? docs/SCALE001_POLICY_DECISION_READINESS.md",
+      "?? docs/SCALE001_SUPPORTED_INPUT_BOUNDARY_PROPOSAL.md",
+      "?? docs/adr/0007-bounded-published-snapshot-segments.md",
+      "?? docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29.json",
+      "?? docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_FINAL.json",
+      "?? docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_FINAL_RAW.tar.gz",
+      "?? docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_RAW.tar.gz",
+      "?? docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_REVIEWED.json",
+      "?? docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_REVIEWED_RAW.tar.gz",
+      "?? docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_REVIEWED_V2.json",
+      "?? docs/evidence/PROJECTTRACE_COMMERCIAL_V1_LOCAL_2026_10_29_REVIEWED_V2_RAW.tar.gz",
+      "?? docs/evidence/PROJECTTRACE_POST_SERIALIZATION_REGRESSION.json",
+      "?? docs/evidence/PROJECTTRACE_POST_SERIALIZATION_REGRESSION_RAW_20261029.tar.gz",
+      "?? docs/evidence/SCALE001_AGGREGATE_GUARD_INVESTIGATION.json",
+      "?? docs/evidence/SCALE001_CGROUP_40280429009.json",
+      "?? docs/evidence/SCALE001_CGROUP_40280429009_MEMORY.jsonl.gz",
+      "?? docs/evidence/SCALE001_CHECKPOINT_PAGES_EQUIVALENCE.json",
+      "?? docs/evidence/SCALE001_CHECKPOINT_PAGES_OWNED.json",
+      "?? docs/evidence/SCALE001_DETERMINISM_AND_POLICY_GATE.json",
+      "?? docs/evidence/SCALE001_FINAL_SNAPSHOT_PROFILE.json",
+      "?? docs/evidence/SCALE001_FINAL_SNAPSHOT_PROFILE_RAW.json.gz",
+      "?? docs/evidence/SCALE001_GENERATION_JSON_EXPORT.json",
+      "?? docs/evidence/SCALE001_GENERATION_MAPS_OWNED.json",
+      "?? docs/evidence/SCALE001_GENERATION_MAP_ITERATION.json",
+      "?? docs/evidence/SCALE001_GRAPH_INDEX_PROTOTYPE.json",
+      "?? docs/evidence/SCALE001_GRAPH_INDEX_PROTOTYPE_RAW.json.gz",
+      "?? docs/evidence/SCALE001_GRAPH_INDEX_RECOVERY.json",
+      "?? docs/evidence/SCALE001_GRAPH_INDEX_RECOVERY_RAW.json.gz",
+      "?? docs/evidence/SCALE001_GRAPH_SCALAR_PROTOTYPE.json",
+      "?? docs/evidence/SCALE001_GRAPH_SCALAR_PROTOTYPE_RAW.json.gz",
+      "?? docs/evidence/SCALE001_INTEGRATED_QUALIFICATION_GATE.json",
+      "?? docs/evidence/SCALE001_POLICY_DECISION_READINESS.json",
+      "?? frontend/e2e/configuration-drift.spec.ts",
+      "?? samples/configuration-drift.json",
+      "?? tests/commercial_snapshot_profile.py",
+      "?? tests/generation_json_export_probe.py",
+      "?? tests/generation_map_iteration_probe.py",
+      "?? tests/graph_index_api_probe.py",
+      "?? tests/graph_index_compatibility.py",
+      "?? tests/graph_index_measure.py",
+      "?? tests/graph_index_prototype.py",
+      "?? tests/graph_index_publication_probe.py",
+      "?? tests/graph_index_pytest_plugin.py",
+      "?? tests/graph_index_recovery.py",
+      "?? tests/graph_index_recovery_plugin.py",
+      "?? tests/graph_index_recovery_probe.py",
+      "?? tests/graph_scalar_plugin.py",
+      "?? tests/graph_scalar_probe.py",
+      "?? tests/graph_scalar_prototype.py",
+      "?? tests/snapshot_component_probe.py",
+      "?? tests/snapshot_materialization_probe.py",
+      "?? tests/sqlite_memory_probe.py",
+      "?? tests/test_checkpoint_field_attribution.py",
+      "?? tests/test_checkpoint_pages.py",
+      "?? tests/test_configuration_drift.py",
+      "?? tests/test_generation_context.py",
+      "?? tests/test_generation_map_iteration.py",
+      "?? tests/test_generation_maps.py",
+      "?? tests/test_graph_index_recovery.py",
+      "?? tests/test_graph_scalar_projection.py",
+      "?? tests/test_graph_scalar_reading.py",
+      "?? tests/test_json_export.py",
+      "?? tests/test_retention_downgrade.py",
+      "?? tests/test_retention_postgresql.py",
+      "?? tests/test_retention_recovery.py",
+      "?? tests/test_sanitization_aggregate_guard.py",
+      "?? tests/test_snapshot_materialization_profile.py"
+    ],
+    "preexisting_dirty_work_preserved": true,
+    "production_changes_this_followup": false,
+    "commit_push_merge_pr_or_workflow": false
+  },
+  "source_hashes_reviewed": {
+    "backend/analysis_checkpoints.py": "7bed5a0360c4b1fe9ab1b16091c4f5370380958ffa4afe028a9a0b813f799000",
+    "backend/checkpoint_pages.py": "e433aac19c4c592cd6513013d8a3c2984b3e93afe7f4a321084daf4f089f7562",
+    "backend/jobs.py": "3b267014a0caf42743ee4c554732e05a713b6d155f7f2ab7e8f59c49424a0da0",
+    "backend/domain.py": "7d319405487b4b148b53249ea564967e18e8b7633b001ffaaa13ffb8b9c02dd2",
+    "backend/generations.py": "9be789e551064d085c95f50b1b1273994db5b6f4f2fce5689c9ed1546a9d4594",
+    "backend/generation_models.py": "00cb29396e66f5ce50afef9e1f2a6886f54352006b6a216f737cfe1723508fa2",
+    "backend/db.py": "947ed5a72f5a5c020afecf9526f9e0a1c048c4f26ceacff4acd109e6e6d767e2",
+    "tests/test_analysis_checkpoints.py": "fbd795d0fa1f8abb631d0163780999ac0e217ff679426a55a24405ef09734d10",
+    "tests/test_checkpoint_pages.py": "f7c7ec2f882c03736a2f85bb6b215eb0e89d921cd72a5327b8e37449d738eced",
+    "tests/test_checkpoint_field_attribution.py": "0f43a9fdb44adaeafeb51cc2388234ceaa1a428010d02a313a35fa7ba9fad125",
+    "docs/COMMERCIAL_V1_RELEASE_GATES.md": "1608016634ef1309579a3398717ddcb9e84e02cc8321be94ffbeabd5c4745b30",
+    "docs/adr/0007-bounded-published-snapshot-segments.md": "d38f27bf16882d7095b03407966d5479bc8fb8c100e9fa684b33354f414ac45a",
+    "docs/SCALE001_SUPPORTED_INPUT_BOUNDARY_PROPOSAL.md": "a4602efd9d91e0668ea4b274e599d8524405dc32b8adf6d8869b4cb38b7bdb2a"
+  },
+  "original_databases_read_only_recheck": {
+    "10000": {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\p74\\test_owned_final_snapshot_prof1\\owned\\benchmark.db",
+      "captured_sha256": "465441f1dfd2c7d6ca3d7427c79dd55e57c350bee451b60a66b8e0e92f5a1d1b",
+      "current_sha256": "465441f1dfd2c7d6ca3d7427c79dd55e57c350bee451b60a66b8e0e92f5a1d1b",
+      "hash_matches": true,
+      "integrity": "ok",
+      "foreign_key_violations": 0
+    },
+    "147": {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\p74\\test_owned_final_snapshot_prof0\\owned\\benchmark.db",
+      "captured_sha256": "97aeda34f1cb1b1d67784926c2140c3c27063585ae135fbb39e22643edce94d6",
+      "current_sha256": "97aeda34f1cb1b1d67784926c2140c3c27063585ae135fbb39e22643edce94d6",
+      "hash_matches": true,
+      "integrity": "ok",
+      "foreign_key_violations": 0
+    },
+    "30000": {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\p77\\test_owned_final_snapshot_prof0\\owned\\benchmark.db",
+      "captured_sha256": "c7313fd66baa9e23ec5f5a7e9bdb8003554d086796c101be14f8d02d6ee5e9a4",
+      "current_sha256": "c7313fd66baa9e23ec5f5a7e9bdb8003554d086796c101be14f8d02d6ee5e9a4",
+      "hash_matches": true,
+      "integrity": "ok",
+      "foreign_key_violations": 0
+    },
+    "prior": {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\vp-json-export-final\\benchmark.db",
+      "captured_sha256": "14a15885488462c687ce2581807ea56ecb2145b98bc58d67f6e2aad3ba9a5627",
+      "current_sha256": "14a15885488462c687ce2581807ea56ecb2145b98bc58d67f6e2aad3ba9a5627",
+      "hash_matches": true,
+      "integrity": "ok",
+      "foreign_key_violations": 0
+    },
+    "all_hashes_match_integrity_ok_fk_zero": true
+  },
+  "prior_artifact_hashes_at_followup_start": {
+    "docs/SCALE001_INTEGRATED_QUALIFICATION_GATE.md": "5f2cda1c317edb9f0a8f60135f324bf86242fda9c687b41257a106006bf90d93",
+    "docs/evidence/SCALE001_INTEGRATED_QUALIFICATION_GATE.json": "0e03d118599d3ad6be0ccfd8826bb8751e1b75be7bf5f1f33daeb26a2cabe2f1",
+    "docs/PROJECTTRACE_POST_SERIALIZATION_REGRESSION_REPORT.md": "6a5ae504ddb60e14b9718e499edc8324b2c9786da40d3658c1825f9890ba0d8d",
+    "PROJECTTRACE_PROGRESS.md": "68ab49695b0608ee5727fd139f53fabfec6679d4bab2e0aeebeab4d6c74b3b2b",
+    "docs/evidence/PROJECTTRACE_POST_SERIALIZATION_REGRESSION.json": "7e012325a21e62538457fb45f1e5f8fc8fe3b8ea07114799193a1cf26e585b09",
+    "docs/evidence/PROJECTTRACE_POST_SERIALIZATION_REGRESSION_RAW_20261029.tar.gz": "32773275b70e22b6568adc04b46e53dcdd7cd43fd7e705ce932245ea7d2dbaff",
+    "docs/evidence/SCALE001_CGROUP_40280429009.json": "fbf39ccb8579d5b73f30bc5109e50dcf3d8e558135788e562d79b04645e079ad",
+    "docs/evidence/SCALE001_CGROUP_40280429009_MEMORY.jsonl.gz": "c16bf8e898bd15917d48e2ac9685242d88571d6ea34aa1bb285754f223d5231f"
+  },
+  "raw_reference_hashes": {
+    "docs/evidence/PROJECTTRACE_POST_SERIALIZATION_REGRESSION_RAW_20261029.tar.gz": "32773275b70e22b6568adc04b46e53dcdd7cd43fd7e705ce932245ea7d2dbaff",
+    "docs/evidence/SCALE001_CGROUP_40280429009.json": "fbf39ccb8579d5b73f30bc5109e50dcf3d8e558135788e562d79b04645e079ad",
+    "docs/evidence/SCALE001_CGROUP_40280429009_MEMORY.jsonl.gz": "c16bf8e898bd15917d48e2ac9685242d88571d6ea34aa1bb285754f223d5231f",
+    "docs/evidence/SCALE001_CHECKPOINT_PAGES_OWNED.json": "194afced1379d3b308a5e4fd4a8e58806e8ff8936210d2c52598f7e1035762b3"
+  },
+  "tests_and_checks": {
+    "environment": {
+      "python": "3.14.3",
+      "pytest": "9.1.1",
+      "ruff": "0.16.10",
+      "platform": "Windows"
+    },
+    "runs": [
+      {
+        "command": "& 'C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe' -m pytest -q -s tests/test_checkpoint_field_attribution.py --basetemp 'C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\checkpoint-field-attribution-reconciled-20261029'",
+        "exit_code": 0,
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "warnings": 1,
+        "status": "PASS; earlier standalone run."
+      },
+      {
+        "command": "& 'C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe' -m pytest -q -s tests/test_analysis_checkpoints.py tests/test_checkpoint_pages.py tests/test_checkpoint_field_attribution.py --basetemp 'C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\checkpoint-attribution-final-verify-20261029\\pytest'",
+        "exit_code": 0,
+        "passed": 38,
+        "failed": 0,
+        "skipped": 0,
+        "warnings": 1,
+        "duration_seconds": 23.25,
+        "status": "PASS; rerun during this follow-up."
+      },
+      {
+        "command": "& 'C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe' -m pytest -q tests/test_generations.py tests/test_publication_units.py tests/test_quality_spill.py tests/test_sanitization_aggregate_guard.py tests/test_generation_context.py tests/test_generation_maps.py tests/test_migrations.py tests/test_retention_recovery.py tests/test_recovery_boundaries.py tests/test_analysis_performance.py tests/test_repository_store.py tests/test_observation_store.py tests/test_timeout_recovery.py tests/test_queue.py tests/test_worker_failure.py --basetemp 'C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\checkpoint-attribution-regressions-20261029' --junitxml 'C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\checkpoint-attribution-regressions-20261029\\results.xml'",
+        "exit_code": 0,
+        "passed": 233,
+        "failed": 0,
+        "skipped": 1,
+        "warnings": 1,
+        "duration_seconds": 387.12,
+        "skip_reason": "Linux unnamed SQLite lifecycle only; prior run on unchanged sources."
+      },
+      {
+        "command": "& 'C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\ruff.exe' check backend/analysis_checkpoints.py backend/checkpoint_pages.py backend/jobs.py backend/domain.py backend/db.py backend/migrations/versions/0026_checkpoint_parts.py tests/test_analysis_checkpoints.py tests/test_checkpoint_pages.py tests/test_checkpoint_field_attribution.py",
+        "exit_code": 0,
+        "status": "PASS; rerun during this follow-up."
+      },
+      {
+        "command": "& 'C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe' -m compileall -q backend tests",
+        "exit_code": 0,
+        "status": "PASS; rerun during this follow-up."
+      },
+      {
+        "command": "git diff --check",
+        "exit_code": 0,
+        "status": "PASS; rerun during this follow-up."
+      }
+    ],
+    "corrected_attempts": [
+      {
+        "issue": "First boundary diagnostic iteration failed because placeholder envelope IDs had serialized lengths different from stored fixture IDs; test now uses exact persisted IDs. Final boundaries pass."
+      },
+      {
+        "issue": "Initial Ruff pass found import ordering and one unused import in new diagnostic; corrected before final pass."
+      }
+    ],
+    "services": {
+      "docker_info_exit_code": 1,
+      "docker_error": "Docker Desktop Linux engine named pipe unavailable",
+      "postgres_test_urls": "unset",
+      "redis_or_celery_urls": "unset",
+      "local_linux_cgroup": "NOT RUN",
+      "postgresql_redis_celery": "NOT RUN",
+      "full_pinned_workload": "NOT RUN by instruction"
+    }
+  },
+  "decision_and_release_status": {
+    "production_change": "NONE; no field is proven safe to remove.",
+    "checkpoint_maximum_bytes": 64000000,
+    "sanitizer_aggregate_nodes": 1000000,
+    "owned_50k_nodes": 1115947,
+    "option_a": "PENDING_PRODUCT_OWNER_APPROVAL",
+    "scale_001": "NOT QUALIFIED",
+    "commercial_v1": "DEVELOPMENT IN PROGRESS",
+    "next_task": "Obtain owner-approved checkpoint admission/format policy and a source-matched privacy-safe pinned-result measurement; establish exact v1 restore type/alias/mutation and downstream retry equivalence before proposing any encoding change."
+  },
+  "updated_artifact_sha256": {
+    "docs/SCALE001_CHECKPOINT_FIELD_ATTRIBUTION.md": "8a2cc94674ca75163b321d5829dce97871f22c3684665946366a9fb42d1c4031",
+    "docs/SCALE001_INTEGRATED_QUALIFICATION_GATE.md": "5db8d4b02e4c7f4c7233543370dbabc4513ee902fd023811cafc9d57f4f58166",
+    "docs/PROJECTTRACE_POST_SERIALIZATION_REGRESSION_REPORT.md": "673497e717c52966272221969cc87a002aea8763c21f69188f5f704baf93a134",
+    "PROJECTTRACE_PROGRESS.md": "55983446d7fc0a48c60cf9ba9ed74c4a764123bc5a5bc54dbaa03e87eaae93ce",
+    "docs/SCALE001_CHECKPOINT_POLICY_DECISION.md": "94c956742636f45c3476b698131fe1e3b206fad7a3ae6f406118a8210ba757c6",
+    "docs/evidence/SCALE001_CHECKPOINT_POLICY_DECISION.json": "ef786b1a9bb8fca0eafb3cee50d4c8386bbf8c1ac63df22a6bfafa0fa71d9d69",
+    "docs/evidence/SCALE001_CHECKPOINT_SOURCE_MATCH.json": "257ff929a7d6b382fab90e8b501b21ea9b1ff14d88e36eee8edadfd0d61b00bf",
+    "tests/test_checkpoint_source_match_manifest.py": "ae6a13b9a8f03ebd638d444e56a6625ed2572cd7187321699c5e17439c41f94d"
+  },
+  "self_hash_note": "Final SHA-256 of this evidence JSON is recorded in the integrated qualification JSON and returned externally; it cannot contain its own stable digest.",
+  "final_reverification": {
+    "date": "2026-10-29",
+    "checkout": {
+      "root": "C:\\Users\\sai krishna\\Projects\\ProjectTrace-local",
+      "branch": "codex/scale-001-local-continuation",
+      "head": "9e21509591bfa5457cc829ebd5637f95be68d573",
+      "dirty_work_preserved": true,
+      "recorded_dirty_source_hashes_match": true,
+      "production_source_or_schema_changed": false
+    },
+    "initial_test_setup_attempt": {
+      "exit_code": 1,
+      "passed": 2,
+      "setup_errors": 38,
+      "warnings": 1,
+      "cause": "The external pytest basetemp parent directory did not exist; no test assertion failure.",
+      "corrected_rerun": "Same selection passed after creating the external scratch directory."
+    },
+    "focused_checkpoint_rerun": {
+      "command": "& 'C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe' -m pytest -q -s tests/test_analysis_checkpoints.py tests/test_checkpoint_pages.py tests/test_checkpoint_field_attribution.py tests/test_checkpoint_source_match_manifest.py --basetemp 'C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\checkpoint-final-confirm-20261029\\pytest'",
+      "exit_code": 0,
+      "passed": 40,
+      "failed": 0,
+      "skipped": 0,
+      "warnings": 1,
+      "duration_seconds": 98.29
+    },
+    "related_regression_rerun": {
+      "command": "& 'C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe' -m pytest -q tests/test_generations.py tests/test_publication_units.py tests/test_quality_spill.py tests/test_sanitization_aggregate_guard.py tests/test_generation_context.py tests/test_generation_maps.py tests/test_migrations.py tests/test_retention_recovery.py tests/test_recovery_boundaries.py tests/test_analysis_performance.py tests/test_repository_store.py tests/test_observation_store.py tests/test_timeout_recovery.py tests/test_queue.py tests/test_worker_failure.py --basetemp 'C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\checkpoint-final-confirm-20261029\\regressions' --junitxml 'C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\checkpoint-final-confirm-20261029\\regressions\\results.xml'",
+      "exit_code": 0,
+      "passed": 195,
+      "failed": 0,
+      "skipped": 1,
+      "warnings": 1,
+      "duration_seconds": 829.4,
+      "skip": "tests/test_observation_store.py::test_linux_spill_is_unlinked_and_reclaimed_on_worker_death: Linux unnamed SQLite lifecycle only",
+      "prior_recorded_run": {
+        "passed": 233,
+        "skipped": 1,
+        "status": "historical separate run; count difference unresolved; do not merge"
+      }
+    },
+    "static_checks": {
+      "ruff": {
+        "exit_code": 0,
+        "status": "PASS"
+      },
+      "compileall_backend_tests": {
+        "command": "python -m compileall -q backend tests",
+        "exit_code": 0,
+        "status": "PASS"
+      },
+      "git_diff_check": {
+        "exit_code": 0,
+        "status": "PASS"
+      },
+      "qualification_json_parse": {
+        "exit_code": 0,
+        "status": "PASS"
+      }
+    },
+    "database_recheck": {
+      "10000": {
+        "sha256": "465441f1dfd2c7d6ca3d7427c79dd55e57c350bee451b60a66b8e0e92f5a1d1b",
+        "matches_captured": true,
+        "integrity": "ok",
+        "foreign_key_violations": 0
+      },
+      "147": {
+        "sha256": "97aeda34f1cb1b1d67784926c2140c3c27063585ae135fbb39e22643edce94d6",
+        "matches_captured": true,
+        "integrity": "ok",
+        "foreign_key_violations": 0
+      },
+      "30000": {
+        "sha256": "c7313fd66baa9e23ec5f5a7e9bdb8003554d086796c101be14f8d02d6ee5e9a4",
+        "matches_captured": true,
+        "integrity": "ok",
+        "foreign_key_violations": 0
+      },
+      "prior": {
+        "sha256": "14a15885488462c687ce2581807ea56ecb2145b98bc58d67f6e2aad3ba9a5627",
+        "matches_captured": true,
+        "integrity": "ok",
+        "foreign_key_violations": 0
+      }
+    },
+    "limits_and_gates": {
+      "checkpoint_max_bytes": 64000000,
+      "sanitizer_max_nodes": 1000000,
+      "historical_50k_snapshot_nodes": 1115947,
+      "historical_v1_failure_actual_bytes": null,
+      "full_pinned_workload_rerun": false,
+      "linux_cgroup_post_change_qualification": false,
+      "scale_001": "NOT QUALIFIED",
+      "commercial_v1": "DEVELOPMENT IN PROGRESS"
+    }
+  },
+  "current_source_match_reassessment": {
+    "date": "2026-10-29",
+    "canonical_manifest": "docs/evidence/SCALE001_CHECKPOINT_SOURCE_MATCH.json",
+    "canonical_manifest_sha256": "257ff929a7d6b382fab90e8b501b21ea9b1ff14d88e36eee8edadfd0d61b00bf",
+    "identity_status_counts": {
+      "VERIFIED_MATCH": 9,
+      "VERIFIED_MISMATCH": 4,
+      "NOT_AVAILABLE": 9
+    },
+    "result_object_and_checkpoint_ciphertext_available": false,
+    "v1_exact_raw_json_bytes": null,
+    "run_input_historical_archive_reproduced": false,
+    "local_full_workload_prerequisites_met": false,
+    "workload_rerun": false,
+    "local_preflight": {
+      "python": "3.14.3",
+      "failed_run_python": "3.14.9",
+      "docker_client": "29.8.2",
+      "docker_info_exit_code": 1,
+      "wsl_distributions": [
+        "docker-desktop"
+      ],
+      "cgroup_v2_visible": false,
+      "database_or_broker_test_endpoints_configured": false
+    },
+    "Context7": {
+      "available": false,
+      "library_ids": "NOT_AVAILABLE; Context7 tool not exposed.",
+      "official_docs_fallback": "Python 3.14 JSON docs; SQLAlchemy 2.1 docs; cryptography 50.0.2 Fernet docs.",
+      "no_project_source_or_payload_sent": true
+    },
+    "focused_manifest_and_attribution_test": {
+      "command": "& 'C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe' -m pytest -q -s tests/test_checkpoint_source_match_manifest.py tests/test_checkpoint_field_attribution.py --basetemp 'C:\\Users\\sai krishna\\Projects\\ProjectTrace-local\\work\\checkpoint-source-match-20261029\\pytest'",
+      "exit_code": 0,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "warnings": 1,
+      "duration_seconds": 5.52
+    },
+    "owner_decisions": {
+      "checkpoint": "PENDING_PRODUCT_OWNER_APPROVAL",
+      "sanitizer": "PENDING_PRODUCT_OWNER_APPROVAL",
+      "separate": true,
+      "explicit_approval_found": false
+    },
+    "release_status": {
+      "scale_001": "NOT QUALIFIED",
+      "commercial_v1": "DEVELOPMENT IN PROGRESS",
+      "checkpoint_max_bytes": 64000000,
+      "sanitizer_max_nodes": 1000000,
+      "owned_50k_nodes": 1115947
+    },
+    "final_confirmation_run": {
+      "command": "& 'C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe' -m pytest -q -s tests/test_checkpoint_source_match_manifest.py tests/test_checkpoint_field_attribution.py --basetemp 'C:\\Users\\sai krishna\\Projects\\ProjectTrace-local\\work\\checkpoint-source-match-20261029-rerun\\pytest'",
+      "exit_code": 0,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "warnings": 1,
+      "duration_seconds": 5.16
+    },
+    "evidence_hash_validation_run": {
+      "command": "& 'C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe' -m pytest -q -s tests/test_checkpoint_source_match_manifest.py tests/test_checkpoint_field_attribution.py --basetemp 'C:\\Users\\sai krishna\\Projects\\ProjectTrace-local\\work\\checkpoint-source-match-20261029-final\\pytest'",
+      "exit_code": 0,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "warnings": 1,
+      "duration_seconds": 5.71
+    }
+  },
+  "final_local_revalidation": {
+    "date": "2026-10-29",
+    "checkout": "C:\\Users\\sai krishna\\Projects\\ProjectTrace-local",
+    "branch": "codex/scale-001-local-continuation",
+    "head": "9e21509591bfa5457cc829ebd5637f95be68d573",
+    "successful_command": "& 'C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe' -m pytest -q -s tests/test_checkpoint_source_match_manifest.py tests/test_checkpoint_field_attribution.py --basetemp 'C:\\Users\\sai krishna\\Projects\\ProjectTrace-local\\work\\checkpoint-source-match-20261029-final-2\\pytest'",
+    "exit_code": 0,
+    "passed": 5,
+    "failed": 0,
+    "skipped": 0,
+    "warnings": 1,
+    "duration_seconds": 5.17,
+    "warning": "Starlette deprecation: httpx with starlette.testclient is deprecated; install httpx2 instead.",
+    "prior_setup_attempt": {
+      "exit_code": 1,
+      "passed_before_setup_error": 4,
+      "setup_errors": 1,
+      "cause": "pytest --basetemp parent did not exist; no test assertion failed; corrected by creating ignored work temp directory."
+    },
+    "ruff_exit_code": 0,
+    "compileall_exit_code": 0,
+    "git_diff_check_exit_code": 0,
+    "full_pinned_workload_run": false,
+    "production_source_changed": false,
+    "actual_failed_checkpoint_bytes": null
+  },
+  "post_reconciliation_test_rerun": {
+    "date": "2026-10-29",
+    "command": "& 'C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe' -m pytest -q -s tests/test_checkpoint_source_match_manifest.py tests/test_checkpoint_field_attribution.py --basetemp 'C:\\Users\\sai krishna\\Projects\\ProjectTrace-local\\work\\checkpoint-source-match-20261029-final-3\\pytest'",
+    "exit_code": 0,
+    "passed": 5,
+    "failed": 0,
+    "skipped": 0,
+    "warnings": 1,
+    "duration_seconds": 5.41,
+    "warning": "Starlette deprecation: httpx with starlette.testclient is deprecated; install httpx2 instead.",
+    "after_integrated_hash_repair": true,
+    "full_workload_run": false,
+    "actual_failed_checkpoint_bytes": null
+  },
+  "final_evidence_validation_run": {
+    "date": "2026-10-29",
+    "command": "& 'C:\\Users\\sai krishna\\OneDrive\\Desktop\\ProjectTrace\\.venv\\Scripts\\python.exe' -m pytest -q -s tests/test_checkpoint_source_match_manifest.py tests/test_checkpoint_field_attribution.py --basetemp 'C:\\Users\\sai krishna\\Projects\\ProjectTrace-local\\work\\checkpoint-source-match-20261029-final-4\\pytest'",
+    "exit_code": 0,
+    "passed": 5,
+    "failed": 0,
+    "skipped": 0,
+    "warnings": 1,
+    "duration_seconds": 5.04,
+    "warning": "Starlette deprecation: httpx with starlette.testclient is deprecated; install httpx2 instead.",
+    "ruff_exit_code": 0,
+    "compileall_exit_code": 0,
+    "git_diff_check_exit_code": 0,
+    "hash_validation_exit_code": 0,
+    "original_databases_hash_and_integrity": "4/4 match; SQLite integrity ok; FK violations 0",
+    "git_status_snapshot_match": true,
+    "full_workload_run": false,
+    "production_source_changed": false,
+    "actual_failed_checkpoint_bytes": null
+  }
+}

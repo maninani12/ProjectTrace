@@ -1,0 +1,1158 @@
+{
+  "status": "NOT_QUALIFIED",
+  "date": "2026-10-27",
+  "scope": "OWNED_WINDOWS_FINAL_SNAPSHOT_DIAGNOSTICS_ONLY",
+  "branch": "codex/scale-001-local-continuation",
+  "head": "9e21509591bfa5457cc829ebd5637f95be68d573",
+  "production_source_changed": false,
+  "publication_actions": "NONE",
+  "normal_profiles": [
+    {
+      "label": "normal_initial_matrix",
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\p74\\test_owned_final_snapshot_prof0\\owned\\profile.json",
+      "metrics": 147,
+      "states": [
+        {
+          "phase": "cold",
+          "state": "PARTIAL",
+          "snapshot_id": "995211f8-b224-5117-aaa0-a27451858558",
+          "metrics": 147,
+          "findings": 336,
+          "snapshot_nodes": 54340,
+          "producer_findings": 330
+        },
+        {
+          "phase": "warm",
+          "state": "PARTIAL",
+          "snapshot_id": "62bfd2d6-e451-5d5a-9f2a-72e0628e0925",
+          "metrics": 147,
+          "findings": 336,
+          "snapshot_nodes": 54240,
+          "producer_findings": 330
+        },
+        {
+          "phase": "incremental",
+          "state": "PARTIAL",
+          "snapshot_id": "2ad1c375-83d3-59b6-9405-78447677bf63",
+          "metrics": 147,
+          "findings": 337,
+          "snapshot_nodes": 55207,
+          "producer_findings": 331
+        }
+      ],
+      "integrity": {
+        "sqlite_integrity": "ok",
+        "foreign_key_violations": 0
+      },
+      "pointers": 2,
+      "final_boundaries": [
+        {
+          "name": "COMPLETE_FINAL_SNAPSHOT_PATH",
+          "phase": "cold",
+          "before": {
+            "cpu_seconds": 19.796875,
+            "rss_bytes": 148373504,
+            "peak_rss_bytes": 148373504
+          },
+          "sampled_peak_rss_bytes": 153903104,
+          "attributes": {},
+          "after": {
+            "cpu_seconds": 22.09375,
+            "rss_bytes": 149508096,
+            "peak_rss_bytes": 167309312
+          },
+          "seconds": 2.3361172000004444,
+          "outcome": "OK"
+        },
+        {
+          "name": "COMPLETE_FINAL_SNAPSHOT_PATH",
+          "phase": "warm",
+          "before": {
+            "cpu_seconds": 38.078125,
+            "rss_bytes": 163446784,
+            "peak_rss_bytes": 167309312
+          },
+          "sampled_peak_rss_bytes": 167403520,
+          "attributes": {},
+          "after": {
+            "cpu_seconds": 40.5,
+            "rss_bytes": 165715968,
+            "peak_rss_bytes": 183148544
+          },
+          "seconds": 2.4638062000012724,
+          "outcome": "OK"
+        },
+        {
+          "name": "COMPLETE_FINAL_SNAPSHOT_PATH",
+          "phase": "incremental",
+          "before": {
+            "cpu_seconds": 61.0,
+            "rss_bytes": 187035648,
+            "peak_rss_bytes": 187035648
+          },
+          "sampled_peak_rss_bytes": 208080896,
+          "attributes": {},
+          "after": {
+            "cpu_seconds": 66.15625,
+            "rss_bytes": 189026304,
+            "peak_rss_bytes": 208080896
+          },
+          "seconds": 5.4929738999999245,
+          "outcome": "OK"
+        }
+      ],
+      "limits": {
+        "job_seconds": 900,
+        "spill_bytes": 256000000,
+        "metadata_nodes": 1000000,
+        "descriptor_nodes": 256000,
+        "encoded_stage_bytes": 64000000
+      }
+    },
+    {
+      "label": "normal_initial_matrix",
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\p74\\test_owned_final_snapshot_prof1\\owned\\profile.json",
+      "metrics": 10000,
+      "states": [
+        {
+          "phase": "cold",
+          "state": "PARTIAL",
+          "snapshot_id": "995211f8-b224-5117-aaa0-a27451858558",
+          "metrics": 10000,
+          "findings": 336,
+          "snapshot_nodes": 261257,
+          "producer_findings": 330
+        }
+      ],
+      "integrity": {
+        "sqlite_integrity": "ok",
+        "foreign_key_violations": 0
+      },
+      "pointers": 1,
+      "final_boundaries": [
+        {
+          "name": "COMPLETE_FINAL_SNAPSHOT_PATH",
+          "phase": "cold",
+          "before": {
+            "cpu_seconds": 112.53125,
+            "rss_bytes": 169926656,
+            "peak_rss_bytes": 185376768
+          },
+          "sampled_peak_rss_bytes": 292388864,
+          "attributes": {},
+          "after": {
+            "cpu_seconds": 129.984375,
+            "rss_bytes": 189100032,
+            "peak_rss_bytes": 294780928
+          },
+          "seconds": 18.276024300001154,
+          "outcome": "OK"
+        }
+      ],
+      "limits": {
+        "job_seconds": 900,
+        "spill_bytes": 256000000,
+        "metadata_nodes": 1000000,
+        "descriptor_nodes": 256000,
+        "encoded_stage_bytes": 64000000
+      }
+    },
+    {
+      "label": "normal_initial_matrix",
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\p74\\test_owned_final_snapshot_prof2\\owned\\profile.json",
+      "metrics": 30000,
+      "states": [
+        {
+          "phase": "cold",
+          "state": "PARTIAL",
+          "snapshot_id": "995211f8-b224-5117-aaa0-a27451858558",
+          "metrics": 30000,
+          "findings": 336,
+          "snapshot_nodes": 681257,
+          "producer_findings": 330
+        }
+      ],
+      "integrity": {
+        "sqlite_integrity": "ok",
+        "foreign_key_violations": 0
+      },
+      "pointers": 1,
+      "final_boundaries": [
+        {
+          "name": "COMPLETE_FINAL_SNAPSHOT_PATH",
+          "phase": "cold",
+          "before": {
+            "cpu_seconds": 171.125,
+            "rss_bytes": 204087296,
+            "peak_rss_bytes": 252735488
+          },
+          "sampled_peak_rss_bytes": 523485184,
+          "attributes": {},
+          "after": {
+            "cpu_seconds": 176.234375,
+            "rss_bytes": 226197504,
+            "peak_rss_bytes": 523485184
+          },
+          "seconds": 5.21469739999884,
+          "outcome": "OK"
+        }
+      ],
+      "limits": {
+        "job_seconds": 900,
+        "spill_bytes": 256000000,
+        "metadata_nodes": 1000000,
+        "descriptor_nodes": 256000,
+        "encoded_stage_bytes": 64000000
+      }
+    },
+    {
+      "label": "normal_initial_matrix",
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\p74\\test_owned_final_snapshot_prof3\\owned\\profile.json",
+      "metrics": 50000,
+      "states": [
+        {
+          "phase": "cold",
+          "error": "ValueError: Sanitization structure budget exceeded"
+        }
+      ],
+      "integrity": {
+        "sqlite_integrity": "ok",
+        "foreign_key_violations": 0
+      },
+      "pointers": 0,
+      "final_boundaries": [
+        {
+          "name": "COMPLETE_FINAL_SNAPSHOT_PATH",
+          "phase": "cold",
+          "before": {
+            "cpu_seconds": 70.453125,
+            "rss_bytes": 220958720,
+            "peak_rss_bytes": 302055424
+          },
+          "sampled_peak_rss_bytes": 236929024,
+          "attributes": {},
+          "after": {
+            "cpu_seconds": 73.03125,
+            "rss_bytes": 222408704,
+            "peak_rss_bytes": 302055424
+          },
+          "seconds": 2.6534145000041462,
+          "outcome": "ERROR",
+          "error": "ValueError: Sanitization structure budget exceeded"
+        }
+      ],
+      "limits": {
+        "job_seconds": 900,
+        "spill_bytes": 256000000,
+        "metadata_nodes": 1000000,
+        "descriptor_nodes": 256000,
+        "encoded_stage_bytes": 64000000
+      }
+    },
+    {
+      "label": "normal_aggregated_fetches",
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\p75\\test_owned_final_snapshot_prof0\\owned\\profile.json",
+      "metrics": 30000,
+      "states": [
+        {
+          "phase": "cold",
+          "state": "PARTIAL",
+          "snapshot_id": "995211f8-b224-5117-aaa0-a27451858558",
+          "metrics": 30000,
+          "findings": 336,
+          "snapshot_nodes": 681257,
+          "producer_findings": 330
+        }
+      ],
+      "integrity": {
+        "sqlite_integrity": "ok",
+        "foreign_key_violations": 0
+      },
+      "pointers": 1,
+      "final_boundaries": [
+        {
+          "name": "COMPLETE_FINAL_SNAPSHOT_PATH",
+          "phase": "cold",
+          "before": {
+            "cpu_seconds": 50.171875,
+            "rss_bytes": 204599296,
+            "peak_rss_bytes": 252952576
+          },
+          "sampled_peak_rss_bytes": 522592256,
+          "attributes": {},
+          "after": {
+            "cpu_seconds": 62.234375,
+            "rss_bytes": 222261248,
+            "peak_rss_bytes": 522592256
+          },
+          "seconds": 12.956044999998994,
+          "outcome": "OK"
+        }
+      ],
+      "limits": {
+        "job_seconds": 900,
+        "spill_bytes": 256000000,
+        "metadata_nodes": 1000000,
+        "descriptor_nodes": 256000,
+        "encoded_stage_bytes": 64000000
+      }
+    },
+    {
+      "label": "normal_native_counters",
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\p77\\test_owned_final_snapshot_prof0\\owned\\profile.json",
+      "metrics": 30000,
+      "states": [
+        {
+          "phase": "cold",
+          "state": "PARTIAL",
+          "snapshot_id": "995211f8-b224-5117-aaa0-a27451858558",
+          "metrics": 30000,
+          "findings": 336,
+          "snapshot_nodes": 681257,
+          "producer_findings": 330
+        }
+      ],
+      "integrity": {
+        "sqlite_integrity": "ok",
+        "foreign_key_violations": 0
+      },
+      "pointers": 1,
+      "final_boundaries": [
+        {
+          "name": "COMPLETE_FINAL_SNAPSHOT_PATH",
+          "phase": "cold",
+          "before": {
+            "cpu_seconds": 69.4375,
+            "rss_bytes": 204017664,
+            "peak_rss_bytes": 253100032
+          },
+          "sampled_peak_rss_bytes": 502472704,
+          "attributes": {},
+          "after": {
+            "cpu_seconds": 77.71875,
+            "rss_bytes": 223010816,
+            "peak_rss_bytes": 521617408
+          },
+          "seconds": 8.673264999997627,
+          "outcome": "OK"
+        }
+      ],
+      "limits": {
+        "job_seconds": 900,
+        "spill_bytes": 256000000,
+        "metadata_nodes": 1000000,
+        "descriptor_nodes": 256000,
+        "encoded_stage_bytes": 64000000
+      }
+    }
+  ],
+  "large_final_stages": [
+    {
+      "name": "OWNED_METRIC_FIXTURE_BUILD",
+      "phase": "cold",
+      "before": {
+        "cpu_seconds": 7.921875,
+        "rss_bytes": 138080256,
+        "peak_rss_bytes": 138645504
+      },
+      "attributes": {
+        "count": 30000
+      },
+      "sampled_peak_rss_bytes": 138080256,
+      "parent": "COMPLETE_ANALYSIS",
+      "outcome": "OK",
+      "seconds": 2.8157319000019925,
+      "after": {
+        "cpu_seconds": 10.53125,
+        "rss_bytes": 138076160,
+        "peak_rss_bytes": 138645504
+      }
+    },
+    {
+      "name": "QUALITY_COMPARISON",
+      "phase": "cold",
+      "before": {
+        "cpu_seconds": 27.59375,
+        "rss_bytes": 145604608,
+        "peak_rss_bytes": 145604608
+      },
+      "attributes": {},
+      "sampled_peak_rss_bytes": 147701760,
+      "parent": "COMPLETE_ANALYSIS",
+      "outcome": "OK",
+      "seconds": 8.213961200002814,
+      "after": {
+        "cpu_seconds": 35.625,
+        "rss_bytes": 147701760,
+        "peak_rss_bytes": 147701760
+      }
+    },
+    {
+      "name": "QUALITY_PERSIST",
+      "phase": "cold",
+      "before": {
+        "cpu_seconds": 57.4375,
+        "rss_bytes": 156471296,
+        "peak_rss_bytes": 156471296
+      },
+      "attributes": {},
+      "sampled_peak_rss_bytes": 156471296,
+      "parent": "COMPLETE_ANALYSIS",
+      "outcome": "OK",
+      "seconds": 3.244354700000258,
+      "after": {
+        "cpu_seconds": 60.5,
+        "rss_bytes": 156467200,
+        "peak_rss_bytes": 156471296
+      }
+    },
+    {
+      "name": "SQL_ENCODE_QUALITY",
+      "phase": "cold",
+      "before": {
+        "cpu_seconds": 60.5,
+        "rss_bytes": 156467200,
+        "peak_rss_bytes": 156471296
+      },
+      "attributes": {
+        "characters": 24971033
+      },
+      "sampled_peak_rss_bytes": 182034432,
+      "parent": "COMPLETE_ANALYSIS",
+      "outcome": "OK",
+      "seconds": 1.5148914000019431,
+      "after": {
+        "cpu_seconds": 61.953125,
+        "rss_bytes": 182034432,
+        "peak_rss_bytes": 207015936
+      }
+    },
+    {
+      "name": "FINAL_RECEIPT_LOOKUP",
+      "phase": "cold",
+      "before": {
+        "cpu_seconds": 69.4375,
+        "rss_bytes": 204017664,
+        "peak_rss_bytes": 253100032
+      },
+      "attributes": {},
+      "sampled_peak_rss_bytes": 204017664,
+      "parent": "COMPLETE_ANALYSIS",
+      "outcome": "OK",
+      "seconds": 0.0007982000024640001,
+      "after": {
+        "cpu_seconds": 69.4375,
+        "rss_bytes": 204017664,
+        "peak_rss_bytes": 253100032
+      }
+    },
+    {
+      "name": "FINAL_SANITIZE",
+      "phase": "cold",
+      "before": {
+        "cpu_seconds": 69.4375,
+        "rss_bytes": 204017664,
+        "peak_rss_bytes": 253100032
+      },
+      "attributes": {
+        "source_line": 1816,
+        "metrics": 30000,
+        "findings": 336
+      },
+      "sampled_peak_rss_bytes": 210317312,
+      "parent": "COMPLETE_ANALYSIS",
+      "outcome": "OK",
+      "seconds": 1.5297688999999082,
+      "after": {
+        "cpu_seconds": 70.90625,
+        "rss_bytes": 210317312,
+        "peak_rss_bytes": 253100032
+      }
+    },
+    {
+      "name": "FINAL_GC",
+      "phase": "cold",
+      "before": {
+        "cpu_seconds": 70.90625,
+        "rss_bytes": 210317312,
+        "peak_rss_bytes": 253100032
+      },
+      "attributes": {},
+      "sampled_peak_rss_bytes": 210317312,
+      "parent": "COMPLETE_ANALYSIS",
+      "outcome": "OK",
+      "seconds": 0.15885840000555618,
+      "after": {
+        "cpu_seconds": 71.0625,
+        "rss_bytes": 210317312,
+        "peak_rss_bytes": 253100032
+      }
+    },
+    {
+      "name": "SQL_ENCODE_SNAPSHOT",
+      "phase": "cold",
+      "before": {
+        "cpu_seconds": 71.0625,
+        "rss_bytes": 210329600,
+        "peak_rss_bytes": 253100032
+      },
+      "attributes": {
+        "characters": 26197173
+      },
+      "sampled_peak_rss_bytes": 236429312,
+      "parent": "COMPLETE_ANALYSIS",
+      "outcome": "OK",
+      "seconds": 0.5977158000023337,
+      "after": {
+        "cpu_seconds": 71.671875,
+        "rss_bytes": 236429312,
+        "peak_rss_bytes": 262676480
+      }
+    },
+    {
+      "name": "DB_EXECUTE_SNAPSHOT_WRITE",
+      "phase": "cold",
+      "before": {
+        "cpu_seconds": 71.671875,
+        "rss_bytes": 236429312,
+        "peak_rss_bytes": 262676480
+      },
+      "attributes": {
+        "sql": "UPDATE records SET data=?, version=? WHERE records.id = ? AND records.version = ?"
+      },
+      "sampled_peak_rss_bytes": 502472704,
+      "parent": "COMPLETE_ANALYSIS",
+      "sqlite_malloc": {
+        "available": true,
+        "sqlite_version": "3.50.4",
+        "before_malloc_bytes": 62482680,
+        "after_malloc_bytes": 88676208,
+        "peak_malloc_bytes": 350664352
+      },
+      "outcome": "OK",
+      "seconds": 0.2110501999995904,
+      "after": {
+        "cpu_seconds": 71.875,
+        "rss_bytes": 262627328,
+        "peak_rss_bytes": 521617408
+      }
+    },
+    {
+      "name": "PROJECT_SNAPSHOT",
+      "phase": "cold",
+      "before": {
+        "cpu_seconds": 71.875,
+        "rss_bytes": 236429312,
+        "peak_rss_bytes": 521617408
+      },
+      "attributes": {},
+      "sampled_peak_rss_bytes": 236429312,
+      "parent": "COMPLETE_ANALYSIS",
+      "outcome": "OK",
+      "seconds": 0.006508500002382789,
+      "after": {
+        "cpu_seconds": 71.890625,
+        "rss_bytes": 236429312,
+        "peak_rss_bytes": 521617408
+      }
+    },
+    {
+      "name": "FINAL_RECEIPT_WRITE",
+      "phase": "cold",
+      "before": {
+        "cpu_seconds": 71.890625,
+        "rss_bytes": 236429312,
+        "peak_rss_bytes": 521617408
+      },
+      "attributes": {},
+      "sampled_peak_rss_bytes": 236437504,
+      "parent": "COMPLETE_ANALYSIS",
+      "outcome": "OK",
+      "seconds": 0.6013304000007338,
+      "after": {
+        "cpu_seconds": 72.359375,
+        "rss_bytes": 236437504,
+        "peak_rss_bytes": 521617408
+      }
+    },
+    {
+      "name": "DB_FETCH_VALIDATION_BATCH",
+      "phase": "cold",
+      "before": {
+        "cpu_seconds": 76.828125,
+        "rss_bytes": 213413888,
+        "peak_rss_bytes": 521617408
+      },
+      "attributes": {
+        "rows": 250
+      },
+      "sampled_peak_rss_bytes": 213508096,
+      "parent": "VALIDATE_GENERATION",
+      "outcome": "OK",
+      "seconds": 0.003202499996405095,
+      "after": {
+        "cpu_seconds": 76.828125,
+        "rss_bytes": 213508096,
+        "peak_rss_bytes": 521617408
+      }
+    },
+    {
+      "name": "DB_FETCH_VALIDATION_BATCH",
+      "phase": "cold",
+      "before": {
+        "cpu_seconds": 76.90625,
+        "rss_bytes": 215445504,
+        "peak_rss_bytes": 521617408
+      },
+      "attributes": {
+        "rows": 250
+      },
+      "sampled_peak_rss_bytes": 215519232,
+      "parent": "VALIDATE_GENERATION",
+      "outcome": "OK",
+      "seconds": 0.0016628999946988188,
+      "after": {
+        "cpu_seconds": 76.90625,
+        "rss_bytes": 215519232,
+        "peak_rss_bytes": 521617408
+      }
+    },
+    {
+      "name": "DB_FETCH_VALIDATION_BATCH",
+      "phase": "cold",
+      "before": {
+        "cpu_seconds": 76.96875,
+        "rss_bytes": 216862720,
+        "peak_rss_bytes": 521617408
+      },
+      "attributes": {
+        "rows": 250
+      },
+      "sampled_peak_rss_bytes": 216887296,
+      "parent": "VALIDATE_GENERATION",
+      "outcome": "OK",
+      "seconds": 0.002194400003645569,
+      "after": {
+        "cpu_seconds": 76.984375,
+        "rss_bytes": 216887296,
+        "peak_rss_bytes": 521617408
+      }
+    },
+    {
+      "name": "DB_FETCH_VALIDATION_BATCH",
+      "phase": "cold",
+      "before": {
+        "cpu_seconds": 77.015625,
+        "rss_bytes": 217702400,
+        "peak_rss_bytes": 521617408
+      },
+      "attributes": {
+        "rows": 250
+      },
+      "sampled_peak_rss_bytes": 217702400,
+      "parent": "VALIDATE_GENERATION",
+      "outcome": "OK",
+      "seconds": 0.0012444999956642278,
+      "after": {
+        "cpu_seconds": 77.03125,
+        "rss_bytes": 217702400,
+        "peak_rss_bytes": 521617408
+      }
+    },
+    {
+      "name": "DB_FETCH_VALIDATION_BATCH",
+      "phase": "cold",
+      "before": {
+        "cpu_seconds": 77.0625,
+        "rss_bytes": 217829376,
+        "peak_rss_bytes": 521617408
+      },
+      "attributes": {
+        "rows": 250
+      },
+      "sampled_peak_rss_bytes": 217829376,
+      "parent": "VALIDATE_GENERATION",
+      "outcome": "OK",
+      "seconds": 0.001269300002604723,
+      "after": {
+        "cpu_seconds": 77.0625,
+        "rss_bytes": 217829376,
+        "peak_rss_bytes": 521617408
+      }
+    },
+    {
+      "name": "DB_FETCH_VALIDATION_BATCH",
+      "phase": "cold",
+      "before": {
+        "cpu_seconds": 77.09375,
+        "rss_bytes": 217837568,
+        "peak_rss_bytes": 521617408
+      },
+      "attributes": {
+        "rows": 250
+      },
+      "sampled_peak_rss_bytes": 217837568,
+      "parent": "VALIDATE_GENERATION",
+      "outcome": "OK",
+      "seconds": 0.0012680000072577968,
+      "after": {
+        "cpu_seconds": 77.09375,
+        "rss_bytes": 217837568,
+        "peak_rss_bytes": 521617408
+      }
+    },
+    {
+      "name": "DB_FETCH_VALIDATION_BATCH",
+      "phase": "cold",
+      "before": {
+        "cpu_seconds": 77.140625,
+        "rss_bytes": 217837568,
+        "peak_rss_bytes": 521617408
+      },
+      "attributes": {
+        "rows": 250
+      },
+      "sampled_peak_rss_bytes": 217837568,
+      "parent": "VALIDATE_GENERATION",
+      "outcome": "OK",
+      "seconds": 0.0025089999980991706,
+      "after": {
+        "cpu_seconds": 77.140625,
+        "rss_bytes": 217837568,
+        "peak_rss_bytes": 521617408
+      }
+    },
+    {
+      "name": "DB_FETCH_VALIDATION_BATCH",
+      "phase": "cold",
+      "before": {
+        "cpu_seconds": 77.1875,
+        "rss_bytes": 217837568,
+        "peak_rss_bytes": 521617408
+      },
+      "attributes": {
+        "rows": 26
+      },
+      "sampled_peak_rss_bytes": 270233600,
+      "parent": "VALIDATE_GENERATION",
+      "outcome": "OK",
+      "seconds": 0.07130109999707201,
+      "after": {
+        "cpu_seconds": 77.265625,
+        "rss_bytes": 244035584,
+        "peak_rss_bytes": 521617408
+      }
+    },
+    {
+      "name": "SQL_DECODE_LARGE",
+      "phase": "cold",
+      "before": {
+        "cpu_seconds": 77.265625,
+        "rss_bytes": 244035584,
+        "peak_rss_bytes": 521617408
+      },
+      "attributes": {
+        "characters": 26197173,
+        "kind": "snapshot"
+      },
+      "sampled_peak_rss_bytes": 289435648,
+      "parent": "VALIDATE_GENERATION",
+      "outcome": "OK",
+      "seconds": 0.14741240000148537,
+      "after": {
+        "cpu_seconds": 77.40625,
+        "rss_bytes": 289435648,
+        "peak_rss_bytes": 521617408
+      }
+    },
+    {
+      "name": "CANONICAL_SNAPSHOT_STRING",
+      "phase": "cold",
+      "before": {
+        "cpu_seconds": 77.40625,
+        "rss_bytes": 263237632,
+        "peak_rss_bytes": 521617408
+      },
+      "attributes": {
+        "characters": 24903656
+      },
+      "sampled_peak_rss_bytes": 288976896,
+      "parent": "VALIDATE_GENERATION",
+      "outcome": "OK",
+      "seconds": 0.1718844999995781,
+      "after": {
+        "cpu_seconds": 77.578125,
+        "rss_bytes": 288976896,
+        "peak_rss_bytes": 521617408
+      }
+    },
+    {
+      "name": "CANONICAL_SNAPSHOT_UTF8_AND_HASH",
+      "phase": "cold",
+      "before": {
+        "cpu_seconds": 77.578125,
+        "rss_bytes": 288976896,
+        "peak_rss_bytes": 521617408
+      },
+      "attributes": {
+        "bytes": 24903656
+      },
+      "sampled_peak_rss_bytes": 288976896,
+      "parent": "VALIDATE_GENERATION",
+      "outcome": "OK",
+      "seconds": 0.023908100003609434,
+      "after": {
+        "cpu_seconds": 77.609375,
+        "rss_bytes": 288976896,
+        "peak_rss_bytes": 521617408
+      }
+    },
+    {
+      "name": "DB_FETCH_VALIDATION_BATCH",
+      "phase": "cold",
+      "before": {
+        "cpu_seconds": 77.609375,
+        "rss_bytes": 264245248,
+        "peak_rss_bytes": 521617408
+      },
+      "attributes": {
+        "rows": 0
+      },
+      "sampled_peak_rss_bytes": 264245248,
+      "parent": "VALIDATE_GENERATION",
+      "outcome": "OK",
+      "seconds": 2.1999949240125716e-06,
+      "after": {
+        "cpu_seconds": 77.609375,
+        "rss_bytes": 264245248,
+        "peak_rss_bytes": 521617408
+      }
+    },
+    {
+      "name": "VALIDATE_GENERATION",
+      "phase": "cold",
+      "before": {
+        "cpu_seconds": 72.375,
+        "rss_bytes": 236437504,
+        "peak_rss_bytes": 521617408
+      },
+      "attributes": {},
+      "sampled_peak_rss_bytes": 289435648,
+      "parent": "COMPLETE_ANALYSIS",
+      "outcome": "OK",
+      "seconds": 5.4840958999993745,
+      "after": {
+        "cpu_seconds": 77.671875,
+        "rss_bytes": 222965760,
+        "peak_rss_bytes": 521617408
+      }
+    },
+    {
+      "name": "PROMOTE_GENERATION",
+      "phase": "cold",
+      "before": {
+        "cpu_seconds": 77.6875,
+        "rss_bytes": 222965760,
+        "peak_rss_bytes": 521617408
+      },
+      "attributes": {},
+      "sampled_peak_rss_bytes": 223010816,
+      "parent": "COMPLETE_ANALYSIS",
+      "outcome": "OK",
+      "seconds": 0.03020980000292184,
+      "after": {
+        "cpu_seconds": 77.71875,
+        "rss_bytes": 223010816,
+        "peak_rss_bytes": 521617408
+      }
+    },
+    {
+      "name": "ATOMIC_PUBLICATION_COMMIT",
+      "phase": "cold",
+      "before": {
+        "cpu_seconds": 77.71875,
+        "rss_bytes": 223010816,
+        "peak_rss_bytes": 521617408
+      },
+      "attributes": {
+        "identity_map": 6,
+        "dirty": 2,
+        "new": 1
+      },
+      "sampled_peak_rss_bytes": 223010816,
+      "parent": "COMPLETE_ANALYSIS",
+      "outcome": "OK",
+      "seconds": 0.0050399000028846785,
+      "after": {
+        "cpu_seconds": 77.71875,
+        "rss_bytes": 223010816,
+        "peak_rss_bytes": 521617408
+      }
+    },
+    {
+      "name": "COMPLETE_FINAL_SNAPSHOT_PATH",
+      "phase": "cold",
+      "before": {
+        "cpu_seconds": 69.4375,
+        "rss_bytes": 204017664,
+        "peak_rss_bytes": 253100032
+      },
+      "sampled_peak_rss_bytes": 502472704,
+      "attributes": {},
+      "after": {
+        "cpu_seconds": 77.71875,
+        "rss_bytes": 223010816,
+        "peak_rss_bytes": 521617408
+      },
+      "seconds": 8.673264999997627,
+      "outcome": "OK"
+    },
+    {
+      "name": "COMPLETE_ANALYSIS",
+      "phase": "cold",
+      "before": {
+        "cpu_seconds": 3.453125,
+        "rss_bytes": 86446080,
+        "peak_rss_bytes": 86446080
+      },
+      "attributes": {},
+      "sampled_peak_rss_bytes": 502472704,
+      "parent": null,
+      "outcome": "OK",
+      "seconds": 84.02710400000069,
+      "after": {
+        "cpu_seconds": 77.71875,
+        "rss_bytes": 223010816,
+        "peak_rss_bytes": 521617408
+      }
+    },
+    {
+      "name": "SQL_DECODE_LARGE",
+      "phase": "cold",
+      "before": {
+        "cpu_seconds": 77.890625,
+        "rss_bytes": 247984128,
+        "peak_rss_bytes": 521617408
+      },
+      "attributes": {
+        "characters": 24971033,
+        "kind": "quality"
+      },
+      "sampled_peak_rss_bytes": 288112640,
+      "parent": "QUALITY_FULL_HYDRATION",
+      "outcome": "OK",
+      "seconds": 0.24927780000143684,
+      "after": {
+        "cpu_seconds": 78.15625,
+        "rss_bytes": 288112640,
+        "peak_rss_bytes": 521617408
+      }
+    },
+    {
+      "name": "QUALITY_FULL_HYDRATION",
+      "phase": "cold",
+      "before": {
+        "cpu_seconds": 77.84375,
+        "rss_bytes": 223010816,
+        "peak_rss_bytes": 521617408
+      },
+      "attributes": {},
+      "sampled_peak_rss_bytes": 288112640,
+      "parent": null,
+      "outcome": "OK",
+      "seconds": 0.30530080000607995,
+      "after": {
+        "cpu_seconds": 78.171875,
+        "rss_bytes": 263139328,
+        "peak_rss_bytes": 521617408
+      }
+    },
+    {
+      "name": "FINDINGS_READ_TOTAL",
+      "phase": "cold",
+      "before": {
+        "cpu_seconds": 78.171875,
+        "rss_bytes": 263139328,
+        "peak_rss_bytes": 521617408
+      },
+      "attributes": {},
+      "sampled_peak_rss_bytes": 263151616,
+      "parent": null,
+      "outcome": "OK",
+      "seconds": 0.019816400003037415,
+      "after": {
+        "cpu_seconds": 78.1875,
+        "rss_bytes": 263151616,
+        "peak_rss_bytes": 521617408
+      }
+    }
+  ],
+  "preservation": {
+    "frozen_source_files": 225,
+    "all_source_hashes_unchanged": true,
+    "old_database_bytes_unchanged": true,
+    "prior_database": {
+      "sqlite": "ok",
+      "foreign_key_violations": 0,
+      "audit_chain": "VERIFIED",
+      "linked_events": 28,
+      "audit_event_ids_sha256": "9d3b6055fd44c269c2d9a967ac6e6a12b3d64fbbae3f64cf259ad8452b0963ed",
+      "edges_checked": 3694,
+      "unresolved_or_cross_tenant_or_generation_edges": 0,
+      "duplicate_complete_edge_data": 0,
+      "generations": [
+        [
+          "PUBLISHED",
+          3
+        ]
+      ],
+      "pointers": 2
+    },
+    "new_control_database": {
+      "sqlite": "ok",
+      "foreign_key_violations": 0,
+      "audit_chain": "VERIFIED",
+      "linked_events": 28,
+      "audit_event_ids_sha256": "9d3b6055fd44c269c2d9a967ac6e6a12b3d64fbbae3f64cf259ad8452b0963ed",
+      "edges_checked": 3694,
+      "unresolved_or_cross_tenant_or_generation_edges": 0,
+      "duplicate_complete_edge_data": 0,
+      "generations": [
+        [
+          "PUBLISHED",
+          3
+        ]
+      ],
+      "pointers": 2
+    },
+    "new_large_database": {
+      "sqlite": "ok",
+      "foreign_key_violations": 0,
+      "audit_chain": "VERIFIED",
+      "linked_events": 9,
+      "audit_event_ids_sha256": "c961602bcc3ff10be4bde88926efe949d362e7942fa8a24a9bca3225656f1f63",
+      "edges_checked": 1230,
+      "unresolved_or_cross_tenant_or_generation_edges": 0,
+      "duplicate_complete_edge_data": 0,
+      "generations": [
+        [
+          "PUBLISHED",
+          1
+        ]
+      ],
+      "pointers": 1
+    }
+  },
+  "complete_output_comparisons": {
+    "control_equal": true,
+    "large_independent_repeats_equal": true,
+    "additional_normalization": false
+  },
+  "tests": [
+    {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\snapshot-profile.xml",
+      "sha256": "a2ad485b70c6e55b6471cc2c5772a7a031da4869f50e178a3413ca67bed6ef7d",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "4",
+          "time": "483.655",
+          "timestamp": "2026-10-27T00:17:12.063827+05:30",
+          "hostname": "LAPTOP-I8MJR81P"
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\snapshot-profile-large-final.xml",
+      "sha256": "a5a53bae67676ba9cad19e21e2b2ff23e2a0c65dc5540f48083a09281bdc04ae",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "1",
+          "time": "70.974",
+          "timestamp": "2026-10-27T00:25:58.889157+05:30",
+          "hostname": "LAPTOP-I8MJR81P"
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\snapshot-regressions.xml",
+      "sha256": "84fb453b07d12ac7443c26dc651e7b1f4da4d2fe2d947775b3c306b47ab76e2d",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "139",
+          "time": "321.978",
+          "timestamp": "2026-10-27T00:32:26.271126+05:30",
+          "hostname": "LAPTOP-I8MJR81P"
+        }
+      ]
+    },
+    {
+      "path": "C:\\Users\\sai krishna\\Documents\\Codex\\2026-10-25\\you-are-taking-over-projecttrace-development\\work\\snapshot-profile-native-final.xml",
+      "sha256": "c2e6851f10b5a8e110ec7c8bf4d15d4ba4b2597d4908af81f2eb29681d40bb64",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "1",
+          "time": "90.273",
+          "timestamp": "2026-10-27T00:39:01.923314+05:30",
+          "hostname": "LAPTOP-I8MJR81P"
+        }
+      ]
+    }
+  ],
+  "static_checks": {
+    "ruff": "PASS: python -m ruff check backend analyzers tests scripts",
+    "compile": "PASS: python -m compileall -q backend analyzers tests scripts",
+    "diff": "PASS: git diff --check"
+  },
+  "raw_archive": {
+    "path": "docs\\evidence\\SCALE001_FINAL_SNAPSHOT_PROFILE_RAW.json.gz",
+    "bytes": 197300,
+    "sha256": "e79c38b6df61de464bd205a403a3ba0fd39ef0e1c059f4d3fd770d06725ff2a0"
+  },
+  "artifact_source_sha256": {
+    "tests/snapshot_materialization_probe.py": "e45b8978346653a1acf19cc1405bc074f44f88917c6631006d79b848e87292ab",
+    "tests/snapshot_component_probe.py": "ba278b500b25c3dc57f78009f6022d5827e96a10cb90c9ceec51af886b4dd7da",
+    "tests/sqlite_memory_probe.py": "1d1f7282987ae7cf6af14e829058e8132c0f060bf2f9b4d2cbe86d09dcdd71eb",
+    "tests/test_snapshot_materialization_profile.py": "1438031ce7e013ab0e4250611305336016df6265c5cddabfc569fe236d487110",
+    "docs/SCALE001_GENERATION_MAPS_LOCAL_TECHNICAL_REPORT.md": "d1e31eebc7a2b0b6ee523026813766e185665857b663972c282c5b3ee31d5daa"
+  },
+  "method_caveats": [
+    "Coordinator RSS only, not process tree or Linux cgroup/zero swap.",
+    "Synthetic metric volume retains all original observations; not source coverage at that function count.",
+    "Traced eight-frame run has large instrumentation overhead; excluded from normal RSS/time comparisons.",
+    "Early harness variants retain detailed small fetch events; final version aggregates them without omitting aggregate evidence.",
+    "File hashes for probe sources are recorded at receipt creation; production source hashes remained fixed throughout.",
+    "RSS retained/lifetime/sample peaks, Python allocation and SQLite malloc bytes are not additive.",
+    "An initial structured-warning fixture error is retained, not classified as application memory failure."
+  ],
+  "root_causes": [
+    "Inline owned 50k snapshot necessarily exceeds unchanged 1Mnode privacy guard.",
+    "Dominant successful-path RSS peak is SQLite UPDATE, specifically a large SQLite-native allocation window.",
+    "Exact graph-index expression evaluation independently reproduces a large native allocation component.",
+    "Native sanitized copy, SQL strings, subsequent JSON decode and canonical hash copies are additional measured costs."
+  ],
+  "next_task": "Prototype snapshot-excluding graph expression indexes in a disposable owned database and prove complete query/legacy/tenant equality and EXPLAIN plan coverage before proposing any model/index migration.",
+  "expected_benefit_only": "209587616-byte SQLite malloc peak difference in read-only expression control is a target, not a measured pipeline reduction.",
+  "unresolved": [
+    "Inline snapshot format/1Mnode contract",
+    "Full pinned Linux768000000/zero-swap qualification and all acceptance gates",
+    "Index design/query-plan/migration qualification",
+    "Large restart/typed hydration/finding producer envelope",
+    "Maximum ancestor/callback, replay-builder and separate downgrade/expiry issues"
+  ]
+}

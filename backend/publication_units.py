@@ -168,6 +168,14 @@ def prepare(db, job_id, files, signature, result, checkpoint):
     return drafts
 
 
-def purge_expired(db):
-    for unit in db.scalars(select(PublicationUnit).where(PublicationUnit.expires_at <= now()).limit(1000)):
-        db.delete(unit)
+def purge_expired(db, *, _guard=None):
+    from sqlalchemy import delete, tuple_
+
+    from backend.retention import ExpiryGuard
+    guard = _guard or ExpiryGuard(db, now())
+    rows = db.execute(select(PublicationUnit.job_id, PublicationUnit.unit_key,
+        PublicationUnit.organization_id, PublicationUnit.repository_id).where(
+            PublicationUnit.expires_at <= guard.instant, ~guard.active(PublicationUnit)).limit(1000)).all()
+    expired = [(job_id, key) for job_id, key, org, repo in rows if guard.allows(job_id, org, repo)]
+    if expired:
+        db.execute(delete(PublicationUnit).where(tuple_(PublicationUnit.job_id, PublicationUnit.unit_key).in_(expired)))

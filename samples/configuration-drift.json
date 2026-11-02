@@ -1,0 +1,11 @@
+{
+  "description": "Static configuration drift fixture. Sources are evidence only: never import, install, build, or execute them. Declared configuration does not establish deployed runtime state.",
+  "base": {
+    "README.md": "# Storage contract\nProduction storage is private.\n",
+    "main.tf": "resource \"aws_s3_bucket\" \"production\" {\n  acl = \"private\"\n}\n"
+  },
+  "head": {
+    "README.md": "# Storage contract\nProduction storage is private.\n",
+    "main.tf": "resource \"aws_s3_bucket\" \"production\" {\n  acl = \"public-read\"\n}\n"
+  }
+}
