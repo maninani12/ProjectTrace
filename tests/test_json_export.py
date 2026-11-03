@@ -337,4 +337,6 @@ def test_fresh_process_export_profiles(tmp_path, count, record_property):
         if sample["mode"] == "stream":
             assert sample["maximum_write"] <= CHUNK_BYTES
         # Local process ceiling includes replay/imports, not Linux qualification.
-        assert sample["after"].get("peak_rss_bytes", sample["after"]["rss_bytes"]) < 190_000_000
+        assert sample["after"]["memory_available"]
+        assert sample["after"]["peak_rss_bytes"] is not None
+        assert sample["after"]["peak_rss_bytes"] < 190_000_000

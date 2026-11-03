@@ -12,6 +12,8 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 
 import pytest
+from alembic.config import Config
+from alembic.script import ScriptDirectory
 from sqlalchemy import func, inspect, select, text
 from sqlalchemy.engine import make_url
 from sqlalchemy.exc import IntegrityError
@@ -250,7 +252,9 @@ def test_postgresql_migrations_preserve_prior_records(postgres):
                 )
             assert db.scalar(text("SELECT data->>'text' FROM records WHERE id='preserved'")) == "Preserved claim"
     with engine.connect() as db:
-        assert db.scalar(text("SELECT version_num FROM alembic_version")) == "0025"
+        expected_heads = set(ScriptDirectory.from_config(Config("alembic.ini")).get_heads())
+        assert expected_heads
+        assert set(db.scalars(text("SELECT version_num FROM alembic_version"))) == expected_heads
 
 
 def test_postgresql_concurrent_duplicate_claims_and_tenant_fairness(postgres):

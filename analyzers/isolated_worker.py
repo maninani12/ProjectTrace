@@ -53,17 +53,23 @@ def prepare(operation):
                 ("tree-sitter", "tree-sitter-java", "tree-sitter-javascript", "tree-sitter-typescript")}
     languages.version = versions.__getitem__
 
+    iac_loads = None
     if operation == "iac":
         # hcl2's default Lark cache uses pickle and writes in site-packages.
         # Build the identical trusted grammar without a filesystem cache.
-        import hcl2.api
         import hcl2.parser
         from hcl2.postlexer import PostLexer
         from lark import Lark
         grammar = Lark.open("hcl2.lark", parser="lalr", cache=False, rel_to=hcl2.parser.__file__,
                             propagate_positions=True, postlex=PostLexer())
-        hcl2.api.parser = lambda: grammar
-        hcl2.loads('variable "sec002_probe" { default = 1 }')
+        def iac_loads(source, *, serialization_options=None):
+            # python-hcl2 8.1.4 has no public parser-factory argument. Its
+            # public transform/serialize stages preserve loads() semantics,
+            # including the trailing newline, without patching _get_parser.
+            tree = hcl2.transform(grammar.parse(source + "\n"))
+            return hcl2.serialize(tree, serialization_options=serialization_options)
+
+        iac_loads('variable "sec002_probe" { default = 1 }')
     yaml.safe_load("{}")
     ast.parse("")
     coverage.ET.fromstring("<probe/>")
@@ -85,7 +91,7 @@ def prepare(operation):
                 read_paths.add(os.path.realpath(path))
     if any(name in sys.modules for name in ("backend.db", "backend.main", "workers.tasks")):
         raise RuntimeError("Parser bootstrap unexpectedly imported application services")
-    return engine, sandbox, self_limits, read_paths, seccomp
+    return engine, sandbox, self_limits, read_paths, seccomp, iac_loads
 
 
 def denied(operation, *, expected=(errno.EPERM, errno.EACCES)):
@@ -100,7 +106,7 @@ def denied(operation, *, expected=(errno.EPERM, errno.EACCES)):
 
 def main():
     operation = sys.argv[1]
-    engine, sandbox, self_limits, read_paths, _library = prepare(operation)
+    engine, sandbox, self_limits, read_paths, _library, iac_loads = prepare(operation)
     memory, cpu = (384 * 1024 * 1024, 10) if operation.startswith("iac") else (512 * 1024 * 1024, 25)
     if operation == "archive_stream":
         cpu = 120
@@ -147,7 +153,7 @@ def main():
         raise ValueError("Owned parser operation mismatch")
     value = packet["value"]
     try:
-        result = dispatch(operation, value, engine, sandbox)
+        result = dispatch(operation, value, engine, sandbox, iac_loads=iac_loads)
     except SandboxFailure as error:
         sys.stdout.buffer.write(json.dumps({"ok": False, "code": error.code}).encode())
         return
@@ -162,7 +168,7 @@ def main():
     sys.stdout.buffer.write(output)
 
 
-def dispatch(operation, value, engine, sandbox):
+def dispatch(operation, value, engine, sandbox, *, iac_loads=None):
     from analyzers.parser_protocol import emit_packet, native_artifact
 
     if operation.startswith("lexical_"):
@@ -330,6 +336,8 @@ def dispatch(operation, value, engine, sandbox):
         return STREAMED
     if operation == "iac":
         from analyzers.infrastructure import _structured_iac
+        if iac_loads is None:
+            raise SandboxFailure("IAC_PARSER_NOT_PREPARED")
         files = value["files"]
         if len(files) > 100 or sum(len(s.encode()) for s in files.values()) > 2_000_000:
             raise ValueError("Infrastructure batch budget")
@@ -339,7 +347,8 @@ def dispatch(operation, value, engine, sandbox):
                 raise ValueError("Per-file source budget")
             started = time.perf_counter()
             result = _structured_iac(path, source,
-                lambda rule, path, line, detail: {"rule": rule, "path": path, "line": line, "explanation": detail}, value["settings"])
+                lambda rule, path, line, detail: {"rule": rule, "path": path, "line": line, "explanation": detail}, value["settings"],
+                hcl_loads=iac_loads)
             total = emit_packet(path, result, time.perf_counter() - started,
                                 "PARTIAL" if result[2] else "COMPLETED", maximum=8*1024*1024, total=total)
         return STREAMED

@@ -1,0 +1,238 @@
+{
+  "schema": "projecttrace-hcl-parser-factory-correction-v1",
+  "recorded_utc": "2026-11-02T22:34:54.232068+00:00",
+  "local_date": "2026-11-03",
+  "head": "e2afa09ccfd45f8a7551b5ed8b2868d6297c299e",
+  "branch": "codex/scale-001-local-continuation",
+  "decision": "BOUNDED_LOCAL_CORRECTION_QUALIFIED; candidate SEC-002 PASS; SCALE-001 NOT QUALIFIED",
+  "root_cause": {
+    "installed_python_hcl2": "8.1.4",
+    "lark": "1.3.1",
+    "pyyaml": "6.0.3",
+    "unused_assignment": "hcl2.api.parser",
+    "actual_internal_factory_alias": "hcl2.api._get_parser",
+    "supported_factory_injection_argument": false,
+    "private_binding_patched": false,
+    "correction": "Explicit per-worker callback using public Lark.parse / hcl2.transform / hcl2.serialize and pinned newline/options semantics",
+    "intentional_old_source_repro": {
+      "failed": 1,
+      "error": "assert 2 == 1",
+      "log": "outputs/hcl-factory-20261103/repro.log"
+    }
+  },
+  "source": {
+    "qualified_control_sha256": "38b4e502d3bd1a3e6a7800080103c3004a844795cce976102e4984db9ce992d6",
+    "before_tree_sha256": "8bb58f48feff26ad3ef1516a0115b23852a4609f684a4a7bc0ad1442fae690e6",
+    "executed_candidate_tree_sha256": "bdcdf6e5cfb4e51dda47f74b1f8c9848f77d54f63bc401664d87820be4125d82",
+    "executed_candidate_files": 704,
+    "production_changes": [
+      "analyzers/isolated_worker.py",
+      "analyzers/infrastructure.py"
+    ],
+    "regression_changes": [
+      "integration_tests/test_parser_isolation.py"
+    ],
+    "after_documentation_manifest": "outputs/hcl-factory-20261103/final-documentation-source-manifest.json",
+    "comparison": "outputs/hcl-factory-20261103/source-comparison.json"
+  },
+  "images": {
+    "control_id": "sha256:4b43c5f01dc36f7ab325f485e9f8c8f1f2a4a0b6b2d0b26ece9994d0e94a81f9",
+    "candidate_id": "sha256:5844e12de488849fc30492d0ef0f88cf8585312d381091eda8fd0c438f4c75bc",
+    "candidate_tag": "projecttrace-hcl-factory-candidate:20261103",
+    "candidate_amd64_manifest": "sha256:dda80c71feecaad2124bb1ac9d783892852216db31e62e3ef81e5be9e900d01d",
+    "candidate_config": "sha256:9e8a32c85e6fd163bd922d02f51039e41c157049f9fc8749945c7b2e8d2181c4",
+    "base_index": "sha256:930e1abba7c4e8f96ed93e8012c35d174d7732752731bbd5e8e757d7ec6f3966",
+    "base_amd64_manifest": "sha256:ec6a14df5b63e3fbb3498e3240f7f640c230f9dca67683d23265db3866697f2d",
+    "identical_rootfs_layer_prefix": 9,
+    "original_image_preserved": true
+  },
+  "qualification": {
+    "candidate_main_passed": 161,
+    "candidate_main_failed": 0,
+    "candidate_main_errors": 0,
+    "candidate_main_skipped": 0,
+    "candidate_focused_passed": 14,
+    "focused_overlap_with_main": 14,
+    "candidate_case_executions": 175,
+    "distinct_cases": 161,
+    "ruff_exit": 0,
+    "compileall_exit": 0,
+    "main_fixture_executions": 316,
+    "large_fixture_executions": 16,
+    "benchmark_kernel_probe_executions_passed": 8,
+    "candidate_sec002_container_probes_passed": 2,
+    "hcl_loaders_control": 2,
+    "hcl_loaders_candidate": 1,
+    "contained_diagnostic_observations_per_subject": 32
+  },
+  "performance": {
+    "native": {
+      "cache_state": "pre-existing package cache present, unchanged for both subjects",
+      "small_repeated_control_seconds": {
+        "n": 6,
+        "median": 1.0749806929998158,
+        "min": 1.021370256999944,
+        "max": 1.107935887000167
+      },
+      "small_repeated_candidate_seconds": {
+        "n": 6,
+        "median": 0.9934063625000817,
+        "min": 0.9528268269996261,
+        "max": 1.0153248709993932
+      },
+      "small_repeated_paired_reduction_percent": {
+        "n": 6,
+        "median": 5.84171384118742,
+        "min": 2.600128006297136,
+        "max": 13.999822717225292
+      },
+      "main_ordinary_pairs_candidate_faster": 50,
+      "main_ordinary_pair_count": 50
+    },
+    "docker": {
+      "cache_state": "package cache absent for both read-only images",
+      "small_repeated_control_seconds": {
+        "n": 6,
+        "median": 2.223121417000584,
+        "min": 2.1841245810001055,
+        "max": 2.279196330000559
+      },
+      "small_repeated_candidate_seconds": {
+        "n": 6,
+        "median": 1.3373339899999337,
+        "min": 1.29919644399979,
+        "max": 1.3713204499999847
+      },
+      "small_repeated_paired_reduction_percent": {
+        "n": 6,
+        "median": 39.91214879467739,
+        "min": 38.72041721173011,
+        "max": 41.01232791122466
+      },
+      "main_ordinary_pairs_candidate_faster": 50,
+      "main_ordinary_pair_count": 50
+    }
+  },
+  "observed_regressions": {
+    "large_native_non_improving_pairs": [
+      {
+        "environment": "native",
+        "repetition": 2,
+        "control": 1.7734433599998738,
+        "candidate": 1.8038923470003283,
+        "regression_percent": 1.7169416112875844
+      }
+    ],
+    "main_ordinary_pairs_candidate_faster": {
+      "native": 50,
+      "docker": 50
+    },
+    "main_pairs_per_platform": 50,
+    "submillisecond_diagnostic_variation": "Retained in raw samples and stage table; not claimed as algorithmic speedup."
+  },
+  "security_invariants": {
+    "uid_euid": 10001,
+    "effective_capabilities": 0,
+    "seccomp": 2,
+    "no_new_privileges": 1,
+    "pids_max": 64,
+    "readonly_root": true,
+    "network": "none",
+    "readonly_sentinel": true,
+    "all_caps_dropped": true,
+    "landlock_abi": 7,
+    "child_secret_isolation": "LANG/LC_ALL/PROJECTTRACE_PARSER_ISOLATION only",
+    "real_denials": [
+      "read",
+      "write",
+      "proc",
+      "metadata",
+      "opath",
+      "exec",
+      "fork",
+      "external_network",
+      "loopback_network",
+      "metadata_network"
+    ],
+    "qualified_image_or_sandbox_weakened": false
+  },
+  "scale001": {
+    "status": "NOT QUALIFIED",
+    "full_workload_run": false,
+    "remote_workflow_dispatched": false,
+    "baseline": "OOM/exit137 at768000000 bytes, swap0",
+    "remote_candidate": "ANALYSIS_TIME_BUDGET1808.034993s versus1800s",
+    "partition_parse_percent": 91.71873312299327,
+    "actual_remote_iac_worker_frequency": null,
+    "pinned_archive_terraform_names": 0,
+    "pinned_remote_iac_completed_file_packets": 376,
+    "full_workload_speedup_claimed": false
+  },
+  "unchanged_policies": {
+    "sanitizer_nodes": 1000000,
+    "raw_checkpoint_bytes": 64000000,
+    "analysis_seconds": 1800,
+    "memory_bytes": 768000000,
+    "swap_bytes": 0,
+    "iac_child_address_bytes": 402653184,
+    "iac_child_cpu_seconds": 10,
+    "iac_parent_timeout_seconds": 15
+  },
+  "evidence_files": {
+    "outputs/hcl-factory-20261103/before-source-manifest.json": {
+      "bytes": 124939,
+      "sha256": "ba3b75eecd7693cd1951c6d8a8dd7ae08c5b22e6e6c1ad5bd29b8bb250442591"
+    },
+    "outputs/hcl-factory-20261103/candidate-source-manifest.json": {
+      "bytes": 125051,
+      "sha256": "54425eb772efdb30f052f03ae2d50f7eba7762daf06bc25b3a7edadd2966beb9"
+    },
+    "outputs/hcl-factory-20261103/performance-summary.json": {
+      "bytes": 565148,
+      "sha256": "0bd0577ec4a7c48d95665ee9ee90148bdfcc22bad1f55a9b9260bd29d7bab654"
+    },
+    "outputs/hcl-factory-20261103/installed-dependency-receipt.json": {
+      "bytes": 2479,
+      "sha256": "11db733a970a3dad3128e6d62c10e9f94e5db2dbaf7d179227f170b2f284b1fd"
+    },
+    "outputs/hcl-factory-20261103/source-comparison.json": {
+      "bytes": 1934,
+      "sha256": "c9228a61d9c691e2e162c10cc1d43c7ff60f3d9e11744c2f3a19c2008b5d47ac"
+    },
+    "outputs/hcl-factory-20261103/workload-frequency.json": {
+      "bytes": 1476,
+      "sha256": "322958257d520e09fdc066acb325a4a5d824736da148adee765bb7fac28f95d2"
+    },
+    "outputs/hcl-factory-20261103/linux/test-results.json": {
+      "bytes": 7007,
+      "sha256": "c2143bc55c0b813a68eea90b9847482e79c8d00e080a142c15461410b2f8026a"
+    },
+    "outputs/hcl-factory-20261103/linux/candidate-build.json": {
+      "bytes": 3331,
+      "sha256": "d8f7bf2a0a4883c26a695862b4ed951ea4234ad06eff99f042f643d7c935040c"
+    },
+    "outputs/hcl-factory-20261103/linux/native-comparison.jsonl": {
+      "bytes": 1537907,
+      "sha256": "0d3da5e2bda889faca9e86a258b3de471b6c904a9c417f75136684deb78ad5d6"
+    },
+    "outputs/hcl-factory-20261103/linux/docker-comparison.jsonl": {
+      "bytes": 1701571,
+      "sha256": "0d4ba9e9596b82bb746f266d9e50b045bd6b770d5bceb96806173b7c7eaceb21"
+    },
+    "outputs/hcl-factory-20261103/linux/native-large.json": {
+      "bytes": 38078,
+      "sha256": "ade72cc8f55a4d5ee41adfcab60e3b534d59e5a801df6229a8d0bc90bd9e4e9f"
+    },
+    "outputs/hcl-factory-20261103/linux/docker-large.json": {
+      "bytes": 49383,
+      "sha256": "f2372300826eab5a9e54e93e4442e561681db9d5dad5b91573f4b58ed92b5f59"
+    },
+    "outputs/hcl-factory-20261103/linux/candidate-sec002.json": {
+      "bytes": 4571,
+      "sha256": "be7e6dac4ce3731871c5f983594a8380fb1f36ddfc425dc7e3b0bd8f3709ceb0"
+    }
+  },
+  "report": "outputs/hcl-factory-20261103/REPORT_20261103.md",
+  "next_milestone": "Bounded per-invocation IaC transport/preparation frequency and partition attribution; full SCALE-001 gates remain separate",
+  "commercial_v1": "DEVELOPMENT IN PROGRESS"
+}

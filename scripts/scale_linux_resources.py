@@ -24,21 +24,36 @@ def cgroup_diagnostics(root):
     return result
 
 
+def namespace_rss(proc_root, coordinator_pid):
+    result = {"coordinator_rss_bytes": None, "namespace_rss_bytes": None, "processes": 0,
+              "missing_process_samples": 0, "rss_scope": "VISIBLE_PID_NAMESPACE_SUM; SHARED_PAGES_MAY_REPEAT"}
+    total = 0
+    for path in proc_root.glob("[0-9]*/status"):
+        try:
+            fields = {k: v.strip() for k, v in (line.split(":", 1) for line in path.read_text().splitlines())}
+            pieces = fields["VmRSS"].split()
+            if len(pieces) != 2 or pieces[1] != "kB" or int(pieces[0]) < 0:
+                raise ValueError("Unavailable RSS counter")
+            rss = int(pieces[0]) * 1024
+            total += rss
+            result["processes"] += 1
+            if path.parent.name == str(coordinator_pid):
+                result["coordinator_rss_bytes"] = rss
+        except (OSError, ValueError, KeyError):
+            result["missing_process_samples"] += 1
+            continue
+    complete = result["missing_process_samples"] == 0 and result["coordinator_rss_bytes"] is not None
+    result["namespace_rss_complete"] = complete
+    result["namespace_rss_lower_bound_bytes"] = total if result["processes"] else None
+    result["namespace_rss_bytes"] = total if complete else None
+    result["child_rss_bytes"] = total - result["coordinator_rss_bytes"] if complete else None
+    return result
+
+
 def memory():
     if os.name != "posix" or not Path("/proc/self/status").is_file():
         return {"available": False}
-    result = {"available": True, "coordinator_rss_bytes": 0, "namespace_rss_bytes": 0, "processes": 0}
-    for path in Path("/proc").glob("[0-9]*/status"):
-        try:
-            fields = {k: v.strip() for k, v in (line.split(":", 1) for line in path.read_text().splitlines())}
-            rss = int(fields.get("VmRSS", "0 kB").split()[0]) * 1024
-            result["namespace_rss_bytes"] += rss
-            result["processes"] += 1
-            if path.parent.name == str(os.getpid()):
-                result["coordinator_rss_bytes"] = rss
-        except (OSError, ValueError):
-            continue
-    result["child_rss_bytes"] = result["namespace_rss_bytes"] - result["coordinator_rss_bytes"]
+    result = {"available": True, **namespace_rss(Path("/proc"), os.getpid())}
     cgroup = Path("/sys/fs/cgroup")
     for name in ("memory.current", "memory.peak", "memory.max", "memory.swap.max", "memory.swap.current"):
         try:

@@ -1,7 +1,8 @@
 import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
+import { localRuntimeStop } from "./scripts/local-runtime.mjs";
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), localRuntimeStop()],
   server: {
     port: Number(process.env.PROJECTTRACE_UI_PORT || 5181),
     strictPort: true,

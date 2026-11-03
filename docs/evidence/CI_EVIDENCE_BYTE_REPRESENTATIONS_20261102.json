@@ -1,0 +1,14 @@
+{
+  "schema": "projecttrace-explicit-evidence-byte-representations-v1",
+  "date": "2026-11-02",
+  "scope": "Additional provenance only; original receipts and manifests remain byte-for-byte unchanged.",
+  "files": {
+    "docs/evidence/SCALE001_CGROUP_40280429009.json": {
+      "representation": "git-lf",
+      "historical_representation": "crlf",
+      "sha256": "c58213148b1ca0b948f02a9f553bb598d0eb5d16fca14593dea86a7328ec3160",
+      "historical_sha256": "fbf39ccb8579d5b73f30bc5109e50dcf3d8e558135788e562d79b04645e079ad",
+      "verification": "Exact LF bytes and exact reconstructed CRLF bytes must both match their pinned digests; no other content/representation is admitted."
+    }
+  }
+}

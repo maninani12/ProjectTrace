@@ -14,6 +14,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 STATE = ROOT / "data/local-runtime.json"
 STOP = ROOT / "data/local-api.stop"
+UI_STOP = ROOT / "data/local-ui.stop"
 
 
 def load_config(path, environment):
@@ -84,6 +85,15 @@ def stop():
         raise ValueError("No managed runtime is recorded. Unmanaged listeners were retained.")
     state = json.loads(STATE.read_text())
     api = state["api"]
+    ui = state["ui"]
+    ui_verified = verified(ui)
+    if ui_verified:
+        expected = str(ROOT / "frontend/node_modules/vite/bin/vite.js").lower().replace("\\", "/")
+        if expected not in ui["identity"]["CommandLine"].lower().replace("\\", "/"):
+            raise ValueError("Recorded UI identity is outside this project; it was retained.")
+        ready = Path(str(UI_STOP) + ".ready")
+        if not ready.is_file() or ready.read_text() != str(ui["pid"]):
+            raise ValueError("Recorded UI has no matching graceful shutdown watcher. API/UI were retained.")
     if verified(api):
         command = api["identity"]["CommandLine"].lower()
         if "local_api.py" not in command or str(ROOT).lower() not in command:
@@ -95,12 +105,13 @@ def stop():
             time.sleep(2)
         if verified(api):
             raise ValueError("API is still draining and was retained. Inspect job status and rerun stop after completion.")
-    ui = state["ui"]
-    if verified(ui):
-        expected = str(ROOT / "frontend/node_modules/vite/bin/vite.js").lower().replace("\\", "/")
-        if expected not in ui["identity"]["CommandLine"].lower().replace("\\", "/"):
-            raise ValueError("Recorded UI identity is outside this project; it was retained.")
-        subprocess.run(["powershell.exe", "-NoProfile", "-Command", f"Stop-Process -Id {int(ui['pid'])} -ErrorAction Stop"], check=True, capture_output=True, creationflags=subprocess.CREATE_NO_WINDOW)
+    if ui_verified and verified(ui):
+        UI_STOP.write_text(str(ui["pid"]))
+        deadline = time.monotonic() + 30
+        while time.monotonic() < deadline and verified(ui):
+            time.sleep(0.5)
+        if verified(ui):
+            raise ValueError("UI graceful shutdown timed out; process and runtime record retained.")
     STATE.unlink(missing_ok=True)
     STOP.unlink(missing_ok=True)
     print("Managed API/UI stopped; database, accounts, keys, history and optional workers retained.")

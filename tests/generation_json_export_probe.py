@@ -65,6 +65,7 @@ def measure(root, mode):
     from backend.generation_models import AnalysisGeneration
     from backend.generations import Generation
     from scripts.benchmark_repository_analysis import process_stats
+    from scripts.process_telemetry import MemoryWindow
     engine = make_engine("sqlite:///" + str(root / "source.db"))
     with sessionmaker(engine, expire_on_commit=False)() as db:
         row = db.scalar(select(AnalysisGeneration))
@@ -87,27 +88,30 @@ def measure(root, mode):
         sink = Sink()
         start_cpu, start = time.process_time(), time.perf_counter()
         document = {"claims_by_id": value}
-        if mode == "dumps":
-            text = json.dumps(document, separators=(",", ":"))
-            sink.write(text.encode())
-        elif mode == "join":
-            text = "".join(json.JSONEncoder(separators=(",", ":")).iterencode(document))
-            sink.write(text.encode())
-        elif mode == "stream":
-            from backend.json_export import write_json
-            write_json(document, sink, separators=(",", ":"))
-        elif mode == "string":
-            from backend.json_export import dumps
-            text = dumps(document, separators=(",", ":"))
-            sink.write(text.encode())
-        else:
-            raise ValueError(mode)
+        with MemoryWindow(process_stats) as window:
+            if mode == "dumps":
+                text = json.dumps(document, separators=(",", ":"))
+                sink.write(text.encode())
+            elif mode == "join":
+                text = "".join(json.JSONEncoder(separators=(",", ":")).iterencode(document))
+                sink.write(text.encode())
+            elif mode == "stream":
+                from backend.json_export import write_json
+                write_json(document, sink, separators=(",", ":"))
+            elif mode == "string":
+                from backend.json_export import dumps
+                text = dumps(document, separators=(",", ":"))
+                sink.write(text.encode())
+            else:
+                raise ValueError(mode)
         result = {"mode": mode, "scope": "OWNED_FRESH_PROCESS_EXPORT", "count": len(value),
             "logical": {"sha256": sink.hash.hexdigest(), "bytes": sink.size},
             "seconds": time.perf_counter() - start, "cpu_seconds": time.process_time() - start_cpu,
             "load_seconds": load_seconds, "decryptions": cipher.decryptions, "encryptions": cipher.encryptions,
             "live_values_peak": live_peak, "maximum_write": sink.maximum_write,
-            "before": before, "after": process_stats(), "cache_size": owner.connection.execute("PRAGMA cache_size").fetchone()[0]}
+            "before": before, "during": window.result, "after": process_stats(),
+            "memory_owner_pid": os.getpid(), "cgroup_memory": "UNAVAILABLE_NOT_MEASURED_BY_PROCESS_PROBE",
+            "cache_size": owner.connection.execute("PRAGMA cache_size").fetchone()[0]}
         owner.close()
     engine.dispose()
     return result

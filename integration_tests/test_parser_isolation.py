@@ -265,3 +265,151 @@ def test_contained_coverage_reports_retain_meaningful_counts_and_safe_failure(fo
     monkeypatch.setattr(sandbox, "invoke", crashed)
     failed = import_report(text, files, **options)
     assert failed["state"] == "REPORT_INVALID" and failed["error_code"] == "HELPER_PROCESS_LIMIT"
+
+
+HCL_FACTORY_SOURCES = {
+    "empty": "",
+    "resource": 'resource "aws_s3_bucket" "owned" {\n acl = "public-read"\n}\n',
+    "nested": 'variable "owned" {\n default = { nested = [1, true, { label = "owned" }] }\n}\n',
+    "expressions": 'locals {\n doubled = [for n in [1, 2, 3] : n * 2 if n > 1]\n label = "owned-${var.name}"\n}\n',
+    "heredoc": 'locals {\n text = <<-OWNED\n  owned ${var.name}\n  second line\n OWNED\n}\n',
+    "comments_unicode": '# owned comment\nlocals { label = "café" /* owned */ }\n',
+    "policy": 'resource "aws_iam_policy" "owned" {\n policy = jsonencode({ Statement = [{ Effect = "Allow", Action = "*", Resource = "*" }] })\n}\n',
+    "bounded_large": "".join(f'resource "aws_s3_bucket" "owned{i}" {{\n acl = "private"\n}}\n' for i in range(80)),
+    "invalid": 'resource "aws_s3_bucket" "owned" {\n acl =\n',
+}
+
+
+def hcl_factory_probe():
+    # A fresh interpreter owns each parser. Never populate the upstream parser
+    # cache before measuring bootstrap, or the original defect is hidden.
+    script = r'''
+import hashlib,json,sys
+sys.path.insert(0,sys.argv[1])
+import hcl2,hcl2.api
+from lark import Lark
+from analyzers.isolated_worker import prepare
+sources=json.load(sys.stdin)
+original=Lark.open
+upstream=hcl2.loads
+factory=hcl2.api._get_parser
+calls=[]
+def opened(cls,filename,*args,**kwargs):
+ if str(filename).endswith('hcl2.lark'):
+  calls.append(kwargs.get('cache') is False)
+ return original(filename,*args,**kwargs)
+Lark.open=classmethod(opened)
+prepared=prepare('iac')
+loader=prepared[-1] if callable(prepared[-1]) else upstream
+after_prepare=len(calls)
+def captured(load,text,options):
+ try:
+  return {'value':load(text,serialization_options=options)}
+ except Exception as error:
+  return {'error':type(error).__module__+'.'+type(error).__name__}
+options=[None,hcl2.SerializationOptions(strip_string_quotes=True,with_meta=True)]
+actual={key:[captured(loader,text,option) for option in options] for key,text in sources.items()}
+repeated=[captured(loader,sources['resource'],options[1]) for _ in range(3)]
+after_parsing=len(calls)
+Lark.open=original
+expected={key:[captured(upstream,text,option) for option in options] for key,text in sources.items()}
+assert hcl2.loads is upstream and hcl2.api._get_parser is factory
+print(json.dumps({'after_prepare':after_prepare,'after_parsing':after_parsing,'cache_disabled':calls,
+ 'public_results_equal':{key:actual[key]==expected[key] for key in sources},
+ 'errors':{key:[row.get('error') for row in value] for key,value in actual.items()},
+ 'repeated_equal':all(row==actual['resource'][1] for row in repeated),
+ 'explicit_loader':loader is not upstream,'upstream_bindings_unchanged':True,
+ 'result_sha256':hashlib.sha256(json.dumps(actual,sort_keys=True).encode()).hexdigest()}))
+'''
+    completed = subprocess.run(
+        [sys.executable, "-I", "-B", "-c", script, str(Path(__file__).resolve().parents[1])],
+        input=json.dumps(HCL_FACTORY_SOURCES), text=True, capture_output=True, timeout=30,
+        env={"LANG": "C.UTF-8", "LC_ALL": "C.UTF-8", "PROJECTTRACE_PARSER_ISOLATION": "required"},
+    )
+    assert completed.returncode == 0, completed.stderr[-1000:]
+    return json.loads(completed.stdout)
+
+
+@pytest.fixture(scope="module")
+def hcl_factory_result():
+    return hcl_factory_probe()
+
+
+def test_hcl_cold_worker_prepares_exactly_one_grammar(hcl_factory_result):
+    assert hcl_factory_result["after_prepare"] == 1
+    assert hcl_factory_result["after_parsing"] == 1
+    assert hcl_factory_result["cache_disabled"] == [True]
+    assert hcl_factory_result["explicit_loader"] and hcl_factory_result["upstream_bindings_unchanged"]
+
+
+@pytest.mark.parametrize("case", list(HCL_FACTORY_SOURCES))
+def test_hcl_prepared_parser_preserves_public_outputs_and_errors(hcl_factory_result, case):
+    assert hcl_factory_result["public_results_equal"][case]
+    errors = hcl_factory_result["errors"][case]
+    assert all(error is not None for error in errors) if case == "invalid" else errors == [None, None]
+
+
+def test_hcl_repeated_parsing_and_independent_worker_ownership(hcl_factory_result):
+    independent = hcl_factory_probe()
+    assert independent == hcl_factory_result
+    assert independent["repeated_equal"] and independent["after_parsing"] == 1
+
+
+@pytest.mark.parametrize("failure", ["FileNotFoundError", "PermissionError"])
+def test_hcl_missing_grammar_fails_before_attestation_and_next_worker_recovers(failure, monkeypatch):
+    from analyzers.engine import finding
+    from analyzers.infrastructure import structured_iac_batch
+
+    # Fault only the just-created owned worker's installed grammar open. The
+    # real parent transport/proof validator must fail closed; no package file changes.
+    script = r'''
+import runpy,sys
+sys.path.insert(0,sys.argv[1])
+from lark import Lark
+error={'FileNotFoundError':FileNotFoundError,'PermissionError':PermissionError}[sys.argv[2]]
+def unavailable(*args,**kwargs):
+ raise error('Owned unavailable grammar fixture')
+Lark.open=unavailable
+sys.argv=[sys.argv[1]+'/analyzers/isolated_worker.py','iac']
+runpy.run_path(sys.argv[0],run_name='__main__')
+'''
+    original = subprocess.Popen
+    root = str(Path(__file__).resolve().parents[1])
+    def failed_worker(command, *args, **kwargs):
+        assert command[-1] == "iac" and command[-2].endswith("isolated_worker.py")
+        return original([sys.executable, "-I", "-B", "-c", script, root, failure], *args, **kwargs)
+    files = {"owned/main.tf": HCL_FACTORY_SOURCES["resource"]}
+    with monkeypatch.context() as patch:
+        patch.setattr(subprocess, "Popen", failed_worker)
+        with pytest.raises(sandbox.SandboxFailure) as stopped:
+            structured_iac_batch(files, finding)
+        assert stopped.value.code == "ISOLATION_NOT_ATTESTED"
+    recovered = structured_iac_batch(files, finding)
+    assert recovered["owned/main.tf"][0] and not recovered["owned/main.tf"][2]
+
+
+def test_hcl_required_batch_preserves_order_locations_privacy_and_json_variant(monkeypatch):
+    from analyzers.engine import finding
+    from analyzers.infrastructure import structured_iac_batch
+
+    token = "ghp_" + "a" * 36
+    files = {"owned/one.tf": HCL_FACTORY_SOURCES["resource"], "owned/empty.tf": "",
+             "owned/invalid.tf": HCL_FACTORY_SOURCES["invalid"],
+             "owned/policy.tf": HCL_FACTORY_SOURCES["policy"],
+             "owned/two.tf.json": json.dumps({"resource": {"aws_s3_bucket": {"owned": {"acl": "public-read", "token": token}}}})}
+    original, pids = subprocess.Popen, []
+    def counted(*args, **kwargs):
+        child = original(*args, **kwargs)
+        pids.append(child.pid)
+        return child
+    monkeypatch.setattr(subprocess, "Popen", counted)
+    first = structured_iac_batch(files, finding)
+    second = structured_iac_batch(files, finding)
+    assert first == second and list(first) == list(files)
+    assert len(pids) == len(set(pids)) == 2
+    assert first["owned/one.tf"][1][0]["line"] == 1
+    assert {f["rule"] for f in first["owned/one.tf"][0]} == {"PT-IAC-003"}
+    assert first["owned/empty.tf"] == ([], [], [])
+    assert first["owned/invalid.tf"][2][0]["state"] == "PARTIAL"
+    assert not first["owned/two.tf.json"][2]
+    assert token not in json.dumps(first)

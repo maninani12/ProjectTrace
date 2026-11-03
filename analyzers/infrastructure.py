@@ -173,8 +173,9 @@ def structured_iac_batch(files, make_finding, settings=None, *, performance=None
     return result
 
 
-def _structured_iac(path, source, make_finding, settings=None):
+def _structured_iac(path, source, make_finding, settings=None, *, hcl_loads=None):
     findings, assets, warnings = [], [], []
+    load_hcl = hcl2.loads if hcl_loads is None else hcl_loads
     settings = infrastructure_config(settings)
     suffix = PurePosixPath(path).suffix.lower()
 
@@ -279,7 +280,7 @@ def _structured_iac(path, source, make_finding, settings=None):
                     if isinstance(values, dict)
                 }
             else:
-                parsed = hcl2.loads(
+                parsed = load_hcl(
                     source, serialization_options=hcl2.SerializationOptions(strip_string_quotes=True, with_meta=True)
                 )
             for block in parsed.get("resource", []):
@@ -352,7 +353,7 @@ def _structured_iac(path, source, make_finding, settings=None):
                             # never evaluated, and references remain symbolic.
                             argument = policy.removeprefix("${jsonencode(").removesuffix(")}")
                             if argument.startswith("{") and argument.endswith("}"):
-                                literal = hcl2.loads(
+                                literal = load_hcl(
                                     "locals { policy_object = " + argument + " }",
                                     serialization_options=hcl2.SerializationOptions(strip_string_quotes=True),
                                 )

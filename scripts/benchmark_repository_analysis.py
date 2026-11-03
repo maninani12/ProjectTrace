@@ -55,6 +55,7 @@ def windows_measurement_api():
     kernel.GetExitCodeProcess.argtypes = [wintypes.HANDLE, ctypes.POINTER(wintypes.DWORD)]
     psapi = ctypes.WinDLL("psapi")
     psapi.GetProcessMemoryInfo.argtypes = [wintypes.HANDLE, ctypes.c_void_p, wintypes.DWORD]
+    kernel.GetProcessIoCounters.argtypes = [wintypes.HANDLE, ctypes.c_void_p]
     class Entry(ctypes.Structure):
         _fields_ = [
             ("size", wintypes.DWORD), ("usage", wintypes.DWORD), ("pid", wintypes.DWORD),
@@ -65,30 +66,50 @@ def windows_measurement_api():
     return kernel, psapi, Memory, Entry
 
 
+def unix_process_stats(row, proc_root=Path("/proc/self"), platform=sys.platform):
+    from scripts.process_telemetry import proc_memory
+
+    values = proc_memory(proc_root)
+    values.update(cpu_seconds=row.ru_utime + row.ru_stime,
+                  resource_peak_rss_bytes=row.ru_maxrss * (1 if platform == "darwin" else 1024),
+                  resource_peak_scope="GETRUSAGE_SELF_LIFETIME_NOT_CURRENT_RSS")
+    return values
+
+
 def process_stats(handle=None):
     if os.name != "nt":
         import resource
 
-        row = resource.getrusage(resource.RUSAGE_SELF)
-        return {"cpu_seconds": row.ru_utime + row.ru_stime, "rss_bytes": row.ru_maxrss * 1024}
+        return unix_process_stats(resource.getrusage(resource.RUSAGE_SELF))
     kernel, psapi, Memory, _ = windows_measurement_api()
     handle = handle or kernel.GetCurrentProcess()
     memory = Memory(cb=ctypes.sizeof(Memory))
     times = [ctypes.c_ulonglong() for _ in range(4)]
-    if not kernel.GetProcessTimes(handle, *(ctypes.byref(v) for v in times)):
-        return None
-    psapi.GetProcessMemoryInfo(handle, ctypes.byref(memory), memory.cb)
+    cpu_available = bool(kernel.GetProcessTimes(handle, *(ctypes.byref(v) for v in times)))
+    memory_available = bool(psapi.GetProcessMemoryInfo(handle, ctypes.byref(memory), memory.cb))
+    counters = (ctypes.c_ulonglong * 6)()
+    io_available = kernel.GetProcessIoCounters(handle, ctypes.byref(counters))
     return {
-        "cpu_seconds": (times[2].value + times[3].value) / 10_000_000,
-        "rss_bytes": memory.rss,
-        "peak_rss_bytes": memory.peak,
+        "cpu_seconds": (times[2].value + times[3].value) / 10_000_000 if cpu_available else None,
+        "rss_bytes": memory.rss if memory_available else None,
+        "peak_rss_bytes": memory.peak if memory_available else None,
+        "memory_available": memory_available,
+        "memory_units": "bytes",
+        "rss_source": "GetProcessMemoryInfo.WorkingSetSize",
+        "peak_rss_source": "GetProcessMemoryInfo.PeakWorkingSetSize",
+        "peak_scope": "PROCESS_LIFETIME",
+        "observed_monotonic": time.perf_counter(),
+        "io_counters": dict(zip(("read_calls", "write_calls", "other_calls", "read_transfer_bytes", "write_transfer_bytes", "other_transfer_bytes"), counters)) if io_available else None,
+        "io_source": "GetProcessIoCounters; all process I/O, not physical disk-only",
     }
 
 
 class Resources:
     def __init__(self):
         self.children, self.lock, self.stop = [], threading.Lock(), threading.Event()
-        self.maximum_rss, self.maximum_helpers, self.helper_cpu = 0, 0, 0.0
+        self.maximum_rss, self.maximum_parent_rss, self.maximum_helpers, self.helper_cpu = None, None, 0, 0.0
+        self.missing_memory_samples = 0
+        self.missing_helper_cpu_samples = 0
         self.helper_seconds, self.helper_calls = 0.0, 0
         self.original = subprocess.Popen
         self.handles = {}
@@ -140,7 +161,11 @@ class Resources:
                     if not self.measured_done:
                         self.measured_done = True
                         stat = process_stats(self._handle) if os.name == "nt" else None
-                        owner.helper_cpu += (stat or {}).get("cpu_seconds", 0)
+                        measured_cpu = (stat or {}).get("cpu_seconds")
+                        if measured_cpu is None:
+                            owner.missing_helper_cpu_samples += 1
+                        else:
+                            owner.helper_cpu += measured_cpu
                         owner.helper_calls += 1
                         owner.helper_seconds += time.perf_counter() - self.measured_start
                 return result
@@ -154,7 +179,11 @@ class Resources:
 
     def sample(self):
         while not self.stop.is_set():
-            rss, active = (process_stats() or {}).get("rss_bytes", 0), 0
+            rss, active = (process_stats() or {}).get("rss_bytes"), 0
+            if rss is None:
+                self.missing_memory_samples += 1
+            else:
+                self.maximum_parent_rss = max(self.maximum_parent_rss or 0, rss)
             with self.lock:
                 for child in self.children:
                     if child.poll() is None:
@@ -167,14 +196,24 @@ class Resources:
                     kernel, _, _, _ = windows_measurement_api()
                     for pid, handle in list(self.handles.items()):
                         stat = process_stats(handle) or {}
-                        rss += stat.get("rss_bytes", 0)
-                        self.helper_lifetime_cpu[pid] = stat.get("cpu_seconds", self.helper_lifetime_cpu.get(pid, 0))
+                        helper_rss = stat.get("rss_bytes")
+                        if helper_rss is None or rss is None:
+                            rss = None
+                            self.missing_memory_samples += 1
+                        else:
+                            rss += helper_rss
+                        measured_cpu = stat.get("cpu_seconds")
+                        if measured_cpu is None:
+                            self.missing_helper_cpu_samples += 1
+                        else:
+                            self.helper_lifetime_cpu[pid] = measured_cpu
                         exit_code = wintypes.DWORD()
                         if kernel.GetExitCodeProcess(handle, ctypes.byref(exit_code)) and exit_code.value != 259:
                             self.retired_helper_cpu += self.helper_lifetime_cpu.pop(pid, 0)
                             kernel.CloseHandle(handle)
                             del self.handles[pid]
-            self.maximum_rss = max(self.maximum_rss, rss)
+            if rss is not None and os.name == "nt":
+                self.maximum_rss = max(self.maximum_rss or 0, rss)
             self.maximum_helpers = max(self.maximum_helpers, active)
             self.stop.wait(0.1)
 
@@ -185,21 +224,28 @@ class Resources:
         if os.name == "nt":
             kernel, _, _, _ = windows_measurement_api()
             for pid, handle in self.handles.items():
-                self.helper_lifetime_cpu[pid] = (process_stats(handle) or {}).get(
-                    "cpu_seconds", self.helper_lifetime_cpu.get(pid, 0)
-                )
+                measured_cpu = (process_stats(handle) or {}).get("cpu_seconds")
+                if measured_cpu is None:
+                    self.missing_helper_cpu_samples += 1
+                else:
+                    self.helper_lifetime_cpu[pid] = measured_cpu
                 kernel.CloseHandle(handle)
         after = process_stats()
         wall = time.perf_counter() - self.started
         self.result = {
             "wall_seconds": round(wall, 6),
-            "parent_cpu_seconds": round(after["cpu_seconds"] - self.before["cpu_seconds"], 6),
-            "helper_cpu_seconds": round(
-                self.retired_helper_cpu + sum(self.helper_lifetime_cpu.values()) if os.name == "nt" else self.helper_cpu, 6
-            ),
-            "helper_cpu_scope": "Owned descendants discovered during 100 ms samples; short-lived undiscovered descendants can be missed.",
+            "parent_cpu_seconds": round(after["cpu_seconds"] - self.before["cpu_seconds"], 6) if after and self.before and after.get("cpu_seconds") is not None and self.before.get("cpu_seconds") is not None else None,
+            "helper_cpu_seconds": round(self.retired_helper_cpu + sum(self.helper_lifetime_cpu.values()), 6) if os.name == "nt" and not self.missing_helper_cpu_samples else None,
+            "missing_helper_cpu_samples": self.missing_helper_cpu_samples,
+            "helper_cpu_is_sampled_lower_bound": True,
+            "helper_cpu_scope": "Owned descendants sampled every 100 ms; short-lived children can be missed." if os.name == "nt" else "UNAVAILABLE",
             "sampled_process_tree_peak_rss_bytes": self.maximum_rss,
-            "parent_lifetime_peak_rss_bytes": after.get("peak_rss_bytes"),
+            "sampled_parent_peak_rss_bytes": self.maximum_parent_rss,
+            "missing_memory_samples": self.missing_memory_samples,
+            "parent_lifetime_peak_rss_bytes": (after or {}).get("peak_rss_bytes"),
+            "parent_io_before": (self.before or {}).get("io_counters"),
+            "parent_io_after": (after or {}).get("io_counters"),
+            "io_scope": (after or {}).get("io_source", "UNAVAILABLE"),
             "helper_concurrency_observed": self.maximum_helpers,
             "helper_calls": self.helper_calls,
             "helper_wall_seconds_overlapping": round(self.helper_seconds, 6),

@@ -2,10 +2,38 @@ import hashlib
 import json
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / "docs/evidence/SCALE001_CHECKPOINT_SOURCE_MATCH_MANIFEST_40280429009.json"
 DECISION = ROOT / "docs/evidence/SCALE001_CHECKPOINT_POLICY_DECISION.json"
 VALID_STATUSES = {"VERIFIED_MATCH", "VERIFIED_MISMATCH", "NOT_AVAILABLE"}
+
+
+def assert_evidence_bytes(raw, item):
+    """Bind checkout bytes to the original receipt without rewriting its digest."""
+    checkout = item.get("checkout_bytes")
+    if checkout is None:
+        assert hashlib.sha256(raw).hexdigest() == item["sha256"]
+        return
+    assert checkout["representation"] == "git-lf"
+    assert checkout["historical_representation"] == "crlf"
+    normalized = raw.replace(b"\r\n", b"\n")
+    assert b"\r" not in normalized
+    assert raw in (normalized, normalized.replace(b"\n", b"\r\n"))
+    assert hashlib.sha256(normalized).hexdigest() == checkout["sha256"]
+    assert hashlib.sha256(normalized.replace(b"\n", b"\r\n")).hexdigest() == item["sha256"]
+
+
+@pytest.mark.parametrize("newline", [b"\n", b"\r\n"])
+def test_historical_digest_is_bound_to_explicit_checkout_representation(newline):
+    raw = b'{"owned": true}\n'
+    item = {"sha256": hashlib.sha256(raw.replace(b"\n", b"\r\n")).hexdigest(),
+            "checkout_bytes": {"representation": "git-lf", "historical_representation": "crlf",
+                               "sha256": hashlib.sha256(raw).hexdigest()}}
+    assert_evidence_bytes(raw.replace(b"\n", newline), item)
+    with pytest.raises(AssertionError):
+        assert_evidence_bytes(raw.replace(b"true", b"false"), item)
 
 
 def test_source_match_manifest_preserves_unknown_checkpoint_measurement():
@@ -67,6 +95,9 @@ def test_canonical_source_match_manifest_evidence_hashes_are_current():
         )
     )
     evidence = manifest["evidence_index"]
+    representations = json.loads(
+        (ROOT / "docs/evidence/CI_EVIDENCE_BYTE_REPRESENTATIONS_20261102.json").read_text(encoding="utf-8")
+    )["files"]
     for key in (
         "candidate_cgroup_receipt",
         "candidate_memory_samples",
@@ -74,5 +105,7 @@ def test_canonical_source_match_manifest_evidence_hashes_are_current():
         "owner_decision_record",
     ):
         item = evidence[key]
-        actual = hashlib.sha256((ROOT / item["path"]).read_bytes()).hexdigest()
-        assert actual == item["sha256"]
+        checkout = representations.get(item["path"])
+        if checkout:
+            assert checkout["historical_sha256"] == item["sha256"]
+        assert_evidence_bytes((ROOT / item["path"]).read_bytes(), {**item, "checkout_bytes": checkout})

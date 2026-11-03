@@ -1,0 +1,847 @@
+{
+  "schema": "projecttrace-linux-blocker-host-partition-profile-v1",
+  "date": "2026-11-02",
+  "observed_at": "2026-11-02T21:05:15.436603+05:30",
+  "branch": "codex/scale-001-local-continuation",
+  "head": "e2afa09ccfd45f8a7551b5ed8b2868d6297c299e",
+  "remote": "https://github.com/maninani12/ProjectTrace.git",
+  "outcome_A_linux_validation": "BLOCKED_NOT_RUN",
+  "outcome_B_partition_profile": "HOST_SUBSTAGES_COMPLETE; LINUX_WORKER_AND_SECURITY_COSTS_UNAVAILABLE",
+  "executed_source_tree_sha256": "9f5e40f6703b91809b5c4e3847c57d2986d8a93ad139c9bc81b9ce6f31b2359d",
+  "executed_source_files": 703,
+  "source_parity_before_after_host_execution": true,
+  "linux_copy_parity": "NOT_RUN",
+  "manifest_canonicalization": "sorted UTF-8 JSONL path/bytes/sha256; LF record separators; original file bytes unchanged",
+  "byte_normalization_performed": false,
+  "manifests": [
+    "outputs/linux-partition-20261102/before-manifest.json",
+    "outputs/linux-partition-20261102/tested-manifest.json",
+    "outputs/linux-partition-20261102/final-manifest.json"
+  ],
+  "linux_availability": {
+    "status": "BLOCKED_NOT_RUN",
+    "native_platform": "Windows-11-10.0.26200-SP0",
+    "wsl": {
+      "returncode": 50,
+      "message": "The Windows Subsystem for Linux is not installed. You can install by running 'wsl.exe --install'.\r\r\nFor more information please visit https://aka.ms/wslinstall"
+    },
+    "docker_command": null,
+    "podman_command": null,
+    "qemu_command": null,
+    "docker_standard_install_exists": false,
+    "ssh_config_exists": false,
+    "codespaces_inspection": "HTTP 403; codespace scope not authorized; no permission expansion requested",
+    "required_mode_preflight": "LINUX_REQUIRED",
+    "landlock_seccomp": "NOT_PROBED_NO_LINUX_KERNEL",
+    "privileged_host_changes": false,
+    "remote_workflows_dispatched": false,
+    "exact_focused_test_identities": [
+      "tests/test_checkpoint_field_attribution.py::test_v1_field_attribution_reconciles_and_candidate_comparison",
+      "tests/test_checkpoint_source_match_manifest.py::test_canonical_source_match_manifest_evidence_hashes_are_current",
+      "tests/test_json_export.py::test_fresh_process_export_profiles[16]",
+      "tests/test_json_export.py::test_fresh_process_export_profiles[10000]",
+      "tests/test_json_export.py::test_fresh_process_export_profiles[50000]",
+      "tests/test_postgresql_integration.py::test_postgresql_migrations_preserve_prior_records"
+    ],
+    "all_six_linux_results": "NOT_RUN_ENVIRONMENT_UNAVAILABLE",
+    "required_security_selections": [
+      "integration_tests/test_parser_isolation.py",
+      "integration_tests/test_archive_isolation.py tests/test_archive_safety.py",
+      "integration_tests/test_lexical_isolation.py",
+      "tests/test_auth_drift.py and exact repository-store regressions from ci.yml",
+      "Docker built non-root SEC-002 probe with read-only/network-none/cap-drop/pid-limit/no-new-privileges"
+    ],
+    "all_linux_security_results": "NOT_RUN_ENVIRONMENT_UNAVAILABLE"
+  },
+  "host_results": {
+    "tests": 26,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 26,
+    "warnings": 1,
+    "seconds": 0.913,
+    "scope": "WINDOWS_PORTABLE_PROTOCOL/PRIVACY AND PROFILER-CORRECTNESS TESTS; NOT_LINUX_SECURITY_ACCEPTANCE"
+  },
+  "host_profile_summary": [
+    {
+      "files": 7,
+      "functions_per_source": 4,
+      "output_packet_bytes": [
+        47940,
+        47927,
+        47919
+      ],
+      "development_helper_starts": [
+        2,
+        2,
+        2
+      ],
+      "stages": [
+        {
+          "stage": "owned_input_preparation_in_memory",
+          "median_wall_seconds": 1.4900000678608194e-05,
+          "median_parent_cpu_seconds": 0.0,
+          "wall_range_seconds": [
+            1.4599998394260183e-05,
+            1.920000067912042e-05
+          ]
+        },
+        {
+          "stage": "development_syntax_helper_roundtrip",
+          "median_wall_seconds": 0.24656010000035167,
+          "median_parent_cpu_seconds": 0.0,
+          "wall_range_seconds": [
+            0.2406857999994827,
+            0.24702009999964503
+          ]
+        },
+        {
+          "stage": "development_iac_helper_roundtrip",
+          "median_wall_seconds": 0.20779770000081044,
+          "median_parent_cpu_seconds": 0.015625,
+          "wall_range_seconds": [
+            0.2007716000007349,
+            0.21607249999942724
+          ]
+        },
+        {
+          "stage": "native_input_serialization_not_sent_to_linux",
+          "median_wall_seconds": 0.00016370000230381265,
+          "median_parent_cpu_seconds": 0.0,
+          "wall_range_seconds": [
+            0.00015179999900283292,
+            0.00016830000095069408
+          ]
+        },
+        {
+          "stage": "native_core_direct_host_replay_preparsed_inputs",
+          "median_wall_seconds": 0.0025668000016594306,
+          "median_parent_cpu_seconds": 0.0,
+          "wall_range_seconds": [
+            0.0019809000004897825,
+            0.0029285000018717255
+          ]
+        },
+        {
+          "stage": "native_artifact_construction",
+          "median_wall_seconds": 1.2500000593718141e-05,
+          "median_parent_cpu_seconds": 0.0,
+          "wall_range_seconds": [
+            1.219999830937013e-05,
+            1.5699999494245276e-05
+          ]
+        },
+        {
+          "stage": "actual_emit_packet_json_serialization_to_memory",
+          "median_wall_seconds": 0.00022620000163442455,
+          "median_parent_cpu_seconds": 0.0,
+          "wall_range_seconds": [
+            0.00021109999943291768,
+            0.00027599999884841964
+          ]
+        }
+      ],
+      "protocol": {
+        "decode_packet": {
+          "median_wall_seconds": 0.0034744000004138798,
+          "median_parent_cpu_seconds": 0.0,
+          "calls_per_run": [
+            7,
+            7,
+            7
+          ]
+        },
+        "metadata": {
+          "median_wall_seconds": 0.0022843000006105285,
+          "median_parent_cpu_seconds": 0.0,
+          "calls_per_run": [
+            7,
+            7,
+            7
+          ]
+        },
+        "expand_native_artifact": {
+          "median_wall_seconds": 2.7000001864507794e-05,
+          "median_parent_cpu_seconds": 0.0,
+          "calls_per_run": [
+            7,
+            7,
+            7
+          ]
+        }
+      },
+      "median_parent_protocol_seconds": 0.006460800002969336,
+      "semantic_fingerprints": [
+        "62d6f147a3d6fae3af30e555a125f2090b1f47e2ccfbe09562be08e34b44c248",
+        "62d6f147a3d6fae3af30e555a125f2090b1f47e2ccfbe09562be08e34b44c248",
+        "62d6f147a3d6fae3af30e555a125f2090b1f47e2ccfbe09562be08e34b44c248"
+      ],
+      "golden_equivalence_all_repeats": true,
+      "diagnostic_allocation": {
+        "method": "TRACEMALLOC_PYTHON_ONLY; excludes native allocator and child processes",
+        "current_bytes": 273798,
+        "peak_bytes": 428601,
+        "baseline_current_bytes": 0,
+        "traced_live_blocks": 3196
+      }
+    },
+    {
+      "files": 28,
+      "functions_per_source": 12,
+      "output_packet_bytes": [
+        462642,
+        462630,
+        462669
+      ],
+      "development_helper_starts": [
+        2,
+        2,
+        2
+      ],
+      "stages": [
+        {
+          "stage": "owned_input_preparation_in_memory",
+          "median_wall_seconds": 4.9199999921256676e-05,
+          "median_parent_cpu_seconds": 0.0,
+          "wall_range_seconds": [
+            4.3300002289470285e-05,
+            6.380000195349567e-05
+          ]
+        },
+        {
+          "stage": "development_syntax_helper_roundtrip",
+          "median_wall_seconds": 0.29979870000170195,
+          "median_parent_cpu_seconds": 0.046875,
+          "wall_range_seconds": [
+            0.2936496999973315,
+            0.3166597000017646
+          ]
+        },
+        {
+          "stage": "development_iac_helper_roundtrip",
+          "median_wall_seconds": 0.20871919999990496,
+          "median_parent_cpu_seconds": 0.03125,
+          "wall_range_seconds": [
+            0.20347310000215657,
+            0.23441620000085095
+          ]
+        },
+        {
+          "stage": "native_input_serialization_not_sent_to_linux",
+          "median_wall_seconds": 0.0012648999982047826,
+          "median_parent_cpu_seconds": 0.0,
+          "wall_range_seconds": [
+            0.0011875999989570118,
+            0.0017566999995324295
+          ]
+        },
+        {
+          "stage": "native_core_direct_host_replay_preparsed_inputs",
+          "median_wall_seconds": 0.01846539999678498,
+          "median_parent_cpu_seconds": 0.015625,
+          "wall_range_seconds": [
+            0.017291399999521673,
+            0.022168700001202524
+          ]
+        },
+        {
+          "stage": "native_artifact_construction",
+          "median_wall_seconds": 4.3300002289470285e-05,
+          "median_parent_cpu_seconds": 0.0,
+          "wall_range_seconds": [
+            3.710000237333588e-05,
+            6.0200000007171184e-05
+          ]
+        },
+        {
+          "stage": "actual_emit_packet_json_serialization_to_memory",
+          "median_wall_seconds": 0.0019595999983721413,
+          "median_parent_cpu_seconds": 0.0,
+          "wall_range_seconds": [
+            0.0019237999986216892,
+            0.0023202999982459005
+          ]
+        }
+      ],
+      "protocol": {
+        "decode_packet": {
+          "median_wall_seconds": 0.03493969999908586,
+          "median_parent_cpu_seconds": 0.015625,
+          "calls_per_run": [
+            28,
+            28,
+            28
+          ]
+        },
+        "metadata": {
+          "median_wall_seconds": 0.02466059998550918,
+          "median_parent_cpu_seconds": 0.03125,
+          "calls_per_run": [
+            28,
+            28,
+            28
+          ]
+        },
+        "expand_native_artifact": {
+          "median_wall_seconds": 0.00014490000467048958,
+          "median_parent_cpu_seconds": 0.0,
+          "calls_per_run": [
+            28,
+            28,
+            28
+          ]
+        }
+      },
+      "median_parent_protocol_seconds": 0.061252499999682186,
+      "semantic_fingerprints": [
+        "ce616d524e8b4a66930c4bd61bb24a65c908e54634babb58655272cfe0784e72",
+        "ce616d524e8b4a66930c4bd61bb24a65c908e54634babb58655272cfe0784e72",
+        "ce616d524e8b4a66930c4bd61bb24a65c908e54634babb58655272cfe0784e72"
+      ],
+      "golden_equivalence_all_repeats": true,
+      "diagnostic_allocation": {
+        "method": "TRACEMALLOC_PYTHON_ONLY; excludes native allocator and child processes",
+        "current_bytes": 1840359,
+        "peak_bytes": 3481050,
+        "baseline_current_bytes": 0,
+        "traced_live_blocks": 18175
+      }
+    }
+  ],
+  "helper_controls": [
+    {
+      "worker": "native_parser_worker.py",
+      "scope": "MINIMAL_VALID_WINDOWS_DEVELOPMENT_HELPER; startup/import/minimal-parse/pipe/teardown combined, not isolated startup",
+      "runs": [
+        {
+          "repeat": 0,
+          "wall_seconds": 0.2574105999992753,
+          "parent_cpu_seconds": 0.046875,
+          "before": {
+            "cpu_seconds": 0.1875,
+            "rss_bytes": 38522880,
+            "peak_rss_bytes": 38522880,
+            "memory_available": true,
+            "memory_units": "bytes",
+            "rss_source": "GetProcessMemoryInfo.WorkingSetSize",
+            "peak_rss_source": "GetProcessMemoryInfo.PeakWorkingSetSize",
+            "peak_scope": "PROCESS_LIFETIME",
+            "observed_monotonic": 17258.8061585,
+            "io_counters": {
+              "read_calls": 539,
+              "write_calls": 0,
+              "other_calls": 4800,
+              "read_transfer_bytes": 5464458,
+              "write_transfer_bytes": 0,
+              "other_transfer_bytes": 458182
+            },
+            "io_source": "GetProcessIoCounters; all process I/O, not physical disk-only"
+          },
+          "after": {
+            "cpu_seconds": 0.234375,
+            "rss_bytes": 38813696,
+            "peak_rss_bytes": 39587840,
+            "memory_available": true,
+            "memory_units": "bytes",
+            "rss_source": "GetProcessMemoryInfo.WorkingSetSize",
+            "peak_rss_source": "GetProcessMemoryInfo.PeakWorkingSetSize",
+            "peak_scope": "PROCESS_LIFETIME",
+            "observed_monotonic": 17259.0622218,
+            "io_counters": {
+              "read_calls": 542,
+              "write_calls": 1,
+              "other_calls": 4857,
+              "read_transfer_bytes": 5465401,
+              "write_transfer_bytes": 36,
+              "other_transfer_bytes": 460598
+            },
+            "io_source": "GetProcessIoCounters; all process I/O, not physical disk-only"
+          },
+          "resources": {
+            "wall_seconds": 0.255469,
+            "parent_cpu_seconds": 0.046875,
+            "helper_cpu_seconds": 0.21875,
+            "missing_helper_cpu_samples": 0,
+            "helper_cpu_is_sampled_lower_bound": true,
+            "helper_cpu_scope": "Owned descendants sampled every 100 ms; short-lived children can be missed.",
+            "sampled_process_tree_peak_rss_bytes": 86835200,
+            "sampled_parent_peak_rss_bytes": 38887424,
+            "missing_memory_samples": 0,
+            "parent_lifetime_peak_rss_bytes": 39587840,
+            "parent_io_before": {
+              "read_calls": 539,
+              "write_calls": 0,
+              "other_calls": 4800,
+              "read_transfer_bytes": 5464458,
+              "write_transfer_bytes": 0,
+              "other_transfer_bytes": 458182
+            },
+            "parent_io_after": {
+              "read_calls": 542,
+              "write_calls": 1,
+              "other_calls": 4857,
+              "read_transfer_bytes": 5465401,
+              "write_transfer_bytes": 36,
+              "other_transfer_bytes": 460598
+            },
+            "io_scope": "GetProcessIoCounters; all process I/O, not physical disk-only",
+            "helper_concurrency_observed": 1,
+            "helper_calls": 1,
+            "helper_wall_seconds_overlapping": 0.24751,
+            "rss_sample_interval_seconds": 0.1
+          },
+          "exit_status": 0,
+          "output_bytes": 943
+        },
+        {
+          "repeat": 1,
+          "wall_seconds": 0.24726499999815132,
+          "parent_cpu_seconds": 0.046875,
+          "before": {
+            "cpu_seconds": 0.234375,
+            "rss_bytes": 38813696,
+            "peak_rss_bytes": 39587840,
+            "memory_available": true,
+            "memory_units": "bytes",
+            "rss_source": "GetProcessMemoryInfo.WorkingSetSize",
+            "peak_rss_source": "GetProcessMemoryInfo.PeakWorkingSetSize",
+            "peak_scope": "PROCESS_LIFETIME",
+            "observed_monotonic": 17259.0622396,
+            "io_counters": {
+              "read_calls": 542,
+              "write_calls": 1,
+              "other_calls": 4857,
+              "read_transfer_bytes": 5465401,
+              "write_transfer_bytes": 36,
+              "other_transfer_bytes": 460598
+            },
+            "io_source": "GetProcessIoCounters; all process I/O, not physical disk-only"
+          },
+          "after": {
+            "cpu_seconds": 0.28125,
+            "rss_bytes": 38858752,
+            "peak_rss_bytes": 39620608,
+            "memory_available": true,
+            "memory_units": "bytes",
+            "rss_source": "GetProcessMemoryInfo.WorkingSetSize",
+            "peak_rss_source": "GetProcessMemoryInfo.PeakWorkingSetSize",
+            "peak_scope": "PROCESS_LIFETIME",
+            "observed_monotonic": 17259.3095067,
+            "io_counters": {
+              "read_calls": 545,
+              "write_calls": 2,
+              "other_calls": 4904,
+              "read_transfer_bytes": 5466344,
+              "write_transfer_bytes": 72,
+              "other_transfer_bytes": 462638
+            },
+            "io_source": "GetProcessIoCounters; all process I/O, not physical disk-only"
+          },
+          "resources": {
+            "wall_seconds": 0.246966,
+            "parent_cpu_seconds": 0.046875,
+            "helper_cpu_seconds": 0.21875,
+            "missing_helper_cpu_samples": 0,
+            "helper_cpu_is_sampled_lower_bound": true,
+            "helper_cpu_scope": "Owned descendants sampled every 100 ms; short-lived children can be missed.",
+            "sampled_process_tree_peak_rss_bytes": 87543808,
+            "sampled_parent_peak_rss_bytes": 38920192,
+            "missing_memory_samples": 0,
+            "parent_lifetime_peak_rss_bytes": 39620608,
+            "parent_io_before": {
+              "read_calls": 542,
+              "write_calls": 1,
+              "other_calls": 4857,
+              "read_transfer_bytes": 5465401,
+              "write_transfer_bytes": 36,
+              "other_transfer_bytes": 460598
+            },
+            "parent_io_after": {
+              "read_calls": 545,
+              "write_calls": 2,
+              "other_calls": 4904,
+              "read_transfer_bytes": 5466344,
+              "write_transfer_bytes": 72,
+              "other_transfer_bytes": 462638
+            },
+            "io_scope": "GetProcessIoCounters; all process I/O, not physical disk-only",
+            "helper_concurrency_observed": 1,
+            "helper_calls": 1,
+            "helper_wall_seconds_overlapping": 0.241097,
+            "rss_sample_interval_seconds": 0.1
+          },
+          "exit_status": 0,
+          "output_bytes": 943
+        },
+        {
+          "repeat": 2,
+          "wall_seconds": 0.2378677000015159,
+          "parent_cpu_seconds": 0.0,
+          "before": {
+            "cpu_seconds": 0.28125,
+            "rss_bytes": 38858752,
+            "peak_rss_bytes": 39620608,
+            "memory_available": true,
+            "memory_units": "bytes",
+            "rss_source": "GetProcessMemoryInfo.WorkingSetSize",
+            "peak_rss_source": "GetProcessMemoryInfo.PeakWorkingSetSize",
+            "peak_scope": "PROCESS_LIFETIME",
+            "observed_monotonic": 17259.3095175,
+            "io_counters": {
+              "read_calls": 545,
+              "write_calls": 2,
+              "other_calls": 4904,
+              "read_transfer_bytes": 5466344,
+              "write_transfer_bytes": 72,
+              "other_transfer_bytes": 462638
+            },
+            "io_source": "GetProcessIoCounters; all process I/O, not physical disk-only"
+          },
+          "after": {
+            "cpu_seconds": 0.28125,
+            "rss_bytes": 38875136,
+            "peak_rss_bytes": 39641088,
+            "memory_available": true,
+            "memory_units": "bytes",
+            "rss_source": "GetProcessMemoryInfo.WorkingSetSize",
+            "peak_rss_source": "GetProcessMemoryInfo.PeakWorkingSetSize",
+            "peak_scope": "PROCESS_LIFETIME",
+            "observed_monotonic": 17259.5473889,
+            "io_counters": {
+              "read_calls": 548,
+              "write_calls": 3,
+              "other_calls": 4951,
+              "read_transfer_bytes": 5467287,
+              "write_transfer_bytes": 108,
+              "other_transfer_bytes": 464678
+            },
+            "io_source": "GetProcessIoCounters; all process I/O, not physical disk-only"
+          },
+          "resources": {
+            "wall_seconds": 0.237605,
+            "parent_cpu_seconds": 0.0,
+            "helper_cpu_seconds": 0.234375,
+            "missing_helper_cpu_samples": 0,
+            "helper_cpu_is_sampled_lower_bound": true,
+            "helper_cpu_scope": "Owned descendants sampled every 100 ms; short-lived children can be missed.",
+            "sampled_process_tree_peak_rss_bytes": 87453696,
+            "sampled_parent_peak_rss_bytes": 38940672,
+            "missing_memory_samples": 0,
+            "parent_lifetime_peak_rss_bytes": 39641088,
+            "parent_io_before": {
+              "read_calls": 545,
+              "write_calls": 2,
+              "other_calls": 4904,
+              "read_transfer_bytes": 5466344,
+              "write_transfer_bytes": 72,
+              "other_transfer_bytes": 462638
+            },
+            "parent_io_after": {
+              "read_calls": 548,
+              "write_calls": 3,
+              "other_calls": 4951,
+              "read_transfer_bytes": 5467287,
+              "write_transfer_bytes": 108,
+              "other_transfer_bytes": 464678
+            },
+            "io_scope": "GetProcessIoCounters; all process I/O, not physical disk-only",
+            "helper_concurrency_observed": 1,
+            "helper_calls": 1,
+            "helper_wall_seconds_overlapping": 0.231501,
+            "rss_sample_interval_seconds": 0.1
+          },
+          "exit_status": 0,
+          "output_bytes": 943
+        }
+      ],
+      "median_seconds": 0.24726499999815132
+    },
+    {
+      "worker": "iac_worker.py",
+      "scope": "MINIMAL_VALID_WINDOWS_DEVELOPMENT_HELPER; startup/import/minimal-parse/pipe/teardown combined, not isolated startup",
+      "runs": [
+        {
+          "repeat": 0,
+          "wall_seconds": 0.2104752000013832,
+          "parent_cpu_seconds": 0.015625,
+          "before": {
+            "cpu_seconds": 0.28125,
+            "rss_bytes": 38875136,
+            "peak_rss_bytes": 39641088,
+            "memory_available": true,
+            "memory_units": "bytes",
+            "rss_source": "GetProcessMemoryInfo.WorkingSetSize",
+            "peak_rss_source": "GetProcessMemoryInfo.PeakWorkingSetSize",
+            "peak_scope": "PROCESS_LIFETIME",
+            "observed_monotonic": 17259.5474052,
+            "io_counters": {
+              "read_calls": 548,
+              "write_calls": 3,
+              "other_calls": 4951,
+              "read_transfer_bytes": 5467287,
+              "write_transfer_bytes": 108,
+              "other_transfer_bytes": 464678
+            },
+            "io_source": "GetProcessIoCounters; all process I/O, not physical disk-only"
+          },
+          "after": {
+            "cpu_seconds": 0.296875,
+            "rss_bytes": 38916096,
+            "peak_rss_bytes": 39669760,
+            "memory_available": true,
+            "memory_units": "bytes",
+            "rss_source": "GetProcessMemoryInfo.WorkingSetSize",
+            "peak_rss_source": "GetProcessMemoryInfo.PeakWorkingSetSize",
+            "peak_scope": "PROCESS_LIFETIME",
+            "observed_monotonic": 17259.7578858,
+            "io_counters": {
+              "read_calls": 551,
+              "write_calls": 4,
+              "other_calls": 4998,
+              "read_transfer_bytes": 5467420,
+              "write_transfer_bytes": 170,
+              "other_transfer_bytes": 466718
+            },
+            "io_source": "GetProcessIoCounters; all process I/O, not physical disk-only"
+          },
+          "resources": {
+            "wall_seconds": 0.210316,
+            "parent_cpu_seconds": 0.015625,
+            "helper_cpu_seconds": 0.171875,
+            "missing_helper_cpu_samples": 0,
+            "helper_cpu_is_sampled_lower_bound": true,
+            "helper_cpu_scope": "Owned descendants sampled every 100 ms; short-lived children can be missed.",
+            "sampled_process_tree_peak_rss_bytes": 74981376,
+            "sampled_parent_peak_rss_bytes": 38969344,
+            "missing_memory_samples": 0,
+            "parent_lifetime_peak_rss_bytes": 39669760,
+            "parent_io_before": {
+              "read_calls": 548,
+              "write_calls": 3,
+              "other_calls": 4951,
+              "read_transfer_bytes": 5467287,
+              "write_transfer_bytes": 108,
+              "other_transfer_bytes": 464678
+            },
+            "parent_io_after": {
+              "read_calls": 551,
+              "write_calls": 4,
+              "other_calls": 4998,
+              "read_transfer_bytes": 5467420,
+              "write_transfer_bytes": 170,
+              "other_transfer_bytes": 466718
+            },
+            "io_scope": "GetProcessIoCounters; all process I/O, not physical disk-only",
+            "helper_concurrency_observed": 1,
+            "helper_calls": 1,
+            "helper_wall_seconds_overlapping": 0.204535,
+            "rss_sample_interval_seconds": 0.1
+          },
+          "exit_status": 0,
+          "output_bytes": 133
+        },
+        {
+          "repeat": 1,
+          "wall_seconds": 0.20802670000193757,
+          "parent_cpu_seconds": 0.015625,
+          "before": {
+            "cpu_seconds": 0.296875,
+            "rss_bytes": 38916096,
+            "peak_rss_bytes": 39669760,
+            "memory_available": true,
+            "memory_units": "bytes",
+            "rss_source": "GetProcessMemoryInfo.WorkingSetSize",
+            "peak_rss_source": "GetProcessMemoryInfo.PeakWorkingSetSize",
+            "peak_scope": "PROCESS_LIFETIME",
+            "observed_monotonic": 17259.7579074,
+            "io_counters": {
+              "read_calls": 551,
+              "write_calls": 4,
+              "other_calls": 4998,
+              "read_transfer_bytes": 5467420,
+              "write_transfer_bytes": 170,
+              "other_transfer_bytes": 466718
+            },
+            "io_source": "GetProcessIoCounters; all process I/O, not physical disk-only"
+          },
+          "after": {
+            "cpu_seconds": 0.3125,
+            "rss_bytes": 38920192,
+            "peak_rss_bytes": 39694336,
+            "memory_available": true,
+            "memory_units": "bytes",
+            "rss_source": "GetProcessMemoryInfo.WorkingSetSize",
+            "peak_rss_source": "GetProcessMemoryInfo.PeakWorkingSetSize",
+            "peak_scope": "PROCESS_LIFETIME",
+            "observed_monotonic": 17259.9659267,
+            "io_counters": {
+              "read_calls": 554,
+              "write_calls": 5,
+              "other_calls": 5045,
+              "read_transfer_bytes": 5467553,
+              "write_transfer_bytes": 232,
+              "other_transfer_bytes": 468758
+            },
+            "io_source": "GetProcessIoCounters; all process I/O, not physical disk-only"
+          },
+          "resources": {
+            "wall_seconds": 0.207887,
+            "parent_cpu_seconds": 0.015625,
+            "helper_cpu_seconds": 0.15625,
+            "missing_helper_cpu_samples": 0,
+            "helper_cpu_is_sampled_lower_bound": true,
+            "helper_cpu_scope": "Owned descendants sampled every 100 ms; short-lived children can be missed.",
+            "sampled_process_tree_peak_rss_bytes": 75468800,
+            "sampled_parent_peak_rss_bytes": 38993920,
+            "missing_memory_samples": 0,
+            "parent_lifetime_peak_rss_bytes": 39694336,
+            "parent_io_before": {
+              "read_calls": 551,
+              "write_calls": 4,
+              "other_calls": 4998,
+              "read_transfer_bytes": 5467420,
+              "write_transfer_bytes": 170,
+              "other_transfer_bytes": 466718
+            },
+            "parent_io_after": {
+              "read_calls": 554,
+              "write_calls": 5,
+              "other_calls": 5045,
+              "read_transfer_bytes": 5467553,
+              "write_transfer_bytes": 232,
+              "other_transfer_bytes": 468758
+            },
+            "io_scope": "GetProcessIoCounters; all process I/O, not physical disk-only",
+            "helper_concurrency_observed": 1,
+            "helper_calls": 1,
+            "helper_wall_seconds_overlapping": 0.202045,
+            "rss_sample_interval_seconds": 0.1
+          },
+          "exit_status": 0,
+          "output_bytes": 133
+        },
+        {
+          "repeat": 2,
+          "wall_seconds": 0.2037516999989748,
+          "parent_cpu_seconds": 0.0,
+          "before": {
+            "cpu_seconds": 0.3125,
+            "rss_bytes": 38920192,
+            "peak_rss_bytes": 39694336,
+            "memory_available": true,
+            "memory_units": "bytes",
+            "rss_source": "GetProcessMemoryInfo.WorkingSetSize",
+            "peak_rss_source": "GetProcessMemoryInfo.PeakWorkingSetSize",
+            "peak_scope": "PROCESS_LIFETIME",
+            "observed_monotonic": 17259.9659358,
+            "io_counters": {
+              "read_calls": 554,
+              "write_calls": 5,
+              "other_calls": 5045,
+              "read_transfer_bytes": 5467553,
+              "write_transfer_bytes": 232,
+              "other_transfer_bytes": 468758
+            },
+            "io_source": "GetProcessIoCounters; all process I/O, not physical disk-only"
+          },
+          "after": {
+            "cpu_seconds": 0.3125,
+            "rss_bytes": 38952960,
+            "peak_rss_bytes": 39718912,
+            "memory_available": true,
+            "memory_units": "bytes",
+            "rss_source": "GetProcessMemoryInfo.WorkingSetSize",
+            "peak_rss_source": "GetProcessMemoryInfo.PeakWorkingSetSize",
+            "peak_scope": "PROCESS_LIFETIME",
+            "observed_monotonic": 17260.1696937,
+            "io_counters": {
+              "read_calls": 557,
+              "write_calls": 6,
+              "other_calls": 5092,
+              "read_transfer_bytes": 5467685,
+              "write_transfer_bytes": 294,
+              "other_transfer_bytes": 470798
+            },
+            "io_source": "GetProcessIoCounters; all process I/O, not physical disk-only"
+          },
+          "resources": {
+            "wall_seconds": 0.203593,
+            "parent_cpu_seconds": 0.0,
+            "helper_cpu_seconds": 0.1875,
+            "missing_helper_cpu_samples": 0,
+            "helper_cpu_is_sampled_lower_bound": true,
+            "helper_cpu_scope": "Owned descendants sampled every 100 ms; short-lived children can be missed.",
+            "sampled_process_tree_peak_rss_bytes": 76054528,
+            "sampled_parent_peak_rss_bytes": 39018496,
+            "missing_memory_samples": 0,
+            "parent_lifetime_peak_rss_bytes": 39718912,
+            "parent_io_before": {
+              "read_calls": 554,
+              "write_calls": 5,
+              "other_calls": 5045,
+              "read_transfer_bytes": 5467553,
+              "write_transfer_bytes": 232,
+              "other_transfer_bytes": 468758
+            },
+            "parent_io_after": {
+              "read_calls": 557,
+              "write_calls": 6,
+              "other_calls": 5092,
+              "read_transfer_bytes": 5467685,
+              "write_transfer_bytes": 294,
+              "other_transfer_bytes": 470798
+            },
+            "io_scope": "GetProcessIoCounters; all process I/O, not physical disk-only",
+            "helper_concurrency_observed": 1,
+            "helper_calls": 1,
+            "helper_wall_seconds_overlapping": 0.19742,
+            "rss_sample_interval_seconds": 0.1
+          },
+          "exit_status": 0,
+          "output_bytes": 132
+        }
+      ],
+      "median_seconds": 0.20802670000193757
+    }
+  ],
+  "instrumentation_sha256": {
+    "profile_partition_pipeline.py": "bd5cf8130b5c52b68d66b79a28fe4b4e313c2729d9655e3d4cc09544cda098ee",
+    "partition_profile_supplement.py": "dbd607f35c5e8eb4946668f98d706cc98ea41a1619a13090fea767f90307e65b",
+    "test_profile_partition_pipeline.py": "56b422760491c76e2cea3ff44e6c21deea258525ed5732d7fc7e93d2615aea9f"
+  },
+  "host_profile_notes": [
+    "Serial preparse regions allow attribution; production parent can run independent syntax/IaC helpers concurrently.",
+    "Native core executed as an explicitly uncontained host replay with prepared parser input, never as a required Linux worker.",
+    "Input serialization to the Linux request format was measured but not sent to a Linux worker.",
+    "Kernel process RSS/peak are lifetime/snapshot readings, not cgroup charge or per-stage peaks.",
+    "Tracemalloc/cProfile diagnostics are separate from timing repeats; native/child allocation counts unavailable.",
+    "Minimal helper controls include startup/import/minimal parsing/pipe/teardown, not pure startup cost.",
+    "An initial empty IaC control violated the existing nonempty-batch requirement; initial failure retained; input corrected, policy unchanged."
+  ],
+  "versions": {
+    "pytest": "9.1.1",
+    "tree-sitter": "0.26.0",
+    "tree-sitter-javascript": "0.25.0",
+    "tree-sitter-typescript": "0.23.2",
+    "tree-sitter-java": "0.23.5",
+    "python-hcl2": "8.1.4",
+    "PyYAML": "6.0.3"
+  },
+  "production_optimization": "NONE",
+  "application_source_changes": "NONE",
+  "preservation": "All original source/evidence bytes unchanged through profiling; three existing documents appended afterward; new receipt only.",
+  "limits_unchanged": {
+    "sanitizer_nodes": 1000000,
+    "checkpoint_raw_bytes": 64000000,
+    "analysis_seconds": 1800,
+    "cgroup_memory_bytes": 768000000,
+    "swap_bytes": 0
+  },
+  "full_workload_run": false,
+  "workflow_dispatch": false,
+  "commit_or_push": false,
+  "scale_001": "NOT QUALIFIED",
+  "commercial_v1": "DEVELOPMENT IN PROGRESS",
+  "next_milestone": "Authorized Linux runtime; verify exact copy/history; run original corrected cases and required real denial probes, then like-for-like Linux packet profiling."
+}

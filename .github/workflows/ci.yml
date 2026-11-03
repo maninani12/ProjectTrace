@@ -24,6 +24,8 @@ jobs:
       PROJECTTRACE_TEST_POSTGRES_URL: postgresql+psycopg://projecttrace_test:disposable-ci-fixture-only@127.0.0.1:15432/projecttrace_test
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        # Field-attribution tests verify a pinned historical serializer via git show.
+        with: {fetch-depth: 0}
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with: {python-version: '3.14'}
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
