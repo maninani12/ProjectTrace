@@ -1,0 +1,115 @@
+{
+  "schema": "projecttrace-pinned-packet-shape-evidence-v1",
+  "date": "2026-11-03",
+  "generated_utc": "2026-11-03T13:40:29.799255+00:00",
+  "decision": "PROFILING_ONLY_NO_PRODUCTION_CHANGE",
+  "commercial_v1": "DEVELOPMENT IN PROGRESS",
+  "scale001": "NOT QUALIFIED",
+  "head": "5ec424b88a53dee5fe5fa85fdf041ee0395d5773",
+  "branch": "codex/scale-001-local-continuation",
+  "starting_raw_source_tree_sha256": "e5bec94f02e80f7c3d25906a8642f83ebc13f298d339513d5a129248959903df",
+  "starting_raw_source_files": 707,
+  "executed_source_tree_sha256": "bdcdf6e5cfb4e51dda47f74b1f8c9848f77d54f63bc401664d87820be4125d82",
+  "executed_source_files": 704,
+  "candidate_image_id": "sha256:5844e12de488849fc30492d0ef0f88cf8585312d381091eda8fd0c438f4c75bc",
+  "active_lock_pins_verified": 94,
+  "profiling_app_pyc_before_after": 0,
+  "historical_distribution": "UNKNOWN; aggregate stream/file/token/metric counters retained, no per-packet shape histogram",
+  "historical_native_validation": {
+    "count_stream_gates": 180,
+    "seconds": 226.605416,
+    "max_seconds": 4.380129
+  },
+  "historical_token_entries": 11154917,
+  "historical_metric_rows": 168858,
+  "historical_spill_ciphertext_bytes": 402123856,
+  "fixtures": 77,
+  "ordinary_cases": 70,
+  "boundary_cases": 7,
+  "benchmark_admission_calls": 6874,
+  "accepted_or_prefix": 5986,
+  "expected_rejections": 888,
+  "ordinary_repetitions_per_mode_platform": 5,
+  "same_process_repeats_per_coordinator": 3,
+  "final_tracemalloc_repetitions_per_platform": 3,
+  "rss_only_repetitions_per_platform": 1,
+  "regression_counts": {
+    "tests": 82,
+    "passed": 81,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 1
+  },
+  "distinct_junit_cases": 82,
+  "skips": [
+    {
+      "case": "tests.test_publication_units::test_windows_long_source_storage_path",
+      "reason": "Windows extended-length path regression"
+    }
+  ],
+  "untimed_copy_oracle": {
+    "cases": 12,
+    "packet_values": 111,
+    "status": "PASS"
+  },
+  "timed_mixed_pipeline_calls": 12,
+  "additional_mixed_pipeline_equivalence_calls": 4,
+  "pipeline_cross_platform_equivalence": "Exact complete fixed-byte replay; actual mixed pipeline cold/warm same-platform match, cross-platform match only after explicitly verified parser_signature-only normalization for sys.version build identity",
+  "ordinary_first_encounter_median_ms": {
+    "native": {
+      "I-tokens-32000": 193.35685400000102,
+      "I-tokens-120000": 743.2775460000016,
+      "D-real-findings-500": 124.24702900000284,
+      "G-safe-131072": 4.279311999994206,
+      "G-trigger-131072": 21.505853000007846
+    },
+    "docker": {
+      "I-tokens-32000": 194.65856599993003,
+      "I-tokens-120000": 761.0684239999728,
+      "D-real-findings-500": 120.75689499999953,
+      "G-safe-131072": 4.472876000022552,
+      "G-trigger-131072": 21.499274000007063
+    }
+  },
+  "clean_traced_peak_median_bytes": {
+    "native": {
+      "I-tokens-32000": 22362417,
+      "I-tokens-120000": 83999508,
+      "D-real-findings-500": 7760151
+    },
+    "docker": {
+      "I-tokens-32000": 22362335,
+      "I-tokens-120000": 84000532,
+      "D-real-findings-500": 7760087
+    }
+  },
+  "memory_scope": "final admission-only Python tracing, no sampler/proc reads; separate RSS lower-bound and process-lifetime HWM; not constrained SCALE memory qualification",
+  "corrections": "Both earlier diagnostic attempts preserved and excluded from final allocation columns; ordinary timing unchanged",
+  "proven_removable_cost": null,
+  "production_correction": false,
+  "limitations": [
+    "Unknown production per-packet frequencies/shape/type/depth/memory",
+    "Synthetic transport admission shapes do not certify real worker producibility under upstream syntax/source limits",
+    "No independent ordinary schema/privacy/copy split where implementation integrates them",
+    "Descriptive finite-size scaling, no asymptotic proof",
+    "No baseline OOM resolution, candidate timeout recovery or full workload publication",
+    "Prior SEC-002 applies to unchanged source/image; no new changed-runtime gate PASS"
+  ],
+  "next_milestone": "Bounded multi-partition memory lifetime and typed token/metric spill plus ParserArtifact persistence attribution; test retained graph/RSS ratcheting without assuming a leak",
+  "local_report": "outputs/pinned-packet-shapes-20261103/REPORT_20261103.md",
+  "evidence_sha256": {
+    "packet-manifest.json": "e56d62000c8738917357b19e8d036cc08fb70afc2242d347fa52eb4ebe1ac2a9",
+    "summary.json": "64f5e44c92af69de8ff8c08839ba65805eedcf38ee8b440449ba5d05abd2c638",
+    "historical-packet-evidence.json": "eea9b11109ba68ac381cbb243ba3245dd712a0d0e688d9fcdbcc9926ce2e6b9f",
+    "raw/native-replays.jsonl": "76db99aa0a920af175cce53d851e08aa98355822a9a22e10884925be3de63d4d",
+    "raw/docker-replays.jsonl": "8ac2cdb89d60b56ec005721eb97d496cfbe43e3c851e9fb056ded71864fa48cd",
+    "raw/native-window-allocations.jsonl": "39b3088d20e92fa292bddc15e93780b6bd2037b516e6484cd26a3272feedf48c",
+    "raw/docker-window-allocations.jsonl": "687288f025c5f0dc3adba3d184df42c8c4355dea0aea6312404e2359d1f79721",
+    "raw/pipeline-cross-platform-equivalence.json": "e78efcb22651e8f3673edba703d2a56b54737b2a003058da26707e89bcdb5d6a",
+    "raw/tests/focused-test-results.json": "fc493357e69a19ba57fffadefdf4a057ff5b38ecf9a11c406021fe0959e47fdf",
+    "REPORT_20261103.md": "756fd9e5c6198746ceb8de43f845dcdf14da910de6d1f2797ed8194868481f6f"
+  },
+  "commit_or_push_performed": false,
+  "full_scale_or_remote_dispatch_performed": false,
+  "runtime_limits_and_security_unchanged": true
+}

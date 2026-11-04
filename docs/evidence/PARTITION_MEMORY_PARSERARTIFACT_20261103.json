@@ -1,0 +1,214 @@
+{
+  "schema": "projecttrace-partition-memory-parserartifact-evidence-v1",
+  "date": "2026-11-03",
+  "generated_utc": "2026-11-03T17:17:38.352198+00:00",
+  "decision": "PROFILING_ONLY_NO_APPLICATION_CHANGE_ORDERING_DEFECT_OPEN",
+  "commercial_v1": "DEVELOPMENT IN PROGRESS",
+  "scale001": "NOT QUALIFIED",
+  "head": "5ec424b88a53dee5fe5fa85fdf041ee0395d5773",
+  "branch": "codex/scale-001-local-continuation",
+  "starting_source_files": 708,
+  "starting_raw_source_tree_sha256": "95ab289aeb6dacee8ad7583e4a464acfdb180e1e7a0eb79d9174a98daced431d",
+  "executed_source_files": 704,
+  "executed_source_tree_sha256": "bdcdf6e5cfb4e51dda47f74b1f8c9848f77d54f63bc401664d87820be4125d82",
+  "candidate_image_id": "sha256:5844e12de488849fc30492d0ef0f88cf8585312d381091eda8fd0c438f4c75bc",
+  "active_lock_pins_verified": 94,
+  "profiling_app_pyc": 0,
+  "fixtures": 8,
+  "largest_file_count": 210,
+  "matched_primary_analysis_calls": 292,
+  "extended_boundary_analysis_calls": 10,
+  "fault_recovery_success_calls": 12,
+  "deliberate_interruptions": 6,
+  "additional_postgresql_codec_calls": 6,
+  "application_retention_or_idempotency_defect_verified": false,
+  "global_quality_order_defect": {
+    "verified": true,
+    "rule": "PT-QUALITY-013",
+    "source": "analyzers/code_quality/core.py:64,234",
+    "controlled_parent_hash_seeds": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "semantic_order_variants": 2,
+    "row_contents_and_all_cache_identities_equal": true,
+    "corrected": false,
+    "differential_ordering_check": "FAIL"
+  },
+  "additional_hash_seed_analysis_calls": 8,
+  "measured_behavior": "Current partition graphs release at frame return; attempt-wide encrypted rows and durable DB pages retain necessary state; no accumulating partition views or ParserArtifact ORM identity map growth in measured cases",
+  "dense_case": {
+    "native": {
+      "cold_total_seconds": {
+        "n": 3,
+        "median": 3.079048392999539,
+        "min": 3.027379925999412,
+        "max": 3.0811824669999623,
+        "samples": [
+          3.079048392999539,
+          3.027379925999412,
+          3.0811824669999623
+        ]
+      },
+      "spill_seconds": {
+        "n": 3,
+        "median": 0.22658,
+        "min": 0.221692,
+        "max": 0.228514,
+        "samples": [
+          0.22658,
+          0.228514,
+          0.221692
+        ]
+      },
+      "cache_write_seconds_excludes_commit": {
+        "n": 3,
+        "median": 0.073041,
+        "min": 0.068002,
+        "max": 0.080922,
+        "samples": [
+          0.080922,
+          0.073041,
+          0.068002
+        ]
+      },
+      "traced_peak_bytes_n1": 28639358,
+      "sampled_parent_rss_peak_bytes_n3": {
+        "n": 3,
+        "median": 127979520,
+        "min": 127901696,
+        "max": 128167936,
+        "samples": [
+          128167936,
+          127901696,
+          127979520
+        ]
+      }
+    },
+    "docker": {
+      "cold_total_seconds": {
+        "n": 3,
+        "median": 4.2641744339998695,
+        "min": 4.1856287400005385,
+        "max": 4.41309898200052,
+        "samples": [
+          4.41309898200052,
+          4.2641744339998695,
+          4.1856287400005385
+        ]
+      },
+      "spill_seconds": {
+        "n": 3,
+        "median": 0.229772,
+        "min": 0.225004,
+        "max": 0.230671,
+        "samples": [
+          0.225004,
+          0.230671,
+          0.229772
+        ]
+      },
+      "cache_write_seconds_excludes_commit": {
+        "n": 3,
+        "median": 0.074997,
+        "min": 0.067802,
+        "max": 0.077326,
+        "samples": [
+          0.077326,
+          0.067802,
+          0.074997
+        ]
+      },
+      "traced_peak_bytes_n1": 28717002,
+      "sampled_parent_rss_peak_bytes_n3": {
+        "n": 3,
+        "median": 127729664,
+        "min": 127295488,
+        "max": 128102400,
+        "samples": [
+          128102400,
+          127295488,
+          127729664
+        ]
+      }
+    }
+  },
+  "cache_equivalence": "Exact semantic/artifact cache identities for B/D/G across native memory/file SQLite/PostgreSQL. All8 cold/warm same-process/cache identities match;7 fresh-process semantic families match; E has a verified two-row global finding permutation",
+  "launch_failure": {
+    "original_exit": 1,
+    "OOMKilled": false,
+    "verified_extended_error": 6410,
+    "error_name": "SQLITE_IOERR_GETTEMPPATH",
+    "classification": "verified read-only laboratory temporary-path resolution failure; not assigned to historical CI",
+    "correction": "benchmark-only process-start SQLITE_TMPDIR to existing writable tmpfs, both platforms; no app/image/mount/security/budget change",
+    "full_scale_tmpfs_configuration_recommended": false
+  },
+  "limits_unchanged": {
+    "sanitizer_nodes": 1000000,
+    "checkpoint_raw_bytes": 64000000,
+    "analysis_seconds": 1800,
+    "docker_memory_bytes": 768000000,
+    "docker_swap_bytes": 0,
+    "default_spill_ciphertext_per_collection_bytes": 256000000,
+    "spill_row_bytes": 32000000
+  },
+  "tests_final_intended_contexts": {
+    "distinct_cases": 129,
+    "passed": 128,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 1
+  },
+  "all_collected_test_executions": {
+    "total": 130,
+    "passed": 128,
+    "failed": 1,
+    "errors": 0,
+    "skipped": 1
+  },
+  "retained_test_failure": "Parent-hook retry assertion run under required mode; unchanged single case passes in CI-declared development mode; original failure retained",
+  "postgresql_tests_passed": 14,
+  "required_linux_tests_passed": 18,
+  "ruff": "PASS; exact7 CI repository directories",
+  "compilation": "PASS;318 Python files in separate retained test source",
+  "matched_launch_security": "PASS focused filesystem/network/environment/crash denials on unchanged qualified image; not a new changed-image gate",
+  "database_scope": "New owned SQLite copies/files and PostgreSQL17.11 database/schemas only; server restored original stopped state",
+  "production_code_or_dependency_change": false,
+  "commit_or_push": false,
+  "remote_checkpoint_at_check": "5ec424b88a53dee5fe5fa85fdf041ee0395d5773",
+  "backup_review": "outputs/partition-memory-20261103/BACKUP_REVIEW.md; six docs/receipts only, requires fresh authorization",
+  "limitations": [
+    "Finite8-case/3-partition synthetic scope; no full pinned workload distribution",
+    "Global E finding-order equivalence across fresh processes FAILS; contents/cache unchanged",
+    "No causal no-spill policy control or whole-job leak absence claim",
+    "RSS/SQLite C heap/allocator/cache ownership not fully separable",
+    "Library build, linked SQLite and HCL cache differ across platforms",
+    "Native cgroup/PG server memory not equivalent to private constrained Docker",
+    "Benchmark tmpfs/main-memory SQLite differs from historical disk-backed qualification",
+    "Some post-spill locals remain bounded until frame return; no material complete-peak improvement proven",
+    "No baseline OOM or1808s timeout resolution/publication qualification"
+  ],
+  "next_milestone": "First stabilize PT-QUALITY-013 file-finding order with cross-process hash seeds and publication/replay/order coverage; then bounded complete-job lifecycle under exact CI2-CPU/768MB/zero-swap and disk-backed DB/private temp storage with reclaim/PSI/I/O telemetry",
+  "report": "outputs/partition-memory-20261103/REPORT_20261103.md",
+  "evidence_sha256": {
+    "REPORT_20261103.md": "8aa372ad3bd605519a69370510b39ebf34f6b1f02ea155806d619cb495137564",
+    "summary.json": "be651c71585c017165b19451293accb52881f0080e1280dabd39f997707b5c63",
+    "findings.json": "f8aaa773ae19a18ac0ae33f1eb8fc29ef93927a7969cfa9f52a55521cdcf348a",
+    "fixture-manifest.json": "f1dbc738e01d50d85e4ed6d3d8126d1c5a43806ec700e5a0bb9cf95755b5a854",
+    "raw/native-matched-matrix.jsonl": "b71e0cbbf483ef0a39a605b9bdf9fd8e421795a63c2a970a9f4524b410839f33",
+    "raw/docker-matched-matrix.jsonl": "d6f7a7fddbc689c1d5b2de8fa11e4758827d4baaf8035c86232a5784c5a475f2",
+    "raw/postgresql-matched-matrix.jsonl": "4a7ccd2e29640e21a8198a966a805810302a00be90c7f428ce3f61e15f442b2d",
+    "raw/sqlite-file-matrix.jsonl": "9b80056511944d32a4653f22690a833550b428b2e9e401a779216ebc24f19596",
+    "raw/fault-recovery.json": "469a5d90056daa8d4132c7d3c0812962af31f59bd39f3193954bfddfbbbcd4a7",
+    "raw/pipeline-temp-path-proof.json": "83369c9496ae0547564a3cf0d56cb2783640f0e36fdd046d3c347695e42c49ef",
+    "raw/matched-launch-sec002.json": "995d484f3c691915b8d5bbd0917e2ef013f4a134e79fad3a5524143e1fed1cf4",
+    "raw/postgresql-codec-profile.jsonl": "68592e1595da35902c41c6e38cd7a38bc6a2123da979db7db4757c9956a4e58e",
+    "raw/tests/validation-results.json": "52260a140298bf24e94bee0ec271fc786c28d7cb2628509f91e204ff63fc6d39",
+    "raw/tests/unit-context-recheck.json": "6caf4a7317b6318acc8f8c4c5cebad8e7eac55ad62c5972b1de70071617ce6fb",
+    "raw/global-semantic-hash-seed-probe.json": "2a782c9a1b3d008d42c5540a547dbb5c9eb459e33963f6e14caf4369b992da54",
+    "mode-identity-audit.json": "30136f4779591249d0f3641c7de520d2e90008b255c2c12e96fdd17538b8cb37"
+  },
+  "overall_deterministic_output_qualification": "FAIL: existing E global PT-QUALITY-013 ordering defect"
+}

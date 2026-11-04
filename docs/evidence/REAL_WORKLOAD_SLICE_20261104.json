@@ -1,0 +1,247 @@
+{
+  "schema": "projecttrace-real-workload-slice-v1",
+  "date": "2026-11-04",
+  "generated_utc": "2026-11-03T19:10:46.549166+00:00",
+  "commercial_v1": "DEVELOPMENT IN PROGRESS",
+  "scale001": "NOT QUALIFIED",
+  "assessment": "EVIDENCE_ONLY_PARTIAL_COVERAGE_PUBLICATIONS_NO_PRODUCTION_CHANGE",
+  "head": "5ec424b88a53dee5fe5fa85fdf041ee0395d5773",
+  "branch": "codex/scale-001-local-continuation",
+  "current_source_tree_sha256": "9f11d367353666c1c504149728fa98cb9c4dca446af5afae1f53ab039efd393d",
+  "current_source_files": 712,
+  "qualified_image": "sha256:acc7dd075d1065291354e3572acb876e20725eb2654e357bef969e781fb56cb0",
+  "runtime_files_verified_unchanged": 194,
+  "active_lock_pins_verified": 94,
+  "workload": {
+    "repository": "maninani12/OpenMetadata",
+    "public_verified": true,
+    "base_commit": "848435caaf8e3f1b7352ccbecea0b1be64c57391",
+    "head_commit": "b1fab2bc21c63335dead4daaaa28194c9878e9bf",
+    "same_tree": "98be740cd54db8653ce735946b6fd6bd5986e5e3",
+    "head_changed_source_files": 0,
+    "archive_bytes": 158981993,
+    "archive_sha256": "95747f22ebf3d01232b1592551bc2bc1866b9bbe7322dd3bf1a97028b0592257",
+    "slice_manifest_sha256": "0d740db72afe28a130034b1e10c6022618d5ecc1519f44d5701103f5abb5ce8a",
+    "files": 92,
+    "bytes": 1263844,
+    "physical_lines": 34791,
+    "predeclared_maximum_files": 96,
+    "predeclared_maximum_bytes": 2000000,
+    "synthetic": false,
+    "entire_workload_analyzed": false
+  },
+  "jobs": [
+    {
+      "scenario": "cold-base",
+      "job_id": "01a1a2b7-6453-79f9-8411-8c5a449119e1",
+      "snapshot_id": "77132fe5-b92d-5e77-b1e8-9319ddaa6603",
+      "generation_id": "09a43b56-b575-52ce-b523-b6650f9ed59e",
+      "inventory_id": "09a2af69-0901-4028-8532-76cf9d6b6a96",
+      "wall_seconds": 25.4034195489985,
+      "status": "PARTIAL",
+      "published": true,
+      "quality_gate": "REVIEW_REQUIRED"
+    },
+    {
+      "scenario": "warm-base",
+      "job_id": "01a1a2b7-c740-753a-9b89-2902c818b0fb",
+      "snapshot_id": "7283921a-7d69-5e41-a0b7-0e7c6f6ea0a2",
+      "generation_id": "7c4d27ae-1eb9-57db-a875-014b2f51394c",
+      "inventory_id": "d73ba87d-8c95-4ae8-a9ba-f5cf82d80a3b",
+      "wall_seconds": 19.866241616997286,
+      "status": "PARTIAL",
+      "published": true,
+      "quality_gate": "REVIEW_REQUIRED"
+    },
+    {
+      "scenario": "real-head-recovery",
+      "job_id": "01a1a2b8-16ed-7489-95dc-83a11d3817b4",
+      "snapshot_id": "3bd5c4b6-4d5b-5967-8021-098491738426",
+      "generation_id": "435e57e9-c537-5e4d-8126-82993eeaad38",
+      "inventory_id": "eafb0de5-7423-4cae-bbf7-f70319c220f1",
+      "wall_seconds": 7.4874282050004695,
+      "status": "PARTIAL",
+      "published": true,
+      "quality_gate": "REVIEW_REQUIRED"
+    }
+  ],
+  "head_initial_deliberate_failed_seconds": 15.378961980000895,
+  "head_total_attempts_seconds": 22.866390185001364,
+  "head_checkpoint_hits": 1,
+  "head_stage_receipts_reused": 7,
+  "duplicate_generation_created": false,
+  "native_order_and_complete_content_hashes_equal": true,
+  "artifact_hashes_equal": true,
+  "partial_coverage": {
+    "iac_template_policy_refused_files": 2,
+    "warm_cache_hits": 88,
+    "warm_cache_misses": 2,
+    "native_findings": 94,
+    "unresolved_native_comparison_identities": 26,
+    "existing_native_deltas": 68,
+    "quality_findings": 67,
+    "quality_existing": 54,
+    "quality_analyzer_baseline": 13,
+    "gates": "REVIEW_REQUIRED"
+  },
+  "privacy_verification": {
+    "all_evidence_records": 270,
+    "native_finding_references": 282,
+    "redacted_evidence_records": 15,
+    "redacted_source_paths": 5,
+    "original_provenance_and_exact_redacted_bytes": "PASS",
+    "raw_source_or_secret_values_exported": false,
+    "initial_harness_assumption_failure_preserved": true
+  },
+  "resources": {
+    "memory_limit_bytes": 768000000,
+    "swap_limit_bytes": 0,
+    "cpu_quota": "200000 100000",
+    "analysis_seconds": 1800,
+    "checkpoint_bytes": 64000000,
+    "sanitizer_nodes": 1000000,
+    "highest_roi_sampled_memory_current_bytes": 415088640,
+    "highest_lifetime_cgroup_memory_peak_bytes": 417972224,
+    "roi_peak_phase": "PARTITION_NATIVE / ANALYZING",
+    "memory_events_max_oom_oomkill_increment": 0,
+    "memory_psi_stall_microseconds": 0,
+    "reclaim_counter_increment": 0,
+    "helper_overlap_observed": 2,
+    "tracemalloc": "NOT_RUN",
+    "cold_native_packets": 90,
+    "cold_native_wire_bytes": 4978889,
+    "maximum_native_packet_bytes": 388132,
+    "cold_native_decoder_seconds": 0.42098054601592594,
+    "cold_native_privacy_seconds": 0.3678361540187325,
+    "cold_native_spill_ciphertext_bytes": 2862836,
+    "artifact_rows": 88,
+    "artifact_json_text_bytes": 4889423,
+    "packet_byte_definition": "per-line protocol packet bytes excluding framing newlines"
+  },
+  "cleanup_diagnostic": {
+    "scope": "additional disposable owned clone, excluded from primary timings",
+    "live_stores_before_gc": 9,
+    "live_stores_after_gc": 0,
+    "anonymous_temp_bytes_before": 4657152,
+    "anonymous_temp_bytes_after": 0,
+    "rss_before_after_bytes": 183545856,
+    "production_gc_changed": false,
+    "permanent_leak_established": false
+  },
+  "validation": {
+    "tests": 65,
+    "passed": 65,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "warnings": 2,
+    "warning_type": "StarletteDeprecationWarning",
+    "ruff": "PASS",
+    "compileall": "PASS",
+    "compiled_files": 320,
+    "whitespace": "PASS",
+    "security": "same qualified image/runtime; current required-mode denial probe PASS; no new boundary change"
+  },
+  "production_code_changed": false,
+  "commit_push_dispatch_full_scale": false,
+  "remaining": [
+    "Historical full-workload OOM/timeout unresolved",
+    "Real slice coverage is PARTIAL with unresolved identities",
+    "No changed-file real HEAD measurement",
+    "No nonlinear scaling inference from n1",
+    "Hardware/storage/cache history not GitHub-equivalent",
+    "Long-lived worker automatic GC/reclaim under full pressure unmeasured",
+    "Full PostgreSQL/Redis/broker/release acceptance open"
+  ],
+  "next_smallest_action": "Pin a verified non-empty BASE/HEAD source change for this same bounded slice, with expected template/identity coverage stated explicitly; measure true incremental/replay costs before broader SCALE qualification or policy changes.",
+  "local_evidence": [
+    {
+      "path": "REPORT_20261104.md",
+      "bytes": 26446,
+      "sha256": "aeae9d77f3d01023c16ec8c67ee33dcc167b7306dba2ebb513bbd76aaa7a9262"
+    },
+    {
+      "path": "facts.json",
+      "bytes": 91725,
+      "sha256": "3cc98e7df3da75b58941465aa2a410bd5493d31dcb3d95241be85006ff6c4526"
+    },
+    {
+      "path": "before-source-manifest.json",
+      "bytes": 125969,
+      "sha256": "81ec5907fa4de925456e6addb4b61b2de4a71ef0227a3f2ab08f54e5bf5086f2"
+    },
+    {
+      "path": "selection-procedure.json",
+      "bytes": 1129,
+      "sha256": "bdb3c24f9662d6b1d47bd127e73f66c0e989c04afbac715d739e8e7869e81e1d"
+    },
+    {
+      "path": "workload-provenance.json",
+      "bytes": 1120,
+      "sha256": "41e0e4a13279c18c640bf60f3d7964df334b7e4dbd4c1935bd776e8cf9b2dced"
+    },
+    {
+      "path": "download-receipt.json",
+      "bytes": 1702,
+      "sha256": "dad0cf030e4632f0d0f0e8ffd23894e4c1db98ae9124a36b5ba8bf89231eea3e"
+    },
+    {
+      "path": "raw/workload-slice-manifest.json",
+      "bytes": 76711,
+      "sha256": "12b60c48d3bccdaec7a98befcfc9fbaba4473bbe949569eaf841fe8d672dba15"
+    },
+    {
+      "path": "raw/summary.json",
+      "bytes": 57031,
+      "sha256": "aa36570e5ca36baf0e3532a7bf11790b6bea7db8737002c369b2a79ded573444"
+    },
+    {
+      "path": "raw/job/job-results.json",
+      "bytes": 538951,
+      "sha256": "465b6729b7da8354b1fcb53baa6f14afbb8a50c6ae472419d53015988b30a17f"
+    },
+    {
+      "path": "raw/post-run-acceptance.json",
+      "bytes": 57815,
+      "sha256": "a5770b906751174184237371a7bf3d51a204c9101923c8f78b7c922bab98b03f"
+    },
+    {
+      "path": "raw/evidence-privacy-audit.json",
+      "bytes": 143180,
+      "sha256": "ed324807b1ef8c5fec099072d45cb8acb894b3bf8cca05452572848c57521f96"
+    },
+    {
+      "path": "raw/initial-evidence-check-assumption.json",
+      "bytes": 418,
+      "sha256": "4aa976687de24c6aa668024a0c179fe522e1a89c3969eeb155b447b246cd9b57"
+    },
+    {
+      "path": "raw/cleanup-diagnostic-cleanup-probe.json",
+      "bytes": 8603,
+      "sha256": "1fce4474ffa75da95f8bbc8d01947b0ee47c36ba1570fbb10af0b279849b5e40"
+    },
+    {
+      "path": "raw/source-environment-closeout.json",
+      "bytes": 419,
+      "sha256": "65cba974bf9c490826b1d0f904c13da13a545687853042a4cfa238dac4756d06"
+    },
+    {
+      "path": "raw/tests/validation-results.json",
+      "bytes": 2389,
+      "sha256": "808877dde02e268a8610f33c06c01e8c4338b486ac0d77614af89a96a6185a66"
+    },
+    {
+      "path": "raw/report-package-correction.json",
+      "bytes": 1437,
+      "sha256": "9ae768ff6e7c22f344448de2273002a3d5a7e63a2301c0f15c414a0dd18bf295"
+    }
+  ],
+  "report_package_correction": {
+    "initial_guard_failed": true,
+    "corrected_before_delivery": true,
+    "private_archive_preserved": true,
+    "originals_discarded": false,
+    "source_sent_externally": false,
+    "final_source_archive_excluded": true
+  }
+}

@@ -9,6 +9,7 @@ import json
 import re
 
 from analyzers import sandbox
+from analyzers.compose_evidence import FUSEKI_LAYERED, FUSEKI_STANDALONE, GUIDE, OPTION_PREFIX, documentation_context
 from analyzers.observation_store import SignalRows
 
 TECHNOLOGIES = {
@@ -67,6 +68,7 @@ DECLARATION = re.compile(
     r"is authenticated (?:using|with)|is deployed (?:with|on)|runs? (?:with|using))\s+([^.;]+)",
     re.I,
 )
+FENCE = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
 
 
 def claim_key(claim):
@@ -103,8 +105,9 @@ def extract_documentation(files, *, diagnostics=None, limit=1501):
                 }
             )
             return claims
-        fenced = False
-        for line_no, line in enumerate(text.splitlines(), 1):
+        fence = ""
+        lines = text.splitlines()
+        for line_no, line in enumerate(lines, 1):
             if len(line) > 32000:
                 if not any(item.get("code") == "DOCUMENTATION_LINE_BUDGET" for item in diagnostics):
                     diagnostics.append(
@@ -117,13 +120,24 @@ def extract_documentation(files, *, diagnostics=None, limit=1501):
                         }
                     )
                 continue
-            if line.lstrip().startswith(("```", "~~~")):
-                fenced = not fenced
+            delimiter = FENCE.match(line)
+            if delimiter:
+                marker, suffix = delimiter.groups()
+                if not fence:
+                    fence = marker
+                elif marker.startswith(fence) and not suffix.strip():
+                    fence = ""
                 continue
-            if fenced:
+            if fence:
                 continue
             candidates = []
-            for declaration in DECLARATION.finditer(line):
+            conditional = line.strip().startswith(OPTION_PREFIX)
+            if conditional:
+                candidates.append(("TECHNOLOGY", "postgresql", line.strip()))
+            fuseki = path == GUIDE and line in (FUSEKI_STANDALONE, FUSEKI_LAYERED)
+            if fuseki:
+                candidates.append(("INFRASTRUCTURE", "fuseki", line))
+            for declaration in (() if conditional or fuseki else DECLARATION.finditer(line)):
                 content = declaration.group(1)
                 for match in TOKEN.finditer(content):
                     preceding = re.split(r",|\band\b|\bbut\b", content[: match.start()], flags=re.I)[-1]
@@ -169,6 +183,10 @@ def extract_documentation(files, *, diagnostics=None, limit=1501):
                         assertion_family="declaration",
                     )
                 )
+                if path == GUIDE and (conditional or fuseki):
+                    context = documentation_context(lines, line_no)
+                    if context:
+                        claims[-1]["configuration_context"] = context
                 if len(claims) >= limit:
                     diagnostics.append(
                         {
@@ -222,6 +240,37 @@ class Verifier:
 
 class DatabaseVerifier(Verifier):
     name = "DatabaseVerifier"
+
+
+class ScopedComposeVerifier(Verifier):
+    signal_type = ""
+    explanation = ""
+
+    def inputs(self, claim, signals, dependencies):
+        return [s for s in signals if s["type"] == self.signal_type], []
+
+    def evaluate(self, claim, signals, dependencies):
+        if signals:
+            return "INFERRED", self.explanation, signals
+        return super().evaluate(claim, [], [])
+
+
+class ComposePostgresVerifier(ScopedComposeVerifier):
+    name = "ComposePostgresVerifier"
+    signal_type = "compose_postgres_option"
+    explanation = (
+        "The selected Compose files declare PostgreSQL defaults and the Fuseki option. "
+        "The documented command targets Fuseki only. Environment overrides, backend startup and reachability are unobserved."
+    )
+
+
+class ComposeFusekiVerifier(ScopedComposeVerifier):
+    name = "ComposeFusekiVerifier"
+    signal_type = "compose_fuseki_startup"
+    explanation = (
+        "The documented Compose selection declares the Fuseki service and its local port mapping. "
+        "Fuseki startup, the IntelliJ backend and endpoint reachability are unobserved."
+    )
 
 
 class AuthenticationVerifier(Verifier):
@@ -329,13 +378,19 @@ VERIFIERS = {
 
 
 def verifier_for(claim):
+    if claim["category"] == "INFRASTRUCTURE" and claim["expected"] == "fuseki" and claim.get("path") == GUIDE:
+        return ComposeFusekiVerifier()
     if claim["category"] == "TECHNOLOGY" and claim["expected"] in {"postgresql", "mysql", "sqlite", "mongodb"}:
+        if claim["expected"] == "postgresql" and claim.get("text", "").startswith(OPTION_PREFIX):
+            return ComposePostgresVerifier()
         return DatabaseVerifier()
     return VERIFIERS.get(claim["category"], Verifier())
 
 
-def verify_claim(claim, signals, dependencies, previous=None):
+def verify_claim(claim, signals, dependencies, previous=None, *, configuration=()):
     verifier = verifier_for(claim)
+    if isinstance(verifier, ScopedComposeVerifier):
+        signals = configuration if claim.get("configuration_context") else ()
     selected, deps = verifier.inputs(claim, signals, dependencies)
     # Keep evidence presentation as deterministic as the cache key. Discovery
     # order (including parallel file parsing) is not evidence of a change.

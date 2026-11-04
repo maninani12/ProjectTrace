@@ -1,0 +1,515 @@
+{
+  "schema": "projecttrace-authentic-incremental-qualification-v1",
+  "date": "2026-11-04",
+  "recorded_utc": "2026-11-04T01:20:38.396865+00:00",
+  "status": "COMPLETE_BOUNDED_PARTIAL_WITH_LIMITATIONS",
+  "commercial_v1": "DEVELOPMENT IN PROGRESS",
+  "scale001": "NOT QUALIFIED",
+  "projecttrace_head": "5ec424b88a53dee5fe5fa85fdf041ee0395d5773",
+  "projecttrace_branch": "codex/scale-001-local-continuation",
+  "starting_source_tree_sha256": "db3ffa5ea7bbf5fbd0e2321cfc451360c738f1acd0062ce78e8338f5e659644f",
+  "qualified_runtime_source_tree": "fb7fc13d6335283e4ecc7949162d54a99dccdc8d3aaa3de7346298e2597f51f7",
+  "qualified_image": "sha256:acc7dd075d1065291354e3572acb876e20725eb2654e357bef969e781fb56cb0",
+  "runtime_files_verified": 194,
+  "pins_verified": 94,
+  "application_code_changed": false,
+  "source": {
+    "repository": "maninani12/OpenMetadata",
+    "base_commit": "bcfe0e03c51d910954e107079334042b31df090b",
+    "head_commit": "3367668465f50fa6d6b7237818c86f05dba8aee4",
+    "direct_parent_verified": true,
+    "different_git_trees": true,
+    "git_changes": [
+      {
+        "path": "openmetadata-ui-core-components/src/main/resources/ui/src/components/base/select/popover.tsx",
+        "status": "modified",
+        "base": {
+          "mode": "100644",
+          "path": "openmetadata-ui-core-components/src/main/resources/ui/src/components/base/select/popover.tsx",
+          "sha": "54f2254d4ef24f92b0799b8fe92bff7ee0904c73",
+          "size": 2854,
+          "type": "blob"
+        },
+        "head": {
+          "mode": "100644",
+          "path": "openmetadata-ui-core-components/src/main/resources/ui/src/components/base/select/popover.tsx",
+          "sha": "dfb715f1821d077f3bd160433cf774da9b4f935e",
+          "size": 4895,
+          "type": "blob"
+        }
+      },
+      {
+        "path": "openmetadata-ui-core-components/src/main/resources/ui/src/components/base/select/select.test.tsx",
+        "status": "modified",
+        "base": {
+          "mode": "100644",
+          "path": "openmetadata-ui-core-components/src/main/resources/ui/src/components/base/select/select.test.tsx",
+          "sha": "801090aecb522acccd53d947eeadf9f4e3c36b1a",
+          "size": 3261,
+          "type": "blob"
+        },
+        "head": {
+          "mode": "100644",
+          "path": "openmetadata-ui-core-components/src/main/resources/ui/src/components/base/select/select.test.tsx",
+          "sha": "5917d22212e11dab096a4e7c98af5fbbc69c0024",
+          "size": 6120,
+          "type": "blob"
+        }
+      }
+    ]
+  },
+  "slice": {
+    "base": {
+      "git_tree": "90b6cfb7a668c82960b07758ab62ca88f19b75e4",
+      "file_count": 94,
+      "source_bytes": 1269961,
+      "physical_lines": 34933,
+      "slice_sha256": "9edced8980c883993830bd18f2b2f23bf9d060b63f72274175565484fcb94931"
+    },
+    "head": {
+      "git_tree": "d7e6b94b36e3f399bb9053d2b68ba7d19b69bb9d",
+      "file_count": 94,
+      "source_bytes": 1274861,
+      "physical_lines": 35078,
+      "slice_sha256": "ea1f4fb36fcacfd829243b2fdc32b8b45eb3cfb43cff0b2e2f9ce63bbe0aa480"
+    }
+  },
+  "file_change_counts": {
+    "modified": 2,
+    "unchanged": 92,
+    "added": 0,
+    "deleted": 0,
+    "renamed": 0,
+    "changed_documentation": 0
+  },
+  "jobs": [
+    {
+      "scenario": "cold-base",
+      "job_id": "01a1a2ef-1229-7564-a19f-02eeb7f91e2d",
+      "snapshot_id": "6fc767db-7eb7-56a7-886c-bf3766897bf2",
+      "generation_id": "ae28e75f-db5e-54f6-b14e-a6901a137f74",
+      "source_commit": "bcfe0e03c51d910954e107079334042b31df090b",
+      "base_id": null,
+      "status": "PARTIAL",
+      "wall_seconds": 24.98407756099914,
+      "artifact_count": 90,
+      "artifact_json_text_bytes": 4931675
+    },
+    {
+      "scenario": "warm-base",
+      "job_id": "01a1a2ef-739a-781c-94d9-58e30d261bcf",
+      "snapshot_id": "cdbb5660-0172-5e2a-aa45-2947a1422f91",
+      "generation_id": "dc9bbd75-33c8-55fb-bef0-593c112c8753",
+      "source_commit": "bcfe0e03c51d910954e107079334042b31df090b",
+      "base_id": "6fc767db-7eb7-56a7-886c-bf3766897bf2",
+      "status": "PARTIAL",
+      "wall_seconds": 20.144717445000424,
+      "artifact_count": 90,
+      "artifact_json_text_bytes": 4931675
+    },
+    {
+      "scenario": "changed-head",
+      "job_id": "01a1a2ef-c4a7-7c95-8482-310dccc0da6e",
+      "snapshot_id": "602dc32f-a781-59f3-b327-b6c8fa63a732",
+      "generation_id": "6b5f881c-c35f-59ad-87ac-0c388f5f0de6",
+      "source_commit": "3367668465f50fa6d6b7237818c86f05dba8aee4",
+      "base_id": "6fc767db-7eb7-56a7-886c-bf3766897bf2",
+      "status": "PARTIAL",
+      "wall_seconds": 21.55180312799712,
+      "artifact_count": 92,
+      "artifact_json_text_bytes": 5024801
+    },
+    {
+      "scenario": "changed-head-recovery",
+      "job_id": "01a1a2f0-1b15-786d-8e55-4af6cd04a958",
+      "snapshot_id": "4a87ac27-278d-55db-bb8d-28a7cf7353f3",
+      "generation_id": "8aed56da-6ec2-5c27-9cae-4c5020c0a44f",
+      "source_commit": "3367668465f50fa6d6b7237818c86f05dba8aee4",
+      "base_id": "cdbb5660-0172-5e2a-aa45-2947a1422f91",
+      "status": "PARTIAL",
+      "wall_seconds": 8.858530019999307,
+      "artifact_count": 92,
+      "artifact_json_text_bytes": 5024801
+    }
+  ],
+  "interruption": {
+    "job_id": "01a1a2f0-1b15-786d-8e55-4af6cd04a958",
+    "stage": "HISTORY",
+    "initial_state": "FAILED",
+    "initial_seconds": 15.854445149998355,
+    "recovery_seconds": 8.858530019999307,
+    "combined_seconds": 24.712975169997662,
+    "global_checkpoint_reused": 1,
+    "publication_units_reused": 186,
+    "stage_receipts_reused": 7,
+    "old_pointer_preserved": true
+  },
+  "duplicate_delivery": {
+    "same_snapshot": true,
+    "same_snapshot_bytes": true,
+    "new_generation": false,
+    "snapshot_id": "4a87ac27-278d-55db-bb8d-28a7cf7353f3",
+    "base_id": "cdbb5660-0172-5e2a-aa45-2947a1422f91"
+  },
+  "evidence_records_verified": 368,
+  "native_predecessors_verified_per_comparison": 68,
+  "prior_unresolved": {
+    "ambiguous": 11,
+    "low_confidence": 15,
+    "verified_removed": 0
+  },
+  "new_native_observation": {
+    "rule": "PT-QUALITY-002",
+    "path": "openmetadata-ui-core-components/src/main/resources/ui/src/components/base/select/popover.tsx",
+    "function": "Popover",
+    "base_length": 44,
+    "head_length": 90,
+    "threshold": 80,
+    "history": "INTRODUCED",
+    "published_visible": true,
+    "quality_delta": "ANALYZER_BASELINE",
+    "quality_new_counter": 0,
+    "quality_new_code": false,
+    "reason": "Conservative snapshot-level unresolved QUALITY comparison policy; not NEW-code qualification."
+  },
+  "tests": {
+    "tests": 123,
+    "passed": 123,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "warnings": 2,
+  "ruff": "PASS",
+  "compiled_python_files": 320,
+  "limits": {
+    "memory_bytes": 768000000,
+    "swap_bytes": 0,
+    "cpu_quota_cores": 2,
+    "analysis_seconds": 1800,
+    "raw_checkpoint_bytes": 64000000,
+    "sanitizer_nodes": 1000000
+  },
+  "resources": [
+    {
+      "scenario": "cold-base",
+      "wall_seconds": 24.98407756099914,
+      "parent_cpu_seconds": 12.751187602,
+      "waited_child_cpu_seconds": 11.967267,
+      "kernel_cpu_seconds": 24.728625,
+      "peak_sampled_memory_current_bytes": 311128064,
+      "lifetime_memory_peak_bytes": 329543680,
+      "io_bytes": {
+        "rbytes": 13025280,
+        "wbytes": 95076352,
+        "rios": 557,
+        "wios": 2707,
+        "dbytes": 0,
+        "dios": 0
+      },
+      "pressure_microseconds": {
+        "memory.pressure": {
+          "some": 0,
+          "full": 0
+        },
+        "cpu.pressure": {
+          "some": 18669,
+          "full": 18669
+        },
+        "io.pressure": {
+          "some": 979555,
+          "full": 979555
+        }
+      },
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      },
+      "reclaim": {
+        "pgscan": 0,
+        "pgsteal": 0,
+        "pgscan_kswapd": 0,
+        "pgscan_direct": 0,
+        "pgscan_khugepaged": 0,
+        "pgscan_proactive": 0,
+        "pgsteal_kswapd": 0,
+        "pgsteal_direct": 0,
+        "pgsteal_khugepaged": 0,
+        "pgsteal_proactive": 0
+      }
+    },
+    {
+      "scenario": "warm-base",
+      "wall_seconds": 20.144717445000424,
+      "parent_cpu_seconds": 11.79997445,
+      "waited_child_cpu_seconds": 7.609045999999999,
+      "kernel_cpu_seconds": 19.412016,
+      "peak_sampled_memory_current_bytes": 371982336,
+      "lifetime_memory_peak_bytes": 374816768,
+      "io_bytes": {
+        "rbytes": 0,
+        "wbytes": 135872512,
+        "rios": 0,
+        "wios": 6681,
+        "dbytes": 0,
+        "dios": 0
+      },
+      "pressure_microseconds": {
+        "memory.pressure": {
+          "some": 0,
+          "full": 0
+        },
+        "cpu.pressure": {
+          "some": 17544,
+          "full": 17544
+        },
+        "io.pressure": {
+          "some": 699610,
+          "full": 699610
+        }
+      },
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      },
+      "reclaim": {
+        "pgscan": 0,
+        "pgsteal": 0,
+        "pgscan_kswapd": 0,
+        "pgscan_direct": 0,
+        "pgscan_khugepaged": 0,
+        "pgscan_proactive": 0,
+        "pgsteal_kswapd": 0,
+        "pgsteal_direct": 0,
+        "pgsteal_khugepaged": 0,
+        "pgsteal_proactive": 0
+      }
+    },
+    {
+      "scenario": "changed-head",
+      "wall_seconds": 21.55180312799712,
+      "parent_cpu_seconds": 12.009823415000003,
+      "waited_child_cpu_seconds": 8.764081000000001,
+      "kernel_cpu_seconds": 20.77853,
+      "peak_sampled_memory_current_bytes": 420671488,
+      "lifetime_memory_peak_bytes": 424321024,
+      "io_bytes": {
+        "rbytes": 0,
+        "wbytes": 163504128,
+        "rios": 0,
+        "wios": 10509,
+        "dbytes": 0,
+        "dios": 0
+      },
+      "pressure_microseconds": {
+        "memory.pressure": {
+          "some": 0,
+          "full": 0
+        },
+        "cpu.pressure": {
+          "some": 18575,
+          "full": 18575
+        },
+        "io.pressure": {
+          "some": 1088999,
+          "full": 1088999
+        }
+      },
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      },
+      "reclaim": {
+        "pgscan": 0,
+        "pgsteal": 0,
+        "pgscan_kswapd": 0,
+        "pgscan_direct": 0,
+        "pgscan_khugepaged": 0,
+        "pgscan_proactive": 0,
+        "pgsteal_kswapd": 0,
+        "pgsteal_direct": 0,
+        "pgsteal_khugepaged": 0,
+        "pgsteal_proactive": 0
+      }
+    },
+    {
+      "scenario": "changed-head-recovery",
+      "wall_seconds": 8.858530019999307,
+      "parent_cpu_seconds": 7.874122835999998,
+      "waited_child_cpu_seconds": 1.3322676295501878e-15,
+      "kernel_cpu_seconds": 7.874123,
+      "peak_sampled_memory_current_bytes": 427614208,
+      "lifetime_memory_peak_bytes": 451342336,
+      "io_bytes": {
+        "rbytes": 0,
+        "wbytes": 153366528,
+        "rios": 0,
+        "wios": 13072,
+        "dbytes": 0,
+        "dios": 0
+      },
+      "pressure_microseconds": {
+        "memory.pressure": {
+          "some": 0,
+          "full": 0
+        },
+        "cpu.pressure": {
+          "some": 11962,
+          "full": 11962
+        },
+        "io.pressure": {
+          "some": 982870,
+          "full": 982870
+        }
+      },
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      },
+      "reclaim": {
+        "pgscan": 0,
+        "pgsteal": 0,
+        "pgscan_kswapd": 0,
+        "pgscan_direct": 0,
+        "pgscan_khugepaged": 0,
+        "pgscan_proactive": 0,
+        "pgsteal_kswapd": 0,
+        "pgsteal_direct": 0,
+        "pgsteal_khugepaged": 0,
+        "pgsteal_proactive": 0
+      }
+    },
+    {
+      "scenario": "changed-head-interrupted",
+      "wall_seconds": 15.854445149998355,
+      "parent_cpu_seconds": null,
+      "waited_child_cpu_seconds": null,
+      "kernel_cpu_seconds": 15.181179,
+      "peak_sampled_memory_current_bytes": 450293760,
+      "lifetime_memory_peak_bytes": 451342336,
+      "io_bytes": {
+        "rbytes": 0,
+        "wbytes": 50438144,
+        "rios": 0,
+        "wios": 3183,
+        "dbytes": 0,
+        "dios": 0
+      },
+      "pressure_microseconds": {
+        "memory.pressure": {
+          "some": 0,
+          "full": 0
+        },
+        "cpu.pressure": {
+          "some": 7823,
+          "full": 7823
+        },
+        "io.pressure": {
+          "some": 527164,
+          "full": 527164
+        }
+      },
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      },
+      "reclaim": {
+        "pgscan": 0,
+        "pgsteal": 0,
+        "pgscan_kswapd": 0,
+        "pgscan_direct": 0,
+        "pgscan_khugepaged": 0,
+        "pgscan_proactive": 0,
+        "pgsteal_kswapd": 0,
+        "pgsteal_direct": 0,
+        "pgsteal_khugepaged": 0,
+        "pgsteal_proactive": 0
+      }
+    }
+  ],
+  "highest_lifetime_memory_peak_bytes": 451342336,
+  "oom_or_reclaim_or_memory_psi_delta": 0,
+  "resource_conclusion": "No resource rejection reproduced in bounded n1 shared-container sequence; no full-scale extrapolation.",
+  "unexercised": [
+    "upstream added/deleted/renamed files",
+    "changed documentation claims",
+    "real finding resolution",
+    "QUALITY NEW-code positive classification under unresolved mixed identities",
+    "live GitHub provider qualification"
+  ],
+  "audit_attempts": "First read-only WAL reader failed SQLITE_CANTOPEN14; second reader had a per-partition assertion assumption; final immutable read-only aggregate audit PASS. No app rerun.",
+  "no_stage_commit_push_dispatch_full_scale": true,
+  "next_smallest_milestone": "Authentic bounded added/deleted and claim-rich HIGH-confidence comparison; review mixed-confidence QUALITY contract separately.",
+  "local_evidence": [
+    {
+      "path": "REPORT_20261104.md",
+      "bytes": 23790,
+      "sha256": "afdcb86a1be7fb5624f9d5266e18f7d1815acc5e265ae2a896a6f0b110ceb941"
+    },
+    {
+      "path": "raw/source-identity-manifest.json",
+      "bytes": 92236,
+      "sha256": "925565936b934abe51cdee28342896663c16ba4b0b9660081bec766c36bae6ea"
+    },
+    {
+      "path": "raw/upstream-commit-proof.json",
+      "bytes": 2088,
+      "sha256": "a777c9ef05cee7730087eecb1b0a3b197a39d7552e5a1fae79411760e010b3c5"
+    },
+    {
+      "path": "raw/expected-change-matrix.json",
+      "bytes": 93155,
+      "sha256": "3ebf6bb9a9f1d9007e6eb42b25e41690f73ec3afca7047a9fc61a4ca44b77303"
+    },
+    {
+      "path": "raw/correctness-audit.json",
+      "bytes": 406631,
+      "sha256": "cdf4bae6b32c3f56022a177874320a8be35b2ac9e2ac7956336078195b8d4aba"
+    },
+    {
+      "path": "raw/incremental-semantics.json",
+      "bytes": 32899,
+      "sha256": "477b98b091d3eb1e228232246cba557d508da1cbb100eeaeec0c938a6b7da161"
+    },
+    {
+      "path": "raw/telemetry-summary.json",
+      "bytes": 76621,
+      "sha256": "e2f8cb08307936d65cd23c44a9afdd43e00e15590af076a65f7f48e05e5b33ca"
+    },
+    {
+      "path": "raw/job/job-results.json",
+      "bytes": 1284354,
+      "sha256": "0a679fa5bf64ffd5b7caf8706586199639b80a97b3251d42474549f14b78bdeb"
+    },
+    {
+      "path": "raw/job/container-envelope.json",
+      "bytes": 2664,
+      "sha256": "fe4fccff8b3c16c37c177e79bae8ffc3c10089a31b0d372015af88098a61da8c"
+    },
+    {
+      "path": "raw/tests/validation-results.json",
+      "bytes": 2639,
+      "sha256": "145fa45a8681f5cd6fccbf3806cf3986cab709d3c9dcf2fabd8fccce005eb520"
+    }
+  ]
+}

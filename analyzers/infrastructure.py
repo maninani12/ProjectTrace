@@ -13,6 +13,15 @@ import hcl2
 import yaml
 
 from analyzers import sandbox
+from analyzers.compose_evidence import (
+    BASE,
+    DEFAULT_BASE,
+    OVERLAY,
+    SOURCE_PATHS,
+    compose_services,
+    fuseki_startup,
+    option_service,
+)
 from analyzers.infrastructure_deep import checks as deep_checks
 from analyzers.infrastructure_deep import config as infrastructure_config
 from analyzers.infrastructure_extra import KUBERNETES_KINDS, dockerfile, enrich_document, terraform
@@ -20,6 +29,10 @@ from analyzers.parser_protocol import completed_packets
 
 
 class InfrastructureLoader(yaml.SafeLoader):
+    pass
+
+
+class ComposeEvidenceLoader(InfrastructureLoader):
     pass
 
 
@@ -37,8 +50,18 @@ def intrinsic(loader, tag, node):
 InfrastructureLoader.add_multi_constructor("!", intrinsic)
 
 
+class SourceMapping(dict):
+    __slots__ = ("plain",)
+
+
 def mapping(loader, node):
-    result = yaml.SafeLoader.construct_mapping(loader, node)
+    if isinstance(loader, ComposeEvidenceLoader):
+        count = len(node.value)
+        merge = any(key.tag == "tag:yaml.org,2002:merge" for key, _ in node.value)
+        result = SourceMapping(yaml.SafeLoader.construct_mapping(loader, node))
+        result.plain = not merge and len(result) == count and not {"__line__", "__end_line__", "intrinsic"} & result.keys()
+    else:
+        result = yaml.SafeLoader.construct_mapping(loader, node)
     result["__line__"] = node.start_mark.line + 1
     result["__end_line__"] = max(result["__line__"], node.end_mark.line + (1 if node.end_mark.column else 0))
     return result
@@ -47,7 +70,7 @@ def mapping(loader, node):
 InfrastructureLoader.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, mapping)
 
 
-def bounded_yaml(source):
+def bounded_yaml(source, *, track_mappings=False):
     if "{{" in source or "{%" in source:
         raise ValueError("Unrendered Helm templates are unsupported; templates are never executed")
     # Refuse aliases, recursive graphs and excessive nesting before constructing data.
@@ -70,7 +93,8 @@ def bounded_yaml(source):
         )
         if count > 40000 or depth > 64:
             raise ValueError("YAML syntax budget exceeded")
-    return list(yaml.load_all(source, Loader=InfrastructureLoader))
+    loader = ComposeEvidenceLoader if track_mappings else InfrastructureLoader
+    return list(yaml.load_all(source, Loader=loader))
 
 
 def structured_iac(path, source, make_finding, settings=None):
@@ -403,7 +427,11 @@ def _structured_iac(path, source, make_finding, settings=None, *, hcl_loads=None
                     identity_method="DOCKER_INSTRUCTIONS",
                 )
         elif suffix in {".yaml", ".yml", ".json"}:
-            docs = [json.loads(source)] if suffix == ".json" else bounded_yaml(source)
+            docs = [json.loads(source)] if suffix == ".json" else bounded_yaml(source, track_mappings=path in SOURCE_PATHS)
+            services = compose_services(docs) if path in SOURCE_PATHS else None
+            postgres_option = option_service(path, services) if path in {BASE, OVERLAY} else None
+            startup_context = fuseki_startup(path, services)
+            startup_service = "openmetadata-server" if path == DEFAULT_BASE else "fuseki"
             for doc in docs:
                 if not isinstance(doc, dict):
                     continue
@@ -459,6 +487,10 @@ def _structured_iac(path, source, make_finding, settings=None, *, hcl_loads=None
                         target = asset(
                             "compose:" + name, "ContainerWorkload", props, props.get("__line__", 1), "COMPOSE"
                         )
+                        if name == postgres_option:
+                            target["postgres_option"] = True
+                        if startup_context and name == startup_service:
+                            target["fuseki_startup"] = startup_context
                         if props.get("privileged") is True:
                             report("PT-IAC-001", target, "Compose service explicitly enables privileged mode.")
                         if str(props.get("user", "")).split(":")[0] in {"root", "0"}:

@@ -3869,7 +3869,7 @@ function Inspector({
           <Badge value={item.classification} />{" "}
           {item.delta && <Badge value={item.delta} />}{" "}
           {item.new_code !== undefined &&
-            (item.new_code ? "Changed code" : "Outside changed lines")}
+            (item.new_code ? "Changed code" : "Not attributed to new code")}
         </p>
       )}
       {item.flow?.length ? (

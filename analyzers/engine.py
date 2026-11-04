@@ -20,6 +20,7 @@ from analyzers.baseline import context_signals, implementation_claims, inventory
 from analyzers.code_quality.classification import binary_input
 from analyzers.code_quality.core import build as quality_build
 from analyzers.code_quality.rules import RULES as QUALITY_RULES
+from analyzers.compose_evidence import option_signals
 from analyzers.finding_identity import annotate as annotate_finding_identity
 from analyzers.flows import python_flows
 from analyzers.infrastructure import structured_iac_batch
@@ -37,7 +38,7 @@ PARSER_SIGNATURE = hashlib.sha256(
     json.dumps(
         [
             sys.version,
-            "native-observations-v10-partitioned-context",
+            "native-observations-v12-compose-startup",
             sandbox.cache_policy(),
             *[
                 package_version(p)
@@ -1239,12 +1240,17 @@ def analyze(
     )
     verification_cache = {}
     reused_verifications = 0
+    contexts = {c["configuration_context"] for c in candidates if "configuration_context" in c}
+    configuration = {context: option_signals(assets, files, context) for context in contexts}
     for claim in candidates:
         claim["text"] = redact(claim["text"])
         claim["expected"] = redact(claim["expected"])
         key = claim_key(claim)
+        context = claim.get("configuration_context")
         try:
-            verdict, reused_verification = verify_claim(claim, signals, deps, prior_verifications.get(key))
+            verdict, reused_verification = verify_claim(
+                claim, signals, deps, prior_verifications.get(key), configuration=configuration.get(context, ()),
+            )
         except Exception as error:
             failures.add("CLAIMS")
             warnings.append(
@@ -1267,6 +1273,8 @@ def analyze(
         verification_cache[key] = verdict
         reused_verifications += reused_verification
         status, reason, evidence = verdict["status"], verdict["reason"], verdict["signals"]
+        if status == "INFERRED" and context in contexts:
+            claim["verification_scope"] = "DECLARED_CONFIGURATION"
         claims.append(
             {
                 **claim,

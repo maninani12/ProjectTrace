@@ -7,6 +7,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 
 from analyzers import sandbox
+from analyzers.compose_evidence import CONTEXT_CLAIMS, GUIDE, documentation_context
 from analyzers.parser_protocol import completed_packets, expand_native_artifact
 
 
@@ -35,10 +36,16 @@ def validate_source_rows(rows, warnings, files, *, documentation=False):
         if not isinstance(row, dict) or not isinstance(row.get("path"), str) or row["path"] not in files:
             raise sandbox.SandboxFailure("HELPER_RESULT_SCOPE")
         if documentation:
-            if (set(row) != {"text", "category", "expected", "path", "line", "assertion_family"}
+            if (set(row) - {"configuration_context"} != {"text", "category", "expected", "path", "line", "assertion_family"}
                     or any(not isinstance(row[key], str) for key in ("text", "category", "expected"))
                     or row["assertion_family"] != "declaration" or type(row["line"]) is not int
-                    or not 1 <= row["line"] <= line_counts[row["path"]]):
+                    or not 1 <= row["line"] <= line_counts[row["path"]]
+                    or "configuration_context" in row and (
+                        not isinstance(row["configuration_context"], str)
+                        or row["path"] != GUIDE
+                        or CONTEXT_CLAIMS.get(row["configuration_context"]) != (row["text"], row["category"], row["expected"])
+                        or documentation_context(files[GUIDE].splitlines(), row["line"]) != row["configuration_context"]
+                    )):
                 raise sandbox.SandboxFailure("HELPER_DOCUMENT_SCHEMA")
         elif (set(row) != {"name", "version", "ecosystem", "path", "direct", "dependency_kind", "manifest", "version_kind", "license"}
                 or row["manifest"] != row["path"] or any(not isinstance(row[key], str) for key in ("name", "version", "ecosystem"))

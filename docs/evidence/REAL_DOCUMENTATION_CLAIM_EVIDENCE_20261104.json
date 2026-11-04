@@ -1,0 +1,268 @@
+{
+  "schema": "projecttrace-authentic-documentation-claim-evidence-v1",
+  "date": "2026-11-04",
+  "recorded_utc": "2026-11-04T04:13:21.990295+00:00",
+  "status": "BOUNDED_PARTIAL_AUTOMATIC_CORRELATION_GAP",
+  "commercial_v1": "DEVELOPMENT IN PROGRESS",
+  "scale001": "NOT QUALIFIED",
+  "upstream": {
+    "repository": "maninani12/OpenMetadata",
+    "base_commit": "e873c9d9a4ed2ac764d3a68c8daaee105478f022",
+    "head_commit": "bb0daa180e2117dbafdeaaa7d7436283ed248961",
+    "base_tree": "c1cf51e504c87fbe9e06ff5478dc66b33b956ff2",
+    "head_tree": "aecb101e1716f209f59f7df395c795ec244afd8b",
+    "full_diff_counts": {
+      "added": 21,
+      "modified": 78
+    },
+    "slice_diff_counts": {
+      "modified": 5,
+      "added": 1
+    },
+    "unchanged_paths": 19,
+    "changed_paths": [
+      {
+        "path": "docker/development/docker-compose-fuseki.yml",
+        "status": "modified",
+        "base": {
+          "mode": "100644",
+          "path": "docker/development/docker-compose-fuseki.yml",
+          "sha": "14d7195a33a7cb39b098cb6c5031305fc67f325f",
+          "size": 706,
+          "type": "blob"
+        },
+        "head": {
+          "mode": "100644",
+          "path": "docker/development/docker-compose-fuseki.yml",
+          "sha": "23d9daed30a67215feef12c017a35977ff3034f6",
+          "size": 2429,
+          "type": "blob"
+        }
+      },
+      {
+        "path": "docker/run_local_docker.sh",
+        "status": "modified",
+        "base": {
+          "mode": "100755",
+          "path": "docker/run_local_docker.sh",
+          "sha": "cec66a41114e8d4e24c3070ee3151c13c9a9cef4",
+          "size": 11615,
+          "type": "blob"
+        },
+        "head": {
+          "mode": "100755",
+          "path": "docker/run_local_docker.sh",
+          "sha": "0fd66ee6df3e14b0b38e195a9244e06c14a01e22",
+          "size": 693,
+          "type": "blob"
+        }
+      },
+      {
+        "path": "docker/run_local_docker_common.sh",
+        "status": "added",
+        "base": null,
+        "head": {
+          "mode": "100755",
+          "path": "docker/run_local_docker_common.sh",
+          "sha": "6de60d23012b598d8e71cb1a36b0b27241ebe1b2",
+          "size": 22246,
+          "type": "blob"
+        }
+      },
+      {
+        "path": "docker/run_local_docker_rdf.sh",
+        "status": "modified",
+        "base": {
+          "mode": "100755",
+          "path": "docker/run_local_docker_rdf.sh",
+          "sha": "9f7aef4e14d8e9e9808d9ad19b23b4365288cebe",
+          "size": 9153,
+          "type": "blob"
+        },
+        "head": {
+          "mode": "100755",
+          "path": "docker/run_local_docker_rdf.sh",
+          "sha": "f411e16083aa6beaa70f1ecc9f8ed31a023f6496",
+          "size": 3607,
+          "type": "blob"
+        }
+      },
+      {
+        "path": "docker/validate_compose.py",
+        "status": "modified",
+        "base": {
+          "mode": "100644",
+          "path": "docker/validate_compose.py",
+          "sha": "c255b23b3d4d0f94e5a8186d9f571d9e1a9151b8",
+          "size": 4733,
+          "type": "blob"
+        },
+        "head": {
+          "mode": "100644",
+          "path": "docker/validate_compose.py",
+          "sha": "a82fe6179a85ffb4aadfd594ea4b5806166cb72d",
+          "size": 5916,
+          "type": "blob"
+        }
+      },
+      {
+        "path": "docs/rdf-local-development.md",
+        "status": "modified",
+        "base": {
+          "mode": "100644",
+          "path": "docs/rdf-local-development.md",
+          "sha": "44b166eaea2fd103977e2584d977c1717cf450ea",
+          "size": 8421,
+          "type": "blob"
+        },
+        "head": {
+          "mode": "100644",
+          "path": "docs/rdf-local-development.md",
+          "sha": "c46d21bddcd43fdf780ed0242ca898c612b726cf",
+          "size": 9405,
+          "type": "blob"
+        }
+      }
+    ]
+  },
+  "claim": {
+    "path": "docs/rdf-local-development.md",
+    "line": 88,
+    "status": "UNVERIFIED",
+    "confidence": "MEDIUM",
+    "conditional_configuration": true,
+    "source_corroboration": "docker/development/docker-compose-postgres.yml",
+    "automatic_support_count": 0,
+    "automatic_contradiction_count": 0,
+    "consistency_findings": 0
+  },
+  "stable_kubernetes_claim": {
+    "identity_id": "a7899ef8-6b26-5760-906d-78372bb322c1",
+    "status": "VERIFIED",
+    "confidence": "HIGH",
+    "predecessor_id": "ea8cfc2f-7661-51d9-a647-7e26df6b1496",
+    "supporting_count": 2
+  },
+  "evidence": {
+    "verified": 84,
+    "claim_refs": 38,
+    "native_refs": 108
+  },
+  "jobs": [
+    {
+      "scenario": "cold-base",
+      "snapshot_id": "ef96fece-6450-57d7-8d4c-1a64f880f29c",
+      "base_id": null,
+      "job_id": "01a1a4b7-4982-721c-9b95-bf380fcf9645",
+      "generation_id": "6627bdd3-9352-5f08-95c1-5532a6b531d4",
+      "status": "PARTIAL",
+      "gate": "REVIEW_REQUIRED",
+      "wall_seconds": 31.806301399003132
+    },
+    {
+      "scenario": "warm-base",
+      "snapshot_id": "f9372164-9bd5-50da-9423-96cfb2343123",
+      "base_id": "ef96fece-6450-57d7-8d4c-1a64f880f29c",
+      "job_id": "01a1a4b7-c0a4-7cc7-aab2-28981dc0c981",
+      "generation_id": "2213e26c-3e23-5875-a20c-0df377575c61",
+      "status": "PARTIAL",
+      "gate": "REVIEW_REQUIRED",
+      "wall_seconds": 23.883913429999666
+    },
+    {
+      "scenario": "changed-head",
+      "snapshot_id": "379319df-bb25-5185-8d00-3009963c15ef",
+      "base_id": "ef96fece-6450-57d7-8d4c-1a64f880f29c",
+      "job_id": "01a1a4b8-1fb7-7363-801b-a157dfc1c8fa",
+      "generation_id": "27af4dcb-8b4d-58ca-9658-37464b82b784",
+      "status": "PARTIAL",
+      "gate": "REVIEW_REQUIRED",
+      "wall_seconds": 31.99902081699838
+    },
+    {
+      "scenario": "changed-head-recovery",
+      "snapshot_id": "e7af0e72-9048-541e-8aea-bb61e5365a49",
+      "base_id": "f9372164-9bd5-50da-9423-96cfb2343123",
+      "job_id": "01a1a4b8-9d21-7981-8c13-c0110557c0e0",
+      "generation_id": "c45e0ad4-34a6-56f4-90ab-cfd952ffd2aa",
+      "status": "PARTIAL",
+      "gate": "REVIEW_REQUIRED",
+      "wall_seconds": 7.482116724000662
+    }
+  ],
+  "interruption_and_recovery_seconds": 35.5442488799963,
+  "publication_units_reused": 44,
+  "receipt_stages_reused": 7,
+  "duplicate_delivery": {
+    "same_snapshot": true,
+    "same_snapshot_bytes": true,
+    "new_generation": false,
+    "snapshot_id": "e7af0e72-9048-541e-8aea-bb61e5365a49",
+    "base_id": "f9372164-9bd5-50da-9423-96cfb2343123"
+  },
+  "native_delta_counts": {
+    "NEW": 2,
+    "EXISTING": 16,
+    "ANALYZER_BASELINE": 10
+  },
+  "unresolved": 10,
+  "lifetime_memory_peak_bytes": 302387200,
+  "backend_tests": {
+    "tests": 85,
+    "passed": 85,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "backend_warnings": 2,
+  "vitest_passed": 7,
+  "chromium_distinct_passed": 4,
+  "chromium_initial_failed": 1,
+  "linux_wrapper_timeout_after_complete_45_pass_report_seconds": 300,
+  "test_only_change": "frontend/e2e/public-base.spec.ts derives Origin from configured BASE URL",
+  "backend_payload_files_verified": 194,
+  "active_pins_verified": 94,
+  "required_denials_passed": true,
+  "local_evidence": [
+    {
+      "path": "REPORT_20261104.md",
+      "sha256": "79b25f875f4fe03593b50ed2f2bba466d961475b93406559b004d0e3c6f4a1f6"
+    },
+    {
+      "path": "raw/source-identity-manifest.json",
+      "sha256": "57c02c01502cf01e314cea65eefd3ca120b0156ba8a146d0fd5879d60737313d"
+    },
+    {
+      "path": "raw/claim-expectation-matrix.json",
+      "sha256": "c02403e255d5087601b72d2a6cbe89f562462676d671ac8805170f8dd55929e8"
+    },
+    {
+      "path": "raw/claim-evidence-audit.json",
+      "sha256": "633e5e04bb0ca6ce0200da6d1013c729f84ef218f39e93e3f8d5ec3170c66f94"
+    },
+    {
+      "path": "raw/telemetry-summary.json",
+      "sha256": "dca72067a3255cae5dfa4f2b89921f9601b501f109e1e5930d44840947e5c23e"
+    },
+    {
+      "path": "raw/browser/authentic-api-and-ui.json",
+      "sha256": "4308e86da419d0c1627feac33c454976ebb1297ccdb68b3d25872c52da185d7b"
+    },
+    {
+      "path": "raw/browser/validation.json",
+      "sha256": "056c32d1bb6ed91833a2b6eb4d58089ddf048140088aa32c49febc806bef2915"
+    },
+    {
+      "path": "raw/browser/validation-public-base-retry.json",
+      "sha256": "bd4c5fd26fed4aa0140b5a7e7ed37540e5290555c27d1cf6653b7dd0d7b870e8"
+    },
+    {
+      "path": "raw/tests/validation-results.json",
+      "sha256": "68e07de617a8dca45de17ea8fa12f41f34e3f5a2e306cbac41efe44b28cf3435"
+    },
+    {
+      "path": "raw/frontend/validation.json",
+      "sha256": "8b8f23fa51098700c88eb2f2843ffdaa3718695183c5b8b200f73aea1e9df91f"
+    }
+  ]
+}

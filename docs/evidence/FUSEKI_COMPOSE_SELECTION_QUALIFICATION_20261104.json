@@ -1,0 +1,374 @@
+{
+  "date": "2026-11-04",
+  "scope": "BOUNDED_STATIC_COMPOSE_SELECTION",
+  "base": "e873c9d9a4ed2ac764d3a68c8daaee105478f022",
+  "head": "bb0daa180e2117dbafdeaaa7d7436283ed248961",
+  "source_metrics": {
+    "base": {
+      "files": 25,
+      "bytes": 172432,
+      "physical_lines": 4270,
+      "executed_slice_sha256": "675c891c1602fd4f056e1c854352e1872d35d031948c115f7f624fe8d7915644"
+    },
+    "head": {
+      "files": 26,
+      "bytes": 182100,
+      "physical_lines": 4597,
+      "executed_slice_sha256": "0e3d20e28cacd5377bedaa8a908f7b8cca9847463c5a1a233c26171a5d0f1332"
+    }
+  },
+  "candidate_source_sha256": "4fa152a9a294ba48728b5a760008db059ad855cdf53f9cd448dab2824a310669",
+  "runtime_changed_paths": [
+    "analyzers/compose_evidence.py",
+    "analyzers/engine.py",
+    "analyzers/infrastructure.py",
+    "analyzers/isolated_analysis.py",
+    "analyzers/verifiers.py"
+  ],
+  "before": "NO_FUSEKI_DOCUMENTATION_CLAIM",
+  "after": {
+    "status": "INFERRED",
+    "confidence": "MEDIUM",
+    "runtime_observed": false,
+    "claim_identity": "b5a9af6a-e1e1-5436-a7c8-81bbb07a1e13",
+    "scope": "DECLARED_CONFIGURATION",
+    "profile": "UNPROFILED_ONLY",
+    "selected_service": "fuseki",
+    "supports": {
+      "cold-base": [
+        {
+          "id": "5749ce85-32d0-5ed4-834d-fe71a4340d0e",
+          "path": "docker/development/docker-compose-fuseki.yml",
+          "sha256": "98ad408e8253dc8d687edb59382a279bd007dc818062b997cc9e0427532d0efd",
+          "blob_sha256": "98ad408e8253dc8d687edb59382a279bd007dc818062b997cc9e0427532d0efd",
+          "snapshot_id": "e554f02e-1e82-5512-aacd-ca2e7e7295a3",
+          "commit": "e873c9d9a4ed2ac764d3a68c8daaee105478f022"
+        }
+      ],
+      "warm-base": [
+        {
+          "id": "d90cd0e2-3836-5818-85a2-cf68221d280b",
+          "path": "docker/development/docker-compose-fuseki.yml",
+          "sha256": "98ad408e8253dc8d687edb59382a279bd007dc818062b997cc9e0427532d0efd",
+          "blob_sha256": "98ad408e8253dc8d687edb59382a279bd007dc818062b997cc9e0427532d0efd",
+          "snapshot_id": "252dd11a-564d-59b7-9d5e-c4405477b81e",
+          "commit": "e873c9d9a4ed2ac764d3a68c8daaee105478f022"
+        }
+      ],
+      "changed-head": [
+        {
+          "id": "6b03c473-a676-5438-90af-87d5544d2bf5",
+          "path": "docker/development/docker-compose.yml",
+          "sha256": "e087e8f919eec0c3e96ba58e5c4cc5720182bae06d82bcc032ba811df823f136",
+          "blob_sha256": "e087e8f919eec0c3e96ba58e5c4cc5720182bae06d82bcc032ba811df823f136",
+          "snapshot_id": "bb388d95-38b9-50f3-ab54-83d45b69c0e3",
+          "commit": "bb0daa180e2117dbafdeaaa7d7436283ed248961"
+        },
+        {
+          "id": "ed2d88af-188b-5e6b-8f4d-9ce8adaa2faa",
+          "path": "docker/development/docker-compose-fuseki.yml",
+          "sha256": "7ebeeb31ca9622ec343c21aecf7327a243640de1aae72aba6beb1f61a838366b",
+          "blob_sha256": "7ebeeb31ca9622ec343c21aecf7327a243640de1aae72aba6beb1f61a838366b",
+          "snapshot_id": "bb388d95-38b9-50f3-ab54-83d45b69c0e3",
+          "commit": "bb0daa180e2117dbafdeaaa7d7436283ed248961"
+        }
+      ],
+      "changed-head-recovery": [
+        {
+          "id": "efac1f63-c39b-5915-ae0b-2c3fe4b826a2",
+          "path": "docker/development/docker-compose.yml",
+          "sha256": "e087e8f919eec0c3e96ba58e5c4cc5720182bae06d82bcc032ba811df823f136",
+          "blob_sha256": "e087e8f919eec0c3e96ba58e5c4cc5720182bae06d82bcc032ba811df823f136",
+          "snapshot_id": "dc8e6666-b0bb-5ba2-bc56-6c298f8514af",
+          "commit": "bb0daa180e2117dbafdeaaa7d7436283ed248961"
+        },
+        {
+          "id": "e87728a8-f445-5bbd-9db7-bb6cf8f15371",
+          "path": "docker/development/docker-compose-fuseki.yml",
+          "sha256": "7ebeeb31ca9622ec343c21aecf7327a243640de1aae72aba6beb1f61a838366b",
+          "blob_sha256": "7ebeeb31ca9622ec343c21aecf7327a243640de1aae72aba6beb1f61a838366b",
+          "snapshot_id": "dc8e6666-b0bb-5ba2-bc56-6c298f8514af",
+          "commit": "bb0daa180e2117dbafdeaaa7d7436283ed248961"
+        }
+      ]
+    }
+  },
+  "publications": [
+    {
+      "scenario": "cold-base",
+      "snapshot": "e554f02e-1e82-5512-aacd-ca2e7e7295a3",
+      "base": null,
+      "status": "PARTIAL",
+      "gate": "REVIEW_REQUIRED"
+    },
+    {
+      "scenario": "warm-base",
+      "snapshot": "252dd11a-564d-59b7-9d5e-c4405477b81e",
+      "base": "e554f02e-1e82-5512-aacd-ca2e7e7295a3",
+      "status": "PARTIAL",
+      "gate": "REVIEW_REQUIRED"
+    },
+    {
+      "scenario": "changed-head",
+      "snapshot": "bb388d95-38b9-50f3-ab54-83d45b69c0e3",
+      "base": "e554f02e-1e82-5512-aacd-ca2e7e7295a3",
+      "status": "PARTIAL",
+      "gate": "REVIEW_REQUIRED"
+    },
+    {
+      "scenario": "changed-head-recovery",
+      "snapshot": "dc8e6666-b0bb-5ba2-bc56-6c298f8514af",
+      "base": "252dd11a-564d-59b7-9d5e-c4405477b81e",
+      "status": "PARTIAL",
+      "gate": "REVIEW_REQUIRED"
+    }
+  ],
+  "duplicate_delivery_identical": true,
+  "peak_cgroup_memory_bytes": 246456320,
+  "oom_events": 0,
+  "security": {
+    "candidate_image": "sha256:6759c82397962d141f68b20c016f5d9a41951a724daccf8cfa64f2f0ee74a9f7",
+    "payload_hashes": 195,
+    "pin_count": 94,
+    "sec002_exit_codes": [
+      0,
+      0
+    ]
+  },
+  "linux": {
+    "prior_exact_rerun": {
+      "command": [
+        "/home/projecttracequal/qualification-20261102/venv/bin/python",
+        "-B",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "tests/test_compose_postgres_evidence.py",
+        "tests/test_pinned_postgres.py",
+        "integration_tests/test_parser_isolation.py",
+        "integration_tests/test_lexical_isolation.py",
+        "--tb=short",
+        "--junitxml=/home/projecttracequal/compose-second-20261104/evidence/tests/required.xml"
+      ],
+      "exit_code": 0,
+      "timeout_seconds": 1500,
+      "test_report_complete": true,
+      "counts": {
+        "tests": 88,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 88
+      },
+      "warnings": 1,
+      "parser_mode": "required",
+      "wall_seconds": 122.00114696600212
+    },
+    "candidate": {
+      "claims": {
+        "command": [
+          "/home/projecttracequal/qualification-20261102/venv/bin/python",
+          "-B",
+          "-m",
+          "pytest",
+          "-q",
+          "-p",
+          "no:cacheprovider",
+          "tests/test_compose_postgres_evidence.py",
+          "tests/test_pinned_postgres.py",
+          "tests/test_pinned_fuseki.py",
+          "tests/test_compose_fuseki_evidence.py",
+          "tests/test_auth_drift.py",
+          "tests/test_configuration_drift.py",
+          "tests/test_engineering_changes.py",
+          "--tb=short",
+          "--junitxml=/home/projecttracequal/compose-second-20261104/evidence/candidate-tests/claims.xml"
+        ],
+        "exit_code": 0,
+        "timeout_seconds": 1500,
+        "test_report_complete": true,
+        "counts": {
+          "tests": 64,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "passed": 64
+        },
+        "warnings": 1,
+        "parser_mode": "development",
+        "wall_seconds": 24.394473871005175
+      },
+      "continuity": {
+        "command": [
+          "/home/projecttracequal/qualification-20261102/venv/bin/python",
+          "-B",
+          "-m",
+          "pytest",
+          "-q",
+          "-p",
+          "no:cacheprovider",
+          "tests/test_public_github.py",
+          "tests/test_public_snapshot_continuity.py",
+          "tests/test_native_history_recovery.py",
+          "tests/test_native_history_uncertain_layouts.py",
+          "tests/test_quality_mixed_confidence.py",
+          "tests/test_analysis_checkpoints.py",
+          "--tb=short",
+          "--junitxml=/home/projecttracequal/compose-second-20261104/evidence/candidate-tests/continuity.xml"
+        ],
+        "exit_code": 0,
+        "timeout_seconds": 1500,
+        "test_report_complete": true,
+        "counts": {
+          "tests": 60,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "passed": 60
+        },
+        "warnings": 1,
+        "parser_mode": "development",
+        "wall_seconds": 150.06776387900027
+      },
+      "required": {
+        "command": [
+          "/home/projecttracequal/qualification-20261102/venv/bin/python",
+          "-B",
+          "-m",
+          "pytest",
+          "-q",
+          "-p",
+          "no:cacheprovider",
+          "tests/test_compose_postgres_evidence.py",
+          "tests/test_pinned_postgres.py",
+          "tests/test_pinned_fuseki.py",
+          "tests/test_compose_fuseki_evidence.py",
+          "integration_tests/test_parser_isolation.py",
+          "integration_tests/test_lexical_isolation.py",
+          "--tb=short",
+          "--junitxml=/home/projecttracequal/compose-second-20261104/evidence/candidate-tests/required.xml"
+        ],
+        "exit_code": 0,
+        "timeout_seconds": 1500,
+        "test_report_complete": true,
+        "counts": {
+          "tests": 107,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "passed": 107
+        },
+        "warnings": 1,
+        "parser_mode": "required",
+        "wall_seconds": 169.26237249199767
+      }
+    },
+    "candidate_totals": {
+      "passed": 231,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "candidate_warnings": 3
+  },
+  "frontend": {
+    "vitest_passed": 7,
+    "chromium_passed": 4,
+    "typecheck_exit": 0,
+    "build_exit": 0
+  },
+  "backup": {
+    "files": 27,
+    "stage_commit_push": "FRESH_APPROVAL_REQUIRED"
+  },
+  "commercial_v1": "DEVELOPMENT IN PROGRESS",
+  "scale001": "NOT QUALIFIED",
+  "local_evidence": [
+    {
+      "path": "REPORT_20261104.md",
+      "sha256": "4fd8f902b772ab127aa0139eb55b6e273edfabcc48de76f2d7ac4d8177fb78ce"
+    },
+    {
+      "path": "EXPECTATIONS.md",
+      "sha256": "cbb97b6cc08b5e941eb66000eae04c22d9f61ea3639508be4ae3b5c3753f6970"
+    },
+    {
+      "path": "reproduction-both.log",
+      "sha256": "bc4d053f392610b46d33b1f5deca7baa43e54985c33c1a63abbb2f4ffa5f7193"
+    },
+    {
+      "path": "source-identity-manifest.json",
+      "sha256": "bb393afbc0c2bff50589cc723c7d26a466a0332d861a394eb5baf5dc92242bf0"
+    },
+    {
+      "path": "source-metrics.json",
+      "sha256": "0767361f39714052c5d81c317f7808229ec92557e36defb4e711aae8d9b880f2"
+    },
+    {
+      "path": "build-launch-initial.json",
+      "sha256": "4176fd7929c00cef2f6dca764f1588200425db6cdfe8fce523a63911eb082d89"
+    },
+    {
+      "path": "required-launch-initial.json",
+      "sha256": "25cdc143a4344428b7cec88b8ebb913b09f6489015f0d676f3ed5fafd2cb860b"
+    },
+    {
+      "path": "raw/candidate-source-manifest.json",
+      "sha256": "6577e66fade2c5f24efeb7982f94fd6efaab29f3f6069d2f859874d7e596c640"
+    },
+    {
+      "path": "raw/job/job-results.json",
+      "sha256": "6b9900d6c32cb67d61246e26259b08eef73870d18f503be990c1391b25848c35"
+    },
+    {
+      "path": "raw/job/container-envelope.json",
+      "sha256": "e5fc3505c1d2fa69599c82aec4138abd641ab79d5fee7b2d2ba0c8c3d6149d5d"
+    },
+    {
+      "path": "raw/claim-evidence-audit.json",
+      "sha256": "3a899158bb0b20748e247db28ad1a3b9a402c7b26fd56ddae057bd699775413b"
+    },
+    {
+      "path": "raw/native-comparison.json",
+      "sha256": "fcc1670d6592140d17be8c0377f133458971e2163caa1047cad2f0f03a751179"
+    },
+    {
+      "path": "raw/image-build.json",
+      "sha256": "61a381e33aa1b3059ebc8f0e9662cfbfabf8e1c841c0730ce6cc3b2cfa8279c8"
+    },
+    {
+      "path": "raw/sec002.json",
+      "sha256": "ef24cba36dac44d4a8fb4ead35a64c25612a4df91aef6b50e61aff736ca47d1b"
+    },
+    {
+      "path": "raw/tests/required.json",
+      "sha256": "b1c66f4f0dc49dcc7ac3082c388bd1a8bcf93a2ef00494339e442aefc01854ea"
+    },
+    {
+      "path": "raw/candidate-tests/claims.json",
+      "sha256": "c8a58a4becd72ce6a5ef58ce64feab0c839a0feb0446c3e4ba392306f01ffa77"
+    },
+    {
+      "path": "raw/candidate-tests/continuity.json",
+      "sha256": "73c66a1dfbae77a075c7a4a7d4d5e84260e8698f8956d8e603565622053d8d97"
+    },
+    {
+      "path": "raw/candidate-tests/required.json",
+      "sha256": "f8f77fce0562bf3bb5e9436af077b5d6b1835a832c1afec639698ec6843ddedc"
+    },
+    {
+      "path": "raw/frontend/validation.json",
+      "sha256": "b1351d9d235ad7efc8cbedad60f4aaa59a2845dbe1e0efc594490e586ac6ce52"
+    },
+    {
+      "path": "raw/browser/validation.json",
+      "sha256": "871fc515d938833e55eb2b658116570d30d44fa2e4e4c614a017ef9fa12958ce"
+    },
+    {
+      "path": "raw/browser/authentic-api-and-ui.json",
+      "sha256": "6caf62c0aaaff6106e90905cac84be202333aeaee67ee0862cf278d23ec0de7f"
+    }
+  ]
+}

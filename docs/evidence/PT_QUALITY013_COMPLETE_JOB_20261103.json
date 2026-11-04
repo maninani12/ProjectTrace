@@ -1,0 +1,747 @@
+{
+  "schema": "projecttrace-quality013-complete-job-v1",
+  "date": "2026-11-03",
+  "recorded_utc": "2026-11-03T18:16:41.849022+00:00",
+  "commercial_v1": "DEVELOPMENT IN PROGRESS",
+  "scale001": "NOT QUALIFIED",
+  "head": "5ec424b88a53dee5fe5fa85fdf041ee0395d5773",
+  "branch": "codex/scale-001-local-continuation",
+  "starting_raw_source_tree_sha256": "7531d6f6d9c003c823524b2061af81662ba7e8429576187b98a1a6345d7ee5a6",
+  "executed_source_tree_sha256": "fb7fc13d6335283e4ecc7949162d54a99dccdc8d3aaa3de7346298e2597f51f7",
+  "executed_source_files": 711,
+  "new_image": "sha256:acc7dd075d1065291354e3572acb876e20725eb2654e357bef969e781fb56cb0",
+  "new_image_runtime_files_verified": 194,
+  "active_lock_pins_verified": 94,
+  "production_changes": [
+    "analyzers/code_quality/core.py: explicit sorted path order for PT-QUALITY-013 only"
+  ],
+  "regression_modules": [
+    "tests/test_quality_determinism.py",
+    "tests/test_quality_determinism_publication.py"
+  ],
+  "determinism": {
+    "original_reproduced": true,
+    "four_fresh_seeds": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "before_after_content_scenarios_per_process": 9,
+    "after_ordered_equivalence": "PASS",
+    "before_after_complete_finding_contents_equal": true,
+    "parser_artifact_hashes_equal_before_after": true,
+    "published_order_variants_before": 3,
+    "published_order_variants_after": 1,
+    "snapshot_api_array_order_corrected": true,
+    "quality_paged_api_order_stable_before_after": true,
+    "legacy_published_and_staged_order_preserved": true,
+    "legacy_checkpoint_hits": 1,
+    "legacy_receipts_reused": 4,
+    "historical_records_rewritten": false
+  },
+  "validation": {
+    "intended": {
+      "tests": 338,
+      "passed": 337,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1
+    },
+    "all_retained_attempts": {
+      "tests": 417,
+      "failures": 7,
+      "errors": 0,
+      "skipped": 1,
+      "passed": 409
+    },
+    "new_determinism_tests_passed": 14,
+    "required_linux_tests_passed": 64,
+    "ruff": "PASS",
+    "compilation": "PASS",
+    "compiled_files": 320,
+    "whitespace": "PASS",
+    "new_image_sec002_existing_and_supplement": "PASS",
+    "warnings": {
+      "final_intended_instances": 6,
+      "all_retained_attempt_instances": 8,
+      "final_types": {
+        "StarletteDeprecationWarning": 4,
+        "PytestWarning": 2
+      },
+      "packages_changed": false
+    }
+  },
+  "complete_job": {
+    "ordinary_repetitions_per_size": 3,
+    "files_per_size": [
+      113,
+      313
+    ],
+    "ordinary_completed_published_jobs": 18,
+    "trace_sequence_completed_published_jobs": 3,
+    "additional_allocation_site_diagnostic_completed_published_jobs": 1,
+    "all_job_states": "COMPLETED",
+    "quality_counters_and_integrity": "PASS",
+    "cold_quality_gate": "REVIEW_REQUIRED",
+    "warm_and_head_fixture_gates": "PASS",
+    "memory_limit_bytes": 768000000,
+    "swap_limit_bytes": 0,
+    "cpu_max": "200000 100000",
+    "analysis_budget_seconds": 1800,
+    "raw_checkpoint_limit_bytes": 64000000,
+    "sanitizer_nodes": 1000000,
+    "spill_ciphertext_limit_bytes": "512000000, existing CI launcher policy",
+    "ordinary_timing_and_charge_summary": {
+      "small": {
+        "cold": {
+          "wall_seconds": {
+            "median": 18.333090942000126,
+            "min": 18.159084687002178,
+            "max": 18.426671253000677,
+            "samples": [
+              18.333090942000126,
+              18.426671253000677,
+              18.159084687002178
+            ]
+          },
+          "capture_seconds": {
+            "median": 1.4404291160026332,
+            "min": 1.4263330399990082,
+            "max": 1.5003050830018765,
+            "samples": [
+              1.5003050830018765,
+              1.4404291160026332,
+              1.4263330399990082
+            ]
+          },
+          "execute_seconds": {
+            "median": 16.832784528000047,
+            "min": 16.732750813000166,
+            "max": 16.986240900001576,
+            "samples": [
+              16.832784528000047,
+              16.986240900001576,
+              16.732750813000166
+            ]
+          },
+          "sampled_cgroup_peak_current_bytes": {
+            "median": 234811392,
+            "min": 140656640,
+            "max": 237080576,
+            "samples": [
+              234811392,
+              237080576,
+              140656640
+            ]
+          },
+          "parent_sampled_peak_rss_bytes": {
+            "median": 133578752,
+            "min": 133234688,
+            "max": 133586944,
+            "samples": [
+              133578752,
+              133586944,
+              133234688
+            ]
+          },
+          "children_sampled_peak_rss_bytes": {
+            "median": 50573312,
+            "min": 50126848,
+            "max": 50941952,
+            "samples": [
+              50126848,
+              50573312,
+              50941952
+            ]
+          },
+          "artifact_sqlite_json_text_bytes_total": {
+            "median": 415713,
+            "min": 415713,
+            "max": 415713,
+            "samples": [
+              415713,
+              415713,
+              415713
+            ]
+          },
+          "max_anonymous_temp_file_bytes": {
+            "median": 0,
+            "min": 0,
+            "max": 0,
+            "samples": [
+              0,
+              0,
+              0
+            ]
+          },
+          "states": [
+            "COMPLETED",
+            "COMPLETED",
+            "COMPLETED"
+          ]
+        },
+        "artifact-warm": {
+          "wall_seconds": {
+            "median": 12.736116069998388,
+            "min": 12.316611114001716,
+            "max": 12.790524039999582,
+            "samples": [
+              12.316611114001716,
+              12.790524039999582,
+              12.736116069998388
+            ]
+          },
+          "capture_seconds": {
+            "median": 1.3337107190018287,
+            "min": 1.2986206550012867,
+            "max": 1.351380441999936,
+            "samples": [
+              1.2986206550012867,
+              1.351380441999936,
+              1.3337107190018287
+            ]
+          },
+          "execute_seconds": {
+            "median": 11.40240577199802,
+            "min": 11.017990937998547,
+            "max": 11.4391438859966,
+            "samples": [
+              11.017990937998547,
+              11.4391438859966,
+              11.40240577199802
+            ]
+          },
+          "sampled_cgroup_peak_current_bytes": {
+            "median": 253370368,
+            "min": 155238400,
+            "max": 254230528,
+            "samples": [
+              254230528,
+              253370368,
+              155238400
+            ]
+          },
+          "parent_sampled_peak_rss_bytes": {
+            "median": 138973184,
+            "min": 138723328,
+            "max": 139014144,
+            "samples": [
+              138973184,
+              139014144,
+              138723328
+            ]
+          },
+          "children_sampled_peak_rss_bytes": {
+            "median": 48025600,
+            "min": 47972352,
+            "max": 48156672,
+            "samples": [
+              48156672,
+              47972352,
+              48025600
+            ]
+          },
+          "artifact_sqlite_json_text_bytes_total": {
+            "median": 415713,
+            "min": 415713,
+            "max": 415713,
+            "samples": [
+              415713,
+              415713,
+              415713
+            ]
+          },
+          "max_anonymous_temp_file_bytes": {
+            "median": 0,
+            "min": 0,
+            "max": 0,
+            "samples": [
+              0,
+              0,
+              0
+            ]
+          },
+          "states": [
+            "COMPLETED",
+            "COMPLETED",
+            "COMPLETED"
+          ]
+        },
+        "eight-file-head": {
+          "wall_seconds": {
+            "median": 20.05414410600133,
+            "min": 19.156826693000767,
+            "max": 20.236539457997424,
+            "samples": [
+              19.156826693000767,
+              20.05414410600133,
+              20.236539457997424
+            ]
+          },
+          "capture_seconds": {
+            "median": 1.349226448997797,
+            "min": 1.3148637949998374,
+            "max": 1.3669387019981514,
+            "samples": [
+              1.3669387019981514,
+              1.3148637949998374,
+              1.349226448997797
+            ]
+          },
+          "execute_seconds": {
+            "median": 18.739279978999548,
+            "min": 17.789888153998618,
+            "max": 18.88731304600151,
+            "samples": [
+              17.789888153998618,
+              18.739279978999548,
+              18.88731304600151
+            ]
+          },
+          "sampled_cgroup_peak_current_bytes": {
+            "median": 270082048,
+            "min": 172777472,
+            "max": 270905344,
+            "samples": [
+              270905344,
+              270082048,
+              172777472
+            ]
+          },
+          "parent_sampled_peak_rss_bytes": {
+            "median": 143396864,
+            "min": 143093760,
+            "max": 143409152,
+            "samples": [
+              143396864,
+              143409152,
+              143093760
+            ]
+          },
+          "children_sampled_peak_rss_bytes": {
+            "median": 47779840,
+            "min": 47706112,
+            "max": 48001024,
+            "samples": [
+              47706112,
+              47779840,
+              48001024
+            ]
+          },
+          "artifact_sqlite_json_text_bytes_total": {
+            "median": 442041,
+            "min": 442041,
+            "max": 442041,
+            "samples": [
+              442041,
+              442041,
+              442041
+            ]
+          },
+          "max_anonymous_temp_file_bytes": {
+            "median": 0,
+            "min": 0,
+            "max": 0,
+            "samples": [
+              0,
+              0,
+              0
+            ]
+          },
+          "states": [
+            "COMPLETED",
+            "COMPLETED",
+            "COMPLETED"
+          ]
+        }
+      },
+      "moderate": {
+        "cold": {
+          "wall_seconds": {
+            "median": 28.516132172000653,
+            "min": 28.24055479099843,
+            "max": 28.685822753999673,
+            "samples": [
+              28.24055479099843,
+              28.516132172000653,
+              28.685822753999673
+            ]
+          },
+          "capture_seconds": {
+            "median": 2.542671675000747,
+            "min": 2.468233435000002,
+            "max": 2.565976818998024,
+            "samples": [
+              2.565976818998024,
+              2.468233435000002,
+              2.542671675000747
+            ]
+          },
+          "execute_seconds": {
+            "median": 26.047898090000672,
+            "min": 25.674577302001126,
+            "max": 26.1431509369977,
+            "samples": [
+              25.674577302001126,
+              26.047898090000672,
+              26.1431509369977
+            ]
+          },
+          "sampled_cgroup_peak_current_bytes": {
+            "median": 161091584,
+            "min": 161046528,
+            "max": 161144832,
+            "samples": [
+              161091584,
+              161046528,
+              161144832
+            ]
+          },
+          "parent_sampled_peak_rss_bytes": {
+            "median": 149774336,
+            "min": 149741568,
+            "max": 149798912,
+            "samples": [
+              149741568,
+              149774336,
+              149798912
+            ]
+          },
+          "children_sampled_peak_rss_bytes": {
+            "median": 53669888,
+            "min": 50884608,
+            "max": 127492096,
+            "samples": [
+              50884608,
+              53669888,
+              127492096
+            ]
+          },
+          "artifact_sqlite_json_text_bytes_total": {
+            "median": 2051691,
+            "min": 2051691,
+            "max": 2051691,
+            "samples": [
+              2051691,
+              2051691,
+              2051691
+            ]
+          },
+          "max_anonymous_temp_file_bytes": {
+            "median": 2129920,
+            "min": 2129920,
+            "max": 2166784,
+            "samples": [
+              2166784,
+              2129920,
+              2129920
+            ]
+          },
+          "states": [
+            "COMPLETED",
+            "COMPLETED",
+            "COMPLETED"
+          ]
+        },
+        "artifact-warm": {
+          "wall_seconds": {
+            "median": 21.894519227000274,
+            "min": 21.72826220299976,
+            "max": 22.07463996399747,
+            "samples": [
+              21.72826220299976,
+              21.894519227000274,
+              22.07463996399747
+            ]
+          },
+          "capture_seconds": {
+            "median": 2.3788270609984465,
+            "min": 2.3410143030014297,
+            "max": 2.3845917860016925,
+            "samples": [
+              2.3410143030014297,
+              2.3845917860016925,
+              2.3788270609984465
+            ]
+          },
+          "execute_seconds": {
+            "median": 19.509927307000908,
+            "min": 19.38724829900093,
+            "max": 19.695813315000123,
+            "samples": [
+              19.38724829900093,
+              19.509927307000908,
+              19.695813315000123
+            ]
+          },
+          "sampled_cgroup_peak_current_bytes": {
+            "median": 196907008,
+            "min": 196591616,
+            "max": 197062656,
+            "samples": [
+              196591616,
+              196907008,
+              197062656
+            ]
+          },
+          "parent_sampled_peak_rss_bytes": {
+            "median": 168050688,
+            "min": 168026112,
+            "max": 168099840,
+            "samples": [
+              168026112,
+              168050688,
+              168099840
+            ]
+          },
+          "children_sampled_peak_rss_bytes": {
+            "median": 48205824,
+            "min": 48160768,
+            "max": 49451008,
+            "samples": [
+              48160768,
+              49451008,
+              48205824
+            ]
+          },
+          "artifact_sqlite_json_text_bytes_total": {
+            "median": 2051691,
+            "min": 2051691,
+            "max": 2051691,
+            "samples": [
+              2051691,
+              2051691,
+              2051691
+            ]
+          },
+          "max_anonymous_temp_file_bytes": {
+            "median": 2129920,
+            "min": 2129920,
+            "max": 2129920,
+            "samples": [
+              2129920,
+              2129920,
+              2129920
+            ]
+          },
+          "states": [
+            "COMPLETED",
+            "COMPLETED",
+            "COMPLETED"
+          ]
+        },
+        "eight-file-head": {
+          "wall_seconds": {
+            "median": 29.10769377199904,
+            "min": 28.99033145700014,
+            "max": 29.330036056999234,
+            "samples": [
+              28.99033145700014,
+              29.330036056999234,
+              29.10769377199904
+            ]
+          },
+          "capture_seconds": {
+            "median": 2.396761592000985,
+            "min": 2.33913134300019,
+            "max": 2.413810589001514,
+            "samples": [
+              2.396761592000985,
+              2.33913134300019,
+              2.413810589001514
+            ]
+          },
+          "execute_seconds": {
+            "median": 26.693882971001585,
+            "min": 26.593570039000042,
+            "max": 26.99090439399879,
+            "samples": [
+              26.593570039000042,
+              26.99090439399879,
+              26.693882971001585
+            ]
+          },
+          "sampled_cgroup_peak_current_bytes": {
+            "median": 235454464,
+            "min": 235212800,
+            "max": 235765760,
+            "samples": [
+              235454464,
+              235765760,
+              235212800
+            ]
+          },
+          "parent_sampled_peak_rss_bytes": {
+            "median": 179097600,
+            "min": 178331648,
+            "max": 179240960,
+            "samples": [
+              179097600,
+              178331648,
+              179240960
+            ]
+          },
+          "children_sampled_peak_rss_bytes": {
+            "median": 49319936,
+            "min": 48013312,
+            "max": 51044352,
+            "samples": [
+              49319936,
+              51044352,
+              48013312
+            ]
+          },
+          "artifact_sqlite_json_text_bytes_total": {
+            "median": 2092315,
+            "min": 2092315,
+            "max": 2092315,
+            "samples": [
+              2092315,
+              2092315,
+              2092315
+            ]
+          },
+          "max_anonymous_temp_file_bytes": {
+            "median": 2129920,
+            "min": 2129920,
+            "max": 2129920,
+            "samples": [
+              2129920,
+              2129920,
+              2129920
+            ]
+          },
+          "states": [
+            "COMPLETED",
+            "COMPLETED",
+            "COMPLETED"
+          ]
+        }
+      }
+    },
+    "highest_ordinary_sampled_charge_bytes": 270905344,
+    "highest_ordinary_lifetime_memory_peak_bytes": 271167488,
+    "peak_charge_phase": "WORKER:lexical_diff / CORRELATING",
+    "memory_limit_events": 0,
+    "memory_psi_stall_microseconds": 0,
+    "reclaim_counter_increments": 0,
+    "tracked_spill_owners_after_consumer_release": 0,
+    "largest_ordinary_io_stall_window": {
+      "run": "moderate-2",
+      "scenario": "cold",
+      "trace": false,
+      "counter": "io.pressure",
+      "start_elapsed_seconds": 26.752768414000457,
+      "end_elapsed_seconds": 26.864875657000084,
+      "duration_seconds": 0.11210724299962749,
+      "some_stall_microseconds_delta": 88021,
+      "some_stall_fraction": 0.7851499835768192,
+      "phase_at_start": "SESSION_COMMIT_INCLUSIVE",
+      "phase_at_end": "SESSION_COMMIT_INCLUSIVE",
+      "stage_at_end": "CORRELATING"
+    },
+    "process_io": "UNAVAILABLE; /proc/self/io FileNotFoundError errno2; cgroup io.stat available",
+    "qualified_scope": "Numeric Docker/WSL envelope with synchronous SQLite; no full SCALE, broker or PostgreSQL acceptance/performance claim",
+    "maximum_observed_active_helper_overlap": 1
+  },
+  "performance_fix_implemented": false,
+  "limitations": [
+    "Synthetic workload is not full pinned workload",
+    "Historical OOM/timeout not reproduced or resolved",
+    "Old persisted analysis/stage receipts retain historical order by contract",
+    "100ms samples can miss transient RSS peaks; lifetime cgroup peak differs from ROI peak",
+    "Shared-cache/WSL/storage/host differences prevent GitHub-hardware equivalence",
+    "Traced allocation diagnostics include observer and lazy-import bookkeeping",
+    "No causal elimination experiment or exhaustive ownership graph for every residual byte"
+  ],
+  "next_smallest_milestone": "One bounded, identity-pinned slice of the already authorized workload through the same full-job telemetry to test whether real packet/observation shape produces pressure or different stage costs; no full SCALE run or cap changes.",
+  "no_commit_push_dispatch_or_full_scale": true,
+  "local_evidence": [
+    {
+      "path": "REPORT_20261103.md",
+      "bytes": 26246,
+      "sha256": "c6501c0cf6b9c95b47cade663acca77c7ace786e0a364e40a43b1030cec82108"
+    },
+    {
+      "path": "facts.json",
+      "bytes": 73023,
+      "sha256": "5f5324b992cd7e0ac992a93e2b762e7f75c4f79709808665721fd1232398f084"
+    },
+    {
+      "path": "raw/candidate-source-manifest.json",
+      "bytes": 121639,
+      "sha256": "04d19554ce25ca8310735e18ad0443129d1592a713894ec4ebe0131b1ebf124d"
+    },
+    {
+      "path": "raw/before-pipeline-seeds.json",
+      "bytes": 4373542,
+      "sha256": "70bf9d7e66521e9db7ad34703c397bc7911d5aee770f575d2c59554905b0313f"
+    },
+    {
+      "path": "raw/fresh-process-before-after.json",
+      "bytes": 355113,
+      "sha256": "dc03d84b942e63568bddc85a7916d9217ca5a96b2c0138d230c553dd0d20ada6"
+    },
+    {
+      "path": "raw/publication-seed-summary.json",
+      "bytes": 457,
+      "sha256": "d79105366a9e9ed0197c48b81c2041733780a8b518c07c642c28ab7afd857075"
+    },
+    {
+      "path": "raw/publication-seed-matrix.json",
+      "bytes": 177638,
+      "sha256": "d4fef679a9fca040dee6d5f40b58615f678d5f0fe8f4dd3547078ada3c985fd8"
+    },
+    {
+      "path": "raw/legacy-before.json",
+      "bytes": 2057,
+      "sha256": "6f50779caca74b772a561b83f36beb10e608f6f68dd41240641ced5fe3d49773"
+    },
+    {
+      "path": "raw/legacy-after.json",
+      "bytes": 715,
+      "sha256": "5f7c98870c4ef8116c6cf6602f8ef25bd83f15be221d8927e4f589cb09d57ed2"
+    },
+    {
+      "path": "raw/job-summary.json",
+      "bytes": 759037,
+      "sha256": "2ba4561b5e20e3f4fe58c964baf114e346e30f93724ec5f12948398592aaec0e"
+    },
+    {
+      "path": "raw/post-run-acceptance.json",
+      "bytes": 9365,
+      "sha256": "3093c7b0cc426d7443a3a47580d707c100c50f1c2f2e1003c8a1d93cf6998a25"
+    },
+    {
+      "path": "raw/allocation-sites-allocation-sites.json",
+      "bytes": 12160,
+      "sha256": "5c58e6aa7c6e985c7de6db748cedee4b85bc0ce132ce44f8dfd8b2ca372cb198"
+    },
+    {
+      "path": "raw/guest-source-image-audit.json",
+      "bytes": 731,
+      "sha256": "3cc13fe1e8d968a8a73cd914be413c356c2b182887e5de71090969603c491a0d"
+    },
+    {
+      "path": "raw/image-build.json",
+      "bytes": 918,
+      "sha256": "1f5e370c4fe694f11de32986ede003c3b52ac10b289f6e755fa5259fb68ae4cd"
+    },
+    {
+      "path": "raw/sec002.json",
+      "bytes": 4799,
+      "sha256": "8d895f2d341fa8956815858e627903022b9c2807c2ad9279dee65cde808dd058"
+    },
+    {
+      "path": "raw/tests-attempt2/validation-results.json",
+      "bytes": 4205,
+      "sha256": "45f8b7e4abb826a1705ae63c85494bdcc7329c8f2b155a2649617b289833512f"
+    },
+    {
+      "path": "raw/tests-attempt3/validation-results.json",
+      "bytes": 1520,
+      "sha256": "b953ebca2bb4791d7a23c99f98751579b2a1d1c89e204a0344552b19472118ba"
+    }
+  ]
+}

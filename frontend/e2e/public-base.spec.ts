@@ -2,7 +2,9 @@ import { test, expect } from "./fixtures";
 import { completedAnalysis } from "./analysis";
 
 test("public import displays and submits the captured BASE on provider failure", async ({ page }) => {
-  const origin = "http://127.0.0.1:5181";
+  const origin = new URL(
+    process.env.PROJECTTRACE_BASE_URL || "http://127.0.0.1:5181",
+  ).origin;
   const registration = await page.request.post("/api/auth/register", {
     headers: { Origin: origin },
     data: { email: `public-base-${Date.now()}@projecttrace.test`,

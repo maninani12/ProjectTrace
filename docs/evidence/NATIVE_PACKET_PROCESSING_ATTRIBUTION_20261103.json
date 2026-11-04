@@ -1,0 +1,335 @@
+{
+  "schema": "projecttrace-native-packet-attribution-v1",
+  "date_local": "2026-11-03",
+  "timezone": "Asia/Calcutta",
+  "recorded_utc": "2026-11-03T12:39:52.640861+00:00",
+  "scope": "completed bounded profiling only; no production/test behavior change or new optimization",
+  "git": {
+    "initial_head": "e2afa09ccfd45f8a7551b5ed8b2868d6297c299e",
+    "current_head": "5ec424b88a53dee5fe5fa85fdf041ee0395d5773",
+    "remote_tip_verified": "5ec424b88a53dee5fe5fa85fdf041ee0395d5773",
+    "branch": "codex/scale-001-local-continuation",
+    "backup_new_explicit_authorization": true,
+    "workflow_scope_browser_approval_completed": true,
+    "approved_file_count": 26,
+    "uploaded_blob_ids_verified": 26,
+    "backup_status": "PUSHED_AND_VERIFIED",
+    "force_push": false,
+    "workflow_dispatch": false,
+    "push_trigger_guard": "[skip ci]",
+    "trigger_guard_reason": "Existing scale-qualification.yml push trigger starts forbidden full pinned workload; message-only amendment preserves approved file tree",
+    "preserved_first_local_commit": "69ca5a8d86f0cba9468f7868090487a5d7d7c3b9",
+    "preserved_ref": "refs/projecttrace-backups/native-packet-first-unpublished-20261103",
+    "post_push_actions_runs_observed": 0,
+    "remote_ci_pass_claimed": false,
+    "new_profiling_docs_committed_or_pushed": false,
+    "credential_handling": "existing authenticated CLI helper; standard user-approved additional workflow scope; no password/token in evidence or persisted Git config override"
+  },
+  "source_identity": {
+    "windows_before_files": 706,
+    "windows_before_raw_tree_sha256": "5ab14c49bf61a180f2c8ce71488761917e508513945b98c2d448f7b9d36046a0",
+    "execution_files": 704,
+    "execution_tree_sha256": "bdcdf6e5cfb4e51dda47f74b1f8c9848f77d54f63bc401664d87820be4125d82",
+    "native_files_verified_per_replay": 704,
+    "image_payload_files_verified_per_replay": 194,
+    "active_lock_pins_verified_per_replay": 94,
+    "native_app_pyc_before_after": 0,
+    "image_app_pyc_before_after": 0,
+    "original_cached_source_copy_preserved": true,
+    "git_blob_normalization": "uploaded Git LF-filtered blob IDs distinct from preserved raw Windows/executed manifests",
+    "final_doc_tree_manifest": "local outputs/native-packet-20261103/final-source-manifest.json; separate from execution tree",
+    "separate_test_source_app_pyc_after_tests": 27,
+    "test_cache_scope": "separate test-only copy; cache creation after ordinary timing; never used for performance; retained"
+  },
+  "images": {
+    "candidate": "sha256:5844e12de488849fc30492d0ef0f88cf8585312d381091eda8fd0c438f4c75bc",
+    "control": "sha256:4b43c5f01dc36f7ab325f485e9f8c8f1f2a4a0b6b2d0b26ece9994d0e94a81f9",
+    "new_image_built": false,
+    "qualification": "original candidate SEC002 retained on exact image; no new constrained SCALE result"
+  },
+  "design": {
+    "fixtures": 24,
+    "independent_coordinators_per_plain_or_observed_platform": 5,
+    "repeat_calls_per_fixture_per_coordinator": 3,
+    "warm_statistics": "reduce3 repeats to one coordinator median, then summarize5 independent coordinators",
+    "same_packet_bytes_across_modes_and_platforms": true,
+    "cold_label": "first encounter of fixture in fresh coordinator; no cold disk/allocator guarantee",
+    "os_cache_host_load_controlled": false,
+    "diagnostic_coordinators_per_platform": 1,
+    "allocation_coordinators_per_platform": 1,
+    "instrumentation_overhead_retained": true
+  },
+  "validation": {
+    "replay_drivers": 24,
+    "packet_admission_calls": 2304,
+    "accepted_or_prefix_calls": 1440,
+    "expected_rejections": 864,
+    "actual_required_native_calls": 30,
+    "mixed_findings_claims_pipeline_calls": 12,
+    "additional_actual_native_cache_equivalence_calls": 10,
+    "actual_required_native_calls_total": 40,
+    "replay_docker_containers_retained": 12,
+    "mixed_pipeline_docker_containers_retained": 3,
+    "all_docker_exit_zero_and_oom_false": true,
+    "expected_outcomes_and_semantics_match_all_modes_platforms": true,
+    "actual_native_cold_warm_semantics_match": true
+  },
+  "tests": {
+    "final_distinct_case_identities": 69,
+    "final_passed": 69,
+    "final_failed": 0,
+    "final_errors": 0,
+    "final_skipped": 0,
+    "final_selections": [
+      {
+        "name": "portable-packet-privacy-accounting",
+        "counts": {
+          "tests": 38,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "passed": 38
+        },
+        "context": "portable development parent"
+      },
+      {
+        "name": "actual-isolation-failures",
+        "counts": {
+          "tests": 18,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "passed": 18
+        },
+        "context": "required Linux"
+      },
+      {
+        "name": "identity-history-recovery",
+        "counts": {
+          "tests": 13,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "passed": 13
+        },
+        "context": "required Linux"
+      }
+    ],
+    "all_collected_attempt_executions": 107,
+    "all_attempt_passes": 106,
+    "retained_context_failure_count": 1,
+    "retained_failure": "Portable dispatch test changes isolation mode after parent signature import; only native_result[6].owned.py.parser_signature differs; intended development context passes",
+    "test_source_changed": false,
+    "helper_setup_failures_retained": "missing owned operator key before collection; prior pipeline import-before-key selection failed fixture decryption; helper-only configuration corrected"
+  },
+  "measured_bottleneck": {
+    "real_native_packet_bytes": 1224056,
+    "real_native_packet_expanded_value_visits": 83110,
+    "real_native_gate_first_median_seconds": {
+      "native": 0.120814,
+      "docker": 0.123105
+    },
+    "real_native_stage_share_approximate_percent": {
+      "bounded_decode_guard_and_json_materialization": 64,
+      "sanitizer_privacy_and_copy": 36
+    },
+    "large_synthetic_packet_bytes": 2238920,
+    "large_synthetic_expanded_value_visits": 360028,
+    "large_synthetic_gate_first_median_seconds": {
+      "native": 0.362146,
+      "docker": 0.370679
+    },
+    "wide_shape_sanitizer_share_percent_range": [
+      48,
+      50
+    ],
+    "packet_decode_calls": "one per decoded completed file packet; no duplicate decode observed",
+    "compact_expansion": "reference restoration, negligible in measured cases",
+    "privacy_text_diagnostic": "33 redact calls for large repeated-token fixture; packet-local cache works; unique-key/value diagnostics have observable overhead",
+    "allocation": "one-frame tracemalloc diagnostic; large synthetic41,924,714-byte peak/298,838 live blocks; real large7,777,323-byte peak/32,370 live blocks; not RSS or total churn"
+  },
+  "native_admission_and_storage": {
+    "post_gate_scope_cache_source_checks": "measured separately in raw actual-native matrix; submillisecond to about1ms in these fixtures",
+    "database_in_completed_packets": false,
+    "mixed_pipeline_counts": {
+      "findings": 47,
+      "assets": 4,
+      "claims": 2,
+      "metrics": 48,
+      "warnings": 0
+    },
+    "cold_sql_cursor_median_seconds": {
+      "native": 0.00019206,
+      "docker": 0.000182447
+    },
+    "statement_values_logged": false,
+    "history_publication": "outside packet gate;13 focused required Linux identity/history/recovery cases pass; no production migration"
+  },
+  "admission": {
+    "unchanged_metadata_node_cap": 1000000,
+    "unchanged_metadata_depth": 60,
+    "unchanged_wire_guard_units": 1000000,
+    "unchanged_wire_guard_depth": 100,
+    "unchanged_native_packet_output_bytes": 16000000,
+    "logical_projections_accounted_independently": true,
+    "independent_cache_mutability_verified": true,
+    "duplicate_json_keys": "existing last-key-wins behavior characterized; no rejection invented",
+    "duplicate_file_paths_and_sanitized_key_collisions": "rejected",
+    "truncated_final_suffix": "preserve completed prefix only",
+    "real_partial_syntax_and_failure_propagation": "verified in actual worker calls and required integration"
+  },
+  "security": {
+    "parser_mode": "required for actual workers",
+    "docker_uid": 10001,
+    "read_only_root_and_mounts": true,
+    "network": "none",
+    "cap_drop": "ALL",
+    "cap_add": null,
+    "no_new_privileges": true,
+    "pid_limit": 64,
+    "worker_landlock_abi_observed": 7,
+    "kernel_fail_closed_tests_passed": true,
+    "replay_is_security_qualification": false,
+    "memory_counters": "process VmRSS current/VmHWM lifetime; cgroup current/peak separate; no reset or equivalence claim",
+    "python_allocation_counters": "diagnostic-only traced Python allocations"
+  },
+  "correction": {
+    "implemented": false,
+    "reason": "No unnecessary cost with a demonstrated admission/identity/privacy/node/ownership-equivalent correction proven; dominant bounded decode and traversal/copy enforce existing requirements",
+    "production_before_after_speedup_claimed": false,
+    "plain_observed_comparison": "instrumentation overhead only; full samples retained"
+  },
+  "historical_scale": {
+    "run_id": 41429161593,
+    "commit": "e2afa09ccfd45f8a7551b5ed8b2868d6297c299e",
+    "baseline_job_id": 125223103299,
+    "baseline_exit": 137,
+    "baseline_oom": true,
+    "candidate_job_id": 125223102927,
+    "candidate_exit": 1,
+    "candidate_oom": false,
+    "candidate_error": "ANALYSIS_TIME_BUDGET",
+    "analyzing_seconds": 1808.034993,
+    "analysis_limit_seconds": 1800,
+    "contained_native_seconds": 494.503276,
+    "native_transport_seconds": 265.378116,
+    "native_packet_validation_seconds": 226.605416,
+    "missing": [
+      "per-packet bytes/nodes/depth/unique-text distribution",
+      "guard versus JSON construction versus metadata substage time",
+      "allocation/GC counts",
+      "failure-prefix/inclusion and cache-state telemetry"
+    ],
+    "bounded_percentages_applied_to_historical_runtime": false,
+    "full_workload_executed": false,
+    "published_generation": false
+  },
+  "status": {
+    "commercial_v1": "DEVELOPMENT IN PROGRESS",
+    "scale001": "NOT QUALIFIED",
+    "new_profiling_docs_remain_uncommitted": true
+  },
+  "next_milestone": "Bounded sanitized token-heavy native response shapes representative of pinned workload, with exact byte/node/unique-text counters and admission-equivalence oracle, before a targeted optimization",
+  "evidence": {
+    "REPORT_20261103.md": {
+      "path": "outputs/native-packet-20261103/REPORT_20261103.md",
+      "bytes": 45719,
+      "sha256": "c102f441328f83bf8ead120188a796157377891856b429b414a7607dfa036fd0"
+    },
+    "summary.json": {
+      "path": "outputs/native-packet-20261103/summary.json",
+      "bytes": 1662476,
+      "sha256": "a840b2d86b1f9c637f9ddfdcb3f0256f3f02a5e4de67d122d9d5eb312babf6f5"
+    },
+    "packet-manifest.json": {
+      "path": "outputs/native-packet-20261103/packet-manifest.json",
+      "bytes": 20665,
+      "sha256": "b3ac5d10aa9174fe119f4b9e0b40af802d3f955f18738e857ac5ce511b0e59d0"
+    },
+    "before-source-manifest.json": {
+      "path": "outputs/native-packet-20261103/before-source-manifest.json",
+      "bytes": 125531,
+      "sha256": "c7fcbbcf2cbff5a5cd59564891f6ea5bb852394da0c0281877541f8aac52346c"
+    },
+    "BACKUP_PLAN.json": {
+      "path": "outputs/native-packet-20261103/BACKUP_PLAN.json",
+      "bytes": 9362,
+      "sha256": "22b3b1378ef1a05efe66cc43819a6616feeb63b36629783504359762aa6cf978"
+    },
+    "backup-sensitive-review.json": {
+      "path": "outputs/native-packet-20261103/backup-sensitive-review.json",
+      "bytes": 4528,
+      "sha256": "29cb726c9f80c57a115402726357e8d5a3bcf53362d860db204cdafe385b3a33"
+    },
+    "backup-execution.json": {
+      "path": "outputs/native-packet-20261103/backup-execution.json",
+      "bytes": 5888,
+      "sha256": "41e92dcd265f8bd2ff8ac998184785c74320b1c1d9afb166509e577b5111216d"
+    },
+    "backup-status.json": {
+      "path": "outputs/native-packet-20261103/backup-status.json",
+      "bytes": 610,
+      "sha256": "eb6fca6cd4098d477d1a8ff1cbbf2d3af4028c71da0881d4574eb91e4352e7d5"
+    },
+    "backup-ci-trigger-verification.json": {
+      "path": "outputs/native-packet-20261103/backup-ci-trigger-verification.json",
+      "bytes": 265,
+      "sha256": "fe08885569a8e72162d0fce13d7274be37623710f9acd8863131789fea234e30"
+    },
+    "raw/native-replays.jsonl": {
+      "path": "outputs/native-packet-20261103/raw/native-replays.jsonl",
+      "bytes": 1807688,
+      "sha256": "45a6e39132713f1de0bd5f9169eb502e707d58edb0825bfaf473c286116e0b14"
+    },
+    "raw/docker-replays.jsonl": {
+      "path": "outputs/native-packet-20261103/raw/docker-replays.jsonl",
+      "bytes": 1801498,
+      "sha256": "c6744da878dc536296176919e9453ef1e4520f8faf3c8c05b51bfe8f746f1192"
+    },
+    "raw/actual-native-matrix.json": {
+      "path": "outputs/native-packet-20261103/raw/actual-native-matrix.json",
+      "bytes": 139687,
+      "sha256": "fe29d6eb4e3c76ee6a11ff76f87d5303e6d2373d87d3fecd0dced16ca2c68585"
+    },
+    "raw/native-reuse-equivalence.json": {
+      "path": "outputs/native-packet-20261103/raw/native-reuse-equivalence.json",
+      "bytes": 2093,
+      "sha256": "38c3910d8cca1c6e5491054375f88d4ea4c044177d49c32d3ff25aec7dab8d62"
+    },
+    "raw/packet-node-audit.json": {
+      "path": "outputs/native-packet-20261103/raw/packet-node-audit.json",
+      "bytes": 20342,
+      "sha256": "d0baae32ce3e3a2bf1521d4d9a5981bb7ca78667a5f5427167952ce30c96a476"
+    },
+    "raw/pipeline-database.json": {
+      "path": "outputs/native-packet-20261103/raw/pipeline-database.json",
+      "bytes": 306314,
+      "sha256": "ecc134eea52d75629aa23b47cbd83e7c764884faff4af1f92fb1744569fda80c"
+    },
+    "raw/portable-context-diagnostic.json": {
+      "path": "outputs/native-packet-20261103/raw/portable-context-diagnostic.json",
+      "bytes": 612,
+      "sha256": "3013f741f83477160aeb9c1764f17d2b91ec51509683b0e8152e9171274ba2ff"
+    },
+    "raw/execution-audit.json": {
+      "path": "outputs/native-packet-20261103/raw/execution-audit.json",
+      "bytes": 2392,
+      "sha256": "2b6dc1d3613c94974bbecdd1bb546748c4d15b9294288140e4b30b0707547b5c"
+    },
+    "raw/test-attempt2/focused-test-results.json": {
+      "path": "outputs/native-packet-20261103/raw/test-attempt2/focused-test-results.json",
+      "bytes": 3189,
+      "sha256": "5139c10da3bcab819991a09497842954b8087e3d6369453616b2ba490256deb7"
+    },
+    "raw/test-attempt3/portable-results.json": {
+      "path": "outputs/native-packet-20261103/raw/test-attempt3/portable-results.json",
+      "bytes": 1189,
+      "sha256": "e5680973d7b12237571daf5a30c58692f8670fac755dfac1a0b0043c1a65398f"
+    },
+    "raw/final-preservation-audit.json": {
+      "path": "outputs/native-packet-20261103/raw/final-preservation-audit.json",
+      "bytes": 4286,
+      "sha256": "02b718fc20768e846970132fa28db5b15a9f8526758e813f6c62d21baa00f2e1"
+    }
+  }
+}

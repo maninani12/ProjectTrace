@@ -231,7 +231,9 @@ def _build(files, metrics, signals, raw_findings, warnings, profile=None, *, con
                     "PT-QUALITY-004", symbol["path"], symbol["line"], metric=symbol, actual=actual, threshold=threshold
                 )
     file_threshold = settings["rules"].get("PT-QUALITY-013", {}).get("threshold", DEFINITIONS["PT-QUALITY-013"][4])
-    for path in selected:
+    # Each selected path emits at most one file-size finding. Keep this rule's
+    # path order stable without changing the surrounding rule-group ordering.
+    for path in sorted(selected):
         row = paths[path]
         if row["kind"] == "SOURCE" and row["physical_lines"] > file_threshold:
             emit(

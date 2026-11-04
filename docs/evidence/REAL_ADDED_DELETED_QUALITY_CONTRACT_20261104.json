@@ -1,0 +1,624 @@
+{
+  "schema": "projecttrace-real-added-deleted-claims-quality-contract-v1",
+  "recorded_utc": "2026-11-04T01:54:25.220039+00:00",
+  "date": "2026-11-04",
+  "status": "COMPLETE_TWO_BOUNDED_TRACKS_WITH_PARTIAL_LIMITATIONS",
+  "commercial_v1": "DEVELOPMENT IN PROGRESS",
+  "scale001": "NOT QUALIFIED",
+  "head": "5ec424b88a53dee5fe5fa85fdf041ee0395d5773",
+  "branch": "codex/scale-001-local-continuation",
+  "starting_source_files": 714,
+  "starting_source_sha256": "1045b188d6482dccf5462e4feacbf5654ab89785c55c72cc79517248057d52ca",
+  "candidate_source_files": 716,
+  "candidate_source_sha256": "43103333298f8137779aca884ceb61aef7e8a0b5e8bf4a5aaeeacdf07d20307b",
+  "backend_runtime_files_match_qualified_image": 194,
+  "backend_image": "sha256:acc7dd075d1065291354e3572acb876e20725eb2654e357bef969e781fb56cb0",
+  "source": {
+    "repository": "maninani12/OpenMetadata",
+    "base_commit": "dc77e98b1edc5fd5d2e439f3f35a9d18faca345f",
+    "head_commit": "7a86e0974a58d4d4c9f2e526058351ea41c15420",
+    "direct_parent_verified": true,
+    "different_git_trees": true,
+    "full_diff_counts": {
+      "modified": 163,
+      "deleted": 2,
+      "added": 2
+    },
+    "slice_diff_counts": {
+      "deleted": 2,
+      "modified": 3,
+      "added": 2
+    },
+    "slice_unchanged": 70,
+    "git_changes": [
+      {
+        "path": "ingestion/src/metadata/profiler/processor/sample_data_handler.py",
+        "status": "deleted",
+        "base": {
+          "mode": "100644",
+          "path": "ingestion/src/metadata/profiler/processor/sample_data_handler.py",
+          "sha": "78abfa9423e06d3a5f5f0c5f39910a78e30844eb",
+          "size": 4483,
+          "type": "blob"
+        },
+        "head": null
+      },
+      {
+        "path": "ingestion/src/metadata/profiler/source/metadata_ext.py",
+        "status": "deleted",
+        "base": {
+          "mode": "100644",
+          "path": "ingestion/src/metadata/profiler/source/metadata_ext.py",
+          "sha": "b77ff6f4a056f00654827dd557e8ad56cee87d74",
+          "size": 10049,
+          "type": "blob"
+        },
+        "head": null
+      },
+      {
+        "path": "ingestion/src/metadata/sampler/config.py",
+        "status": "modified",
+        "base": {
+          "mode": "100644",
+          "path": "ingestion/src/metadata/sampler/config.py",
+          "sha": "e7514dbb2459b296358822e57f820dce4b41da03",
+          "size": 11934,
+          "type": "blob"
+        },
+        "head": {
+          "mode": "100644",
+          "path": "ingestion/src/metadata/sampler/config.py",
+          "sha": "4b0e9d2b58d5b9d47da1d4922707bb4bf46776a0",
+          "size": 9546,
+          "type": "blob"
+        }
+      },
+      {
+        "path": "ingestion/src/metadata/workflow/profiler.py",
+        "status": "modified",
+        "base": {
+          "mode": "100644",
+          "path": "ingestion/src/metadata/workflow/profiler.py",
+          "sha": "dd2e4befdcb175407d2c777fc2d336bcf137d6c7",
+          "size": 4419,
+          "type": "blob"
+        },
+        "head": {
+          "mode": "100644",
+          "path": "ingestion/src/metadata/workflow/profiler.py",
+          "sha": "2663cdfe3610ae410cf943d5c2f521b6b5198237",
+          "size": 4026,
+          "type": "blob"
+        }
+      },
+      {
+        "path": "openmetadata-integration-tests/src/test/java/org/openmetadata/it/tests/SampleDataStorageMigrationIT.java",
+        "status": "added",
+        "base": null,
+        "head": {
+          "mode": "100644",
+          "path": "openmetadata-integration-tests/src/test/java/org/openmetadata/it/tests/SampleDataStorageMigrationIT.java",
+          "sha": "26d21fe9d01f0b63aa94aafec1cdd52683a7968e",
+          "size": 16121,
+          "type": "blob"
+        }
+      },
+      {
+        "path": "openmetadata-service/src/test/java/org/openmetadata/service/migration/v210/SampleDataStorageMigrationPathsTest.java",
+        "status": "added",
+        "base": null,
+        "head": {
+          "mode": "100644",
+          "path": "openmetadata-service/src/test/java/org/openmetadata/service/migration/v210/SampleDataStorageMigrationPathsTest.java",
+          "sha": "4f7cbcbba687c4bd67a40d5dee2dea3f8bf4991f",
+          "size": 8636,
+          "type": "blob"
+        }
+      },
+      {
+        "path": "openmetadata-ui/src/main/resources/ui/public/locales/en-US/Database/MicrosoftFabric.md",
+        "status": "modified",
+        "base": {
+          "mode": "100644",
+          "path": "openmetadata-ui/src/main/resources/ui/public/locales/en-US/Database/MicrosoftFabric.md",
+          "sha": "315d6c1de15b49765999ba38f5ba403e17768ab4",
+          "size": 6670,
+          "type": "blob"
+        },
+        "head": {
+          "mode": "100644",
+          "path": "openmetadata-ui/src/main/resources/ui/public/locales/en-US/Database/MicrosoftFabric.md",
+          "sha": "7539af11819a6c33e78f289c07a9ecf0b8ed5074",
+          "size": 6505,
+          "type": "blob"
+        }
+      }
+    ]
+  },
+  "slices": {
+    "base": {
+      "git_tree": "b62603efd7c7a1a59f0c1d92463a8df1b83b4538",
+      "file_count": 75,
+      "source_bytes": 952493,
+      "physical_lines": 26489,
+      "slice_sha256": "28cf57773bf336f231341433c8b96dce4d3b157a1bb65aa90f1069c096648b6d"
+    },
+    "head": {
+      "git_tree": "6f16977dd4af58a4c00a10e1704996229c1e8a57",
+      "file_count": 75,
+      "source_bytes": 959772,
+      "physical_lines": 26642,
+      "slice_sha256": "f6ae680bd36a64195c994a5836484b122f91aba07925710e48e9981c5ff96477"
+    }
+  },
+  "jobs": [
+    {
+      "scenario": "cold-base",
+      "job_id": "01a1a43d-fc51-771c-904e-2962f6c76487",
+      "snapshot_id": "35b68fce-b602-56a4-958b-9b3b6e995755",
+      "generation_id": "1d5b8000-2fa6-51a8-9045-14b15a10d455",
+      "base_id": null,
+      "source_commit": "dc77e98b1edc5fd5d2e439f3f35a9d18faca345f",
+      "wall_seconds": 22.842272444999253,
+      "status": "PARTIAL",
+      "artifact_count": 71,
+      "artifact_json_text_bytes": 3916653
+    },
+    {
+      "scenario": "warm-base",
+      "job_id": "01a1a43e-54c1-7a9a-baee-e868cf4e1fd1",
+      "snapshot_id": "b99a9c12-c8fd-51fa-bc6f-1a5e6be01a3b",
+      "generation_id": "cafe2ea7-a46a-5715-9360-abe256abae52",
+      "base_id": "35b68fce-b602-56a4-958b-9b3b6e995755",
+      "source_commit": "dc77e98b1edc5fd5d2e439f3f35a9d18faca345f",
+      "wall_seconds": 18.098660141004075,
+      "status": "PARTIAL",
+      "artifact_count": 71,
+      "artifact_json_text_bytes": 3916653
+    },
+    {
+      "scenario": "changed-head",
+      "job_id": "01a1a43e-9c7b-72b1-b7b9-4e72570daadf",
+      "snapshot_id": "11044b96-f18f-5a96-ae50-dea5e775ebfe",
+      "generation_id": "59a21588-8d59-56fc-9ec8-243b405d8d88",
+      "base_id": "35b68fce-b602-56a4-958b-9b3b6e995755",
+      "source_commit": "7a86e0974a58d4d4c9f2e526058351ea41c15420",
+      "wall_seconds": 21.21264371599682,
+      "status": "PARTIAL",
+      "artifact_count": 76,
+      "artifact_json_text_bytes": 4106662
+    },
+    {
+      "scenario": "changed-head-recovery",
+      "job_id": "01a1a43e-f142-7eac-8ab9-41b4fab11739",
+      "snapshot_id": "fe1e5e3f-842b-5037-b6df-631dcb758b40",
+      "generation_id": "06c20cce-29f5-573a-aaae-de391912716a",
+      "base_id": "b99a9c12-c8fd-51fa-bc6f-1a5e6be01a3b",
+      "source_commit": "7a86e0974a58d4d4c9f2e526058351ea41c15420",
+      "wall_seconds": 6.658785720996093,
+      "status": "PARTIAL",
+      "artifact_count": 76,
+      "artifact_json_text_bytes": 4106662
+    }
+  ],
+  "recovery": {
+    "initial_seconds": 16.03814272800082,
+    "resume_seconds": 6.658785720996093,
+    "combined_seconds": 22.696928448996914,
+    "checkpoint_hits": 1,
+    "publication_units_reused": 148,
+    "stage_receipts_reused": 7,
+    "pointer_preserved": true
+  },
+  "duplicate": {
+    "same_snapshot": true,
+    "same_snapshot_bytes": true,
+    "new_generation": false,
+    "snapshot_id": "fe1e5e3f-842b-5037-b6df-631dcb758b40",
+    "base_id": "b99a9c12-c8fd-51fa-bc6f-1a5e6be01a3b"
+  },
+  "track_a": {
+    "claims_before_and_after": 16,
+    "introduced_claims": 1,
+    "removed_claims": 1,
+    "preserved_claim_predecessors": 15,
+    "introduced_native_findings": 0,
+    "resolved_native_findings": 6,
+    "preserved_HIGH_native_predecessors": 37,
+    "unchanged_HIGH_native_predecessors": 34,
+    "moved_HIGH_native_predecessors": 3,
+    "unresolved_current_native": 14,
+    "native_NOT_OBSERVED_events": 28,
+    "evidence_records_verified": 292,
+    "native_evidence_references_verified": 216,
+    "quality_summary_resolved": 0,
+    "reason_quality_resolved": "Global conservative unresolved QUALITY comparison; independent native resolutions remain visible.",
+    "real_documentation_claims": 0,
+    "modified_real_claim_changes": 0,
+    "unexercised": "Real documentation claim modification/correlation; real native introduction in this pair."
+  },
+  "track_b": {
+    "counter_contract": "CONSISTENT_CONSERVATIVE",
+    "backend_matching_or_counter_change": false,
+    "verified_defect": "Frontend false new_code label made an unsupported assertion about changed lines",
+    "correction": "Outside changed lines -> Not attributed to new code",
+    "production_changed_paths": [
+      "frontend/src/WorkspaceApp.tsx"
+    ],
+    "API_compatibility": "UNCHANGED",
+    "historical_records_rewritten": false,
+    "before_UI_tests": {
+      "passed": 1,
+      "failed": 1
+    },
+    "final_backend_tests": {
+      "tests": 135,
+      "passed": 135,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "final_UI_tests": {
+      "passed": 10,
+      "failed": 0,
+      "pending": 0
+    },
+    "case_coverage": "A-J plus explicit claim continuity/API gate checks",
+    "final_warning_instances": 3,
+    "retained_all_test_executions": {
+      "tests": 169,
+      "passed": 158,
+      "failed": 11,
+      "skipped": 0,
+      "warning_instances": 4
+    }
+  },
+  "checks": {
+    "ruff": "PASS",
+    "python_compilation": 321,
+    "typescript": "PASS",
+    "client_build": "PASS",
+    "security": "194 backend payload files unchanged and in-job required denials PASS; UI independently tested, no modified-runtime image reuse"
+  },
+  "resources": [
+    {
+      "scenario": "cold-base",
+      "wall_seconds": 22.842272444999253,
+      "parent_cpu_seconds": 10.599427376000001,
+      "waited_child_cpu_seconds": 12.105096,
+      "kernel_cpu_seconds": 22.710607,
+      "peak_sampled_memory_current_bytes": 289222656,
+      "lifetime_memory_peak_bytes": 303828992,
+      "io_bytes": {
+        "rbytes": 13025280,
+        "wbytes": 67670016,
+        "rios": 557,
+        "wios": 1821,
+        "dbytes": 0,
+        "dios": 0
+      },
+      "pressure_microseconds": {
+        "memory.pressure": {
+          "some": 0,
+          "full": 0
+        },
+        "cpu.pressure": {
+          "some": 11245,
+          "full": 11245
+        },
+        "io.pressure": {
+          "some": 813447,
+          "full": 813447
+        }
+      },
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      },
+      "reclaim": {
+        "pgscan": 0,
+        "pgsteal": 0,
+        "pgscan_kswapd": 0,
+        "pgscan_direct": 0,
+        "pgscan_khugepaged": 0,
+        "pgscan_proactive": 0,
+        "pgsteal_kswapd": 0,
+        "pgsteal_direct": 0,
+        "pgsteal_khugepaged": 0,
+        "pgsteal_proactive": 0
+      }
+    },
+    {
+      "scenario": "warm-base",
+      "wall_seconds": 18.098660141004075,
+      "parent_cpu_seconds": 9.379275514,
+      "waited_child_cpu_seconds": 7.476084,
+      "kernel_cpu_seconds": 16.864043,
+      "peak_sampled_memory_current_bytes": 352043008,
+      "lifetime_memory_peak_bytes": 353353728,
+      "io_bytes": {
+        "rbytes": 0,
+        "wbytes": 95723520,
+        "rios": 0,
+        "wios": 4435,
+        "dbytes": 0,
+        "dios": 0
+      },
+      "pressure_microseconds": {
+        "memory.pressure": {
+          "some": 0,
+          "full": 0
+        },
+        "cpu.pressure": {
+          "some": 10595,
+          "full": 10595
+        },
+        "io.pressure": {
+          "some": 1064896,
+          "full": 1064896
+        }
+      },
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      },
+      "reclaim": {
+        "pgscan": 0,
+        "pgsteal": 0,
+        "pgscan_kswapd": 0,
+        "pgscan_direct": 0,
+        "pgscan_khugepaged": 0,
+        "pgscan_proactive": 0,
+        "pgsteal_kswapd": 0,
+        "pgsteal_direct": 0,
+        "pgsteal_khugepaged": 0,
+        "pgsteal_proactive": 0
+      }
+    },
+    {
+      "scenario": "changed-head",
+      "wall_seconds": 21.21264371599682,
+      "parent_cpu_seconds": 9.918413478000002,
+      "waited_child_cpu_seconds": 10.716092,
+      "kernel_cpu_seconds": 20.653034,
+      "peak_sampled_memory_current_bytes": 410136576,
+      "lifetime_memory_peak_bytes": 413454336,
+      "io_bytes": {
+        "rbytes": 0,
+        "wbytes": 124776448,
+        "rios": 0,
+        "wios": 6998,
+        "dbytes": 0,
+        "dios": 0
+      },
+      "pressure_microseconds": {
+        "memory.pressure": {
+          "some": 0,
+          "full": 0
+        },
+        "cpu.pressure": {
+          "some": 12952,
+          "full": 12952
+        },
+        "io.pressure": {
+          "some": 962141,
+          "full": 962141
+        }
+      },
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      },
+      "reclaim": {
+        "pgscan": 0,
+        "pgsteal": 0,
+        "pgscan_kswapd": 0,
+        "pgscan_direct": 0,
+        "pgscan_khugepaged": 0,
+        "pgscan_proactive": 0,
+        "pgsteal_kswapd": 0,
+        "pgsteal_direct": 0,
+        "pgsteal_khugepaged": 0,
+        "pgsteal_proactive": 0
+      }
+    },
+    {
+      "scenario": "changed-head-recovery",
+      "wall_seconds": 6.658785720996093,
+      "parent_cpu_seconds": 6.084046072,
+      "waited_child_cpu_seconds": 3.552713678800501e-15,
+      "kernel_cpu_seconds": 6.084046,
+      "peak_sampled_memory_current_bytes": 409600000,
+      "lifetime_memory_peak_bytes": 439906304,
+      "io_bytes": {
+        "rbytes": 0,
+        "wbytes": 103096320,
+        "rios": 0,
+        "wios": 7715,
+        "dbytes": 0,
+        "dios": 0
+      },
+      "pressure_microseconds": {
+        "memory.pressure": {
+          "some": 0,
+          "full": 0
+        },
+        "cpu.pressure": {
+          "some": 13203,
+          "full": 13203
+        },
+        "io.pressure": {
+          "some": 526813,
+          "full": 526813
+        }
+      },
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      },
+      "reclaim": {
+        "pgscan": 0,
+        "pgsteal": 0,
+        "pgscan_kswapd": 0,
+        "pgscan_direct": 0,
+        "pgscan_khugepaged": 0,
+        "pgscan_proactive": 0,
+        "pgsteal_kswapd": 0,
+        "pgsteal_direct": 0,
+        "pgsteal_khugepaged": 0,
+        "pgsteal_proactive": 0
+      }
+    },
+    {
+      "scenario": "changed-head-interrupted",
+      "wall_seconds": 16.03814272800082,
+      "parent_cpu_seconds": null,
+      "waited_child_cpu_seconds": null,
+      "kernel_cpu_seconds": 15.45019,
+      "peak_sampled_memory_current_bytes": 435974144,
+      "lifetime_memory_peak_bytes": 439906304,
+      "io_bytes": {
+        "rbytes": 0,
+        "wbytes": 39084032,
+        "rios": 0,
+        "wios": 2649,
+        "dbytes": 0,
+        "dios": 0
+      },
+      "pressure_microseconds": {
+        "memory.pressure": {
+          "some": 0,
+          "full": 0
+        },
+        "cpu.pressure": {
+          "some": 5471,
+          "full": 5471
+        },
+        "io.pressure": {
+          "some": 466502,
+          "full": 466502
+        }
+      },
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      },
+      "reclaim": {
+        "pgscan": 0,
+        "pgsteal": 0,
+        "pgscan_kswapd": 0,
+        "pgscan_direct": 0,
+        "pgscan_khugepaged": 0,
+        "pgscan_proactive": 0,
+        "pgsteal_kswapd": 0,
+        "pgsteal_direct": 0,
+        "pgsteal_khugepaged": 0,
+        "pgsteal_proactive": 0
+      }
+    }
+  ],
+  "highest_lifetime_memory_peak_bytes": 439906304,
+  "memory_max_oom_pressure_reclaim_delta": 0,
+  "limits_unchanged": {
+    "memory_bytes": 768000000,
+    "swap_bytes": 0,
+    "cpu_quota_cores": 2,
+    "analysis_seconds": 1800,
+    "checkpoint_bytes": 64000000,
+    "sanitizer_nodes": 1000000
+  },
+  "stage_commit_push_dispatch_full_scale": false,
+  "next_smallest_milestone": "Authentic bounded documentation claim modification with verifier-supported implementation correlation.",
+  "local_evidence": [
+    {
+      "path": "REPORT_20261104.md",
+      "bytes": 24319,
+      "sha256": "64b64ed76556a4efebf087d9699cd9b5377c15250fa208050f29c77be787dc21"
+    },
+    {
+      "path": "QUALITY_CONTRACT.md",
+      "bytes": 2283,
+      "sha256": "26ff1d225d9b03700f177f2a34c563b52a83a041bb13737dfa799bcda4842b57"
+    },
+    {
+      "path": "raw/source-identity-manifest.json",
+      "bytes": 193818,
+      "sha256": "a0f4668c31b16ca38526150684ebb4c02f1577b3752f915b5f34e8c56cce55e7"
+    },
+    {
+      "path": "raw/upstream-commit-proof.json",
+      "bytes": 49157,
+      "sha256": "d3c079d94ccad9735d2afa688148e3efc605717993fb4c51b7a9ce94a5f09d46"
+    },
+    {
+      "path": "raw/expected-change-matrix.json",
+      "bytes": 73607,
+      "sha256": "ef9b689244089f49eee2db2933299ad0842a1c87ab8c8078a9117e511ea13719"
+    },
+    {
+      "path": "raw/correctness-audit.json",
+      "bytes": 336523,
+      "sha256": "b3b1d826ab71a928d82edd238def62594f857f59a4774b2efdba9d629bda6db0"
+    },
+    {
+      "path": "raw/native-resolution-reconciliation.json",
+      "bytes": 4223,
+      "sha256": "b76fd34839d23aae14a16d3c084e43c9c5a7197b0bb466fda6ae0ae0a66e9cdc"
+    },
+    {
+      "path": "raw/quality-contract-audit.json",
+      "bytes": 8762,
+      "sha256": "507290220c7fd98e62ada00c9517c0756adb0840e88be4f1c3e92961eb54ce51"
+    },
+    {
+      "path": "raw/telemetry-summary.json",
+      "bytes": 76751,
+      "sha256": "7d89b4217f46dcc177cdcd0a646df97c9ad94c201652e546d6243322ae16dc51"
+    },
+    {
+      "path": "raw/job/job-results.json",
+      "bytes": 937405,
+      "sha256": "32293e8bcf0da27fce06fcfe2994205285370f90acfff965a1286abdccdb2170"
+    },
+    {
+      "path": "raw/tests/validation-results.json",
+      "bytes": 4272,
+      "sha256": "2b5a9beb47473991de92fcc7328e8a17833ee71ecd833bba4b90e25b3cc071fa"
+    },
+    {
+      "path": "raw/frontend/before.json",
+      "bytes": 11478,
+      "sha256": "78f3af471d69b835e24bcd8e08862eaa737b4414cd8a3bdd7a3fee5acf1a2ba2"
+    },
+    {
+      "path": "raw/frontend/after-final.json",
+      "bytes": 4165,
+      "sha256": "f286b0cb0b4d85d7ad3de1e49fefba966c28d53622da94243b259a32a27642e0"
+    },
+    {
+      "path": "raw/frontend/checks.json",
+      "bytes": 796,
+      "sha256": "51a76f3c0ba8f4e0971c6f1c294f2a6d26d00dc1e833de4ff0a9d488c3dd3baa"
+    }
+  ]
+}
