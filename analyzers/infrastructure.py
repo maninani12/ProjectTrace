@@ -22,6 +22,7 @@ from analyzers.compose_evidence import (
     fuseki_startup,
     option_service,
 )
+from analyzers.compose_profiles import PROFILE_FILE, profile_anchors
 from analyzers.infrastructure_deep import checks as deep_checks
 from analyzers.infrastructure_deep import config as infrastructure_config
 from analyzers.infrastructure_extra import KUBERNETES_KINDS, dockerfile, enrich_document, terraform
@@ -427,11 +428,13 @@ def _structured_iac(path, source, make_finding, settings=None, *, hcl_loads=None
                     identity_method="DOCKER_INSTRUCTIONS",
                 )
         elif suffix in {".yaml", ".yml", ".json"}:
-            docs = [json.loads(source)] if suffix == ".json" else bounded_yaml(source, track_mappings=path in SOURCE_PATHS)
-            services = compose_services(docs) if path in SOURCE_PATHS else None
+            tracked = path in SOURCE_PATHS or path == PROFILE_FILE
+            docs = [json.loads(source)] if suffix == ".json" else bounded_yaml(source, track_mappings=tracked)
+            services = compose_services(docs) if tracked else None
             postgres_option = option_service(path, services) if path in {BASE, OVERLAY} else None
             startup_context = fuseki_startup(path, services)
             startup_service = "openmetadata-server" if path == DEFAULT_BASE else "fuseki"
+            profile_evidence = profile_anchors(services) if path == PROFILE_FILE else {}
             for doc in docs:
                 if not isinstance(doc, dict):
                     continue
@@ -491,6 +494,8 @@ def _structured_iac(path, source, make_finding, settings=None, *, hcl_loads=None
                             target["postgres_option"] = True
                         if startup_context and name == startup_service:
                             target["fuseki_startup"] = startup_context
+                        if name in profile_evidence:
+                            target["profile_selections"] = profile_evidence[name]
                         if props.get("privileged") is True:
                             report("PT-IAC-001", target, "Compose service explicitly enables privileged mode.")
                         if str(props.get("user", "")).split(":")[0] in {"root", "0"}:

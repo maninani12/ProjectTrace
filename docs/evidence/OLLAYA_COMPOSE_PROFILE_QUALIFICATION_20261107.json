@@ -1,0 +1,207 @@
+{
+  "date": "2026-11-07",
+  "tested_source_tree_sha256": "9d3f8a2e42652551a9713cddc8f2823b0c8508c4075f5cbf15a9ff35206ad689",
+  "tested_source_files": 725,
+  "upstream": {
+    "repository": "fs1n/Ollama-Manager",
+    "commit": "407e1497530b5ce63a18aed4d75cdf27eda326f4",
+    "blobs": [
+      {
+        "path": "README.md",
+        "blob_sha1": "44af2bd470e507076e71737981adc5a962624fac",
+        "sha256": "81570b59f5f7099692c7020acbaa6bb8c135b48a3ea4fdf0e1ba17b8d15d3b31",
+        "bytes": 8142,
+        "mode": "100644"
+      },
+      {
+        "path": "docker-compose.yml",
+        "blob_sha1": "08cb97bead5e14f4782f4b1ffdcdcc069993e189",
+        "sha256": "6042f421afe90da8caf54b17aedcafd3057c2fd2bd0ceac10edd36e4b048178d",
+        "bytes": 2296,
+        "mode": "100644"
+      }
+    ]
+  },
+  "profile": {
+    "name": "ollaya",
+    "default_services": [
+      "ollama-manager"
+    ],
+    "selected_services": [
+      "ollama-manager",
+      "ollaya"
+    ],
+    "verdict": "INFERRED",
+    "confidence": "MEDIUM",
+    "scope": "DECLARED_CONFIGURATION",
+    "supporting_paths": [
+      "docker-compose.yml"
+    ],
+    "published_scope": "Two-file pinned slice",
+    "local_gate": "PASS",
+    "runtime_observed": false,
+    "duplicate_delivery_identical": true
+  },
+  "image": {
+    "candidate": "sha256:2e518345dc822690a41b1f78c9a8d75b0051375578c167239ad8c8fa3281cea0",
+    "base": "sha256:6759c82397962d141f68b20c016f5d9a41951a724daccf8cfa64f2f0ee74a9f7",
+    "runtime_hashes": 196,
+    "identity_verification": "Retained build, container and publication receipts",
+    "live_inspect": "ENGINE_UNAVAILABLE",
+    "probe_exit_codes": {
+      "existing": 0,
+      "supplement": 0
+    }
+  },
+  "linux": {
+    "development": {
+      "exit_code": 0,
+      "counts": {
+        "tests": 97,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 97
+      },
+      "warnings": 1,
+      "warning_category": "StarletteDeprecationWarning",
+      "junit_sha256": "9b287efd0603d7a44202a5d30207f09c5bb989035f4c4024de4f94fb3b0e3c4a",
+      "log_sha256": "d15dd09e03819f35a5b04a5b5d41b36175cc1f1e092853bdfcaad9a006cb27d7"
+    },
+    "required": {
+      "exit_code": 0,
+      "counts": {
+        "tests": 128,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 128
+      },
+      "warnings": 1,
+      "warning_category": "StarletteDeprecationWarning",
+      "junit_sha256": "d516636e44b72305e1977186e62b13c7e95a9c720b576406b4cedf6860794dbe",
+      "log_sha256": "10844a2ef26ca973c5aa6c47505ed27d0f8dd196fa09db54d4ff95397df405e8"
+    }
+  },
+  "ruff_exit_code": 0,
+  "compilation_exit_code": 0,
+  "historical_attempts": {
+    "original_behavior_reproduction": "Expected fail, no profile claim extracted",
+    "windows_smoke": "62 passed, 1 failed. The fixture omitted physical_lines; both final Linux selections exited 0.",
+    "prior_fuseki_launchers": "Image-tag and private test-directory errors are retained in the earlier Fuseki backup evidence and did not enter Ollaya candidate test totals.",
+    "earlier_failure_log_download": "The November 4 initial fetch rejected terminal escapes; the retry retained the raw log."
+  },
+  "ci": {
+    "workflow_head": "d247049e47cad510c3441e83989fe4156a554fc0",
+    "validation_run": 41786011272,
+    "validation_jobs": [
+      {
+        "name": "broker-recovery",
+        "id": 126428192884,
+        "status": "SUCCESS",
+        "completed_at": "2026-11-04T06:38:19Z"
+      },
+      {
+        "name": "parser-isolation",
+        "id": 126428193254,
+        "status": "SUCCESS",
+        "completed_at": "2026-11-04T06:33:47Z"
+      },
+      {
+        "name": "browser",
+        "id": 126428193297,
+        "status": "SUCCESS",
+        "completed_at": "2026-11-04T06:50:53Z"
+      },
+      {
+        "name": "validate",
+        "id": 126428193326,
+        "status": "SUCCESS",
+        "completed_at": "2026-11-04T06:49:47Z"
+      }
+    ],
+    "scale_run": 41786011306,
+    "scale_jobs": {
+      "baseline": {
+        "job_id": 126428193239,
+        "classification": "VERIFIED_RESOURCE_OOM_FAILURE",
+        "stage": "ANALYZING",
+        "container_exit": 137,
+        "oom_killed": true,
+        "peak_bytes": 768000000,
+        "memory_limit": 768000000,
+        "swap_limit": 0,
+        "artifact_id": 13301657888,
+        "artifact_digest": "sha256:a1ae8bcd6cfcd96dbc348b6a2f169058e831e84ab51277b11391374dd8daf679",
+        "artifact_digest_verified": true,
+        "published_generations": 0
+      },
+      "candidate": {
+        "job_id": 126428192919,
+        "classification": "VERIFIED_ANALYSIS_TIME_BUDGET",
+        "stage": "VERIFYING",
+        "container_exit": 1,
+        "oom_killed": false,
+        "peak_bytes": 768000000,
+        "memory_limit": 768000000,
+        "swap_limit": 0,
+        "artifact_id": 13303116768,
+        "artifact_digest": "sha256:3ded911a8908a859908a0eb8e0dfdbd2039bc4f88239b154e717ea11847a6274",
+        "artifact_digest_verified": true,
+        "published_generations": 0
+      }
+    },
+    "candidate_budget_seconds": 1800,
+    "candidate_harness_seconds": 2200.053,
+    "final_identity": {
+      "start_harness_seconds": 1747.105201,
+      "end_harness_seconds": 2134.162845,
+      "terminal_event": "END",
+      "wall_seconds": 387.057644,
+      "cgroup_cpu_seconds": 382.71874,
+      "io_full_pressure_seconds": 4.870989,
+      "memory_max_event_delta": 47067,
+      "pgscan_delta": 3171274
+    },
+    "quality_build": {
+      "start_harness_seconds": 1530.728461,
+      "end_harness_seconds": 1746.775256,
+      "terminal_event": "END",
+      "wall_seconds": 216.046795,
+      "cgroup_cpu_seconds": 210.617662,
+      "io_full_pressure_seconds": 5.948989,
+      "memory_max_event_delta": 9365,
+      "pgscan_delta": 575945
+    },
+    "checkpoint_guard": {
+      "start_harness_seconds": 2153.690277,
+      "end_harness_seconds": 2153.699527,
+      "terminal_event": "ERROR",
+      "wall_seconds": 0.00925,
+      "cgroup_cpu_seconds": 0.006108,
+      "io_full_pressure_seconds": 0.001636,
+      "memory_max_event_delta": 0,
+      "pgscan_delta": 0
+    },
+    "cold_analysis": "FAILED",
+    "manifest": "PASSED",
+    "enforcement_probe": "PASSED"
+  },
+  "next_milestone": "Bounded source-identity profiling on matched pinned slices with CPU, source-read, helper and cgroup reclaim attribution",
+  "commercial_v1": "DEVELOPMENT IN PROGRESS",
+  "scale001": "NOT QUALIFIED",
+  "local_evidence": [
+    {
+      "path": "PROFILE_VERIFICATION.json",
+      "sha256": "5f6ac6d59960c05d3040f8c431591af4cd7f63f4f08444ebbc652976a74cc3a2"
+    },
+    {
+      "path": "ci/diagnosis.json",
+      "sha256": "79ad0f0c47393bdb4abe8d1d9972e371725745955e198c2c799c8ccbd444f265"
+    },
+    {
+      "path": "ci/ci-074824.json",
+      "sha256": "15d866c537d7d19b82878d613576de3ddc687ce6cdc561a97c18c48335edbae3"
+    }
+  ]
+}

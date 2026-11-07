@@ -10,6 +10,7 @@ import re
 
 from analyzers import sandbox
 from analyzers.compose_evidence import FUSEKI_LAYERED, FUSEKI_STANDALONE, GUIDE, OPTION_PREFIX, documentation_context
+from analyzers.compose_profiles import PROFILE_CONTEXT, PROFILE_FAMILY, PROFILE_README, documented_profile
 from analyzers.observation_store import SignalRows
 
 TECHNOLOGIES = {
@@ -69,6 +70,7 @@ DECLARATION = re.compile(
     re.I,
 )
 FENCE = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
+COMMENT = re.compile(r"<!--|-->")
 
 
 def claim_key(claim):
@@ -106,6 +108,7 @@ def extract_documentation(files, *, diagnostics=None, limit=1501):
             )
             return claims
         fence = ""
+        in_comment = False
         lines = text.splitlines()
         for line_no, line in enumerate(lines, 1):
             if len(line) > 32000:
@@ -131,13 +134,23 @@ def extract_documentation(files, *, diagnostics=None, limit=1501):
             if fence:
                 continue
             candidates = []
+            profile_claim = None
+            if path == PROFILE_README:
+                comments = COMMENT.findall(line)
+                if not in_comment and not comments:
+                    profile_claim = documented_profile(path, lines, line_no)
+                if comments:
+                    in_comment = comments[-1] == "<!--"
+            if profile_claim:
+                command, category, profile = profile_claim
+                candidates.append((category, profile, command))
             conditional = line.strip().startswith(OPTION_PREFIX)
             if conditional:
                 candidates.append(("TECHNOLOGY", "postgresql", line.strip()))
             fuseki = path == GUIDE and line in (FUSEKI_STANDALONE, FUSEKI_LAYERED)
             if fuseki:
                 candidates.append(("INFRASTRUCTURE", "fuseki", line))
-            for declaration in (() if conditional or fuseki else DECLARATION.finditer(line)):
+            for declaration in (() if conditional or fuseki or profile_claim else DECLARATION.finditer(line)):
                 content = declaration.group(1)
                 for match in TOKEN.finditer(content):
                     preceding = re.split(r",|\band\b|\bbut\b", content[: match.start()], flags=re.I)[-1]
@@ -169,7 +182,9 @@ def extract_documentation(files, *, diagnostics=None, limit=1501):
             for match in re.finditer(r"\bOrders publishes events through (Kafka|Redis)\b", line, re.I):
                 candidates.append(("ARCHITECTURE", match.group(1).lower(), match.group(0) + "."))
             for category, expected, statement in candidates:
-                identity = (path, category, expected)
+                is_profile = profile_claim == (statement, category, expected)
+                family = PROFILE_FAMILY if is_profile else "declaration"
+                identity = (path, category, expected, family)
                 if identity in seen:
                     continue
                 seen.add(identity)
@@ -180,10 +195,12 @@ def extract_documentation(files, *, diagnostics=None, limit=1501):
                         expected=expected,
                         path=path,
                         line=line_no,
-                        assertion_family="declaration",
+                        assertion_family=family,
                     )
                 )
-                if path == GUIDE and (conditional or fuseki):
+                if is_profile:
+                    claims[-1]["configuration_context"] = PROFILE_CONTEXT
+                elif path == GUIDE and (conditional or fuseki):
                     context = documentation_context(lines, line_no)
                     if context:
                         claims[-1]["configuration_context"] = context
@@ -271,6 +288,18 @@ class ComposeFusekiVerifier(ScopedComposeVerifier):
         "The documented Compose selection declares the Fuseki service and its local port mapping. "
         "Fuseki startup, the IntelliJ backend and endpoint reachability are unobserved."
     )
+
+
+class ComposeProfileVerifier(ScopedComposeVerifier):
+    name = "ComposeProfileVerifier"
+    signal_type = PROFILE_FAMILY
+
+    def evaluate(self, claim, signals, dependencies):
+        if signals:
+            services = signals[0]["value"]
+            return ("INFERRED", f"The declared Compose profile selects {services}. "
+                    "Container startup and runtime connectivity are unobserved.", signals)
+        return super().evaluate(claim, [], [])
 
 
 class AuthenticationVerifier(Verifier):
@@ -378,6 +407,8 @@ VERIFIERS = {
 
 
 def verifier_for(claim):
+    if claim.get("assertion_family") == PROFILE_FAMILY:
+        return ComposeProfileVerifier()
     if claim["category"] == "INFRASTRUCTURE" and claim["expected"] == "fuseki" and claim.get("path") == GUIDE:
         return ComposeFusekiVerifier()
     if claim["category"] == "TECHNOLOGY" and claim["expected"] in {"postgresql", "mysql", "sqlite", "mongodb"}:

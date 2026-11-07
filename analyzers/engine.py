@@ -21,6 +21,7 @@ from analyzers.code_quality.classification import binary_input
 from analyzers.code_quality.core import build as quality_build
 from analyzers.code_quality.rules import RULES as QUALITY_RULES
 from analyzers.compose_evidence import option_signals
+from analyzers.compose_profiles import PROFILE_CONTEXT, profile_signals
 from analyzers.finding_identity import annotate as annotate_finding_identity
 from analyzers.flows import python_flows
 from analyzers.infrastructure import structured_iac_batch
@@ -38,7 +39,7 @@ PARSER_SIGNATURE = hashlib.sha256(
     json.dumps(
         [
             sys.version,
-            "native-observations-v12-compose-startup",
+            "native-observations-v13-compose-profiles",
             sandbox.cache_policy(),
             *[
                 package_version(p)
@@ -1242,14 +1243,16 @@ def analyze(
     reused_verifications = 0
     contexts = {c["configuration_context"] for c in candidates if "configuration_context" in c}
     configuration = {context: option_signals(assets, files, context) for context in contexts}
+    profiles = profile_signals(assets, input_files) if PROFILE_CONTEXT in contexts else {}
     for claim in candidates:
         claim["text"] = redact(claim["text"])
         claim["expected"] = redact(claim["expected"])
         key = claim_key(claim)
         context = claim.get("configuration_context")
+        scoped = profiles.get(claim["expected"], ()) if context == PROFILE_CONTEXT else configuration.get(context, ())
         try:
             verdict, reused_verification = verify_claim(
-                claim, signals, deps, prior_verifications.get(key), configuration=configuration.get(context, ()),
+                claim, signals, deps, prior_verifications.get(key), configuration=scoped,
             )
         except Exception as error:
             failures.add("CLAIMS")

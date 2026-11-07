@@ -8,6 +8,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 from analyzers import sandbox
 from analyzers.compose_evidence import CONTEXT_CLAIMS, GUIDE, documentation_context
+from analyzers.compose_profiles import PROFILE_CONTEXT, PROFILE_FAMILY, PROFILE_README, documented_profile
 from analyzers.parser_protocol import completed_packets, expand_native_artifact
 
 
@@ -38,14 +39,20 @@ def validate_source_rows(rows, warnings, files, *, documentation=False):
         if documentation:
             if (set(row) - {"configuration_context"} != {"text", "category", "expected", "path", "line", "assertion_family"}
                     or any(not isinstance(row[key], str) for key in ("text", "category", "expected"))
-                    or row["assertion_family"] != "declaration" or type(row["line"]) is not int
-                    or not 1 <= row["line"] <= line_counts[row["path"]]
-                    or "configuration_context" in row and (
+                    or row["assertion_family"] not in ("declaration", PROFILE_FAMILY) or type(row["line"]) is not int
+                    or not 1 <= row["line"] <= line_counts[row["path"]]):
+                raise sandbox.SandboxFailure("HELPER_DOCUMENT_SCHEMA")
+            context = row.get("configuration_context")
+            fields = (row["text"], row["category"], row["expected"])
+            if row["assertion_family"] == PROFILE_FAMILY:
+                if (context != PROFILE_CONTEXT or row["path"] != PROFILE_README
+                    or documented_profile(row["path"], files[row["path"]].splitlines(), row["line"]) != fields):
+                    raise sandbox.SandboxFailure("HELPER_DOCUMENT_SCHEMA")
+            elif "configuration_context" in row and (
                         not isinstance(row["configuration_context"], str)
                         or row["path"] != GUIDE
-                        or CONTEXT_CLAIMS.get(row["configuration_context"]) != (row["text"], row["category"], row["expected"])
-                        or documentation_context(files[GUIDE].splitlines(), row["line"]) != row["configuration_context"]
-                    )):
+                        or CONTEXT_CLAIMS.get(context) != fields
+                        or documentation_context(files[GUIDE].splitlines(), row["line"]) != context):
                 raise sandbox.SandboxFailure("HELPER_DOCUMENT_SCHEMA")
         elif (set(row) != {"name", "version", "ecosystem", "path", "direct", "dependency_kind", "manifest", "version_kind", "license"}
                 or row["manifest"] != row["path"] or any(not isinstance(row[key], str) for key in ("name", "version", "ecosystem"))
