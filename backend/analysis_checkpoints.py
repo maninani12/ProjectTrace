@@ -60,10 +60,11 @@ def budget():
     return maximum
 
 
-def save(db, job_id, organization_id, repository_id, signature, result, checkpoint, *, check=None):
+def save(db, job_id, organization_id, repository_id, signature, result, checkpoint, *, check=None, rejection=None):
+    """Save a checkpoint and optionally collect aggregate budget rejection metadata."""
     from backend.checkpoint_pages import save as save_pages
     job = scope(db, job_id, organization_id, repository_id)
-    return save_pages(db, job, signature, result, budget(), checkpoint, check or checkpoint)
+    return save_pages(db, job, signature, result, budget(), checkpoint, check or checkpoint, rejection=rejection)
 
 
 def discard(db, job):

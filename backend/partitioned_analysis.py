@@ -9,7 +9,7 @@ from sqlalchemy import select, text
 
 from analyzers.engine import PARSER_SIGNATURE, VERSION, analyze, native_observations
 from analyzers.infrastructure_deep import config
-from analyzers.observation_store import EncryptedRows, SignalRows
+from analyzers.observation_store import EncryptedRows, MetricRows, SignalRows
 from analyzers.performance import Performance
 from backend.db import ParserArtifact
 from backend.domain import add
@@ -31,7 +31,7 @@ def analyze_inventory(db, files, *, progress=None, verification_context=None, pr
     if not isinstance(files, RepositoryFiles) or files.native_only:
         raise ValueError("Analysis requires an authorized complete inventory.")
     scope = (files.organization_id, files.repository_id, files.inventory_id)
-    signals, metrics, findings = SignalRows(scope), EncryptedRows(scope), EncryptedRows(scope)
+    signals, metrics, findings = SignalRows(scope), MetricRows(scope), EncryptedRows(scope)
     signals.label, metrics.label, findings.label = "NATIVE_SIGNALS", "NATIVE_METRICS", "NATIVE_FINDINGS"
     if getattr(progress, "close_on_failure", None):
         progress.close_on_failure(signals)

@@ -276,6 +276,28 @@ class MetricRows(EncryptedRows):
         finally:
             cursor.close()
 
+    def for_paths(self, paths):
+        """Read a bounded path batch in global observation order."""
+        self._open()
+        selected = set(paths)
+        if not selected:
+            return
+        tags = {self._tag(path): path for path in selected}
+        if len(tags) != len(selected):
+            raise ValueError("Metric paths have conflicting index tags.")
+        placeholders = ",".join("?" for _ in tags)
+        cursor = self.connection.execute(
+            f"SELECT ordinal,path FROM metric_lookup WHERE path IN ({placeholders}) ORDER BY ordinal", tuple(tags)
+        )
+        try:
+            for position, tag in cursor:
+                row = self[position]
+                if row["path"] != tags[tag]:
+                    raise ValueError("Metric index does not match its encrypted row.")
+                yield row
+        finally:
+            cursor.close()
+
     def containing(self, path, line):
         best, span = None, None
         for row in self.for_path(path):

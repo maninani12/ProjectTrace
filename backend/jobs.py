@@ -179,12 +179,15 @@ def execute_analysis(db, user, repo, files, *, request_id=None, job=None, _elaps
 
     def save_checkpoint(signature, result):
         from backend.analysis_checkpoints import save
-        saved = save(db, job_id, organization_id, repository_id, signature, result, check_current, check=stage.check_current)
+        rejection = {}
+        saved = save(db, job_id, organization_id, repository_id, signature, result, check_current,
+                     check=stage.check_current, rejection=rejection)
         performance.count("global_analysis_checkpoints_saved" if saved else "global_analysis_checkpoints_oversize")
         if not saved and inventory_input and os.getenv("PROJECTTRACE_GENERATION_PUBLICATION", "1") == "1":
             raise IntakeError("GLOBAL_CHECKPOINT_BUDGET", "Completed analysis exceeds the durable checkpoint byte budget.",
                               budget="ANALYSIS_CHECKPOINT_MAX_BYTES", maximum=int(os.getenv("ANALYSIS_CHECKPOINT_MAX_BYTES", "64000000")),
-                              remediation="Inspect analysis volume and stage storage; retained source inventory remains available.")
+                              remediation="Inspect analysis volume and stage storage; retained source inventory remains available.",
+                              checkpoint_diagnostic=rejection or None)
 
     stage.load_analysis_checkpoint = load_checkpoint
     stage.save_analysis_checkpoint = save_checkpoint

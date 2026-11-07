@@ -201,6 +201,9 @@ def main():
         if hasattr(error, "budget"):
             receipt["safe_budget_diagnostic"] = {k: getattr(error, k, None) for k in
                 ("budget", "maximum", "actual", "rows", "collection")}
+        checkpoint_diagnostic = getattr(error, "checkpoint_diagnostic", None)
+        if checkpoint_diagnostic is not None:
+            receipt["checkpoint_diagnostic"] = checkpoint_diagnostic
         import traceback
         receipt["owned_stack"] = [{"module": Path(frame.f_code.co_filename).name,
                                   "function": frame.f_code.co_name, "line": line}

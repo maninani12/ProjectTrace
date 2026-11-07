@@ -25,16 +25,27 @@ MAX_CIPHER_PAGE = PAGE_BYTES * 2 + 4096
 
 
 class BudgetExceeded(ValueError):
-    pass
+    def __init__(self, message, *, site, limit, measured, exact, **components):
+        super().__init__(message)
+        self.diagnostic = {
+            "site": site,
+            "measurement": "ENCRYPTED_AGGREGATE_BYTES" if exact else "RAW_UTF8_PREFIX_BYTES",
+            "site_limit_bytes": limit,
+            "measured_bytes": measured,
+            "measurement_exact": exact,
+            **components,
+        }
 
 
-def encode(value, maximum, check, *, default=None, sort_keys=True):
+def encode(value, maximum, check, *, default=None, sort_keys=True, site="ROW_ENCODING"):
     raw = bytearray()
     for index, part in enumerate(json.JSONEncoder(default=default, ensure_ascii=True, sort_keys=sort_keys, separators=(",", ":")).iterencode(value)):
         if index % 256 == 0:
             check()
-        if len(raw) + len(part) > maximum:
-            raise BudgetExceeded("Checkpoint row or manifest exceeds its byte budget.")
+        attempted = len(raw) + len(part)  # ensure_ascii makes these UTF-8 byte lengths.
+        if attempted > maximum:
+            raise BudgetExceeded("Checkpoint row or manifest exceeds its byte budget.",
+                                 site=site, limit=maximum, measured=attempted, exact=False)
         raw.extend(part.encode("ascii"))
     return bytes(raw)
 
@@ -54,7 +65,7 @@ def discard(db, job):
     db.execute(delete(AnalysisCheckpointPart).where(*parts_where(job)))
 
 
-def save(db, job, signature, result, maximum, fence, check):
+def save(db, job, signature, result, maximum, fence, check, *, rejection=None):
     from backend.queue import cipher
     attempt = str(uuid.uuid4())
     context = identity(job, signature, attempt)
@@ -96,8 +107,12 @@ def save(db, job, signature, result, maximum, fence, check):
         encrypted = cipher().encrypt(packed).decode()
         lock()
         total, active = retained_bytes()
-        if total + active + len(encrypted) > maximum:
-            raise BudgetExceeded("Aggregate encrypted checkpoint budget exceeded.")
+        attempted = total + active + len(encrypted)
+        if attempted > maximum:
+            raise BudgetExceeded("Aggregate encrypted checkpoint budget exceeded.",
+                                 site="PAGE_ADMISSION", limit=maximum, measured=attempted, exact=True,
+                                 retained_page_bytes=total, active_manifest_bytes=active,
+                                 proposed_ciphertext_bytes=len(encrypted), component_raw_bytes=len(raw))
         db.add(AnalysisCheckpointPart(job_id=job.id, attempt=attempt, ordinal=ordinal,
             organization_id=job.organization_id, repository_id=job.repository_id,
             ciphertext=encrypted, digest=hashlib.sha256(packed).hexdigest(), expires_at=expires))
@@ -174,12 +189,16 @@ def save(db, job, signature, result, maximum, fence, check):
         # files is an iterable inventory view, never repository source text.
         root = ["object", [[key, tree(value, files=key == "files")] for key, value in sorted(result.items())]]
         manifest = {"schema": SCHEMA, "identity": context, "root": root, "pages": ordinal, "expires_at": expires}
-        raw = encode(manifest, row_limit, tick)
+        raw = encode(manifest, row_limit, tick, site="MANIFEST_ENCODING")
         encrypted = cipher().encrypt(raw).decode()
         lock()
         total, active_size = retained_bytes()
-        if total + max(active_size, len(encrypted)) > maximum:
-            raise BudgetExceeded("Aggregate encrypted checkpoint budget exceeded.")
+        attempted = total + max(active_size, len(encrypted))
+        if attempted > maximum:
+            raise BudgetExceeded("Aggregate encrypted checkpoint budget exceeded.",
+                                 site="MANIFEST_ADMISSION", limit=maximum, measured=attempted, exact=True,
+                                 retained_page_bytes=total, active_manifest_bytes=active_size,
+                                 proposed_ciphertext_bytes=len(encrypted), component_raw_bytes=len(raw))
         inventory = db.execute(select(func.count(), func.min(AnalysisCheckpointPart.ordinal),
             func.max(AnalysisCheckpointPart.ordinal)).where(*parts_where(job, attempt))).one()
         if inventory[0] != ordinal or ordinal and (inventory[1], inventory[2]) != (0, ordinal - 1):
@@ -214,9 +233,19 @@ def save(db, job, signature, result, maximum, fence, check):
             if active_context != context:
                 db.execute(delete(AnalysisCheckpointPart).where(*parts_where(job, attempt)))
                 db.commit()
+                cleanup = "ATTEMPT_REMOVED"
+            else:
+                cleanup = "ACTIVE_ATTEMPT_PRESERVED"
         except Exception:
             db.rollback()  # Preserve the original failure; expiry reclaims orphans.
+            cleanup = "CLEANUP_FAILED"
         if isinstance(error, BudgetExceeded):
+            if rejection is not None:
+                rejection.update(schema="projecttrace-checkpoint-rejection-v1",
+                                 storage_schema=SCHEMA, stage="GLOBAL_CHECKPOINT",
+                                 configured_limit_bytes=maximum, staged_page_count=ordinal,
+                                 logical_v1_bytes=None, logical_v1_size_reason="V1_ENVELOPE_NOT_SERIALIZED",
+                                 cleanup=cleanup, **error.diagnostic)
             return False
         raise
 

@@ -6,7 +6,7 @@ from cryptography.fernet import InvalidToken
 
 from analyzers.code_quality.core import build
 from analyzers.engine import native_observations
-from analyzers.observation_store import EncryptedRows, ObservationBudgetExceeded
+from analyzers.observation_store import EncryptedRows, MetricRows, ObservationBudgetExceeded
 
 
 def test_spill_is_lossless_ordered_encrypted_and_streams_json(tmp_path):
@@ -250,3 +250,49 @@ def test_spilled_metric_reverse_iteration_preserves_non_python_identity(monkeypa
         assert actual[0]["identity_method"] == "PARSER_SYMBOL" and actual[0]["identity_confidence"] == "HIGH"
     finally:
         rows.close()
+
+
+def test_final_identity_only_decodes_selected_metrics_in_original_order(monkeypatch):
+    from analyzers import isolated_analysis
+
+    paths = [f"source/{i}.ts" for i in range(101)]
+    findings = [{"path": path, "rule": "OWNED"} for path in paths]
+    observations = [
+        {"path": path, "order": i, "duplicate_tokens": ["private"]}
+        for i, path in enumerate([paths[-1], *reversed(paths[:-1]), "unused.ts", paths[0], paths[-1]])
+    ]
+    packets = []
+
+    def helper(operation, packet):
+        assert operation == "identity"
+        packets.append(packet)
+        return [dict(finding, structural_key=finding["path"]) for finding in packet["findings"]]
+
+    monkeypatch.setattr(isolated_analysis.sandbox, "call", helper)
+    expected = isolated_analysis.identity({}, [dict(finding) for finding in findings], observations)
+    expected_packets = [packet["metrics"] for packet in packets]
+    packets.clear()
+    metrics = MetricRows(("tenant-a", "repo", "inventory"))
+    try:
+        metrics.extend(observations)
+        statements = []
+        metrics.connection.set_trace_callback(statements.append)
+        result = isolated_analysis.identity({}, findings, metrics)
+        assert result == expected
+        assert [packet["metrics"] for packet in packets] == expected_packets
+        decoded = sum(sql.startswith("SELECT ciphertext FROM rows") for sql in statements)
+        assert decoded == len(observations) - 1
+    finally:
+        metrics.close()
+
+
+def test_metric_path_batch_rejects_misbound_index_row():
+    metrics = MetricRows(("tenant-a", "repo", "inventory"))
+    try:
+        metrics.append({"path": "selected.py"})
+        metrics.append({"path": "unrelated.py"})
+        metrics.connection.execute("UPDATE metric_lookup SET path=? WHERE ordinal=1", (metrics._tag("selected.py"),))
+        with pytest.raises(ValueError, match="does not match"):
+            list(metrics.for_paths(["selected.py"]))
+    finally:
+        metrics.close()

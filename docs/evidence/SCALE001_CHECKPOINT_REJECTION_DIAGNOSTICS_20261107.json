@@ -1,0 +1,403 @@
+{
+  "checkpoint": "34655e84ac14fd3911a3cdfe78f5f8fd63c97284",
+  "checkpoint_storage_policy": "existing paged writer and historical v1 recovery",
+  "date": "2026-11-07",
+  "diagnostic": "projecttrace-checkpoint-rejection-v1",
+  "disposition": {
+    "commercial_v1": "DEVELOPMENT IN PROGRESS",
+    "scale001": "NOT QUALIFIED"
+  },
+  "linux": {
+    "compile": {
+      "exit_code": 0,
+      "mode": "development",
+      "timeout_seconds": 120
+    },
+    "development": {
+      "complete_junit": true,
+      "counts": {
+        "errors": 0,
+        "failures": 0,
+        "passed": 274,
+        "skipped": 0,
+        "tests": 274
+      },
+      "exit_code": 0,
+      "mode": "development",
+      "timeout_seconds": 800,
+      "warnings": 1
+    },
+    "required-fixtures": {
+      "complete_junit": true,
+      "counts": {
+        "errors": 0,
+        "failures": 0,
+        "passed": 2,
+        "skipped": 0,
+        "tests": 2
+      },
+      "exit_code": 0,
+      "mode": "required",
+      "timeout_seconds": 800,
+      "warnings": 1
+    },
+    "required-new": {
+      "complete_junit": true,
+      "counts": {
+        "errors": 0,
+        "failures": 0,
+        "passed": 60,
+        "skipped": 0,
+        "tests": 60
+      },
+      "exit_code": 0,
+      "mode": "required",
+      "timeout_seconds": 800,
+      "warnings": 1
+    },
+    "required-repeat": {
+      "complete_junit": true,
+      "counts": {
+        "errors": 0,
+        "failures": 0,
+        "passed": 191,
+        "skipped": 0,
+        "tests": 191
+      },
+      "exit_code": 0,
+      "mode": "required",
+      "timeout_seconds": 1500,
+      "warnings": 1
+    },
+    "ruff": {
+      "exit_code": 0,
+      "mode": "development",
+      "timeout_seconds": 120
+    }
+  },
+  "old_reviewed_files_preserved": 8,
+  "overhead": {
+    "accept": {
+      "after_traced_python_peak_bytes": 2170148,
+      "before_traced_python_peak_bytes": 2170013,
+      "cgroup_cpu_seconds": [
+        0.025486,
+        0.026796
+      ],
+      "process_cpu_seconds": [
+        0.025151370000000006,
+        0.02608539700000001
+      ],
+      "wall_seconds": [
+        0.028677215999778127,
+        0.02896067099936772
+      ]
+    },
+    "default_limit": {
+      "after": {
+        "cgroup_cpu_seconds": 5.907389,
+        "diagnostic_compact_bytes": 562,
+        "limit_bytes": 64000000,
+        "measured_instrumentation": {
+          "db_commit_seconds": 0.9419790029978685,
+          "encode_seconds": 0.07755204799013882,
+          "sql_cursor_seconds": 3.082468287001575
+        },
+        "memory_event_delta": {
+          "high": 0,
+          "low": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_group_kill": 0,
+          "oom_kill": 0
+        },
+        "observed_input": {
+          "full_traversals": 0,
+          "rows_iterated": 260,
+          "traversals_started": 1
+        },
+        "operation_counts": {
+          "commits": 490,
+          "encode_calls": 262,
+          "sql_statements": 1227
+        },
+        "process_cpu_seconds": 5.907085574,
+        "sampled_peaks": {
+          "cgroup_memory_bytes": 258416640,
+          "rss_bytes": 144093184,
+          "samples": 254
+        },
+        "wall_seconds": 6.476758601000256
+      },
+      "before": {
+        "cgroup_cpu_seconds": 5.603584,
+        "diagnostic_compact_bytes": 0,
+        "limit_bytes": 64000000,
+        "measured_instrumentation": {
+          "db_commit_seconds": 0.9629027420078273,
+          "encode_seconds": 0.08049860199389514,
+          "sql_cursor_seconds": 2.7389831090195003
+        },
+        "memory_event_delta": {
+          "high": 0,
+          "low": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_group_kill": 0,
+          "oom_kill": 0
+        },
+        "observed_input": {
+          "full_traversals": 0,
+          "rows_iterated": 260,
+          "traversals_started": 1
+        },
+        "operation_counts": {
+          "commits": 490,
+          "encode_calls": 262,
+          "sql_statements": 1227
+        },
+        "process_cpu_seconds": 5.603159926,
+        "sampled_peaks": {
+          "cgroup_memory_bytes": 257544192,
+          "rss_bytes": 143925248,
+          "samples": 241
+        },
+        "wall_seconds": 6.170984798999598
+      },
+      "device_io_bytes_available": false
+    },
+    "reject": {
+      "after_traced_python_peak_bytes": 2200469,
+      "before_traced_python_peak_bytes": 2200355,
+      "cgroup_cpu_seconds": [
+        0.050283,
+        0.05073
+      ],
+      "process_cpu_seconds": [
+        0.04956519899999989,
+        0.05046321600000003
+      ],
+      "wall_seconds": [
+        0.05734740099978808,
+        0.059806187000503996
+      ]
+    }
+  },
+  "owned_boundary_matrix": {
+    "cases": [
+      {
+        "accepted": false,
+        "case": "ROW_ENCODING",
+        "manifest_bytes_after": 0,
+        "page_bytes_after": 0,
+        "reason": {
+          "cleanup": "ATTEMPT_REMOVED",
+          "configured_limit_bytes": 1000000,
+          "logical_v1_bytes": null,
+          "logical_v1_size_reason": "V1_ENVELOPE_NOT_SERIALIZED",
+          "measured_bytes": 1000022,
+          "measurement": "RAW_UTF8_PREFIX_BYTES",
+          "measurement_exact": false,
+          "schema": "projecttrace-checkpoint-rejection-v1",
+          "site": "ROW_ENCODING",
+          "site_limit_bytes": 995904,
+          "stage": "GLOBAL_CHECKPOINT",
+          "staged_page_count": 0,
+          "storage_schema": "projecttrace-analysis-checkpoint-v2"
+        }
+      },
+      {
+        "accepted": false,
+        "case": "MANIFEST_ENCODING",
+        "manifest_bytes_after": 0,
+        "page_bytes_after": 0,
+        "reason": {
+          "cleanup": "ATTEMPT_REMOVED",
+          "configured_limit_bytes": 1000000,
+          "logical_v1_bytes": null,
+          "logical_v1_size_reason": "V1_ENVELOPE_NOT_SERIALIZED",
+          "measured_bytes": 1000310,
+          "measurement": "RAW_UTF8_PREFIX_BYTES",
+          "measurement_exact": false,
+          "schema": "projecttrace-checkpoint-rejection-v1",
+          "site": "MANIFEST_ENCODING",
+          "site_limit_bytes": 995904,
+          "stage": "GLOBAL_CHECKPOINT",
+          "staged_page_count": 0,
+          "storage_schema": "projecttrace-analysis-checkpoint-v2"
+        }
+      },
+      {
+        "accepted": false,
+        "case": "OWNED_CLEANUP_EXCEPTION",
+        "manifest_bytes_after": 0,
+        "page_bytes_after": 2268,
+        "reason": {
+          "cleanup": "CLEANUP_FAILED",
+          "configured_limit_bytes": 1000000,
+          "logical_v1_bytes": null,
+          "logical_v1_size_reason": "V1_ENVELOPE_NOT_SERIALIZED",
+          "measured_bytes": 1000421,
+          "measurement": "RAW_UTF8_PREFIX_BYTES",
+          "measurement_exact": false,
+          "schema": "projecttrace-checkpoint-rejection-v1",
+          "site": "MANIFEST_ENCODING",
+          "site_limit_bytes": 995904,
+          "stage": "GLOBAL_CHECKPOINT",
+          "staged_page_count": 2,
+          "storage_schema": "projecttrace-analysis-checkpoint-v2"
+        }
+      },
+      {
+        "accepted": true,
+        "actual_aggregate_bytes": 6160,
+        "case": "V2_SMALL_AGGREGATE_BOUNDARY",
+        "limit_bytes": 6161,
+        "manifest_bytes_after": 824,
+        "page_bytes_after": 5336,
+        "reason": {}
+      },
+      {
+        "accepted": true,
+        "actual_aggregate_bytes": 6160,
+        "case": "V2_SMALL_AGGREGATE_BOUNDARY",
+        "limit_bytes": 6160,
+        "manifest_bytes_after": 824,
+        "page_bytes_after": 5336,
+        "reason": {}
+      },
+      {
+        "accepted": false,
+        "actual_aggregate_bytes": 6160,
+        "case": "V2_SMALL_AGGREGATE_BOUNDARY",
+        "limit_bytes": 6159,
+        "manifest_bytes_after": 0,
+        "page_bytes_after": 0,
+        "reason": {
+          "active_manifest_bytes": 0,
+          "cleanup": "ATTEMPT_REMOVED",
+          "component_raw_bytes": 555,
+          "configured_limit_bytes": 6159,
+          "logical_v1_bytes": null,
+          "logical_v1_size_reason": "V1_ENVELOPE_NOT_SERIALIZED",
+          "measured_bytes": 6160,
+          "measurement": "ENCRYPTED_AGGREGATE_BYTES",
+          "measurement_exact": true,
+          "proposed_ciphertext_bytes": 824,
+          "retained_page_bytes": 5336,
+          "schema": "projecttrace-checkpoint-rejection-v1",
+          "site": "MANIFEST_ADMISSION",
+          "site_limit_bytes": 6159,
+          "stage": "GLOBAL_CHECKPOINT",
+          "staged_page_count": 2,
+          "storage_schema": "projecttrace-analysis-checkpoint-v2"
+        }
+      },
+      {
+        "actual_bytes": 63999999,
+        "case": "HISTORICAL_RAW_V1_BOUNDARY",
+        "limit_bytes": 64000000,
+        "over_budget": false,
+        "schema": "projecttrace-checkpoint-size-diagnostic-v1"
+      },
+      {
+        "actual_bytes": 64000000,
+        "case": "HISTORICAL_RAW_V1_BOUNDARY",
+        "limit_bytes": 64000000,
+        "over_budget": false,
+        "schema": "projecttrace-checkpoint-size-diagnostic-v1"
+      },
+      {
+        "actual_bytes": 64000001,
+        "case": "HISTORICAL_RAW_V1_BOUNDARY",
+        "limit_bytes": 64000000,
+        "over_budget": true,
+        "schema": "projecttrace-checkpoint-size-diagnostic-v1"
+      }
+    ],
+    "integrity": {
+      "fk_violations": 0,
+      "generations": 0,
+      "published_pointers": 0,
+      "sqlite": "ok",
+      "stage_receipts": 0
+    },
+    "scope": "owned SQLite checkpoints and offline v1 counter"
+  },
+  "owned_default_rejection": {
+    "active_manifest_bytes": 0,
+    "cleanup": "ATTEMPT_REMOVED",
+    "component_raw_bytes": 256000,
+    "configured_limit_bytes": 64000000,
+    "logical_v1_bytes": null,
+    "logical_v1_size_reason": "V1_ENVELOPE_NOT_SERIALIZED",
+    "measured_bytes": 64232308,
+    "measurement": "ENCRYPTED_AGGREGATE_BYTES",
+    "measurement_exact": true,
+    "proposed_ciphertext_bytes": 264332,
+    "retained_page_bytes": 63967976,
+    "schema": "projecttrace-checkpoint-rejection-v1",
+    "site": "PAGE_ADMISSION",
+    "site_limit_bytes": 64000000,
+    "stage": "GLOBAL_CHECKPOINT",
+    "staged_page_count": 243,
+    "storage_schema": "projecttrace-analysis-checkpoint-v2"
+  },
+  "owned_offline_v1": {
+    "applies_to": "complete owned fixture only",
+    "logical_raw_utf8_bytes": 72001535,
+    "seconds": 0.20303606699962984,
+    "traversals": 1
+  },
+  "recovery": {
+    "checkpoint_hits": 1,
+    "duplicate_delivery_byte_identical": true,
+    "foreign_key_violations": 0,
+    "interrupted_after": "HISTORY",
+    "preserved_ordered_staged_findings": 3,
+    "preserved_stage_receipts": 7,
+    "prior_published_snapshots_byte_identical": 2,
+    "reused_stage_receipts": 7,
+    "sqlite_integrity": "ok",
+    "status": "PASS",
+    "test_kind": "synthetic changed HEAD on a private clone of the real-slice BASE database"
+  },
+  "remote_ci": {
+    "baseline": {
+      "artifact_digest": "sha256:f88260f12ae33f8c92da829769a554a1eb48ebc4509180a4b4fe2dfa2899f428",
+      "classification": "VERIFIED_RESOURCE_OOM_FAILURE",
+      "container_exit": 137,
+      "job_id": 128347188546,
+      "oom_killed": true
+    },
+    "candidate": {
+      "artifact_digest": "sha256:2d900034ac3868238cd982165087cb589dfcef46229c34f70449d541a2c732b0",
+      "checkpoint_budget": {
+        "actual": null,
+        "budget": "ANALYSIS_CHECKPOINT_MAX_BYTES",
+        "collection": null,
+        "maximum": 64000000,
+        "rows": null
+      },
+      "classification": "VERIFIED_GLOBAL_CHECKPOINT_BUDGET",
+      "container_exit": 1,
+      "job_id": 128347188290,
+      "oom_killed": false
+    },
+    "retained_rejecting_site_available": false,
+    "scale_run": 42353740097,
+    "validation_passed_jobs": 4,
+    "validation_run": 42353740209
+  },
+  "schema": "projecttrace-checkpoint-rejection-qualification-v1",
+  "source": {
+    "candidate_image": "sha256:a74fb7a5e158103100da5c77730e0052919d9276e5b7c592d650560d1f378512",
+    "runtime_files": 196,
+    "runtime_sha256": "cf6483000222ce22abf18b5315684fce5e0359736932cc21285e41760d0ce56d",
+    "sec002_exit_codes": [
+      0,
+      0
+    ],
+    "tested_tree_sha256": "c75632fe70fd686e5f7327a0faed4fd54d2840c370dabf146b005fbee048355f"
+  }
+}

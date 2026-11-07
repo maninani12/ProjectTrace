@@ -6,7 +6,7 @@ from sqlalchemy import func, select
 
 from backend.db import FindingOccurrence, QualityAnalysis, QualityOccurrence, Record
 from backend.generation_models import AnalysisGeneration
-from tests.test_public_snapshot_continuity import public_snapshot
+from tests.test_public_snapshot_continuity import historical_identity_snapshot, public_snapshot
 from tests.test_repository_store import storage  # noqa: F401
 
 GOOD = "def work(items=None):\n    return items\n"
@@ -30,15 +30,12 @@ def verify_projection(db, snapshot):
 
 @pytest.mark.parametrize("case", ["verified", "unknown_predecessor", "existing", "resolved", "ambiguous", "partial", "mixed", "confidence_change", "added_deleted"])
 def test_lifecycle_attribution_and_counters(storage, monkeypatch, case):  # noqa: F811
-    from analyzers import finding_identity
     db, _, _ = storage
     before, after = {"app.py": GOOD}, {"app.py": BAD}
     if case in {"unknown_predecessor", "existing", "confidence_change"}:
         before = {"app.py": BAD}
     if case in {"unknown_predecessor", "existing"}:
         after = before
-    if case == "unknown_predecessor":
-        monkeypatch.setattr(finding_identity, "VERSION", "owned-unsupported-schema")
     if case == "resolved":
         before, after = {"app.py": BAD}, {"app.py": GOOD}
     if case == "ambiguous":
@@ -53,9 +50,12 @@ def test_lifecycle_attribution_and_counters(storage, monkeypatch, case):  # noqa
     if case == "added_deleted":
         before = {"deleted.py": "def old(items=[]):\n    return items\n", "unchanged.py": GOOD}
         after = {"added.py": "def added(options={}):\n    return options\n", "unchanged.py": GOOD}
-    base = public_snapshot(storage, before, "a" * 40, legacy=True)
+    if case == "unknown_predecessor":
+        base = historical_identity_snapshot(storage, before, "a" * 40, "owned-unsupported-schema", monkeypatch)
+        assert any(f["identity_version"] == "owned-unsupported-schema" for f in base.data["findings"])
+    else:
+        base = public_snapshot(storage, before, "a" * 40, legacy=True)
     db.refresh(base)  # Compare persisted JSON, including JSON array representation.
-    monkeypatch.setattr(finding_identity, "VERSION", "structural-v2")
     original = dict(base.data)
     head = public_snapshot(storage, after, "b" * 40, base=base.id)
     quality = verify_projection(db, head)

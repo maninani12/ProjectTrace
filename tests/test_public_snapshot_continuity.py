@@ -29,6 +29,23 @@ def public_snapshot(storage, sources, commit, *, legacy=False, base=None, proven
     return result[0]
 
 
+def historical_identity_snapshot(owned_storage, sources, commit, version, monkeypatch):
+    """Publish a fixture with an older schema after either analyzer mode returns."""
+    from backend import partitioned_analysis
+
+    analyze = partitioned_analysis.analyze_inventory
+
+    def historical_result(*args, **kwargs):
+        result = analyze(*args, **kwargs)
+        for finding in result["findings"]:
+            finding["identity_version"] = version
+        return result
+
+    with monkeypatch.context() as patch:
+        patch.setattr(partitioned_analysis, "analyze_inventory", historical_result)
+        return public_snapshot(owned_storage, sources, commit, legacy=True)
+
+
 def documentation(snapshot):
     return [c for c in snapshot.data["claims"] if c.get("origin") == "DOCUMENTATION"]
 

@@ -2,8 +2,10 @@
 
 
 class IntakeError(ValueError):
-    def __init__(self, code, message, *, budget=None, actual=None, maximum=None, remediation=None):
+    def __init__(self, code, message, *, budget=None, actual=None, maximum=None, remediation=None,
+                 checkpoint_diagnostic=None):
         self.code, self.budget, self.actual, self.maximum = code, budget, actual, maximum
+        self.checkpoint_diagnostic = checkpoint_diagnostic
         self.remediation = remediation or "Correct the source archive and import a new snapshot."
         if budget is not None:
             message += f" {budget}: actual {actual}; maximum {maximum}."
@@ -14,4 +16,6 @@ class IntakeError(ValueError):
         result = {"code": self.code, "message": self.message, "remediation": self.remediation}
         if self.budget is not None:
             result.update(budget=self.budget, actual=self.actual, maximum=self.maximum)
+        if self.checkpoint_diagnostic is not None:
+            result["checkpoint_diagnostic"] = self.checkpoint_diagnostic
         return result

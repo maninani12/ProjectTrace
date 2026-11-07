@@ -90,7 +90,14 @@ def test_incompressible_exhaustion_preserves_previous_complete_receipt(storage, 
     old_digest = db.get(AnalysisCheckpoint, job.id).result_digest
     rng = random.Random(52)
     values = [rng.randbytes(1800).hex() for _ in range(600)]
-    assert not persist(db, job, {"large": values})
+    rejection = {}
+    assert not persist(db, job, {"large": values}, rejection=rejection)
+    assert rejection["site"] == "PAGE_ADMISSION"
+    assert rejection["measurement_exact"] is True
+    assert rejection["measured_bytes"] == (
+        rejection["retained_page_bytes"] + rejection["active_manifest_bytes"] + rejection["proposed_ciphertext_bytes"]
+    ) > rejection["site_limit_bytes"] == 1_000_000
+    assert rejection["cleanup"] == "ATTEMPT_REMOVED"
     assert db.get(AnalysisCheckpoint, job.id).result_digest == old_digest
     assert recover(db, job) == {"old": [1, 2, 3]}
     assert db.scalar(select(func.count(func.distinct(AnalysisCheckpointPart.attempt)))) == 1
@@ -342,6 +349,14 @@ def test_checkpoint_budget_failure_keeps_inventory_for_subsequent_valid_analysis
     assert failed_job.data["state"] == "FAILED"
     assert failed_job.data["stage"] == "VERIFYING"
     assert failed_job.data["error_code"] == "GLOBAL_CHECKPOINT_BUDGET"
+    detail = failed_job.data["error_detail"]
+    assert detail["actual"] is None and detail["maximum"] == 1_000_000
+    diagnostic = detail["checkpoint_diagnostic"]
+    assert diagnostic["schema"] == "projecttrace-checkpoint-rejection-v1"
+    assert diagnostic["stage"] == "GLOBAL_CHECKPOINT"
+    assert diagnostic["site"] == "MANIFEST_ENCODING"
+    assert diagnostic["measurement_exact"] is False
+    assert diagnostic["cleanup"] == "ATTEMPT_REMOVED"
     assert db.scalar(select(func.count()).select_from(Record).where(Record.kind == "snapshot")) == 0
     assert db.scalar(select(func.count()).select_from(AnalysisGeneration).where(
         AnalysisGeneration.job_id == failed_job_id)) == 0

@@ -9,6 +9,7 @@ from concurrent.futures import ThreadPoolExecutor
 from analyzers import sandbox
 from analyzers.compose_evidence import CONTEXT_CLAIMS, GUIDE, documentation_context
 from analyzers.compose_profiles import PROFILE_CONTEXT, PROFILE_FAMILY, PROFILE_README, documented_profile
+from analyzers.observation_store import MetricRows
 from analyzers.parser_protocol import completed_packets, expand_native_artifact
 
 
@@ -288,7 +289,10 @@ def identity(files, findings, metrics):
 
     def flush():
         selected = [findings[index] for index in positions]
-        measured = [{k: v for k, v in row.items() if k != "duplicate_tokens"} for row in metrics if row["path"] in sources]
+        rows = metrics.for_paths(sources) if isinstance(metrics, MetricRows) else (
+            row for row in metrics if row["path"] in sources
+        )
+        measured = [{k: v for k, v in row.items() if k != "duplicate_tokens"} for row in rows]
         result = sandbox.call("identity", {"files": sources, "findings": selected, "metrics": measured})
         if len(result) != len(selected):
             raise sandbox.SandboxFailure("HELPER_SCOPE")

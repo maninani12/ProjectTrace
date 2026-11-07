@@ -5,7 +5,7 @@ import pytest
 from sqlalchemy import select, text
 
 from backend.db import FindingOccurrence, QualityAnalysis, Record
-from tests.test_public_snapshot_continuity import public_snapshot
+from tests.test_public_snapshot_continuity import historical_identity_snapshot, public_snapshot
 from tests.test_repository_store import storage  # noqa: F401
 
 FAMILIES = [
@@ -119,16 +119,14 @@ def test_severity_profile_change_keeps_concept_and_invalidates_review_context(st
 
 @pytest.mark.parametrize("unknown_schema", [False, True])
 def test_ambiguous_and_unsupported_native_identities_are_not_verified_transitions(storage, monkeypatch, unknown_schema):  # noqa: F811
-    from analyzers import finding_identity
     db, _, _ = storage
     source = ("def work(items=[]):\n    return items\n" if unknown_schema else
               "import subprocess\ndef work(command):\n    subprocess.run(command, shell=True)\n    subprocess.run(command, shell=True)\n")
     if unknown_schema:
-        monkeypatch.setattr(finding_identity, "VERSION", "unsupported-owned-schema")
-    base = public_snapshot(storage, {"app.py": source}, "a" * 40, legacy=True)
-    if unknown_schema:
+        base = historical_identity_snapshot(storage, {"app.py": source}, "a" * 40, "unsupported-owned-schema", monkeypatch)
         assert any(f.get("identity_version") == "unsupported-owned-schema" for f in base.data["findings"])
-        monkeypatch.setattr(finding_identity, "VERSION", "structural-v2")
+    else:
+        base = public_snapshot(storage, {"app.py": source}, "a" * 40, legacy=True)
     head = public_snapshot(storage, {"app.py": source}, "b" * 40, base=base.id)
     assert head.data["status"] == "PARTIAL"
     events = list(db.scalars(select(FindingOccurrence).where(FindingOccurrence.snapshot_id == head.id)))
