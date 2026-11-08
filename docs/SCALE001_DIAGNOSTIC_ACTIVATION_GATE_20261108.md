@@ -1,0 +1,11 @@
+# SCALE-001 candidate diagnostic activation and artifact retention
+
+November 8, 2026 · Commercial V1 **DEVELOPMENT IN PROGRESS** · SCALE-001 **NOT QUALIFIED**
+
+The existing full-workload candidate command uses `--diagnostic candidate SOURCE_SHA256`. CI verifies that checked-out HEAD matches the event SHA and hashes the exact Git archive. The host runner pins the image ID for the opted-in run. The baseline command and resource and manifest probes retain their existing arguments. The existing matrix, source archive, limits, actions pins, triggers, permissions and seven-day retention are preserved.
+
+A candidate-only `always()` step validates fixed cold/warm collector snapshots against the reviewed input schema and identity. It mounts only the snapshots and schema as inputs. It publishes exactly two files when valid data exists. `scale-diagnostic-native.json` uses `projecttrace-scale-native-diagnostic-v1`. `scale-diagnostic-resources.json` uses `projecttrace-scale-resource-diagnostic-v1`. Each preserves phase status and is capped at 196,608 bytes. An abrupt exit retains the latest valid incomplete observation. A malformed snapshot is withheld, and the output step reports failure while retaining a valid peer if available. An absent pair emits no diagnostic artifacts.
+
+Owned fixtures verified deadline, checkpoint row-budget rejection, attested helper failure, interruption, optional collector write failure, cleanup and the disabled path. The checked-in allowlist produced a verified local ZIP after container removal. The pinned 24- and 128-file on/off pairs preserved analysis and publication outputs. The largest exported file was 53,292 bytes. Required-mode Linux passed 134 tests without deselection. Both SEC-002 probes passed on the exact 199-file image. [Sanitized activation receipt](evidence/SCALE001_DIAGNOSTIC_ACTIVATION_20261108.json)
+
+**READY FOR EXPLICIT APPROVAL.** A normal push starts validation and both expensive full SCALE-001 jobs. Only the candidate receives the added diagnostic step. The retained baseline OOM and candidate analysis deadline are open. The candidate may time out before checkpoint admission and WSL does not reproduce full-runner reclaim. Full qualification still requires the release gates. [Prior diagnostic preflight](SCALE001_DIAGNOSTIC_PREFLIGHT_GATE_20261108.md)

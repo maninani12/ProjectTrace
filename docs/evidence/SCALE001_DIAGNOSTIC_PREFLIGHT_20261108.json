@@ -1,0 +1,1053 @@
+{
+  "bounded": {
+    "cold_analyzing_resources": [
+      {
+        "delta": {
+          "cpu.pressure": {
+            "full": 2557,
+            "some": 2557
+          },
+          "cpu.stat": {
+            "nr_throttled": 1,
+            "system_usec": 228243,
+            "throttled_usec": 2373,
+            "usage_usec": 4559996,
+            "user_usec": 4331753
+          },
+          "io.pressure": {
+            "full": 51041,
+            "some": 51041
+          },
+          "io.stat": {
+            "rbytes": 0,
+            "rios": 0,
+            "wbytes": 5009408,
+            "wios": 22
+          },
+          "memory.events": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0
+          },
+          "memory.events.local": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0
+          },
+          "memory.pressure": {
+            "full": 0,
+            "some": 0
+          },
+          "memory.stat": {
+            "pgmajfault": 0,
+            "pgscan": 0,
+            "pgscan_direct": 0,
+            "pgsteal": 0,
+            "pgsteal_direct": 0,
+            "workingset_refault_file": 0
+          }
+        },
+        "peak_bytes": 160030720
+      },
+      {
+        "delta": {
+          "cpu.pressure": {
+            "full": 1326,
+            "some": 1327
+          },
+          "cpu.stat": {
+            "nr_throttled": 1,
+            "system_usec": 212103,
+            "throttled_usec": 1203,
+            "usage_usec": 4514459,
+            "user_usec": 4302355
+          },
+          "io.pressure": {
+            "full": 18175,
+            "some": 18175
+          },
+          "io.stat": {
+            "rbytes": 0,
+            "rios": 0,
+            "wbytes": 5009408,
+            "wios": 24
+          },
+          "memory.events": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0
+          },
+          "memory.events.local": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0
+          },
+          "memory.pressure": {
+            "full": 0,
+            "some": 0
+          },
+          "memory.stat": {
+            "pgmajfault": 0,
+            "pgscan": 0,
+            "pgscan_direct": 0,
+            "pgsteal": 0,
+            "pgsteal_direct": 0,
+            "workingset_refault_file": 0
+          }
+        },
+        "peak_bytes": 159989760
+      }
+    ],
+    "cold_native_gate": {
+      "cache_write_ms": 60.396953,
+      "helper_sum_ms": 2610.780842,
+      "helper_union_ms": 2137.7234425,
+      "native_coordinator_materialize_ms": 0.147214,
+      "native_decode_ms": 159.9436885,
+      "native_expand_ms": 1.198463,
+      "native_gate_ms": 287.9148935,
+      "native_guard_ms": 61.424362,
+      "native_nodes": 205908.0,
+      "native_privacy_ms": 121.115913,
+      "spill_ms": 132.0688035,
+      "whole_job_commits_ms": 767.945287
+    },
+    "containers": 10,
+    "equivalence": {
+      "fixture": {
+        "cold": {
+          "artifact_rows": 7,
+          "artifact_sha256": "58d9c5ee4112c7194a1739caac4d282366343886bfd3afca8753a0efe8a8d235",
+          "claim_count": 1,
+          "duplicate_delivery_identical": true,
+          "evidence_count": 7,
+          "finding_count": 6,
+          "gate": "REVIEW_REQUIRED",
+          "ordered_evidence_sha256": "f14ea26036c8a6c81f3e0a81f9988fc6609657f37865064c01dd4b7f4d5bffe6",
+          "published_pointers": 1,
+          "published_states": [
+            [
+              "PUBLISHED",
+              1
+            ]
+          ],
+          "retained_checkpoints": 0,
+          "semantic_sha256": "b53553d3024484e9b7edeeb381aa094b16d06858ebf48c2e5dab2d9fbb7634c2",
+          "state": "COMPLETED"
+        },
+        "warm": {
+          "artifact_rows": 7,
+          "artifact_sha256": "58d9c5ee4112c7194a1739caac4d282366343886bfd3afca8753a0efe8a8d235",
+          "claim_count": 1,
+          "duplicate_delivery_identical": true,
+          "evidence_count": 7,
+          "finding_count": 6,
+          "gate": "PASS",
+          "ordered_evidence_sha256": "f14ea26036c8a6c81f3e0a81f9988fc6609657f37865064c01dd4b7f4d5bffe6",
+          "published_pointers": 1,
+          "published_states": [
+            [
+              "PUBLISHED",
+              2
+            ]
+          ],
+          "retained_checkpoints": 0,
+          "semantic_sha256": "697d083911fc62c8870b4183046c9934b0ea1c9ef05f4ee1eab6bd2f2928c6aa",
+          "state": "COMPLETED"
+        }
+      },
+      "large": {
+        "cold": {
+          "artifact_rows": 117,
+          "artifact_sha256": "f48beb636b9c262a4c50b72e353c9af99c3bb569de5cbe868eca8bd30994fd7b",
+          "claim_count": 29,
+          "duplicate_delivery_identical": true,
+          "evidence_count": 128,
+          "finding_count": 48,
+          "gate": "REVIEW_REQUIRED",
+          "ordered_evidence_sha256": "069de445d0d19345c862cc3a0e562122cbbcb5c5c222e7a975050efd0eff8d37",
+          "published_pointers": 1,
+          "published_states": [
+            [
+              "PUBLISHED",
+              1
+            ]
+          ],
+          "retained_checkpoints": 0,
+          "semantic_sha256": "8560d08211a08123faf161c5ec832a1d88df67a124e0a8b910335589f79c3903",
+          "state": "PARTIAL"
+        },
+        "warm": {
+          "artifact_rows": 117,
+          "artifact_sha256": "f48beb636b9c262a4c50b72e353c9af99c3bb569de5cbe868eca8bd30994fd7b",
+          "claim_count": 29,
+          "duplicate_delivery_identical": true,
+          "evidence_count": 128,
+          "finding_count": 48,
+          "gate": "REVIEW_REQUIRED",
+          "ordered_evidence_sha256": "069de445d0d19345c862cc3a0e562122cbbcb5c5c222e7a975050efd0eff8d37",
+          "published_pointers": 1,
+          "published_states": [
+            [
+              "PUBLISHED",
+              2
+            ]
+          ],
+          "retained_checkpoints": 0,
+          "semantic_sha256": "a2c7c69527eab4324128fca53f1116a372d14b26f21021655effe40fb267e09d",
+          "state": "PARTIAL"
+        }
+      },
+      "small": {
+        "cold": {
+          "artifact_rows": 19,
+          "artifact_sha256": "a6277bae319a519ec47fd2b82fbaf27881587d6fd31e86c8d79ba357751c95b6",
+          "claim_count": 5,
+          "duplicate_delivery_identical": true,
+          "evidence_count": 24,
+          "finding_count": 2,
+          "gate": "REVIEW_REQUIRED",
+          "ordered_evidence_sha256": "02870bd42c38ff1023a67fbb945cbc59a7e78cdc286ccfafbc6b3cf1aa0c1c29",
+          "published_pointers": 1,
+          "published_states": [
+            [
+              "PUBLISHED",
+              1
+            ]
+          ],
+          "retained_checkpoints": 0,
+          "semantic_sha256": "0f65cf3ff2338e9bab6185d5ea41580005dcf923de2ffee097a9595fe9049b05",
+          "state": "PARTIAL"
+        },
+        "warm": {
+          "artifact_rows": 19,
+          "artifact_sha256": "a6277bae319a519ec47fd2b82fbaf27881587d6fd31e86c8d79ba357751c95b6",
+          "claim_count": 5,
+          "duplicate_delivery_identical": true,
+          "evidence_count": 24,
+          "finding_count": 2,
+          "gate": "PASS",
+          "ordered_evidence_sha256": "02870bd42c38ff1023a67fbb945cbc59a7e78cdc286ccfafbc6b3cf1aa0c1c29",
+          "published_pointers": 1,
+          "published_states": [
+            [
+              "PUBLISHED",
+              2
+            ]
+          ],
+          "retained_checkpoints": 0,
+          "semantic_sha256": "24ed9aaa27705aaea812b436fb01d4c9e72343cbc6aab7d775deab6e54e20a31",
+          "state": "PARTIAL"
+        }
+      }
+    },
+    "gc": {
+      "cold_coordinator_materialize_gc_ns": [
+        0,
+        0
+      ],
+      "cold_iac_yaml_decode_gc_ns": [
+        0,
+        0
+      ],
+      "cold_job_gc_counts": [
+        412,
+        412
+      ],
+      "cold_job_gc_wall_ns": [
+        328218002,
+        333549643
+      ],
+      "cold_syntax_privacy_gen2_ns": [
+        45912852,
+        47373824
+      ]
+    },
+    "input_commit": "b1fab2bc21c63335dead4daaaa28194c9878e9bf",
+    "max_receipt_bytes": 34382,
+    "overhead": {
+      "fixture": {
+        "cold": {
+          "median": {
+            "delta": {
+              "cgroup_cpu_seconds": -0.15299500000000066,
+              "parent_cpu_seconds": -0.06995615900000018,
+              "partition_parse_seconds": 0.02855300000000005,
+              "scope_peak_bytes": -897024,
+              "wall_seconds": -0.22901941300006
+            },
+            "off": {
+              "cgroup_cpu_seconds": 6.844134,
+              "parent_cpu_seconds": 2.53804507,
+              "partition_parse_seconds": 2.187072,
+              "scope_peak_bytes": 157790208,
+              "wall_seconds": 7.013528890000089
+            },
+            "on": {
+              "cgroup_cpu_seconds": 6.691139,
+              "parent_cpu_seconds": 2.4680889109999997,
+              "partition_parse_seconds": 2.215625,
+              "scope_peak_bytes": 156893184,
+              "wall_seconds": 6.784509477000029
+            }
+          },
+          "pairs": [
+            {
+              "delta": {
+                "cgroup_cpu_seconds": -0.15299500000000066,
+                "parent_cpu_seconds": -0.06995615900000018,
+                "partition_parse_seconds": 0.02855300000000005,
+                "scope_peak_bytes": -897024,
+                "wall_seconds": -0.22901941300006
+              },
+              "off": {
+                "cgroup_cpu_seconds": 6.844134,
+                "parent_cpu_seconds": 2.53804507,
+                "partition_parse_seconds": 2.187072,
+                "scope_peak_bytes": 157790208,
+                "wall_seconds": 7.013528890000089
+              },
+              "on": {
+                "cgroup_cpu_seconds": 6.691139,
+                "parent_cpu_seconds": 2.4680889109999997,
+                "partition_parse_seconds": 2.215625,
+                "scope_peak_bytes": 156893184,
+                "wall_seconds": 6.784509477000029
+              },
+              "pair": 2
+            }
+          ]
+        },
+        "warm": {
+          "median": {
+            "delta": {
+              "cgroup_cpu_seconds": 0.07869199999999932,
+              "parent_cpu_seconds": 0.06062747900000032,
+              "partition_parse_seconds": 0.0018429999999999835,
+              "scope_peak_bytes": -897024,
+              "wall_seconds": 0.2187603640004454
+            },
+            "off": {
+              "cgroup_cpu_seconds": 4.276347,
+              "parent_cpu_seconds": 2.1984056739999995,
+              "partition_parse_seconds": 0.424331,
+              "scope_peak_bytes": 157790208,
+              "wall_seconds": 4.520674773999872
+            },
+            "on": {
+              "cgroup_cpu_seconds": 4.355039,
+              "parent_cpu_seconds": 2.259033153,
+              "partition_parse_seconds": 0.426174,
+              "scope_peak_bytes": 156893184,
+              "wall_seconds": 4.739435138000317
+            }
+          },
+          "pairs": [
+            {
+              "delta": {
+                "cgroup_cpu_seconds": 0.07869199999999932,
+                "parent_cpu_seconds": 0.06062747900000032,
+                "partition_parse_seconds": 0.0018429999999999835,
+                "scope_peak_bytes": -897024,
+                "wall_seconds": 0.2187603640004454
+              },
+              "off": {
+                "cgroup_cpu_seconds": 4.276347,
+                "parent_cpu_seconds": 2.1984056739999995,
+                "partition_parse_seconds": 0.424331,
+                "scope_peak_bytes": 157790208,
+                "wall_seconds": 4.520674773999872
+              },
+              "on": {
+                "cgroup_cpu_seconds": 4.355039,
+                "parent_cpu_seconds": 2.259033153,
+                "partition_parse_seconds": 0.426174,
+                "scope_peak_bytes": 156893184,
+                "wall_seconds": 4.739435138000317
+              },
+              "pair": 2
+            }
+          ]
+        }
+      },
+      "large": {
+        "cold": {
+          "median": {
+            "delta": {
+              "cgroup_cpu_seconds": 0.052176500000000736,
+              "parent_cpu_seconds": -0.0074752930000001605,
+              "partition_parse_seconds": 0.028236499999999998,
+              "scope_peak_bytes": -217088.0,
+              "wall_seconds": -0.19934583799999928
+            },
+            "off": {
+              "cgroup_cpu_seconds": 11.675006,
+              "parent_cpu_seconds": 6.259084872500001,
+              "partition_parse_seconds": 3.3998524999999997,
+              "scope_peak_bytes": 160227328.0,
+              "wall_seconds": 12.006020174999776
+            },
+            "on": {
+              "cgroup_cpu_seconds": 11.727182500000001,
+              "parent_cpu_seconds": 6.2516095795,
+              "partition_parse_seconds": 3.428089,
+              "scope_peak_bytes": 160010240.0,
+              "wall_seconds": 11.806674336999777
+            }
+          },
+          "pairs": [
+            {
+              "delta": {
+                "cgroup_cpu_seconds": 0.17091200000000129,
+                "parent_cpu_seconds": 0.08317526700000055,
+                "partition_parse_seconds": 0.03842800000000013,
+                "scope_peak_bytes": -28672,
+                "wall_seconds": -0.07342082100012703
+              },
+              "off": {
+                "cgroup_cpu_seconds": 11.626622,
+                "parent_cpu_seconds": 6.213484201,
+                "partition_parse_seconds": 3.403479,
+                "scope_peak_bytes": 160059392,
+                "wall_seconds": 11.938722862999839
+              },
+              "on": {
+                "cgroup_cpu_seconds": 11.797534,
+                "parent_cpu_seconds": 6.2966594680000005,
+                "partition_parse_seconds": 3.441907,
+                "scope_peak_bytes": 160030720,
+                "wall_seconds": 11.865302041999712
+              },
+              "pair": 3
+            },
+            {
+              "delta": {
+                "cgroup_cpu_seconds": -0.06655899999999981,
+                "parent_cpu_seconds": -0.09812585300000087,
+                "partition_parse_seconds": 0.018044999999999867,
+                "scope_peak_bytes": -405504,
+                "wall_seconds": -0.3252708549998715
+              },
+              "off": {
+                "cgroup_cpu_seconds": 11.72339,
+                "parent_cpu_seconds": 6.304685544000001,
+                "partition_parse_seconds": 3.396226,
+                "scope_peak_bytes": 160395264,
+                "wall_seconds": 12.073317486999713
+              },
+              "on": {
+                "cgroup_cpu_seconds": 11.656831,
+                "parent_cpu_seconds": 6.206559691,
+                "partition_parse_seconds": 3.414271,
+                "scope_peak_bytes": 159989760,
+                "wall_seconds": 11.748046631999841
+              },
+              "pair": 4
+            }
+          ]
+        },
+        "warm": {
+          "median": {
+            "delta": {
+              "cgroup_cpu_seconds": 0.06687800000000088,
+              "parent_cpu_seconds": 0.08976322550000049,
+              "partition_parse_seconds": -0.05906650000000002,
+              "scope_peak_bytes": 655360.0,
+              "wall_seconds": 0.003373317999603387
+            },
+            "off": {
+              "cgroup_cpu_seconds": 9.459951499999999,
+              "parent_cpu_seconds": 5.654774424499999,
+              "partition_parse_seconds": 1.837926,
+              "scope_peak_bytes": 192473088.0,
+              "wall_seconds": 10.235698623500184
+            },
+            "on": {
+              "cgroup_cpu_seconds": 9.526829500000002,
+              "parent_cpu_seconds": 5.74453765,
+              "partition_parse_seconds": 1.7788595,
+              "scope_peak_bytes": 193128448.0,
+              "wall_seconds": 10.239071941499787
+            }
+          },
+          "pairs": [
+            {
+              "delta": {
+                "cgroup_cpu_seconds": 0.08429100000000034,
+                "parent_cpu_seconds": 0.0711910609999995,
+                "partition_parse_seconds": 0.021168999999999993,
+                "scope_peak_bytes": 458752,
+                "wall_seconds": -0.018033963000561926
+              },
+              "off": {
+                "cgroup_cpu_seconds": 9.468365,
+                "parent_cpu_seconds": 5.720165285,
+                "partition_parse_seconds": 1.748277,
+                "scope_peak_bytes": 192430080,
+                "wall_seconds": 10.298527737000313
+              },
+              "on": {
+                "cgroup_cpu_seconds": 9.552656,
+                "parent_cpu_seconds": 5.791356346,
+                "partition_parse_seconds": 1.769446,
+                "scope_peak_bytes": 192888832,
+                "wall_seconds": 10.280493773999751
+              },
+              "pair": 3
+            },
+            {
+              "delta": {
+                "cgroup_cpu_seconds": 0.049465000000001424,
+                "parent_cpu_seconds": 0.10833539000000147,
+                "partition_parse_seconds": -0.13930200000000004,
+                "scope_peak_bytes": 851968,
+                "wall_seconds": 0.0247805989997687
+              },
+              "off": {
+                "cgroup_cpu_seconds": 9.451538,
+                "parent_cpu_seconds": 5.589383563999999,
+                "partition_parse_seconds": 1.927575,
+                "scope_peak_bytes": 192516096,
+                "wall_seconds": 10.172869510000055
+              },
+              "on": {
+                "cgroup_cpu_seconds": 9.501003,
+                "parent_cpu_seconds": 5.697718954000001,
+                "partition_parse_seconds": 1.788273,
+                "scope_peak_bytes": 193368064,
+                "wall_seconds": 10.197650108999824
+              },
+              "pair": 4
+            }
+          ]
+        }
+      },
+      "small": {
+        "cold": {
+          "median": {
+            "delta": {
+              "cgroup_cpu_seconds": -0.14298250000000046,
+              "parent_cpu_seconds": -0.17565157899999972,
+              "partition_parse_seconds": 0.00422049999999996,
+              "scope_peak_bytes": -600064.0,
+              "wall_seconds": -0.13372043200001826
+            },
+            "off": {
+              "cgroup_cpu_seconds": 6.323186,
+              "parent_cpu_seconds": 2.9580302835,
+              "partition_parse_seconds": 1.4169595,
+              "scope_peak_bytes": 157534208.0,
+              "wall_seconds": 6.316575888999978
+            },
+            "on": {
+              "cgroup_cpu_seconds": 6.180203499999999,
+              "parent_cpu_seconds": 2.7823787045,
+              "partition_parse_seconds": 1.42118,
+              "scope_peak_bytes": 156934144.0,
+              "wall_seconds": 6.18285545699996
+            }
+          },
+          "pairs": [
+            {
+              "delta": {
+                "cgroup_cpu_seconds": -0.11111100000000018,
+                "parent_cpu_seconds": -0.16275686199999928,
+                "partition_parse_seconds": 0.017525000000000013,
+                "scope_peak_bytes": -638976,
+                "wall_seconds": -0.13081337799985704
+              },
+              "off": {
+                "cgroup_cpu_seconds": 6.308452,
+                "parent_cpu_seconds": 2.9517221429999996,
+                "partition_parse_seconds": 1.410223,
+                "scope_peak_bytes": 157712384,
+                "wall_seconds": 6.325584417999835
+              },
+              "on": {
+                "cgroup_cpu_seconds": 6.197341,
+                "parent_cpu_seconds": 2.7889652810000003,
+                "partition_parse_seconds": 1.427748,
+                "scope_peak_bytes": 157073408,
+                "wall_seconds": 6.194771039999978
+              },
+              "pair": 3
+            },
+            {
+              "delta": {
+                "cgroup_cpu_seconds": -0.17485400000000073,
+                "parent_cpu_seconds": -0.18854629600000017,
+                "partition_parse_seconds": -0.009084000000000092,
+                "scope_peak_bytes": -561152,
+                "wall_seconds": -0.1366274860001795
+              },
+              "off": {
+                "cgroup_cpu_seconds": 6.33792,
+                "parent_cpu_seconds": 2.964338424,
+                "partition_parse_seconds": 1.423696,
+                "scope_peak_bytes": 157356032,
+                "wall_seconds": 6.307567360000121
+              },
+              "on": {
+                "cgroup_cpu_seconds": 6.163066,
+                "parent_cpu_seconds": 2.775792128,
+                "partition_parse_seconds": 1.414612,
+                "scope_peak_bytes": 156794880,
+                "wall_seconds": 6.1709398739999415
+              },
+              "pair": 4
+            }
+          ]
+        },
+        "warm": {
+          "median": {
+            "delta": {
+              "cgroup_cpu_seconds": 0.06877149999999999,
+              "parent_cpu_seconds": 0.0130741950000004,
+              "partition_parse_seconds": 0.015595000000000026,
+              "scope_peak_bytes": -600064.0,
+              "wall_seconds": 0.11142953000012312
+            },
+            "off": {
+              "cgroup_cpu_seconds": 5.168474,
+              "parent_cpu_seconds": 2.3084595305,
+              "partition_parse_seconds": 1.255889,
+              "scope_peak_bytes": 157534208.0,
+              "wall_seconds": 5.495058625500178
+            },
+            "on": {
+              "cgroup_cpu_seconds": 5.2372455,
+              "parent_cpu_seconds": 2.3215337255,
+              "partition_parse_seconds": 1.271484,
+              "scope_peak_bytes": 156934144.0,
+              "wall_seconds": 5.606488155500301
+            }
+          },
+          "pairs": [
+            {
+              "delta": {
+                "cgroup_cpu_seconds": 0.014165000000000205,
+                "parent_cpu_seconds": -0.034605612999999646,
+                "partition_parse_seconds": 0.016110999999999986,
+                "scope_peak_bytes": -638976,
+                "wall_seconds": 0.0552364770001077
+              },
+              "off": {
+                "cgroup_cpu_seconds": 5.186423,
+                "parent_cpu_seconds": 2.336289728,
+                "partition_parse_seconds": 1.252096,
+                "scope_peak_bytes": 157712384,
+                "wall_seconds": 5.520458754000174
+              },
+              "on": {
+                "cgroup_cpu_seconds": 5.200588,
+                "parent_cpu_seconds": 2.3016841150000005,
+                "partition_parse_seconds": 1.268207,
+                "scope_peak_bytes": 157073408,
+                "wall_seconds": 5.575695231000282
+              },
+              "pair": 3
+            },
+            {
+              "delta": {
+                "cgroup_cpu_seconds": 0.12337799999999977,
+                "parent_cpu_seconds": 0.060754003000000445,
+                "partition_parse_seconds": 0.015079000000000065,
+                "scope_peak_bytes": -561152,
+                "wall_seconds": 0.16762258300013855
+              },
+              "off": {
+                "cgroup_cpu_seconds": 5.150525,
+                "parent_cpu_seconds": 2.280629333,
+                "partition_parse_seconds": 1.259682,
+                "scope_peak_bytes": 157356032,
+                "wall_seconds": 5.469658497000182
+              },
+              "on": {
+                "cgroup_cpu_seconds": 5.273903,
+                "parent_cpu_seconds": 2.3413833360000003,
+                "partition_parse_seconds": 1.274761,
+                "scope_peak_bytes": 156794880,
+                "wall_seconds": 5.637281080000321
+              },
+              "pair": 4
+            }
+          ]
+        }
+      }
+    },
+    "owned_route_fixture": {
+      "HCL_MIXED": {
+        "admitted_packets": 3,
+        "attestation_ns": 1178565479,
+        "containment_ns": 7691130,
+        "failed": 0,
+        "grammar_observations": 1,
+        "grammars_prepared": 1,
+        "invoke_wall_ns": 1271930554,
+        "prepare_ns": 1107687756,
+        "reaped": 1,
+        "requested_files": 3,
+        "requests": 1,
+        "starts": 1,
+        "worker_cpu_ns": 1270212000,
+        "worker_rss_bytes_sum": 88436736,
+        "worker_wall_ns": 1271740333
+      },
+      "HCL_TERRAFORM": {
+        "admitted_packets": 1,
+        "attestation_ns": 1192806561,
+        "containment_ns": 7696325,
+        "failed": 0,
+        "grammar_observations": 1,
+        "grammars_prepared": 1,
+        "invoke_wall_ns": 1282408111,
+        "prepare_ns": 1121082861,
+        "reaped": 1,
+        "requested_files": 1,
+        "requests": 1,
+        "starts": 1,
+        "worker_cpu_ns": 1280331000,
+        "worker_rss_bytes_sum": 88436736,
+        "worker_wall_ns": 1282229139
+      },
+      "NO_HCL_DOCKERFILE": {
+        "admitted_packets": 1,
+        "attestation_ns": 718198892,
+        "containment_ns": 18104949,
+        "failed": 1,
+        "grammar_observations": 2,
+        "grammars_prepared": 0,
+        "invoke_wall_ns": 868878579,
+        "prepare_ns": 571524130,
+        "reaped": 2,
+        "requested_files": 2,
+        "requests": 2,
+        "starts": 2,
+        "worker_cpu_ns": 867158000,
+        "worker_rss_bytes_sum": 176873472,
+        "worker_wall_ns": 868488640
+      },
+      "NO_HCL_JSON": {
+        "admitted_packets": 1,
+        "attestation_ns": 351751513,
+        "containment_ns": 8714789,
+        "failed": 0,
+        "grammar_observations": 1,
+        "grammars_prepared": 0,
+        "invoke_wall_ns": 430690109,
+        "prepare_ns": 276537139,
+        "reaped": 1,
+        "requested_files": 1,
+        "requests": 1,
+        "starts": 1,
+        "worker_cpu_ns": 429944000,
+        "worker_rss_bytes_sum": 88436736,
+        "worker_wall_ns": 430508553
+      },
+      "NO_HCL_MISROUTE": {
+        "attestation_ns": 350440520,
+        "containment_ns": 9675492,
+        "failed": 0,
+        "grammar_observations": 1,
+        "grammars_prepared": 0,
+        "invoke_wall_ns": 423407974,
+        "prepare_ns": 275968924,
+        "reaped": 1,
+        "rejected": 1,
+        "requested_files": 2,
+        "requests": 1,
+        "starts": 1,
+        "worker_cpu_ns": 422333000,
+        "worker_rss_bytes_sum": 88436736,
+        "worker_wall_ns": 423219581
+      },
+      "NO_HCL_YAML": {
+        "admitted_packets": 1,
+        "attestation_ns": 349048258,
+        "containment_ns": 8341025,
+        "failed": 0,
+        "grammar_observations": 1,
+        "grammars_prepared": 0,
+        "invoke_wall_ns": 424060129,
+        "prepare_ns": 275334452,
+        "reaped": 1,
+        "requested_files": 1,
+        "requests": 1,
+        "starts": 1,
+        "worker_cpu_ns": 423276000,
+        "worker_rss_bytes_sum": 88436736,
+        "worker_wall_ns": 423869161
+      }
+    },
+    "receipt_count": 11,
+    "route_starts": {
+      "HCL_MIXED": 2,
+      "HCL_TERRAFORM": 1,
+      "IDENTITY": 10,
+      "LEXICAL": 14,
+      "NATIVE": 11,
+      "NO_HCL_CONFIG_MIXED": 8,
+      "NO_HCL_DOCKERFILE": 2,
+      "NO_HCL_JSON": 1,
+      "NO_HCL_MISROUTE": 1,
+      "NO_HCL_YAML": 1,
+      "OPENAPI": 10,
+      "RUNTIME_PROBE": 24,
+      "SYNTAX": 7
+    },
+    "source_cases": {
+      "large": {
+        "bytes": 480724,
+        "files": 128,
+        "input_sha256": "b80a3b668d809ac9feb53e980d04e5a231da1a373cf04b18e89d1c2c33d8aa48",
+        "type_mix": {
+          "dockerfile": 6,
+          "java": 24,
+          "json": 20,
+          "python": 32,
+          "typescript": 32,
+          "yaml": 14
+        }
+      },
+      "small": {
+        "bytes": 82883,
+        "files": 24,
+        "input_sha256": "f7aa733477e4e61a3c45ea5c0b8e1cb2c42fa2f0d8548f3708b6a7359017797a",
+        "type_mix": {
+          "dockerfile": 2,
+          "java": 4,
+          "json": 4,
+          "python": 6,
+          "typescript": 4,
+          "yaml": 4
+        }
+      }
+    }
+  },
+  "checkpoint": "200905bb4b7fcf8ab5e42c07c9f7f6c2c280a617",
+  "date": "2026-11-08",
+  "disposition": {
+    "commercial_v1": "DEVELOPMENT IN PROGRESS",
+    "full_diagnostic_ci_justified": "YES after separate authorization and review of the explicit activation and artifact wiring",
+    "runner_reclaim_equivalence": "NOT EQUIVALENT",
+    "scale001": "NOT QUALIFIED"
+  },
+  "evidence_sha256": {
+    "checks/linux-source-manifest.json": "594c469b45bce68f6dec921a3e6cf2d90340b8e4442b4272e4872c7ceba45b5e",
+    "fixture-manifest.json": "efb2c20961758fb553c38b102f648b2fc63111060138e40e23fc7ff0c5d421f8",
+    "packet-gc-cgroup-attribution.json": "ce0cb0d0b54db7f7cabfcd5bd8161ce9cc210c64fc2ea16aa11836f9beae61ac",
+    "preflight-summary.json": "32b6808d0d936a251632c46c74496562c40282f80114d49dee3aff6933028f1d",
+    "route-matrix.json": "7a37a04e3f44014f8688bca8d7d70dd9f4dcc94771a840bb05e3968803b790d3",
+    "runtime-manifest.json": "c81528b6fc9d40ddc047e2868ccb2706f52dcde2f60841f51a89f6a1791cd3ff",
+    "security/sec002.json": "f43c86691334405828a28b8e14b50f164ae529925dfb2418f1eb080283d6f5df",
+    "slice-manifest.json": "07e5a1174581a4da08f86d8b44597a65a5f710525d7053b25edfc184877a9573"
+  },
+  "full_ci": {
+    "baseline": {
+      "classification": "VERIFIED_RESOURCE_OOM_FAILURE",
+      "container_exit": 137,
+      "job_id": 128406463091,
+      "memory": {
+        "final_events": null,
+        "kernel_enforcement_verified": true,
+        "last_current_bytes": 313585664,
+        "limit_bytes": 768000000,
+        "oom_killed": true,
+        "peak_bytes": 768000000,
+        "swap_limit_bytes": 0
+      },
+      "publication": {
+        "foreign_key_violations": 0,
+        "published_generations": 0,
+        "published_pointers": 0,
+        "sqlite_integrity": "ok"
+      }
+    },
+    "candidate": {
+      "error_code": "ANALYSIS_TIME_BUDGET",
+      "memory": {
+        "final_events": {
+          "max": 15160,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        "kernel_enforcement_verified": true,
+        "last_current_bytes": 749096960,
+        "limit_bytes": 768000000,
+        "oom_killed": false,
+        "peak_bytes": 768000000,
+        "swap_limit_bytes": 0
+      },
+      "publication": {
+        "foreign_key_violations": 0,
+        "published_generations": 0,
+        "published_pointers": 0,
+        "sqlite_integrity": "ok"
+      },
+      "stage": "EXTRACTING_CLAIMS"
+    },
+    "inferred_only_no_hcl": 34,
+    "retained_runner_analyzing_interval": {
+      "cpu_seconds": 1759.326236,
+      "end": 1987.124,
+      "file_bytes_start_end": [
+        355262464,
+        208883712
+      ],
+      "io_bytes_and_ops": {
+        "dbytes": 0,
+        "dios": 0,
+        "rbytes": 271818752,
+        "rios": 26241,
+        "wbytes": 3071856640,
+        "wios": 120929
+      },
+      "memory_max_events": 9619,
+      "page_scans": 469585,
+      "pressure_us": {
+        "full": 34226761,
+        "some": 34232378
+      },
+      "start": 218.296
+    },
+    "run_id": 42373565217
+  },
+  "image": {
+    "build_exit": 0,
+    "docker": "29.9.2",
+    "files": 198,
+    "image": "sha256:72de9fd98468610286407cd51b55bbe9e94eac471924f52300649881bfc06a31",
+    "kernel": "6.18.54.1-microsoft-standard-WSL2",
+    "overlays": [
+      "scale_diagnostic.py",
+      "scale_diagnostic_worker.py",
+      "qualify_scale_workload.py",
+      "run_scale_cgroup.py"
+    ],
+    "parent": "sha256:e0a86ce946c874d6e4e2ab200e0f18c471531aea09995f70bfcfa14135a1db8e",
+    "runtime_sha256": "4f8677572c9b2a2426cb355b780277113026415e539327154be4cdb0b0ca2f18",
+    "storage_driver": "overlayfs"
+  },
+  "runtime_proof": {
+    "exit_code": 0,
+    "image": "sha256:72de9fd98468610286407cd51b55bbe9e94eac471924f52300649881bfc06a31",
+    "proof": {
+      "mismatches": [],
+      "runtime_files": 198
+    },
+    "runtime_sha256": "4f8677572c9b2a2426cb355b780277113026415e539327154be4cdb0b0ca2f18"
+  },
+  "schema": "projecttrace-scale001-telemetry-preflight-v1",
+  "sec002": [
+    {
+      "envelope": {
+        "CapDrop": [
+          "ALL"
+        ],
+        "Memory": 768000000,
+        "MemorySwap": 768000000,
+        "NanoCpus": 2000000000,
+        "NetworkMode": "none",
+        "PidsLimit": 64,
+        "ReadonlyRootfs": true,
+        "SecurityOpt": [
+          "no-new-privileges"
+        ]
+      },
+      "exit_code": 0,
+      "image": "sha256:72de9fd98468610286407cd51b55bbe9e94eac471924f52300649881bfc06a31",
+      "kind": "existing",
+      "oom": false
+    },
+    {
+      "envelope": {
+        "CapDrop": [
+          "ALL"
+        ],
+        "Memory": 768000000,
+        "MemorySwap": 768000000,
+        "NanoCpus": 2000000000,
+        "NetworkMode": "none",
+        "PidsLimit": 64,
+        "ReadonlyRootfs": true,
+        "SecurityOpt": [
+          "no-new-privileges"
+        ]
+      },
+      "exit_code": 0,
+      "image": "sha256:72de9fd98468610286407cd51b55bbe9e94eac471924f52300649881bfc06a31",
+      "kind": "supplement",
+      "oom": false
+    }
+  ],
+  "telemetry_schema_sha256": "6b7c23e93a0301a4dd04d1d773c90c197a9a5a7b882a36b4d0376bda9f2491ab",
+  "tests": {
+    "activation_guard": {
+      "manifest_only_with_diagnostic_exit": 2,
+      "resource_probe_with_diagnostic_exit": 2
+    },
+    "development": {
+      "counts": {
+        "errors": 0,
+        "failures": 0,
+        "passed": 143,
+        "skipped": 0,
+        "tests": 143
+      },
+      "elapsed_seconds": 140.61011175,
+      "exit_code": 0,
+      "warnings": 1
+    },
+    "diagnostic": {
+      "errors": 0,
+      "exit_code": 0,
+      "failed": 0,
+      "passed": 13,
+      "skipped": 0,
+      "warnings": 1
+    },
+    "failed_attempts": {
+      "early_summary_missing_final_trial_exit": 1,
+      "initial_local_monitor_event_mask_exit": 1,
+      "initial_ruff_import_order_exit": 1,
+      "superseded_matrix_launcher_sigterm_exit": 15
+    },
+    "required": {
+      "counts": {
+        "errors": 0,
+        "failures": 0,
+        "passed": 134,
+        "skipped": 0,
+        "tests": 134
+      },
+      "elapsed_seconds": 84.32305688899987,
+      "exit_code": 0,
+      "warnings": 1
+    },
+    "required-routing": {
+      "counts": {
+        "errors": 0,
+        "failures": 0,
+        "passed": 12,
+        "skipped": 0,
+        "tests": 12
+      },
+      "elapsed_seconds": 11.728451567999855,
+      "exit_code": 0,
+      "warnings": 0
+    },
+    "static": {
+      "compile_exit": 0,
+      "git_diff_check_exit": 0,
+      "ruff_exit": 0
+    }
+  }
+}

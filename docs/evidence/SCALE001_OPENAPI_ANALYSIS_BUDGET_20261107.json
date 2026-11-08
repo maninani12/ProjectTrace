@@ -1,0 +1,752 @@
+{
+  "bounded": {
+    "dependencies": {
+      "PyYAML": "6.0.3",
+      "SQLAlchemy": "2.1.3",
+      "cryptography": "50.0.2",
+      "tree-sitter": "0.26.0"
+    },
+    "isolated_worker": {
+      "adversarial": {
+        "contract_exact_after_transport": true,
+        "cyclic_local_refs": 2,
+        "external_ref": 1,
+        "network_used": false,
+        "static_claims": 1
+      },
+      "real_inputs": {
+        "batch": [
+          {
+            "attestation_and_exact_result_match": true,
+            "bootstrap_attestation_and_input_cpu_seconds": 0.143834246,
+            "bootstrap_attestation_and_input_wall_seconds": 0.14584715700038942,
+            "decode_cpu_seconds": 0.0039842900000000014,
+            "decode_wall_seconds": 0.0028252620013518026,
+            "dispatch_cpu_seconds": 0.0039842900000000014,
+            "dispatch_wall_seconds": 0.0038838809996377677,
+            "files": 11,
+            "max_single_decode_wall_seconds": 0.0018059750000247732,
+            "normal_helper_wall_seconds": 0.18935400400005165,
+            "profiled_helper_wall_seconds": 0.198494156000379,
+            "source_bytes": 425688,
+            "source_decode_count": 11
+          },
+          {
+            "attestation_and_exact_result_match": true,
+            "bootstrap_attestation_and_input_cpu_seconds": 0.174017214,
+            "bootstrap_attestation_and_input_wall_seconds": 0.17878495199875033,
+            "decode_cpu_seconds": 0.0,
+            "decode_wall_seconds": 0.002221326998551376,
+            "dispatch_cpu_seconds": 0.003973652999999994,
+            "dispatch_wall_seconds": 0.004387110000607208,
+            "files": 23,
+            "max_single_decode_wall_seconds": 0.0010862149993045023,
+            "normal_helper_wall_seconds": 0.17335718599861139,
+            "profiled_helper_wall_seconds": 0.24764947200128518,
+            "source_bytes": 416394,
+            "source_decode_count": 23
+          },
+          {
+            "attestation_and_exact_result_match": true,
+            "bootstrap_attestation_and_input_cpu_seconds": 0.142404815,
+            "bootstrap_attestation_and_input_wall_seconds": 0.14704678199996124,
+            "decode_cpu_seconds": 0.003957100000000019,
+            "decode_wall_seconds": 0.0020309400006226497,
+            "dispatch_cpu_seconds": 0.007927725000000024,
+            "dispatch_wall_seconds": 0.0068661900004372,
+            "files": 3,
+            "max_single_decode_wall_seconds": 0.0018898230009654071,
+            "normal_helper_wall_seconds": 0.17903310899964708,
+            "profiled_helper_wall_seconds": 0.20286393599963048,
+            "source_bytes": 484435,
+            "source_decode_count": 3
+          }
+        ],
+        "context": [
+          {
+            "attestation_and_exact_result_match": true,
+            "bootstrap_attestation_and_input_cpu_seconds": 0.133662998,
+            "bootstrap_attestation_and_input_wall_seconds": 0.13811506400088547,
+            "decode_cpu_seconds": 0.0,
+            "decode_wall_seconds": 4.5753999074804597e-05,
+            "dispatch_cpu_seconds": 0.0,
+            "dispatch_wall_seconds": 0.00011315600022498984,
+            "files": 4,
+            "max_single_decode_wall_seconds": 2.2999998691375367e-05,
+            "normal_helper_wall_seconds": 0.2501466209996579,
+            "profiled_helper_wall_seconds": 0.19625406500017561,
+            "source_bytes": 3774,
+            "source_decode_count": 4
+          }
+        ],
+        "small": [
+          {
+            "attestation_and_exact_result_match": true,
+            "bootstrap_attestation_and_input_cpu_seconds": 0.136566561,
+            "bootstrap_attestation_and_input_wall_seconds": 0.1383253189997049,
+            "decode_cpu_seconds": 0.0,
+            "decode_wall_seconds": 2.1937999918009154e-05,
+            "dispatch_cpu_seconds": 0.0,
+            "dispatch_wall_seconds": 8.01130008767359e-05,
+            "files": 1,
+            "max_single_decode_wall_seconds": 2.1937999918009154e-05,
+            "normal_helper_wall_seconds": 0.15402084499874036,
+            "profiled_helper_wall_seconds": 0.205795036001291,
+            "source_bytes": 1527,
+            "source_decode_count": 1
+          }
+        ]
+      },
+      "scope": "separate required-mode worker replay, parser policy preserved; whole-job data excluded"
+    },
+    "matching_results": true,
+    "production_optimization_applied": false,
+    "python": "3.14.10",
+    "runtime_sha256": "cf6483000222ce22abf18b5315684fce5e0359736932cc21285e41760d0ce56d",
+    "scope": "bounded real SQLite jobs and isolated companion worker",
+    "stage_control_and_counted_runs": [
+      {
+        "all_claims": 5,
+        "case": "small",
+        "control_claim_stage_seconds": 0.269612,
+        "control_job_cgroup_cpu_seconds": 5.249455,
+        "control_job_wall_seconds": 6.010588772998744,
+        "control_openapi_seconds": 0.134274,
+        "control_scope_lifetime_peak_bytes": 252702720,
+        "counted_openapi_cgroup_cpu_seconds": 0.219489,
+        "counted_openapi_seconds": 0.231576,
+        "counted_scope_lifetime_peak_bytes": 148389888,
+        "duplicate_delivery_byte_identical": true,
+        "evidence": 4,
+        "gate": "REVIEW_REQUIRED",
+        "io_pressure_us": {
+          "full": 954,
+          "some": 954
+        },
+        "json_files": 1,
+        "native_cache_hits": 0,
+        "native_cache_misses": 4,
+        "normalized_api_projection_sha256": "f4585b14408f93da5e538be6d116706ef7f69c10b5f7f6e7cf77363f88594fa5",
+        "openapi_claims": 4,
+        "phase": "cold",
+        "phase_counters": {
+          "batch_workers": 1,
+          "blob_bytes": 1527,
+          "blob_integrity_hashes": 1,
+          "blob_opens": 1,
+          "contract_reads": 1,
+          "deadline_checks": 1,
+          "invalid_json": 0,
+          "ipc_request_bytes": 1849,
+          "ipc_response_bytes": 1516,
+          "source_reads": 1,
+          "source_returned_bytes": 1527,
+          "sql_SELECT": 1,
+          "sql_UPDATE": 1,
+          "valid_contracts": 1
+        },
+        "phase_samples": {
+          "fds_peak": 17,
+          "parent_rss_peak": 117755904,
+          "samples": 10,
+          "scope_current_peak": 120696832
+        },
+        "phase_times": {
+          "deadline_check_seconds": 0.01682578699910664,
+          "read_inclusive_seconds": 0.23118230299951392,
+          "source_seconds": 0.0002599299987195991,
+          "sql_seconds": 0.00010319299872207921,
+          "worker_cpu_seconds": 0.21210100000000015,
+          "worker_wall_seconds": 0.2138022290000663
+        },
+        "scope_memory_events": {
+          "high": 0,
+          "low": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_group_kill": 0,
+          "oom_kill": 0
+        },
+        "source_bytes": 13123,
+        "source_files": 4,
+        "state": "COMPLETED"
+      },
+      {
+        "all_claims": 5,
+        "case": "small",
+        "control_claim_stage_seconds": 0.312277,
+        "control_job_cgroup_cpu_seconds": 3.046478,
+        "control_job_wall_seconds": 3.4783272169988777,
+        "control_openapi_seconds": 0.12104,
+        "control_scope_lifetime_peak_bytes": 252702720,
+        "counted_openapi_cgroup_cpu_seconds": 0.138052,
+        "counted_openapi_seconds": 0.135339,
+        "counted_scope_lifetime_peak_bytes": 148389888,
+        "duplicate_delivery_byte_identical": true,
+        "evidence": 4,
+        "gate": "PASS",
+        "io_pressure_us": {
+          "full": 20,
+          "some": 20
+        },
+        "json_files": 1,
+        "native_cache_hits": 4,
+        "native_cache_misses": 0,
+        "normalized_api_projection_sha256": "f4585b14408f93da5e538be6d116706ef7f69c10b5f7f6e7cf77363f88594fa5",
+        "openapi_claims": 4,
+        "phase": "warm",
+        "phase_counters": {
+          "batch_workers": 1,
+          "blob_bytes": 1527,
+          "blob_integrity_hashes": 1,
+          "blob_opens": 1,
+          "contract_reads": 1,
+          "deadline_checks": 1,
+          "invalid_json": 0,
+          "ipc_request_bytes": 1849,
+          "ipc_response_bytes": 1516,
+          "source_reads": 1,
+          "source_returned_bytes": 1527,
+          "sql_SELECT": 1,
+          "sql_UPDATE": 1,
+          "valid_contracts": 1
+        },
+        "phase_samples": {
+          "fds_peak": 13,
+          "parent_rss_peak": 125415424,
+          "samples": 6,
+          "scope_current_peak": 131244032
+        },
+        "phase_times": {
+          "deadline_check_seconds": 0.0022465479996753857,
+          "read_inclusive_seconds": 0.13485255900013726,
+          "source_seconds": 0.0002328569989913376,
+          "sql_seconds": 0.00010485799793968908,
+          "worker_cpu_seconds": 0.1308539999999997,
+          "worker_wall_seconds": 0.13208135200147808
+        },
+        "scope_memory_events": {
+          "high": 0,
+          "low": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_group_kill": 0,
+          "oom_kill": 0
+        },
+        "source_bytes": 13123,
+        "source_files": 4,
+        "state": "COMPLETED"
+      },
+      {
+        "all_claims": 5,
+        "case": "context",
+        "control_claim_stage_seconds": 0.392728,
+        "control_job_cgroup_cpu_seconds": 4.487757,
+        "control_job_wall_seconds": 4.967692883999916,
+        "control_openapi_seconds": 0.173659,
+        "control_scope_lifetime_peak_bytes": 147931136,
+        "counted_openapi_cgroup_cpu_seconds": 0.123718,
+        "counted_openapi_seconds": 0.169821,
+        "counted_scope_lifetime_peak_bytes": 147378176,
+        "duplicate_delivery_byte_identical": true,
+        "evidence": 7,
+        "gate": "REVIEW_REQUIRED",
+        "io_pressure_us": {
+          "full": 12029,
+          "some": 12029
+        },
+        "json_files": 4,
+        "native_cache_hits": 0,
+        "native_cache_misses": 7,
+        "normalized_api_projection_sha256": "f4585b14408f93da5e538be6d116706ef7f69c10b5f7f6e7cf77363f88594fa5",
+        "openapi_claims": 4,
+        "phase": "cold",
+        "phase_counters": {
+          "batch_workers": 1,
+          "blob_bytes": 3774,
+          "blob_integrity_hashes": 4,
+          "blob_opens": 4,
+          "contract_reads": 4,
+          "deadline_checks": 1,
+          "invalid_json": 0,
+          "ipc_request_bytes": 4659,
+          "ipc_response_bytes": 2279,
+          "source_reads": 4,
+          "source_returned_bytes": 3774,
+          "sql_SELECT": 1,
+          "sql_UPDATE": 1,
+          "valid_contracts": 1
+        },
+        "phase_samples": {
+          "fds_peak": 17,
+          "parent_rss_peak": 117796864,
+          "samples": 7,
+          "scope_current_peak": 119463936
+        },
+        "phase_times": {
+          "deadline_check_seconds": 0.049635315999694285,
+          "read_inclusive_seconds": 0.16875309600072796,
+          "source_seconds": 0.0003071770006499719,
+          "sql_seconds": 0.00010431499867991079,
+          "worker_cpu_seconds": 0.11801699999999996,
+          "worker_wall_seconds": 0.11841581400040013
+        },
+        "scope_memory_events": {
+          "high": 0,
+          "low": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_group_kill": 0,
+          "oom_kill": 0
+        },
+        "source_bytes": 15370,
+        "source_files": 7,
+        "state": "COMPLETED"
+      },
+      {
+        "all_claims": 5,
+        "case": "context",
+        "control_claim_stage_seconds": 0.280598,
+        "control_job_cgroup_cpu_seconds": 3.067476,
+        "control_job_wall_seconds": 3.479321079001238,
+        "control_openapi_seconds": 0.161774,
+        "control_scope_lifetime_peak_bytes": 147931136,
+        "counted_openapi_cgroup_cpu_seconds": 0.123768,
+        "counted_openapi_seconds": 0.165158,
+        "counted_scope_lifetime_peak_bytes": 147378176,
+        "duplicate_delivery_byte_identical": true,
+        "evidence": 7,
+        "gate": "PASS",
+        "io_pressure_us": {
+          "full": 13450,
+          "some": 13450
+        },
+        "json_files": 4,
+        "native_cache_hits": 7,
+        "native_cache_misses": 0,
+        "normalized_api_projection_sha256": "f4585b14408f93da5e538be6d116706ef7f69c10b5f7f6e7cf77363f88594fa5",
+        "openapi_claims": 4,
+        "phase": "warm",
+        "phase_counters": {
+          "batch_workers": 1,
+          "blob_bytes": 3774,
+          "blob_integrity_hashes": 4,
+          "blob_opens": 4,
+          "contract_reads": 4,
+          "deadline_checks": 1,
+          "invalid_json": 0,
+          "ipc_request_bytes": 4659,
+          "ipc_response_bytes": 2279,
+          "source_reads": 4,
+          "source_returned_bytes": 3774,
+          "sql_SELECT": 1,
+          "sql_UPDATE": 1,
+          "valid_contracts": 1
+        },
+        "phase_samples": {
+          "fds_peak": 17,
+          "parent_rss_peak": 125530112,
+          "samples": 7,
+          "scope_current_peak": 130183168
+        },
+        "phase_times": {
+          "deadline_check_seconds": 0.04705111700059206,
+          "read_inclusive_seconds": 0.16379204599979857,
+          "source_seconds": 0.0003705140024976572,
+          "sql_seconds": 0.00017082600061257835,
+          "worker_cpu_seconds": 0.11521499999999979,
+          "worker_wall_seconds": 0.11598668300030113
+        },
+        "scope_memory_events": {
+          "high": 0,
+          "low": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_group_kill": 0,
+          "oom_kill": 0
+        },
+        "source_bytes": 15370,
+        "source_files": 7,
+        "state": "COMPLETED"
+      },
+      {
+        "all_claims": 9,
+        "case": "batch",
+        "control_claim_stage_seconds": 0.784778,
+        "control_job_cgroup_cpu_seconds": 5.838611,
+        "control_job_wall_seconds": 6.686057652001182,
+        "control_openapi_seconds": 0.58133,
+        "control_scope_lifetime_peak_bytes": 154578944,
+        "counted_openapi_cgroup_cpu_seconds": 0.411364,
+        "counted_openapi_seconds": 0.576836,
+        "counted_scope_lifetime_peak_bytes": 154845184,
+        "duplicate_delivery_byte_identical": true,
+        "evidence": 40,
+        "gate": "REVIEW_REQUIRED",
+        "io_pressure_us": {
+          "full": 59234,
+          "some": 59234
+        },
+        "json_files": 37,
+        "native_cache_hits": 0,
+        "native_cache_misses": 40,
+        "normalized_api_projection_sha256": "f4585b14408f93da5e538be6d116706ef7f69c10b5f7f6e7cf77363f88594fa5",
+        "openapi_claims": 4,
+        "phase": "cold",
+        "phase_counters": {
+          "batch_workers": 3,
+          "blob_bytes": 1326517,
+          "blob_integrity_hashes": 37,
+          "blob_opens": 37,
+          "contract_reads": 37,
+          "deadline_checks": 3,
+          "invalid_json": 0,
+          "ipc_request_bytes": 1443901,
+          "ipc_response_bytes": 10327,
+          "source_reads": 37,
+          "source_returned_bytes": 1326517,
+          "sql_SELECT": 3,
+          "sql_UPDATE": 3,
+          "valid_contracts": 1
+        },
+        "phase_samples": {
+          "fds_peak": 17,
+          "parent_rss_peak": 125173760,
+          "samples": 23,
+          "scope_current_peak": 131108864
+        },
+        "phase_times": {
+          "deadline_check_seconds": 0.18453271300131746,
+          "read_inclusive_seconds": 0.5754528139950708,
+          "source_seconds": 0.006814590991780278,
+          "sql_seconds": 0.0007520930012105964,
+          "worker_cpu_seconds": 0.37000600000000006,
+          "worker_wall_seconds": 0.37349162899954536
+        },
+        "scope_memory_events": {
+          "high": 0,
+          "low": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_group_kill": 0,
+          "oom_kill": 0
+        },
+        "source_bytes": 1338113,
+        "source_files": 40,
+        "state": "COMPLETED"
+      },
+      {
+        "all_claims": 9,
+        "case": "batch",
+        "control_claim_stage_seconds": 0.805346,
+        "control_job_cgroup_cpu_seconds": 4.351898,
+        "control_job_wall_seconds": 4.9866008139997575,
+        "control_openapi_seconds": 0.67929,
+        "control_scope_lifetime_peak_bytes": 156028928,
+        "counted_openapi_cgroup_cpu_seconds": 0.473324,
+        "counted_openapi_seconds": 0.633731,
+        "counted_scope_lifetime_peak_bytes": 155635712,
+        "duplicate_delivery_byte_identical": true,
+        "evidence": 40,
+        "gate": "REVIEW_REQUIRED",
+        "io_pressure_us": {
+          "full": 32250,
+          "some": 32250
+        },
+        "json_files": 37,
+        "native_cache_hits": 40,
+        "native_cache_misses": 0,
+        "normalized_api_projection_sha256": "f4585b14408f93da5e538be6d116706ef7f69c10b5f7f6e7cf77363f88594fa5",
+        "openapi_claims": 4,
+        "phase": "warm",
+        "phase_counters": {
+          "batch_workers": 3,
+          "blob_bytes": 1326517,
+          "blob_integrity_hashes": 37,
+          "blob_opens": 37,
+          "contract_reads": 37,
+          "deadline_checks": 3,
+          "invalid_json": 0,
+          "ipc_request_bytes": 1443901,
+          "ipc_response_bytes": 10327,
+          "source_reads": 37,
+          "source_returned_bytes": 1326517,
+          "sql_SELECT": 3,
+          "sql_UPDATE": 3,
+          "valid_contracts": 1
+        },
+        "phase_samples": {
+          "fds_peak": 13,
+          "parent_rss_peak": 136380416,
+          "samples": 25,
+          "scope_current_peak": 147234816
+        },
+        "phase_times": {
+          "deadline_check_seconds": 0.17852324200066505,
+          "read_inclusive_seconds": 0.6331187510077143,
+          "source_seconds": 0.006140980998679879,
+          "sql_seconds": 0.0005660729984811042,
+          "worker_cpu_seconds": 0.4322359999999999,
+          "worker_wall_seconds": 0.4374572140004602
+        },
+        "scope_memory_events": {
+          "high": 0,
+          "low": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_group_kill": 0,
+          "oom_kill": 0
+        },
+        "source_bytes": 1338113,
+        "source_files": 40,
+        "state": "PARTIAL"
+      }
+    ]
+  },
+  "checkpoint": "200905bb4b7fcf8ab5e42c07c9f7f6c2c280a617",
+  "checks": {
+    "compile": {
+      "exit_code": 0,
+      "mode": "development"
+    },
+    "development": {
+      "complete_junit": true,
+      "counts": {
+        "errors": 0,
+        "failures": 0,
+        "passed": 133,
+        "skipped": 0,
+        "tests": 133
+      },
+      "exit_code": 0,
+      "mode": "development",
+      "warnings": 1
+    },
+    "required": {
+      "complete_junit": true,
+      "counts": {
+        "errors": 0,
+        "failures": 0,
+        "passed": 105,
+        "skipped": 0,
+        "tests": 105
+      },
+      "exit_code": 0,
+      "mode": "required",
+      "warnings": 1
+    },
+    "ruff": {
+      "exit_code": 0,
+      "mode": "development"
+    }
+  },
+  "ci": {
+    "analysis_budget_seconds": 1800,
+    "baseline": {
+      "artifact": {
+        "digest": "sha256:2a972750ce96e1f2bf205de78f0dbe8ed69c46699e99d6824117eece793d3719",
+        "digest_verified": true,
+        "expired": false,
+        "id": 13574529974,
+        "name": "scale-full-baseline-42373565217",
+        "sha256_computed": "sha256:2a972750ce96e1f2bf205de78f0dbe8ed69c46699e99d6824117eece793d3719",
+        "size_in_bytes": 1754877
+      },
+      "classification": "VERIFIED_RESOURCE_OOM_FAILURE",
+      "container_exit": 137,
+      "job_id": 128406463091,
+      "memory": {
+        "final_events": null,
+        "kernel_enforcement_verified": true,
+        "last_current_bytes": 313585664,
+        "limit_bytes": 768000000,
+        "oom_killed": true,
+        "peak_bytes": 768000000,
+        "swap_limit_bytes": 0
+      },
+      "publication": {
+        "foreign_key_violations": 0,
+        "published_generations": 0,
+        "published_pointers": 0,
+        "sqlite_integrity": "ok"
+      }
+    },
+    "candidate_artifact_digest": "sha256:41168429c8cb394b012fae8a4bfbe178d111b7a408c39e649a79483f6ddd5735",
+    "candidate_artifact_id": 13576105290,
+    "candidate_container_exit": 1,
+    "candidate_job_id": 128406462943,
+    "error_code": "ANALYSIS_TIME_BUDGET",
+    "guard_boundary": {
+      "callback": "OpenAPIContracts.read after helper return, validation and submitted counters, before pending.pop",
+      "last_batch_helper_wall_seconds": null,
+      "last_batch_source_bytes": null,
+      "last_batch_source_path": null,
+      "last_batch_submitted_but_unconsumed_files": 1,
+      "observed_batches_submitted": 39
+    },
+    "inferred_budget_left_at_claim_entry_seconds": 30.670808999999963,
+    "memory": {
+      "final_events": {
+        "max": 15160,
+        "oom": 0,
+        "oom_kill": 0
+      },
+      "kernel_enforcement_verified": true,
+      "last_current_bytes": 749096960,
+      "limit_bytes": 768000000,
+      "oom_killed": false,
+      "peak_bytes": 768000000,
+      "swap_limit_bytes": 0
+    },
+    "openapi_body_seconds": 26.269188,
+    "publication": {
+      "foreign_key_violations": 0,
+      "published_generations": 0,
+      "published_pointers": 0,
+      "sqlite_integrity": "ok"
+    },
+    "recorded_preclaims_seconds": 1769.329191,
+    "recorded_stage_seconds": {
+      "ANALYZING": 1769.076893,
+      "EXTRACTING_CLAIMS": 30.956056,
+      "PARSING": 0.113361,
+      "VALIDATING": 0.138937
+    },
+    "run_id": 42373565217,
+    "sample_attribution": {
+      "analyzing_observed_samples": {
+        "cpu_seconds": 1759.326236,
+        "end": 1987.124,
+        "file_bytes_start_end": [
+          355262464,
+          208883712
+        ],
+        "io_bytes_and_ops": {
+          "dbytes": 0,
+          "dios": 0,
+          "rbytes": 271818752,
+          "rios": 26241,
+          "wbytes": 3071856640,
+          "wios": 120929
+        },
+        "memory_max_events": 9619,
+        "page_scans": 469585,
+        "pressure_us": {
+          "full": 34226761,
+          "some": 34232378
+        },
+        "start": 218.296
+      },
+      "claims_entry_to_estimated_guard_sample": {
+        "cpu_seconds": 30.232326,
+        "end": 2017.758,
+        "file_bytes_start_end": [
+          208883712,
+          224944128
+        ],
+        "io_bytes_and_ops": {
+          "dbytes": 0,
+          "dios": 0,
+          "rbytes": 31313920,
+          "rios": 2561,
+          "wbytes": 6934528,
+          "wios": 589
+        },
+        "memory_max_events": 101,
+        "page_scans": 3982,
+        "pressure_us": {
+          "full": 195177,
+          "some": 195176
+        },
+        "start": 1987.124
+      },
+      "estimated_guard_harness_seconds": 2017.794809,
+      "first_parsing_sample_harness_seconds": 217.96,
+      "status": "SAMPLE-BASED ESTIMATE; guard instant and per-child CPU not retained"
+    },
+    "stage": "EXTRACTING_CLAIMS"
+  },
+  "date": "2026-11-07",
+  "disposition": {
+    "candidate_root_cost": "Preclaims partition work consumed 98.3% of the analysis budget.",
+    "commercial_v1": "DEVELOPMENT IN PROGRESS",
+    "next": "Bounded cold native partition attribution under runner-equivalent reclaim.",
+    "openapi_timeout_trigger": "Completed helper return and deadline check. Exact final path and read time unavailable.",
+    "optimization": "Evidence only. No actionable OpenAPI defect demonstrated.",
+    "scale001": "NOT QUALIFIED"
+  },
+  "input": {
+    "archive_sha256": "95747f22ebf3d01232b1592551bc2bc1866b9bbe7322dd3bf1a97028b0592257",
+    "cases": {
+      "batch": {
+        "files": 40,
+        "input_identity_sha256": "5ae601a4aee41b82000d12bb34dc7bb08a0fdde042b71cc541291aa5bdfac76e",
+        "source_bytes": 1338113
+      },
+      "context": {
+        "files": 7,
+        "input_identity_sha256": "f6ab7a03cadf301960d2e60b9d613082b9b5187f78be875bdf1a94056088c150",
+        "source_bytes": 15370
+      },
+      "small": {
+        "files": 4,
+        "input_identity_sha256": "69fabe562b4ddb7a82abf0c531467b4c0869ce281faf85db5ed3057f414ef528",
+        "source_bytes": 13123
+      }
+    },
+    "single_authentic_openapi_json": {
+      "operations": 4,
+      "paths": 3,
+      "ref_keys": 0,
+      "schemas": 1
+    },
+    "upstream_commit": "b1fab2bc21c63335dead4daaaa28194c9878e9bf"
+  },
+  "schema": "projecttrace-scale001-openapi-analysis-budget-v1",
+  "selected_measurements": {
+    "CACHE_WRITE": {
+      "count": 199,
+      "max_seconds": 0.700698,
+      "seconds": 40.913332
+    },
+    "DOCUMENTATION_CLAIMS": {
+      "count": 1,
+      "max_seconds": 4.65547,
+      "seconds": 4.65547
+    },
+    "OBSERVATION_SPILL": {
+      "count": 199,
+      "max_seconds": 1.398469,
+      "seconds": 89.264486
+    },
+    "OPENAPI_CLAIMS": {
+      "count": 1,
+      "max_seconds": 26.269188,
+      "seconds": 26.269188
+    },
+    "OPENAPI_CONTRACT_BATCH": {
+      "count": 39,
+      "max_seconds": 0.668757,
+      "seconds": 25.358312
+    },
+    "OPENAPI_SOURCE_READ": {
+      "count": 39,
+      "max_seconds": 0.027044,
+      "seconds": 0.634674
+    },
+    "PARTITION_PARSE": {
+      "count": 199,
+      "max_seconds": 17.560787,
+      "seconds": 1598.843438
+    }
+  },
+  "source": {
+    "prior_sec002_exits": [
+      0,
+      0
+    ],
+    "runtime_files": 196,
+    "runtime_sha256": "cf6483000222ce22abf18b5315684fce5e0359736932cc21285e41760d0ce56d",
+    "verified_prior_sec002_image": "sha256:a74fb7a5e158103100da5c77730e0052919d9276e5b7c592d650560d1f378512"
+  }
+}

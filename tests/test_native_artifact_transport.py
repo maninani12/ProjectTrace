@@ -120,13 +120,13 @@ def test_helper_refuses_to_pack_inconsistent_observation_and_cache_payloads():
         native_artifact("owned.js", row)
 
 
-def test_owned_worker_dispatch_emits_complete_compact_native_result(monkeypatch):
-    from analyzers.engine import native_observations
-
-    monkeypatch.setenv("PROJECTTRACE_PARSER_ISOLATION", "development")
+def test_owned_worker_dispatch_emits_complete_compact_native_result():
     files = {"owned.py": "def owned(value):\n    return value + 1\n"}
-    # Exercise the real installed dispatch/emitter on owned inert input. This
-    # portable check intentionally does not claim Linux bootstrap enforcement.
+    # Start both sides in development mode so the import-time parser signature
+    # stays consistent when this portable check is collected in required mode.
+    env = {**os.environ, "PROJECTTRACE_PARSER_ISOLATION": "development"}
+    payload = json.dumps({"files": files, "cache": {}, "settings": {},
+                          "parsed": {"languages": {}, "iac": {}}}).encode()
     code = """
 import json,sys
 from analyzers import engine,sandbox
@@ -134,12 +134,19 @@ from analyzers.isolated_worker import STREAMED,dispatch
 value=json.loads(sys.stdin.buffer.read())
 assert dispatch('native',value,engine,sandbox) is STREAMED
 """
-    result = subprocess.run([sys.executable, "-c", code], input=json.dumps({"files": files, "cache": {},
-        "settings": {}, "parsed": {"languages": {}, "iac": {}}}).encode(), capture_output=True,
-        env=os.environ.copy(), timeout=30)
+    result = subprocess.run([sys.executable, "-c", code], input=payload, capture_output=True, env=env, timeout=30)
     assert result.returncode == 0, result.stderr.decode()
     assert json.loads(result.stdout)["result"]["schema"] == "projecttrace-native-artifact-v1"
     actual = completed_packets(result.stdout, files, 16_000_000, expand=expand_native_artifact)["owned.py"]
-    control = list(native_observations(files))
-    control[5] = sorted(control[5])
-    assert actual[:8] == control
+
+    control_code = """
+import json,sys
+from analyzers.engine import native_observations
+control=list(native_observations(json.load(sys.stdin)["files"]))
+control[5]=sorted(control[5])
+print(json.dumps(control))
+"""
+    control = subprocess.run([sys.executable, "-c", control_code], input=payload,
+                             capture_output=True, env=env, timeout=30)
+    assert control.returncode == 0, control.stderr.decode()
+    assert actual[:8] == json.loads(control.stdout)

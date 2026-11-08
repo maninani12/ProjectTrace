@@ -1,0 +1,1142 @@
+{
+  "checkpoint": "200905bb4b7fcf8ab5e42c07c9f7f6c2c280a617",
+  "ci": {
+    "baseline": {
+      "artifact": {
+        "digest": "sha256:2a972750ce96e1f2bf205de78f0dbe8ed69c46699e99d6824117eece793d3719",
+        "digest_verified": true,
+        "expired": false,
+        "id": 13574529974,
+        "name": "scale-full-baseline-42373565217",
+        "sha256_computed": "sha256:2a972750ce96e1f2bf205de78f0dbe8ed69c46699e99d6824117eece793d3719",
+        "size_in_bytes": 1754877
+      },
+      "classification": "VERIFIED_RESOURCE_OOM_FAILURE",
+      "container_exit": 137,
+      "job_id": 128406463091,
+      "memory": {
+        "final_events": null,
+        "kernel_enforcement_verified": true,
+        "last_current_bytes": 313585664,
+        "limit_bytes": 768000000,
+        "oom_killed": true,
+        "peak_bytes": 768000000,
+        "swap_limit_bytes": 0
+      },
+      "publication": {
+        "foreign_key_violations": 0,
+        "published_generations": 0,
+        "published_pointers": 0,
+        "sqlite_integrity": "ok"
+      }
+    },
+    "candidate": {
+      "artifact_id": 13576105290,
+      "checkpoint_admission_reached": false,
+      "container_exit": 1,
+      "error_code": "ANALYSIS_TIME_BUDGET",
+      "full_run_publication": false,
+      "job_id": 128406462943,
+      "memory": {
+        "final_events": {
+          "max": 15160,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        "kernel_enforcement_verified": true,
+        "last_current_bytes": 749096960,
+        "limit_bytes": 768000000,
+        "oom_killed": false,
+        "peak_bytes": 768000000,
+        "swap_limit_bytes": 0
+      },
+      "partition_parse_seconds": 1598.843438,
+      "publication": {
+        "foreign_key_violations": 0,
+        "published_generations": 0,
+        "published_pointers": 0,
+        "sqlite_integrity": "ok"
+      },
+      "stage": "EXTRACTING_CLAIMS",
+      "verified_artifact_digest": "sha256:41168429c8cb394b012fae8a4bfbe178d111b7a408c39e649a79483f6ddd5735"
+    },
+    "constrained_run_id": 42373565217,
+    "validation": "success",
+    "validation_run_id": 42373565157
+  },
+  "contained_iac_setup_probe": {
+    "baseline": {
+      "dispatch_wall_seconds": 0.0007618130002811085,
+      "hcl_grammar_build_seconds": 0.8403619670007174,
+      "hcl_grammar_builds": 1.0,
+      "landlock_seccomp_install_seconds": 0.003694715499477752,
+      "normal_parent_seconds": 1.0548297599998477,
+      "source_hcl_decodes": 0.0,
+      "startup_attestation_and_input_seconds": 1.0099069574989699
+    },
+    "candidate": {
+      "dispatch_wall_seconds": 0.0008193694993678946,
+      "hcl_grammar_build_seconds": 0.0,
+      "hcl_grammar_builds": 0.0,
+      "landlock_seccomp_install_seconds": 0.0028747520000251825,
+      "normal_parent_seconds": 0.18729323449952062,
+      "source_hcl_decodes": 0.0,
+      "startup_attestation_and_input_seconds": 0.16622821700002532
+    }
+  },
+  "controls": {
+    "large_cold": {
+      "baseline": {
+        "cache_hits": {
+          "max": 0,
+          "median": 0.0,
+          "min": 0
+        },
+        "cache_misses": {
+          "max": 128,
+          "median": 128.0,
+          "min": 128
+        },
+        "cpu": {
+          "max": 10.650246,
+          "median": 10.522638,
+          "min": 10.39503
+        },
+        "parse": {
+          "max": 3.060927,
+          "median": 2.945876,
+          "min": 2.830825
+        },
+        "partitions": {
+          "max": 2,
+          "median": 2.0,
+          "min": 2
+        },
+        "wall": {
+          "max": 11.601812085000347,
+          "median": 11.260283982000146,
+          "min": 10.918755878999946
+        }
+      },
+      "candidate": {
+        "cache_hits": {
+          "max": 0,
+          "median": 0.0,
+          "min": 0
+        },
+        "cache_misses": {
+          "max": 128,
+          "median": 128.0,
+          "min": 128
+        },
+        "cpu": {
+          "max": 9.657048,
+          "median": 9.528447499999999,
+          "min": 9.399847
+        },
+        "parse": {
+          "max": 2.104891,
+          "median": 2.0824629999999997,
+          "min": 2.060035
+        },
+        "partitions": {
+          "max": 2,
+          "median": 2.0,
+          "min": 2
+        },
+        "wall": {
+          "max": 10.327437730000383,
+          "median": 10.210244144000171,
+          "min": 10.093050557999959
+        }
+      }
+    },
+    "large_warm": {
+      "baseline": {
+        "cache_hits": {
+          "max": 117,
+          "median": 117.0,
+          "min": 117
+        },
+        "cache_misses": {
+          "max": 11,
+          "median": 11.0,
+          "min": 11
+        },
+        "cpu": {
+          "max": 8.841537,
+          "median": 8.776107,
+          "min": 8.710677
+        },
+        "parse": {
+          "max": 1.700117,
+          "median": 1.6721425,
+          "min": 1.644168
+        },
+        "partitions": {
+          "max": 2,
+          "median": 2.0,
+          "min": 2
+        },
+        "wall": {
+          "max": 10.034225937000883,
+          "median": 9.73216621750089,
+          "min": 9.430106498000896
+        }
+      },
+      "candidate": {
+        "cache_hits": {
+          "max": 117,
+          "median": 117.0,
+          "min": 117
+        },
+        "cache_misses": {
+          "max": 11,
+          "median": 11.0,
+          "min": 11
+        },
+        "cpu": {
+          "max": 7.853897,
+          "median": 7.8208865,
+          "min": 7.787876
+        },
+        "parse": {
+          "max": 0.933923,
+          "median": 0.8713525,
+          "min": 0.808782
+        },
+        "partitions": {
+          "max": 2,
+          "median": 2.0,
+          "min": 2
+        },
+        "wall": {
+          "max": 9.037922726000033,
+          "median": 8.78026438950019,
+          "min": 8.522606053000345
+        }
+      }
+    },
+    "small_cold": {
+      "baseline": {
+        "cache_hits": {
+          "max": 0,
+          "median": 0.0,
+          "min": 0
+        },
+        "cache_misses": {
+          "max": 24,
+          "median": 24.0,
+          "min": 24
+        },
+        "cpu": {
+          "max": 5.913061,
+          "median": 5.5848344999999995,
+          "min": 5.256608
+        },
+        "parse": {
+          "max": 1.656696,
+          "median": 1.593429,
+          "min": 1.530162
+        },
+        "partitions": {
+          "max": 1,
+          "median": 1.0,
+          "min": 1
+        },
+        "wall": {
+          "max": 6.087867215001097,
+          "median": 5.7211817895013155,
+          "min": 5.354496364001534
+        }
+      },
+      "candidate": {
+        "cache_hits": {
+          "max": 0,
+          "median": 0.0,
+          "min": 0
+        },
+        "cache_misses": {
+          "max": 24,
+          "median": 24.0,
+          "min": 24
+        },
+        "cpu": {
+          "max": 4.580037,
+          "median": 4.550231999999999,
+          "min": 4.520427
+        },
+        "parse": {
+          "max": 0.694117,
+          "median": 0.6847775,
+          "min": 0.675438
+        },
+        "partitions": {
+          "max": 1,
+          "median": 1.0,
+          "min": 1
+        },
+        "wall": {
+          "max": 4.934508509000807,
+          "median": 4.7957652655004495,
+          "min": 4.657022022000092
+        }
+      }
+    },
+    "small_warm": {
+      "baseline": {
+        "cache_hits": {
+          "max": 19,
+          "median": 19.0,
+          "min": 19
+        },
+        "cache_misses": {
+          "max": 5,
+          "median": 5.0,
+          "min": 5
+        },
+        "cpu": {
+          "max": 4.724137,
+          "median": 4.6874455,
+          "min": 4.650754
+        },
+        "parse": {
+          "max": 1.49733,
+          "median": 1.4904885,
+          "min": 1.483647
+        },
+        "partitions": {
+          "max": 1,
+          "median": 1.0,
+          "min": 1
+        },
+        "wall": {
+          "max": 4.979992825999943,
+          "median": 4.968435007499465,
+          "min": 4.9568771889989875
+        }
+      },
+      "candidate": {
+        "cache_hits": {
+          "max": 19,
+          "median": 19.0,
+          "min": 19
+        },
+        "cache_misses": {
+          "max": 5,
+          "median": 5.0,
+          "min": 5
+        },
+        "cpu": {
+          "max": 3.967951,
+          "median": 3.84609,
+          "min": 3.724229
+        },
+        "parse": {
+          "max": 0.563191,
+          "median": 0.5567615,
+          "min": 0.550332
+        },
+        "partitions": {
+          "max": 1,
+          "median": 1.0,
+          "min": 1
+        },
+        "wall": {
+          "max": 4.5481234149992815,
+          "median": 4.33807085799981,
+          "min": 4.128018301000338
+        }
+      }
+    }
+  },
+  "counted_medians": {
+    "large_cold": {
+      "baseline": {
+        "cache_hits": 0.0,
+        "cache_misses": 128.0,
+        "cache_read_rows": 0.0,
+        "cache_write": 0.060400999999999996,
+        "cache_write_rows": 117.0,
+        "child_rss_sum_peak": 97357824.0,
+        "combined_materialization_wall": 0.00011014249957952416,
+        "commit_count": 6.0,
+        "commit_wall": 0.1293106990005981,
+        "coordinator_admission_wall": 0.0037475429999176413,
+        "cpu": 10.446144499999999,
+        "db_artifacts": 117.0,
+        "db_deserialize_wall": 0.0,
+        "db_serialize_wall": 0.05304537650226848,
+        "file_charge_change": 4276224.0,
+        "gc_count": 68.0,
+        "gc_pause_wall": 0.012879951500508469,
+        "iac_first_attestation_wall": 1.0370068789998186,
+        "iac_worker_transport": 1.0598914759993932,
+        "job_throttled_usec": 6910.0,
+        "lookup": 0.0026115,
+        "max_events": 0.0,
+        "native_decode_wall": 0.168888875002267,
+        "native_first_attestation_wall": 0.36137583999970957,
+        "native_logical_privacy_nodes": 205908.0,
+        "native_metrics": 524.0,
+        "native_packet_bytes": 2008084.5,
+        "native_packet_gate_wall": 0.3002604989997053,
+        "native_packets": 128.0,
+        "native_privacy_wall": 0.12801763500101515,
+        "oom": 0.0,
+        "outer_partition_wall": 3.1600177849995816,
+        "packet_count": 204.0,
+        "packet_decode_wall_sum": 0.2756111360013165,
+        "packet_gate_wall_sum": 0.4490704829995593,
+        "packet_privacy_wall_sum": 0.1672849420019702,
+        "parallel_helper_assembly": 1.4202653899992583,
+        "parent_cpu": 6.8390100165,
+        "parent_rss_peak": 141479936.0,
+        "parse": 2.8223215,
+        "partition_cgroup_cpu": 3.4340710000000003,
+        "partition_worker_cpu": 2.689858,
+        "partitions": 2.0,
+        "pgscan": 0.0,
+        "popen_wall": 0.006946415500351577,
+        "recv_syscall_wall": 0.00339227550830401,
+        "request_encode_wall": 0.0124388820004242,
+        "scope_partition_ceiling_events": 0.0,
+        "scope_partition_io_full_psi_usec": 74482.5,
+        "scope_partition_memory_full_psi_usec": 0.0,
+        "scope_partition_oom": 0.0,
+        "scope_partition_pgscan": 0.0,
+        "scope_partition_throttled_usec": 6910.0,
+        "scope_peak": 158504960.0,
+        "scope_sample_peak": 157677568.0,
+        "send_syscall_wall": 0.0006518269992739079,
+        "source_blob_reads": 128.0,
+        "source_load_wall": 0.004903822502456023,
+        "spill": 0.1399605,
+        "spill_ciphertext": 1205696.0,
+        "sql_count": 21.0,
+        "sql_cursor_wall": 0.0029196800041972892,
+        "tokens": 24968.0,
+        "transport_overlap_wall": 0.27518358099951,
+        "wall": 11.123664243001258,
+        "worker_peak_rss": 141033472.0,
+        "worker_request_bytes": 2013787.0,
+        "worker_response_with_proof_bytes": 3203876.5,
+        "worker_starts": 7.0,
+        "worker_transport_wall_sum": 2.699787041498894,
+        "worker_transport_wall_union": 2.424603460499384
+      },
+      "candidate": {
+        "cache_hits": 0.0,
+        "cache_misses": 128.0,
+        "cache_read_rows": 0.0,
+        "cache_write": 0.0624335,
+        "cache_write_rows": 117.0,
+        "child_rss_sum_peak": 93972480.0,
+        "combined_materialization_wall": 0.00011786699997173855,
+        "commit_count": 6.0,
+        "commit_wall": 0.13425384700076393,
+        "coordinator_admission_wall": 0.0038708379997842712,
+        "cpu": 9.883956,
+        "db_artifacts": 117.0,
+        "db_deserialize_wall": 0.0,
+        "db_serialize_wall": 0.0547682864989838,
+        "file_charge_change": 4278272.0,
+        "gc_count": 68.0,
+        "gc_pause_wall": 0.0140501839987337,
+        "iac_first_attestation_wall": 0.24329159850094584,
+        "iac_worker_transport": 0.2692417124999338,
+        "job_throttled_usec": 1591.5,
+        "lookup": 0.0028320000000000003,
+        "max_events": 0.0,
+        "native_decode_wall": 0.20882494199850044,
+        "native_first_attestation_wall": 0.3619114240000272,
+        "native_logical_privacy_nodes": 205908.0,
+        "native_metrics": 524.0,
+        "native_packet_bytes": 2008081.5,
+        "native_packet_gate_wall": 0.3818156630013618,
+        "native_packets": 128.0,
+        "native_privacy_wall": 0.1694084294995264,
+        "oom": 0.0,
+        "outer_partition_wall": 2.5381158694999613,
+        "packet_count": 204.0,
+        "packet_decode_wall_sum": 0.3269219915009671,
+        "packet_gate_wall_sum": 0.5473565440015591,
+        "packet_privacy_wall_sum": 0.2141798130060124,
+        "parallel_helper_assembly": 0.7717158904997632,
+        "parent_cpu": 7.027404732499999,
+        "parent_rss_peak": 140455936.0,
+        "parse": 2.19517,
+        "partition_cgroup_cpu": 2.6920504999999997,
+        "partition_worker_cpu": 1.8651475,
+        "partitions": 2.0,
+        "pgscan": 0.0,
+        "popen_wall": 0.013207637000959949,
+        "recv_syscall_wall": 0.0017326484976365464,
+        "request_encode_wall": 0.013264932502352167,
+        "scope_partition_ceiling_events": 0.0,
+        "scope_partition_io_full_psi_usec": 38348.5,
+        "scope_partition_memory_full_psi_usec": 0.0,
+        "scope_partition_oom": 0.0,
+        "scope_partition_pgscan": 0.0,
+        "scope_partition_throttled_usec": 1591.5,
+        "scope_peak": 156174336.0,
+        "scope_sample_peak": 154976256.0,
+        "send_syscall_wall": 0.0014147844985927804,
+        "source_blob_reads": 128.0,
+        "source_load_wall": 0.00468022800032486,
+        "spill": 0.1385285,
+        "spill_ciphertext": 1204322.0,
+        "sql_count": 21.0,
+        "sql_cursor_wall": 0.0028634949994739145,
+        "tokens": 24968.0,
+        "transport_overlap_wall": 0.26924201600104425,
+        "wall": 10.65300508799919,
+        "worker_peak_rss": 140050432.0,
+        "worker_request_bytes": 2013799.0,
+        "worker_response_with_proof_bytes": 3203870.5,
+        "worker_starts": 7.0,
+        "worker_transport_wall_sum": 1.8957379090006725,
+        "worker_transport_wall_union": 1.6264958929996283
+      }
+    },
+    "large_warm": {
+      "baseline": {
+        "cache_hits": 117.0,
+        "cache_misses": 11.0,
+        "cache_read_rows": 117.0,
+        "cache_write": 0.0047834999999999996,
+        "cache_write_rows": 0.0,
+        "child_rss_sum_peak": 72286208.0,
+        "combined_materialization_wall": 0.0003054584994970355,
+        "commit_count": 6.0,
+        "commit_wall": 0.09038556649829843,
+        "coordinator_admission_wall": 0.0011489444996186648,
+        "cpu": 8.985855,
+        "db_artifacts": 117.0,
+        "db_deserialize_wall": 0.011803123992649489,
+        "db_serialize_wall": 0.000923642502129951,
+        "file_charge_change": 86016.0,
+        "gc_count": 53.0,
+        "gc_pause_wall": 0.010146338503545849,
+        "iac_first_attestation_wall": 1.0835593130004781,
+        "iac_worker_transport": 1.0878414890003114,
+        "job_throttled_usec": 0.0,
+        "lookup": 0.014654,
+        "max_events": 0.0,
+        "native_decode_wall": 0.0013435625023703324,
+        "native_first_attestation_wall": 0.18848689399965224,
+        "native_logical_privacy_nodes": 704.0,
+        "native_metrics": 524.0,
+        "native_packet_bytes": 17247.0,
+        "native_packet_gate_wall": 0.002356310000322992,
+        "native_packets": 11.0,
+        "native_privacy_wall": 0.000902784003301349,
+        "oom": 0.0,
+        "outer_partition_wall": 1.993674225000177,
+        "packet_count": 22.0,
+        "packet_decode_wall_sum": 0.001798299504116585,
+        "packet_gate_wall_sum": 0.003174152500832861,
+        "packet_privacy_wall_sum": 0.0011287480037935893,
+        "parallel_helper_assembly": 1.090365568999914,
+        "parent_cpu": 6.4139331660000005,
+        "parent_rss_peak": 169105408.0,
+        "parse": 1.7406335,
+        "partition_cgroup_cpu": 1.9207589999999999,
+        "partition_worker_cpu": 1.6328844999999998,
+        "partitions": 2.0,
+        "pgscan": 0.0,
+        "popen_wall": 0.0026514924993534805,
+        "recv_syscall_wall": 6.340299842122477e-05,
+        "request_encode_wall": 0.0008870259998730035,
+        "scope_partition_ceiling_events": 0.0,
+        "scope_partition_io_full_psi_usec": 22468.5,
+        "scope_partition_memory_full_psi_usec": 0.0,
+        "scope_partition_oom": 0.0,
+        "scope_partition_pgscan": 0.0,
+        "scope_partition_throttled_usec": 0.0,
+        "scope_peak": 216135680.0,
+        "scope_sample_peak": 214956032.0,
+        "send_syscall_wall": 4.607499977282714e-05,
+        "source_blob_reads": 11.0,
+        "source_load_wall": 0.0008453825003016391,
+        "spill": 0.138523,
+        "spill_ciphertext": 1206438.0,
+        "sql_count": 19.0,
+        "sql_cursor_wall": 0.0008972079958766699,
+        "tokens": 24968.0,
+        "transport_overlap_wall": 0.0,
+        "wall": 10.209315454500029,
+        "worker_peak_rss": 168740864.0,
+        "worker_request_bytes": 140945.0,
+        "worker_response_with_proof_bytes": 22408.0,
+        "worker_starts": 4.0,
+        "worker_transport_wall_sum": 1.641334921499947,
+        "worker_transport_wall_union": 1.641334921499947
+      },
+      "candidate": {
+        "cache_hits": 117.0,
+        "cache_misses": 11.0,
+        "cache_read_rows": 117.0,
+        "cache_write": 0.0065495,
+        "cache_write_rows": 0.0,
+        "child_rss_sum_peak": 46309376.0,
+        "combined_materialization_wall": 0.00015674900078010978,
+        "commit_count": 6.0,
+        "commit_wall": 0.08225004249925405,
+        "coordinator_admission_wall": 0.00029299500147317303,
+        "cpu": 8.084955,
+        "db_artifacts": 117.0,
+        "db_deserialize_wall": 0.012655124503908155,
+        "db_serialize_wall": 0.0011019350040442077,
+        "file_charge_change": 83968.0,
+        "gc_count": 53.0,
+        "gc_pause_wall": 0.01050849399962317,
+        "iac_first_attestation_wall": 0.1800144469998486,
+        "iac_worker_transport": 0.18220372149971809,
+        "job_throttled_usec": 0.0,
+        "lookup": 0.015707,
+        "max_events": 0.0,
+        "native_decode_wall": 0.0013727095001740963,
+        "native_first_attestation_wall": 0.1813079529993047,
+        "native_logical_privacy_nodes": 704.0,
+        "native_metrics": 524.0,
+        "native_packet_bytes": 17244.0,
+        "native_packet_gate_wall": 0.0023784374998285784,
+        "native_packets": 11.0,
+        "native_privacy_wall": 0.0008703175008122344,
+        "oom": 0.0,
+        "outer_partition_wall": 1.1465664524994281,
+        "packet_count": 22.0,
+        "packet_decode_wall_sum": 0.001757433498823957,
+        "packet_gate_wall_sum": 0.0030923680005798815,
+        "packet_privacy_wall_sum": 0.0010799034989759093,
+        "parallel_helper_assembly": 0.18406919750032102,
+        "parent_cpu": 6.2970805045,
+        "parent_rss_peak": 168030208.0,
+        "parse": 0.898765,
+        "partition_cgroup_cpu": 1.084593,
+        "partition_worker_cpu": 0.799652,
+        "partitions": 2.0,
+        "pgscan": 0.0,
+        "popen_wall": 0.0017983865000132937,
+        "recv_syscall_wall": 7.47995036363136e-05,
+        "request_encode_wall": 0.0009329789991170401,
+        "scope_partition_ceiling_events": 0.0,
+        "scope_partition_io_full_psi_usec": 39423.5,
+        "scope_partition_memory_full_psi_usec": 0.0,
+        "scope_partition_oom": 0.0,
+        "scope_partition_pgscan": 0.0,
+        "scope_partition_throttled_usec": 0.0,
+        "scope_peak": 189511680.0,
+        "scope_sample_peak": 188166144.0,
+        "send_syscall_wall": 4.4418500692700036e-05,
+        "source_blob_reads": 11.0,
+        "source_load_wall": 0.0007212044993138989,
+        "spill": 0.13861,
+        "spill_ciphertext": 1206078.0,
+        "sql_count": 19.0,
+        "sql_cursor_wall": 0.0011385275020074914,
+        "tokens": 24968.0,
+        "transport_overlap_wall": 0.0,
+        "wall": 9.16455329099972,
+        "worker_peak_rss": 167596032.0,
+        "worker_request_bytes": 140957.0,
+        "worker_response_with_proof_bytes": 22397.0,
+        "worker_starts": 4.0,
+        "worker_transport_wall_sum": 0.7995191145009812,
+        "worker_transport_wall_union": 0.7995191145009812
+      }
+    },
+    "small_cold": {
+      "baseline": {
+        "cache_hits": 0.0,
+        "cache_misses": 24.0,
+        "cache_read_rows": 0.0,
+        "cache_write": 0.010106,
+        "cache_write_rows": 19.0,
+        "child_rss_sum_peak": 93841408.0,
+        "combined_materialization_wall": 3.226349963370012e-05,
+        "commit_count": 3.0,
+        "commit_wall": 0.00555017350052367,
+        "coordinator_admission_wall": 0.000996202999886009,
+        "cpu": 5.6813975,
+        "db_artifacts": 19.0,
+        "db_deserialize_wall": 0.0,
+        "db_serialize_wall": 0.006697610998344317,
+        "file_charge_change": 356352.0,
+        "gc_count": 9.0,
+        "gc_pause_wall": 0.0012886204995083972,
+        "iac_first_attestation_wall": 1.1128981564997957,
+        "iac_worker_transport": 1.1162678615010009,
+        "job_throttled_usec": 364.5,
+        "lookup": 0.001497,
+        "max_events": 0.0,
+        "native_decode_wall": 0.022439811501499207,
+        "native_first_attestation_wall": 0.22339456900044752,
+        "native_logical_privacy_nodes": 25764.0,
+        "native_metrics": 62.0,
+        "native_packet_bytes": 254764.0,
+        "native_packet_gate_wall": 0.04313862350045383,
+        "native_packets": 24.0,
+        "native_privacy_wall": 0.020084103000044706,
+        "oom": 0.0,
+        "outer_partition_wall": 1.674115109000013,
+        "packet_count": 38.0,
+        "packet_decode_wall_sum": 0.036571863000062876,
+        "packet_gate_wall_sum": 0.06300116000056732,
+        "packet_privacy_wall_sum": 0.025408609500118473,
+        "parallel_helper_assembly": 1.1188677710006232,
+        "parent_cpu": 3.1524338380000003,
+        "parent_rss_peak": 122816512.0,
+        "parse": 1.6343115,
+        "partition_cgroup_cpu": 1.9020925,
+        "partition_worker_cpu": 1.778009,
+        "partitions": 1.0,
+        "pgscan": 0.0,
+        "popen_wall": 0.008459827000478981,
+        "recv_syscall_wall": 0.00021913649743510177,
+        "request_encode_wall": 0.002493285498530895,
+        "scope_partition_ceiling_events": 0.0,
+        "scope_partition_io_full_psi_usec": 119.0,
+        "scope_partition_memory_full_psi_usec": 0.0,
+        "scope_partition_oom": 0.0,
+        "scope_partition_pgscan": 0.0,
+        "scope_partition_throttled_usec": 364.5,
+        "scope_peak": 154601472.0,
+        "scope_sample_peak": 152920064.0,
+        "send_syscall_wall": 0.00019828150016110158,
+        "source_blob_reads": 24.0,
+        "source_load_wall": 0.0011989730010100175,
+        "spill": 0.021133,
+        "spill_ciphertext": 146284.0,
+        "sql_count": 10.0,
+        "sql_cursor_wall": 0.0008065999991231365,
+        "tokens": 3038.0,
+        "transport_overlap_wall": 0.21069575200090185,
+        "wall": 5.8607510319998255,
+        "worker_peak_rss": 121821184.0,
+        "worker_request_bytes": 303584.0,
+        "worker_response_with_proof_bytes": 408073.5,
+        "worker_starts": 4.0,
+        "worker_transport_wall_sum": 1.795028995001303,
+        "worker_transport_wall_union": 1.5843332430004011
+      },
+      "candidate": {
+        "cache_hits": 0.0,
+        "cache_misses": 24.0,
+        "cache_read_rows": 0.0,
+        "cache_write": 0.010124999999999999,
+        "cache_write_rows": 19.0,
+        "child_rss_sum_peak": 92086272.0,
+        "combined_materialization_wall": 4.471549982554279e-05,
+        "commit_count": 3.0,
+        "commit_wall": 0.027704268501111073,
+        "coordinator_admission_wall": 0.0008726699998078402,
+        "cpu": 4.6198005,
+        "db_artifacts": 19.0,
+        "db_deserialize_wall": 0.0,
+        "db_serialize_wall": 0.007386552998468687,
+        "file_charge_change": 356352.0,
+        "gc_count": 9.0,
+        "gc_pause_wall": 0.0013269099999888567,
+        "iac_first_attestation_wall": 0.21066467199943872,
+        "iac_worker_transport": 0.21352055750048748,
+        "job_throttled_usec": 0.0,
+        "lookup": 0.001056,
+        "max_events": 0.0,
+        "native_decode_wall": 0.021493186498446448,
+        "native_first_attestation_wall": 0.17896738950003055,
+        "native_logical_privacy_nodes": 25764.0,
+        "native_metrics": 62.0,
+        "native_packet_bytes": 254744.5,
+        "native_packet_gate_wall": 0.03812115100117808,
+        "native_packets": 24.0,
+        "native_privacy_wall": 0.016095465000944387,
+        "oom": 0.0,
+        "outer_partition_wall": 0.7485303884986934,
+        "packet_count": 38.0,
+        "packet_decode_wall_sum": 0.03505073050109786,
+        "packet_gate_wall_sum": 0.05740906050141348,
+        "packet_privacy_wall_sum": 0.02142808050120948,
+        "parallel_helper_assembly": 0.2531914110004436,
+        "parent_cpu": 2.984565454,
+        "parent_rss_peak": 123297792.0,
+        "parse": 0.6897455,
+        "partition_cgroup_cpu": 0.9450609999999999,
+        "partition_worker_cpu": 0.829472,
+        "partitions": 1.0,
+        "pgscan": 0.0,
+        "popen_wall": 0.016213898499700008,
+        "recv_syscall_wall": 0.0002605190029498772,
+        "request_encode_wall": 0.0021758439988843747,
+        "scope_partition_ceiling_events": 0.0,
+        "scope_partition_io_full_psi_usec": 5459.5,
+        "scope_partition_memory_full_psi_usec": 0.0,
+        "scope_partition_oom": 0.0,
+        "scope_partition_pgscan": 0.0,
+        "scope_partition_throttled_usec": 0.0,
+        "scope_peak": 152295424.0,
+        "scope_sample_peak": 151302144.0,
+        "send_syscall_wall": 9.519849936623359e-05,
+        "source_blob_reads": 24.0,
+        "source_load_wall": 0.0010106754989465117,
+        "spill": 0.0176995,
+        "spill_ciphertext": 146382.0,
+        "sql_count": 10.0,
+        "sql_cursor_wall": 0.0006569049992322107,
+        "tokens": 3038.0,
+        "transport_overlap_wall": 0.21352102150012797,
+        "wall": 4.900822517000961,
+        "worker_peak_rss": 121741312.0,
+        "worker_request_bytes": 303596.0,
+        "worker_response_with_proof_bytes": 408053.5,
+        "worker_starts": 4.0,
+        "worker_transport_wall_sum": 0.8408955615022933,
+        "worker_transport_wall_union": 0.6273745400021653
+      }
+    },
+    "small_warm": {
+      "baseline": {
+        "cache_hits": 19.0,
+        "cache_misses": 5.0,
+        "cache_read_rows": 19.0,
+        "cache_write": 0.0017404999999999999,
+        "cache_write_rows": 0.0,
+        "child_rss_sum_peak": 70897664.0,
+        "combined_materialization_wall": 3.9407499571098015e-05,
+        "commit_count": 3.0,
+        "commit_wall": 0.04866352099998039,
+        "coordinator_admission_wall": 0.00022178049948706757,
+        "cpu": 4.7284615,
+        "db_artifacts": 19.0,
+        "db_deserialize_wall": 0.0056207870056823594,
+        "db_serialize_wall": 0.00042828349978663027,
+        "file_charge_change": 0.0,
+        "gc_count": 7.0,
+        "gc_pause_wall": 0.002754740000455058,
+        "iac_first_attestation_wall": 1.0571608314994592,
+        "iac_worker_transport": 1.0600240744988696,
+        "job_throttled_usec": 0.0,
+        "lookup": 0.0063935,
+        "max_events": 0.0,
+        "native_decode_wall": 0.0006254455011003301,
+        "native_first_attestation_wall": 0.20938561699949787,
+        "native_logical_privacy_nodes": 320.0,
+        "native_metrics": 62.0,
+        "native_packet_bytes": 7788.0,
+        "native_packet_gate_wall": 0.001162891999229032,
+        "native_packets": 5.0,
+        "native_privacy_wall": 0.00047565150271111634,
+        "oom": 0.0,
+        "outer_partition_wall": 1.549632716000815,
+        "packet_count": 10.0,
+        "packet_decode_wall_sum": 0.0008202815015465603,
+        "packet_gate_wall_sum": 0.0015496599990001414,
+        "packet_privacy_wall_sum": 0.0005931880041316617,
+        "parallel_helper_assembly": 1.061408250000568,
+        "parent_cpu": 2.5601580219999995,
+        "parent_rss_peak": 133011456.0,
+        "parse": 1.471539,
+        "partition_cgroup_cpu": 1.5079505,
+        "partition_worker_cpu": 1.4448215000000002,
+        "partitions": 1.0,
+        "pgscan": 0.0,
+        "popen_wall": 0.0011487949996080715,
+        "recv_syscall_wall": 3.83869992219843e-05,
+        "request_encode_wall": 0.0004653940013668034,
+        "scope_partition_ceiling_events": 0.0,
+        "scope_partition_io_full_psi_usec": 4037.0,
+        "scope_partition_memory_full_psi_usec": 0.0,
+        "scope_partition_oom": 0.0,
+        "scope_partition_pgscan": 0.0,
+        "scope_partition_throttled_usec": 0.0,
+        "scope_peak": 169046016.0,
+        "scope_sample_peak": 166424576.0,
+        "send_syscall_wall": 1.50835003296379e-05,
+        "source_blob_reads": 5.0,
+        "source_load_wall": 0.0004393130002426915,
+        "spill": 0.019197,
+        "spill_ciphertext": 146412.0,
+        "sql_count": 9.0,
+        "sql_cursor_wall": 0.0005297594971125363,
+        "tokens": 3038.0,
+        "transport_overlap_wall": 0.0,
+        "wall": 5.082695915499244,
+        "worker_peak_rss": 132440064.0,
+        "worker_request_bytes": 66350.0,
+        "worker_response_with_proof_bytes": 10282.0,
+        "worker_starts": 3.0,
+        "worker_transport_wall_sum": 1.4533725544988556,
+        "worker_transport_wall_union": 1.4533725544988556
+      },
+      "candidate": {
+        "cache_hits": 19.0,
+        "cache_misses": 5.0,
+        "cache_read_rows": 19.0,
+        "cache_write": 0.0018909999999999999,
+        "cache_write_rows": 0.0,
+        "child_rss_sum_peak": 46411776.0,
+        "combined_materialization_wall": 3.9212999581650365e-05,
+        "commit_count": 3.0,
+        "commit_wall": 0.046661061998747755,
+        "coordinator_admission_wall": 0.0001646484997763764,
+        "cpu": 3.840592,
+        "db_artifacts": 19.0,
+        "db_deserialize_wall": 0.002991759999531496,
+        "db_serialize_wall": 0.0004172689996266854,
+        "file_charge_change": 0.0,
+        "gc_count": 7.0,
+        "gc_pause_wall": 0.0026031665001937654,
+        "iac_first_attestation_wall": 0.18286680900018837,
+        "iac_worker_transport": 0.18529725600001257,
+        "job_throttled_usec": 0.0,
+        "lookup": 0.004115000000000001,
+        "max_events": 0.0,
+        "native_decode_wall": 0.000664657001834712,
+        "native_first_attestation_wall": 0.17135864550073165,
+        "native_logical_privacy_nodes": 320.0,
+        "native_metrics": 62.0,
+        "native_packet_bytes": 7787.0,
+        "native_packet_gate_wall": 0.00112577749951015,
+        "native_packets": 5.0,
+        "native_privacy_wall": 0.0004001594998044311,
+        "oom": 0.0,
+        "outer_partition_wall": 0.6295759470003759,
+        "packet_count": 10.0,
+        "packet_decode_wall_sum": 0.0008858615019562421,
+        "packet_gate_wall_sum": 0.0015552614995613112,
+        "packet_privacy_wall_sum": 0.0005228310010352288,
+        "parallel_helper_assembly": 0.18676635649990203,
+        "parent_cpu": 2.5489330839999997,
+        "parent_rss_peak": 133023744.0,
+        "parse": 0.5548949999999999,
+        "partition_cgroup_cpu": 0.5939194999999999,
+        "partition_worker_cpu": 0.537757,
+        "partitions": 1.0,
+        "pgscan": 0.0,
+        "popen_wall": 0.0011717964998751995,
+        "recv_syscall_wall": 4.5737002437817864e-05,
+        "request_encode_wall": 0.0004572530006043962,
+        "scope_partition_ceiling_events": 0.0,
+        "scope_partition_io_full_psi_usec": 6273.5,
+        "scope_partition_memory_full_psi_usec": 0.0,
+        "scope_partition_oom": 0.0,
+        "scope_partition_pgscan": 0.0,
+        "scope_partition_throttled_usec": 0.0,
+        "scope_peak": 152295424.0,
+        "scope_sample_peak": 142229504.0,
+        "send_syscall_wall": 1.6080500245152507e-05,
+        "source_blob_reads": 5.0,
+        "source_load_wall": 0.0004639589997168514,
+        "spill": 0.019346500000000003,
+        "spill_ciphertext": 146378.0,
+        "sql_count": 9.0,
+        "sql_cursor_wall": 0.0005047105005360208,
+        "tokens": 3038.0,
+        "transport_overlap_wall": 0.0,
+        "wall": 4.226259185999879,
+        "worker_peak_rss": 132507648.0,
+        "worker_request_bytes": 66362.0,
+        "worker_response_with_proof_bytes": 10283.0,
+        "worker_starts": 3.0,
+        "worker_transport_wall_sum": 0.5394091190000836,
+        "worker_transport_wall_union": 0.5394091190000836
+      }
+    }
+  },
+  "date": "2026-11-07",
+  "disposition": {
+    "commercial_v1": "DEVELOPMENT IN PROGRESS",
+    "correction": "Avoid HCL grammar construction on verified non-Terraform IaC batches.",
+    "next": "Count IaC launch routes and time retained packet admission by type under bounded runner-equivalent reclaim.",
+    "scale001": "NOT QUALIFIED"
+  },
+  "evidence_sha256": {
+    "checks/test-source.json": "9881043aecc038126d0c7626dcb34ff065b4a460e9fb3f4d91e8929ec2ae1bbe",
+    "historical-ci.json": "7d01ab647c1576679942e2e57580b91b1138d05747ba6d8bc79537cf347168cb",
+    "ordered-publication-audit.json": "104346f03cee47dc12453393e31d664eb50a8574b5f3eaad981eb45035c1446b",
+    "security/existing-probe.json": "fe7cc41110837d67275ebfb03d8e10fc194cab791682ea2759888a7761885aeb",
+    "security/supplement-probe.json": "cc3a50d91ae8cc53431a746117a90967e7fc1dfd97e63d6ea47769fd07d281b3",
+    "slice-manifest.json": "07e5a1174581a4da08f86d8b44597a65a5f710525d7053b25edfc184877a9573",
+    "summary.json": "69a387a4919e9e2bee47e02e3bad04c9ed36498af593d6eeebd2c85a0a0117a1",
+    "telemetry/candidate-runtime.json": "9e771d74b507c5190c10be34cf6e83e9f15439c1f0fbe88d397d8819ccfd2e38"
+  },
+  "image": {
+    "exit_code": 0,
+    "image": "sha256:e0a86ce946c874d6e4e2ab200e0f18c471531aea09995f70bfcfa14135a1db8e",
+    "overlays": [
+      "analyzers/infrastructure.py",
+      "analyzers/isolated_worker.py"
+    ],
+    "prior_image": "sha256:a74fb7a5e158103100da5c77730e0052919d9276e5b7c592d650560d1f378512",
+    "tag": "projecttrace-native-partition:20261107"
+  },
+  "limits": {
+    "analysis_seconds": 1800,
+    "memory_bytes": 768000000,
+    "raw_checkpoint_bytes": 64000000,
+    "sanitizer_nodes": 1000000,
+    "swap_bytes": 0
+  },
+  "measurement_scope": {
+    "allocation_repeats_per_cell": 1,
+    "cold_and_warm_per_scope": true,
+    "cold_definition": "New process and empty ParserArtifact database. Kernel page cache kept intact.",
+    "complete_scopes": 20,
+    "control_repeats_per_cell": 2,
+    "counted_repeats_per_cell": 2,
+    "database": "Disposable SQLite. Bounded projections and ordered publication audit match by cache phase.",
+    "device_io_bytes": null,
+    "device_io_reason": "Scoped device accounting unavailable in WSL.",
+    "full_run_speedup_established": false,
+    "transport": "Worker-window union counts overlap once. CPU and nested gate/DB durations are separate."
+  },
+  "regressions": {
+    "compile": {
+      "exit_code": 0,
+      "mode": "development"
+    },
+    "development": {
+      "complete_junit": true,
+      "counts": {
+        "errors": 0,
+        "failures": 0,
+        "passed": 143,
+        "skipped": 0,
+        "tests": 143
+      },
+      "exit_code": 0,
+      "failures": [],
+      "mode": "development",
+      "warnings": 1
+    },
+    "original_fixture_control": {
+      "exit_code": 1,
+      "failures": 1,
+      "proof_exit_code": 0,
+      "sole_output_difference": "parser_signature",
+      "warnings": 1
+    },
+    "required-final": {
+      "complete_junit": true,
+      "counts": {
+        "errors": 0,
+        "failures": 0,
+        "passed": 133,
+        "skipped": 0,
+        "tests": 133
+      },
+      "deselected": 1,
+      "exit_code": 0,
+      "failures": [],
+      "mode": "required",
+      "warnings": 1
+    },
+    "required-initial": {
+      "complete_junit": true,
+      "counts": {
+        "errors": 0,
+        "failures": 1,
+        "passed": 133,
+        "skipped": 0,
+        "tests": 134
+      },
+      "exit_code": 1,
+      "failures": [
+        "test_owned_worker_dispatch_emits_complete_compact_native_result"
+      ],
+      "mode": "required",
+      "warnings": 1
+    },
+    "ruff": {
+      "exit_code": 0,
+      "mode": "development"
+    }
+  },
+  "runtime": {
+    "exit_code": 0,
+    "image": "sha256:e0a86ce946c874d6e4e2ab200e0f18c471531aea09995f70bfcfa14135a1db8e",
+    "proof": {
+      "mismatches": [],
+      "runtime_files": 196
+    },
+    "runtime_sha256": "a7e1f78ef6d2735c731cbab9d84e05ce8d0b0c40f958fd72b3fdb5f68330298f"
+  },
+  "schema": "projecttrace-scale001-native-partition-attribution-v1",
+  "sec002": [
+    {
+      "envelope": {
+        "CapDrop": [
+          "ALL"
+        ],
+        "Memory": 768000000,
+        "MemorySwap": 768000000,
+        "NanoCpus": 2000000000,
+        "NetworkMode": "none",
+        "PidsLimit": 64,
+        "ReadonlyRootfs": true,
+        "SecurityOpt": [
+          "no-new-privileges"
+        ]
+      },
+      "exit_code": 0,
+      "image": "sha256:e0a86ce946c874d6e4e2ab200e0f18c471531aea09995f70bfcfa14135a1db8e",
+      "kind": "existing",
+      "oom": false
+    },
+    {
+      "envelope": {
+        "CapDrop": [
+          "ALL"
+        ],
+        "Memory": 768000000,
+        "MemorySwap": 768000000,
+        "NanoCpus": 2000000000,
+        "NetworkMode": "none",
+        "PidsLimit": 64,
+        "ReadonlyRootfs": true,
+        "SecurityOpt": [
+          "no-new-privileges"
+        ]
+      },
+      "exit_code": 0,
+      "image": "sha256:e0a86ce946c874d6e4e2ab200e0f18c471531aea09995f70bfcfa14135a1db8e",
+      "kind": "supplement",
+      "oom": false
+    }
+  ],
+  "source": {
+    "archive_sha256": "95747f22ebf3d01232b1592551bc2bc1866b9bbe7322dd3bf1a97028b0592257",
+    "cases": {
+      "large": {
+        "bytes": 480724,
+        "files": 128,
+        "input_sha256": "b80a3b668d809ac9feb53e980d04e5a231da1a373cf04b18e89d1c2c33d8aa48",
+        "type_mix": {
+          "dockerfile": 6,
+          "java": 24,
+          "json": 20,
+          "python": 32,
+          "typescript": 32,
+          "yaml": 14
+        }
+      },
+      "small": {
+        "bytes": 82883,
+        "files": 24,
+        "input_sha256": "f7aa733477e4e61a3c45ea5c0b8e1cb2c42fa2f0d8548f3708b6a7359017797a",
+        "type_mix": {
+          "dockerfile": 2,
+          "java": 4,
+          "json": 4,
+          "python": 6,
+          "typescript": 4,
+          "yaml": 4
+        }
+      }
+    },
+    "commit": "b1fab2bc21c63335dead4daaaa28194c9878e9bf",
+    "repository": "maninani12/OpenMetadata",
+    "tree": "98be740cd54db8653ce735946b6fd6bd5986e5e3"
+  }
+}

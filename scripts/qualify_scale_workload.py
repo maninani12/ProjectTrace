@@ -13,7 +13,7 @@ import platform
 import sys
 import threading
 import time
-from contextlib import closing
+from contextlib import closing, nullcontext
 from pathlib import Path
 
 from scripts.scale_linux_resources import memory
@@ -42,7 +42,10 @@ def main():
     parser.add_argument("--archive", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--manifest-only", action="store_true")
+    parser.add_argument("--diagnostic", nargs=3, metavar=("REVISION", "SOURCE_SHA256", "IMAGE_SHA256"))
     args = parser.parse_args()
+    if args.diagnostic and args.manifest_only:
+        parser.error("Analysis diagnostics require a workload run.")
     output = args.output.resolve()
     output.mkdir(parents=True, exist_ok=True)
     if (output / "qualification.json").exists():
@@ -164,14 +167,24 @@ def main():
             Performance.switch = measured_switch
             from scripts.scale_operation_probe import operation_probe
             scenario = ["NOT_STARTED"]
+
+            def diagnostics(mode):
+                if not args.diagnostic:
+                    return nullcontext()
+                from scripts.scale_diagnostic import diagnostic
+                revision, source_sha256, image_sha256 = args.diagnostic
+                return diagnostic(output / f"scale-diagnostic-{mode}.json", revision=revision, cache=mode,
+                                  source_sha256=source_sha256, slice_sha256=archive_sha, image_sha256=image_sha256)
+
             try:
                 with operation_probe(stage, output / "operation-memory.jsonl", started, scenario=scenario):
                     for number, mode in enumerate(("cold", "warm")):
                         scenario[0] = mode
                         receipt["scenarios"][mode] = "RUNNING"
                         write(output / "qualification.json", receipt)
-                        snapshot, job = execute_analysis(db, user, repo, files, git_commit=COMMIT,
-                                                         branch="qualification-" + mode)
+                        with diagnostics(mode):
+                            snapshot, job = execute_analysis(db, user, repo, files, git_commit=COMMIT,
+                                                             branch="qualification-" + mode)
                         receipt["scenarios"][mode] = job.data["state"]
                         receipt.setdefault("outputs", {})[mode] = {
                             "files": snapshot.data["file_count"], "claims": len(snapshot.data.get("claims", [])),

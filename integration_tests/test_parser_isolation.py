@@ -413,3 +413,63 @@ def test_hcl_required_batch_preserves_order_locations_privacy_and_json_variant(m
     assert first["owned/invalid.tf"][2][0]["state"] == "PARTIAL"
     assert not first["owned/two.tf.json"][2]
     assert token not in json.dumps(first)
+
+
+def test_non_terraform_iac_attests_when_hcl_grammar_is_unavailable(monkeypatch):
+    from analyzers.engine import finding
+    from analyzers.infrastructure import structured_iac_batch
+
+    script = r'''
+import runpy,sys
+sys.path.insert(0,sys.argv[1])
+from lark import Lark
+def unavailable(*args,**kwargs):
+ raise AssertionError("Owned non-Terraform worker attempted to construct an HCL grammar")
+Lark.open=unavailable
+sys.argv=[sys.argv[1]+"/analyzers/isolated_worker.py",sys.argv[2]]
+runpy.run_path(sys.argv[0],run_name="__main__")
+'''
+    original = subprocess.Popen
+    root = str(Path(__file__).resolve().parents[1])
+    operations = []
+
+    def without_grammar(command, *args, **kwargs):
+        operations.append(command[-1])
+        return original([sys.executable, "-I", "-B", "-c", script, root, command[-1]], *args, **kwargs)
+
+    files = {"owned/Dockerfile": "FROM ubuntu:latest\nUSER root\n",
+             "owned/compose.yml": "services:\n  api:\n    image: nginx:latest\n"}
+    monkeypatch.setattr(subprocess, "Popen", without_grammar)
+    result = structured_iac_batch(files, finding)
+    assert operations == ["iac_without_hcl"]
+    assert list(result) == list(files) and not any(row[2] for row in result.values())
+    assert "PT-IAC-002" in {row["rule"] for row in result["owned/Dockerfile"][0]}
+
+
+@pytest.mark.parametrize("path", ["owned/main.tf", "owned/main.TF", "owned/main.tf.json"])
+def test_non_hcl_worker_rejects_misrouted_terraform_before_any_packet(path):
+    files = {"owned/Dockerfile": "FROM alpine:latest\n", path: "{}"}
+    raw, failure = sandbox.invoke("iac_without_hcl", {"files": files, "settings": {}})
+    assert failure is None
+    assert sandbox.decode_packet(raw) == {"ok": False, "code": "IAC_PARSER_NOT_PREPARED"}
+
+
+def test_mixed_iac_with_terraform_json_keeps_the_hcl_capable_route(monkeypatch):
+    from analyzers.engine import finding
+    from analyzers.infrastructure import structured_iac_batch
+
+    original = sandbox.invoke
+    operations = []
+
+    def invoke(operation, *args, **kwargs):
+        operations.append(operation)
+        return original(operation, *args, **kwargs)
+
+    files = {"owned/Dockerfile": "FROM alpine:latest\n",
+             "owned/policy.tf.json": json.dumps({"resource": {"aws_s3_bucket_policy": {"owned": {
+                 "policy": '${jsonencode({ Statement = [{ Effect = "Allow", Principal = "*", Action = "s3:GetObject" }] })}'
+             }}}})}
+    monkeypatch.setattr(sandbox, "invoke", invoke)
+    result = structured_iac_batch(files, finding)
+    assert operations == ["iac"]
+    assert list(result) == list(files) and not result["owned/policy.tf.json"][2]

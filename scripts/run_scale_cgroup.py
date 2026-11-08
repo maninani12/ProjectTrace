@@ -33,7 +33,10 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--manifest-only", action="store_true")
     parser.add_argument("--resource-probe", action="store_true")
+    parser.add_argument("--diagnostic", nargs=2, metavar=("REVISION", "SOURCE_SHA256"))
     args = parser.parse_args()
+    if args.diagnostic and (args.manifest_only or args.resource_probe):
+        parser.error("Analysis diagnostics require a workload run.")
     if os.getuid() == 0:
         parser.error("Run the host harness as an ordinary runner user.")
     output = args.output.resolve()
@@ -51,6 +54,14 @@ def main():
         command = command[:module] + ["scripts.scale_resource_probe"]
     elif args.manifest_only:
         command.append("--manifest-only")
+    if args.diagnostic:
+        revision, source_sha256 = args.diagnostic
+        import re
+        if revision not in {"baseline", "candidate"} or not re.fullmatch(r"[0-9a-f]{64}", source_sha256):
+            parser.error("Supply a diagnostic revision and a verified source SHA-256.")
+        image = docker("image", "inspect", "--format", "{{.Id}}", args.image)
+        command[command.index("python") - 1] = image
+        command.extend(("--diagnostic", revision, source_sha256, image.removeprefix("sha256:")))
     identity = docker(*command)
     evidence = {"memory_limit_bytes": LIMIT, "swap_limit_bytes": 0, "container": identity,
                 "all_descendants_in_container_cgroup": True, "network": "none", "sec002": "required",

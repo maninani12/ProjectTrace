@@ -1,0 +1,2205 @@
+{
+  "bounded": {
+    "allocation_pairs": 1,
+    "controlled_pairs": 2,
+    "counted_pairs": 2,
+    "observed_decoder_gc_diagnostic": {
+      "baseline": {
+        "decode_cpu_seconds": 0.0017652279999999998,
+        "decode_wall_seconds": 0.0017560649997676592,
+        "duplicate_tokens": 0,
+        "encoded_line_bytes": 25886,
+        "json_bytes": 25872,
+        "logical_nodes": 715,
+        "metrics": 0,
+        "nested_decode_gc_count": 0,
+        "nested_decode_gc_cpu": 0.0,
+        "nested_decode_gc_wall": 0.0,
+        "packets": 14,
+        "privacy_cpu_seconds": 0.0007248050000000002,
+        "privacy_wall_seconds": 0.0007119579998970949
+      },
+      "candidate": {
+        "decode_cpu_seconds": 0.050973583999999995,
+        "decode_wall_seconds": 0.05174942399980864,
+        "duplicate_tokens": 0,
+        "encoded_line_bytes": 25892,
+        "json_bytes": 25878,
+        "logical_nodes": 715,
+        "metrics": 0,
+        "nested_decode_gc_count": 1,
+        "nested_decode_gc_cpu": 0.048852541,
+        "nested_decode_gc_wall": 0.04960807899999509,
+        "packets": 14,
+        "privacy_cpu_seconds": 0.0008502449999999938,
+        "privacy_wall_seconds": 0.0008374499998353713
+      }
+    },
+    "packet_admission_by_type": {
+      "cold": {
+        "baseline": {
+          "iac/dockerfile": {
+            "decode_cpu_seconds": {
+              "max": 0.001545753999999999,
+              "median": 0.0015009974999999993,
+              "min": 0.0014562409999999996
+            },
+            "decode_wall_seconds": {
+              "max": 0.0015450450000003002,
+              "median": 0.0015006669999593214,
+              "min": 0.0014562889999183426
+            },
+            "duplicate_tokens": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "encoded_line_bytes": {
+              "max": 18199,
+              "median": 18198.5,
+              "min": 18198
+            },
+            "json_bytes": {
+              "max": 18193,
+              "median": 18192.5,
+              "min": 18192
+            },
+            "logical_nodes": {
+              "max": 690,
+              "median": 690.0,
+              "min": 690
+            },
+            "metrics": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "packets": {
+              "max": 6,
+              "median": 6.0,
+              "min": 6
+            },
+            "privacy_cpu_seconds": {
+              "max": 0.0007127179999999985,
+              "median": 0.0006700374999999989,
+              "min": 0.0006273569999999994
+            },
+            "privacy_wall_seconds": {
+              "max": 0.0007090269999139309,
+              "median": 0.0006664710000165996,
+              "min": 0.0006239150001192684
+            }
+          },
+          "iac/yaml": {
+            "decode_cpu_seconds": {
+              "max": 0.0018964629999999993,
+              "median": 0.0017929239999999991,
+              "min": 0.001689384999999999
+            },
+            "decode_wall_seconds": {
+              "max": 0.0018961939999826427,
+              "median": 0.0017931974999214617,
+              "min": 0.0016902009998602807
+            },
+            "duplicate_tokens": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "encoded_line_bytes": {
+              "max": 25884,
+              "median": 25884.0,
+              "min": 25884
+            },
+            "json_bytes": {
+              "max": 25870,
+              "median": 25870.0,
+              "min": 25870
+            },
+            "logical_nodes": {
+              "max": 715,
+              "median": 715.0,
+              "min": 715
+            },
+            "metrics": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "packets": {
+              "max": 14,
+              "median": 14.0,
+              "min": 14
+            },
+            "privacy_cpu_seconds": {
+              "max": 0.0007877839999999984,
+              "median": 0.0007726059999999999,
+              "min": 0.0007574280000000014
+            },
+            "privacy_wall_seconds": {
+              "max": 0.0007773060000886289,
+              "median": 0.0007628220000128749,
+              "min": 0.0007483379999371209
+            }
+          },
+          "native/dockerfile": {
+            "decode_cpu_seconds": {
+              "max": 0.0025277189999999283,
+              "median": 0.002440975999999928,
+              "min": 0.002354232999999928
+            },
+            "decode_wall_seconds": {
+              "max": 0.0025265200000035293,
+              "median": 0.0024388565000208473,
+              "min": 0.0023511930000381653
+            },
+            "duplicate_tokens": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "encoded_line_bytes": {
+              "max": 30224,
+              "median": 30220.0,
+              "min": 30216
+            },
+            "expand_cpu_seconds": {
+              "max": 3.1966999999966106e-05,
+              "median": 3.1632499999934005e-05,
+              "min": 3.1297999999901904e-05
+            },
+            "expand_wall_seconds": {
+              "max": 2.8105999945182703e-05,
+              "median": 2.778949999537872e-05,
+              "min": 2.7473000045574736e-05
+            },
+            "json_bytes": {
+              "max": 30218,
+              "median": 30214.0,
+              "min": 30210
+            },
+            "logical_nodes": {
+              "max": 1916,
+              "median": 1916.0,
+              "min": 1916
+            },
+            "metrics": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "packets": {
+              "max": 6,
+              "median": 6.0,
+              "min": 6
+            },
+            "privacy_cpu_seconds": {
+              "max": 0.0017791300000000732,
+              "median": 0.001703735000000095,
+              "min": 0.001628340000000117
+            },
+            "privacy_wall_seconds": {
+              "max": 0.0017741790000513902,
+              "median": 0.0016991760000166778,
+              "min": 0.0016241729999819654
+            }
+          },
+          "native/java": {
+            "decode_cpu_seconds": {
+              "max": 0.046752982999999526,
+              "median": 0.04638782649999984,
+              "min": 0.046022670000000154
+            },
+            "decode_wall_seconds": {
+              "max": 0.04689109800000324,
+              "median": 0.046672389000036674,
+              "min": 0.04645368000007011
+            },
+            "duplicate_tokens": {
+              "max": 6410,
+              "median": 6410.0,
+              "min": 6410
+            },
+            "encoded_line_bytes": {
+              "max": 517403,
+              "median": 517401.0,
+              "min": 517399
+            },
+            "expand_cpu_seconds": {
+              "max": 0.00024006099999929198,
+              "median": 0.00020562699999959744,
+              "min": 0.0001711929999999029
+            },
+            "expand_wall_seconds": {
+              "max": 0.00015216699995335148,
+              "median": 0.00015206299994474648,
+              "min": 0.00015195899993614148
+            },
+            "json_bytes": {
+              "max": 517379,
+              "median": 517377.0,
+              "min": 517375
+            },
+            "logical_nodes": {
+              "max": 53048,
+              "median": 53048.0,
+              "min": 53048
+            },
+            "metrics": {
+              "max": 158,
+              "median": 158.0,
+              "min": 158
+            },
+            "packets": {
+              "max": 24,
+              "median": 24.0,
+              "min": 24
+            },
+            "privacy_cpu_seconds": {
+              "max": 0.033153819999999445,
+              "median": 0.031436897500000005,
+              "min": 0.029719975000000565
+            },
+            "privacy_wall_seconds": {
+              "max": 0.03344577199999321,
+              "median": 0.031666603999980225,
+              "min": 0.029887435999967238
+            }
+          },
+          "native/json_other": {
+            "decode_cpu_seconds": {
+              "max": 0.002225942999999786,
+              "median": 0.0021849919999995526,
+              "min": 0.0021440409999993193
+            },
+            "decode_wall_seconds": {
+              "max": 0.0022252300000218384,
+              "median": 0.002184527999986585,
+              "min": 0.002143825999951332
+            },
+            "duplicate_tokens": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "encoded_line_bytes": {
+              "max": 26740,
+              "median": 26736.0,
+              "min": 26732
+            },
+            "expand_cpu_seconds": {
+              "max": 7.359400000050975e-05,
+              "median": 7.089350000033523e-05,
+              "min": 6.819300000016071e-05
+            },
+            "expand_wall_seconds": {
+              "max": 6.714800002782795e-05,
+              "median": 6.454900002950126e-05,
+              "min": 6.195000003117457e-05
+            },
+            "json_bytes": {
+              "max": 26720,
+              "median": 26716.0,
+              "min": 26712
+            },
+            "logical_nodes": {
+              "max": 870,
+              "median": 870.0,
+              "min": 870
+            },
+            "metrics": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "packets": {
+              "max": 20,
+              "median": 20.0,
+              "min": 20
+            },
+            "privacy_cpu_seconds": {
+              "max": 0.0011715380000008047,
+              "median": 0.0011612945000003538,
+              "min": 0.001151050999999903
+            },
+            "privacy_wall_seconds": {
+              "max": 0.001160492000224167,
+              "median": 0.0011503965001509187,
+              "min": 0.0011403010000776703
+            }
+          },
+          "native/python": {
+            "decode_cpu_seconds": {
+              "max": 0.057755187000000596,
+              "median": 0.05661460500000037,
+              "min": 0.05547402300000015
+            },
+            "decode_wall_seconds": {
+              "max": 0.05813164900013135,
+              "median": 0.0570379825001055,
+              "min": 0.05594431600007965
+            },
+            "duplicate_tokens": {
+              "max": 8780,
+              "median": 8780.0,
+              "min": 8780
+            },
+            "encoded_line_bytes": {
+              "max": 671207,
+              "median": 671206.0,
+              "min": 671205
+            },
+            "expand_cpu_seconds": {
+              "max": 0.00022844599999927162,
+              "median": 0.0002135469999994255,
+              "min": 0.00019864799999957938
+            },
+            "expand_wall_seconds": {
+              "max": 0.0001917069998853549,
+              "median": 0.00018415199986066,
+              "min": 0.0001765969998359651
+            },
+            "json_bytes": {
+              "max": 671175,
+              "median": 671174.0,
+              "min": 671173
+            },
+            "logical_nodes": {
+              "max": 72564,
+              "median": 72564.0,
+              "min": 72564
+            },
+            "metrics": {
+              "max": 195,
+              "median": 195.0,
+              "min": 195
+            },
+            "packets": {
+              "max": 32,
+              "median": 32.0,
+              "min": 32
+            },
+            "privacy_cpu_seconds": {
+              "max": 0.04556714900000047,
+              "median": 0.04491421250000005,
+              "min": 0.04426127599999963
+            },
+            "privacy_wall_seconds": {
+              "max": 0.045706363000022066,
+              "median": 0.04518706000001771,
+              "min": 0.04466775700001335
+            }
+          },
+          "native/typescript": {
+            "decode_cpu_seconds": {
+              "max": 0.05800345500000126,
+              "median": 0.05769044750000096,
+              "min": 0.05737744000000067
+            },
+            "decode_wall_seconds": {
+              "max": 0.05866511699997545,
+              "median": 0.05819904400004816,
+              "min": 0.05773297100012087
+            },
+            "duplicate_tokens": {
+              "max": 9778,
+              "median": 9778.0,
+              "min": 9778
+            },
+            "encoded_line_bytes": {
+              "max": 696691,
+              "median": 696686.0,
+              "min": 696681
+            },
+            "expand_cpu_seconds": {
+              "max": 0.00021599399999994162,
+              "median": 0.00020991449999985257,
+              "min": 0.0002038349999997635
+            },
+            "expand_wall_seconds": {
+              "max": 0.00019222399981799754,
+              "median": 0.0001869169999508813,
+              "min": 0.00018161000008376504
+            },
+            "json_bytes": {
+              "max": 696659,
+              "median": 696654.0,
+              "min": 696649
+            },
+            "logical_nodes": {
+              "max": 74354,
+              "median": 74354.0,
+              "min": 74354
+            },
+            "metrics": {
+              "max": 171,
+              "median": 171.0,
+              "min": 171
+            },
+            "packets": {
+              "max": 32,
+              "median": 32.0,
+              "min": 32
+            },
+            "privacy_cpu_seconds": {
+              "max": 0.04492884900000038,
+              "median": 0.04409299800000044,
+              "min": 0.043257147000000495
+            },
+            "privacy_wall_seconds": {
+              "max": 0.04536303299994415,
+              "median": 0.04438439499995184,
+              "min": 0.04340575699995952
+            }
+          },
+          "native/yaml": {
+            "decode_cpu_seconds": {
+              "max": 0.005176443999999947,
+              "median": 0.004742240000000009,
+              "min": 0.004308036000000071
+            },
+            "decode_wall_seconds": {
+              "max": 0.00516605699988304,
+              "median": 0.004739727999975685,
+              "min": 0.00431339900006833
+            },
+            "duplicate_tokens": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "encoded_line_bytes": {
+              "max": 65835,
+              "median": 65833.5,
+              "min": 65832
+            },
+            "expand_cpu_seconds": {
+              "max": 8.024599999978399e-05,
+              "median": 7.308399999994553e-05,
+              "min": 6.592200000010706e-05
+            },
+            "expand_wall_seconds": {
+              "max": 7.161400003496965e-05,
+              "median": 6.563799999526054e-05,
+              "min": 5.966199995555144e-05
+            },
+            "json_bytes": {
+              "max": 65821,
+              "median": 65819.5,
+              "min": 65818
+            },
+            "logical_nodes": {
+              "max": 3156,
+              "median": 3156.0,
+              "min": 3156
+            },
+            "metrics": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "packets": {
+              "max": 14,
+              "median": 14.0,
+              "min": 14
+            },
+            "privacy_cpu_seconds": {
+              "max": 0.0031770030000000116,
+              "median": 0.002923515499999807,
+              "min": 0.0026700279999996024
+            },
+            "privacy_wall_seconds": {
+              "max": 0.0031654169999910664,
+              "median": 0.002913746000018591,
+              "min": 0.0026620750000461157
+            }
+          },
+          "syntax/java": {
+            "decode_cpu_seconds": {
+              "max": 0.09185038599999998,
+              "median": 0.091272135,
+              "min": 0.09069388400000002
+            },
+            "decode_wall_seconds": {
+              "max": 0.09305333899993684,
+              "median": 0.09223603749993003,
+              "min": 0.09141873599992323
+            },
+            "duplicate_tokens": {
+              "max": 6410,
+              "median": 6410.0,
+              "min": 6410
+            },
+            "encoded_line_bytes": {
+              "max": 490209,
+              "median": 490209.0,
+              "min": 490209
+            },
+            "json_bytes": {
+              "max": 490185,
+              "median": 490185.0,
+              "min": 490185
+            },
+            "logical_nodes": {
+              "max": 26107,
+              "median": 26107.0,
+              "min": 26107
+            },
+            "metrics": {
+              "max": 158,
+              "median": 158.0,
+              "min": 158
+            },
+            "packets": {
+              "max": 24,
+              "median": 24.0,
+              "min": 24
+            },
+            "privacy_cpu_seconds": {
+              "max": 0.018051234999999964,
+              "median": 0.01762433049999999,
+              "min": 0.017197426000000016
+            },
+            "privacy_wall_seconds": {
+              "max": 0.01835707099985484,
+              "median": 0.017756250999923395,
+              "min": 0.01715543099999195
+            }
+          },
+          "syntax/typescript": {
+            "decode_cpu_seconds": {
+              "max": 0.05677154499999999,
+              "median": 0.055687956999999996,
+              "min": 0.054604369
+            },
+            "decode_wall_seconds": {
+              "max": 0.05714911500007247,
+              "median": 0.056068031499961535,
+              "min": 0.0549869479998506
+            },
+            "duplicate_tokens": {
+              "max": 9778,
+              "median": 9778.0,
+              "min": 9778
+            },
+            "encoded_line_bytes": {
+              "max": 660313,
+              "median": 660312.0,
+              "min": 660311
+            },
+            "json_bytes": {
+              "max": 660281,
+              "median": 660280.0,
+              "min": 660279
+            },
+            "logical_nodes": {
+              "max": 36621,
+              "median": 36621.0,
+              "min": 36621
+            },
+            "metrics": {
+              "max": 171,
+              "median": 171.0,
+              "min": 171
+            },
+            "packets": {
+              "max": 32,
+              "median": 32.0,
+              "min": 32
+            },
+            "privacy_cpu_seconds": {
+              "max": 0.02217583099999999,
+              "median": 0.022161511999999994,
+              "min": 0.022147192999999996
+            },
+            "privacy_wall_seconds": {
+              "max": 0.022948584000005212,
+              "median": 0.02259299750008381,
+              "min": 0.02223741100016241
+            }
+          }
+        },
+        "candidate": {
+          "iac/dockerfile": {
+            "decode_cpu_seconds": {
+              "max": 0.002937461999999994,
+              "median": 0.0021215049999999958,
+              "min": 0.0013055479999999975
+            },
+            "decode_wall_seconds": {
+              "max": 0.0029328480000003765,
+              "median": 0.0021168794999653073,
+              "min": 0.0013009109999302382
+            },
+            "duplicate_tokens": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "encoded_line_bytes": {
+              "max": 18200,
+              "median": 18198.5,
+              "min": 18197
+            },
+            "json_bytes": {
+              "max": 18194,
+              "median": 18192.5,
+              "min": 18191
+            },
+            "logical_nodes": {
+              "max": 690,
+              "median": 690.0,
+              "min": 690
+            },
+            "metrics": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "packets": {
+              "max": 6,
+              "median": 6.0,
+              "min": 6
+            },
+            "privacy_cpu_seconds": {
+              "max": 0.0012345359999999927,
+              "median": 0.0009424819999999984,
+              "min": 0.0006504280000000041
+            },
+            "privacy_wall_seconds": {
+              "max": 0.0012185709999812389,
+              "median": 0.0009313344999952733,
+              "min": 0.0006440980000093077
+            }
+          },
+          "iac/yaml": {
+            "decode_cpu_seconds": {
+              "max": 0.05444258999999999,
+              "median": 0.051654889999999995,
+              "min": 0.048867190000000005
+            },
+            "decode_wall_seconds": {
+              "max": 0.05491275800022777,
+              "median": 0.051911538500093,
+              "min": 0.048910318999958236
+            },
+            "duplicate_tokens": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "encoded_line_bytes": {
+              "max": 25888,
+              "median": 25887.5,
+              "min": 25887
+            },
+            "json_bytes": {
+              "max": 25874,
+              "median": 25873.5,
+              "min": 25873
+            },
+            "logical_nodes": {
+              "max": 715,
+              "median": 715.0,
+              "min": 715
+            },
+            "metrics": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "packets": {
+              "max": 14,
+              "median": 14.0,
+              "min": 14
+            },
+            "privacy_cpu_seconds": {
+              "max": 0.0008175399999999955,
+              "median": 0.0007895534999999977,
+              "min": 0.0007615669999999999
+            },
+            "privacy_wall_seconds": {
+              "max": 0.0008052900001302987,
+              "median": 0.0007762660001162658,
+              "min": 0.0007472420001022329
+            }
+          },
+          "native/dockerfile": {
+            "decode_cpu_seconds": {
+              "max": 0.0020923589999999326,
+              "median": 0.0020482054999999555,
+              "min": 0.0020040519999999784
+            },
+            "decode_wall_seconds": {
+              "max": 0.002092877999984921,
+              "median": 0.002045193000014933,
+              "min": 0.0019975080000449452
+            },
+            "duplicate_tokens": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "encoded_line_bytes": {
+              "max": 30222,
+              "median": 30219.5,
+              "min": 30217
+            },
+            "expand_cpu_seconds": {
+              "max": 2.4077000000177762e-05,
+              "median": 2.373350000006713e-05,
+              "min": 2.33899999999565e-05
+            },
+            "expand_wall_seconds": {
+              "max": 2.1754999806944397e-05,
+              "median": 2.1615499889549028e-05,
+              "min": 2.147599997215366e-05
+            },
+            "json_bytes": {
+              "max": 30216,
+              "median": 30213.5,
+              "min": 30211
+            },
+            "logical_nodes": {
+              "max": 1916,
+              "median": 1916.0,
+              "min": 1916
+            },
+            "metrics": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "packets": {
+              "max": 6,
+              "median": 6.0,
+              "min": 6
+            },
+            "privacy_cpu_seconds": {
+              "max": 0.0016650760000000986,
+              "median": 0.0015772099999998845,
+              "min": 0.0014893439999996705
+            },
+            "privacy_wall_seconds": {
+              "max": 0.0016498829999704867,
+              "median": 0.0015680935000830232,
+              "min": 0.0014863040001955596
+            }
+          },
+          "native/java": {
+            "decode_cpu_seconds": {
+              "max": 0.04756993700000001,
+              "median": 0.04608987650000029,
+              "min": 0.04460981600000058
+            },
+            "decode_wall_seconds": {
+              "max": 0.04782086699970023,
+              "median": 0.04621898199985708,
+              "min": 0.04461709700001393
+            },
+            "duplicate_tokens": {
+              "max": 6410,
+              "median": 6410.0,
+              "min": 6410
+            },
+            "encoded_line_bytes": {
+              "max": 517414,
+              "median": 517408.0,
+              "min": 517402
+            },
+            "expand_cpu_seconds": {
+              "max": 0.00017544700000060587,
+              "median": 0.00015875449999991353,
+              "min": 0.0001420619999992212
+            },
+            "expand_wall_seconds": {
+              "max": 0.00015594400008467346,
+              "median": 0.00014100600003530417,
+              "min": 0.00012606799998593488
+            },
+            "json_bytes": {
+              "max": 517390,
+              "median": 517384.0,
+              "min": 517378
+            },
+            "logical_nodes": {
+              "max": 53048,
+              "median": 53048.0,
+              "min": 53048
+            },
+            "metrics": {
+              "max": 158,
+              "median": 158.0,
+              "min": 158
+            },
+            "packets": {
+              "max": 24,
+              "median": 24.0,
+              "min": 24
+            },
+            "privacy_cpu_seconds": {
+              "max": 0.03381780400000012,
+              "median": 0.033238212500000364,
+              "min": 0.03265862100000061
+            },
+            "privacy_wall_seconds": {
+              "max": 0.0340111479999905,
+              "median": 0.03338636250001059,
+              "min": 0.032761577000030684
+            }
+          },
+          "native/json_other": {
+            "decode_cpu_seconds": {
+              "max": 0.002411643999999713,
+              "median": 0.0023633794999998736,
+              "min": 0.0023151150000000342
+            },
+            "decode_wall_seconds": {
+              "max": 0.0028229339999370495,
+              "median": 0.0025667664999105,
+              "min": 0.0023105989998839505
+            },
+            "duplicate_tokens": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "encoded_line_bytes": {
+              "max": 26737,
+              "median": 26733.0,
+              "min": 26729
+            },
+            "expand_cpu_seconds": {
+              "max": 8.187600000009176e-05,
+              "median": 8.029949999988073e-05,
+              "min": 7.87229999996697e-05
+            },
+            "expand_wall_seconds": {
+              "max": 7.402500011721713e-05,
+              "median": 7.224199998745462e-05,
+              "min": 7.04589998576921e-05
+            },
+            "json_bytes": {
+              "max": 26717,
+              "median": 26713.0,
+              "min": 26709
+            },
+            "logical_nodes": {
+              "max": 870,
+              "median": 870.0,
+              "min": 870
+            },
+            "metrics": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "packets": {
+              "max": 20,
+              "median": 20.0,
+              "min": 20
+            },
+            "privacy_cpu_seconds": {
+              "max": 0.0014702259999996858,
+              "median": 0.0013102614999996876,
+              "min": 0.0011502969999996893
+            },
+            "privacy_wall_seconds": {
+              "max": 0.0014556840000068405,
+              "median": 0.0012949765000200841,
+              "min": 0.0011342690000333278
+            }
+          },
+          "native/python": {
+            "decode_cpu_seconds": {
+              "max": 0.062599238,
+              "median": 0.059605924499999796,
+              "min": 0.05661261099999959
+            },
+            "decode_wall_seconds": {
+              "max": 0.06333369199978733,
+              "median": 0.06024743199998284,
+              "min": 0.05716117200017834
+            },
+            "duplicate_tokens": {
+              "max": 8780,
+              "median": 8780.0,
+              "min": 8780
+            },
+            "encoded_line_bytes": {
+              "max": 671205,
+              "median": 671204.0,
+              "min": 671203
+            },
+            "expand_cpu_seconds": {
+              "max": 0.00028547799999945056,
+              "median": 0.0002375954999999097,
+              "min": 0.00018971300000036884
+            },
+            "expand_wall_seconds": {
+              "max": 0.00026059399988298537,
+              "median": 0.00021456299998590111,
+              "min": 0.00016853200008881686
+            },
+            "json_bytes": {
+              "max": 671173,
+              "median": 671172.0,
+              "min": 671171
+            },
+            "logical_nodes": {
+              "max": 72564,
+              "median": 72564.0,
+              "min": 72564
+            },
+            "metrics": {
+              "max": 195,
+              "median": 195.0,
+              "min": 195
+            },
+            "packets": {
+              "max": 32,
+              "median": 32.0,
+              "min": 32
+            },
+            "privacy_cpu_seconds": {
+              "max": 0.0528461540000007,
+              "median": 0.049122459499999604,
+              "min": 0.04539876499999851
+            },
+            "privacy_wall_seconds": {
+              "max": 0.053430100999435126,
+              "median": 0.04937774249978588,
+              "min": 0.04532538400013664
+            }
+          },
+          "native/typescript": {
+            "decode_cpu_seconds": {
+              "max": 0.0615187279999998,
+              "median": 0.0597780504999994,
+              "min": 0.058037372999999004
+            },
+            "decode_wall_seconds": {
+              "max": 0.061613721000242094,
+              "median": 0.060050014500092175,
+              "min": 0.058486307999942255
+            },
+            "duplicate_tokens": {
+              "max": 9778,
+              "median": 9778.0,
+              "min": 9778
+            },
+            "encoded_line_bytes": {
+              "max": 696700,
+              "median": 696683.5,
+              "min": 696667
+            },
+            "expand_cpu_seconds": {
+              "max": 0.00023144800000007848,
+              "median": 0.0002098145000003493,
+              "min": 0.0001881810000006201
+            },
+            "expand_wall_seconds": {
+              "max": 0.0002070520001211662,
+              "median": 0.0001862164999408833,
+              "min": 0.0001653809997606004
+            },
+            "json_bytes": {
+              "max": 696668,
+              "median": 696651.5,
+              "min": 696635
+            },
+            "logical_nodes": {
+              "max": 74354,
+              "median": 74354.0,
+              "min": 74354
+            },
+            "metrics": {
+              "max": 171,
+              "median": 171.0,
+              "min": 171
+            },
+            "packets": {
+              "max": 32,
+              "median": 32.0,
+              "min": 32
+            },
+            "privacy_cpu_seconds": {
+              "max": 0.04608109199999966,
+              "median": 0.044006649999999814,
+              "min": 0.04193220799999997
+            },
+            "privacy_wall_seconds": {
+              "max": 0.046841550999886294,
+              "median": 0.04478713649982069,
+              "min": 0.042732721999755086
+            }
+          },
+          "native/yaml": {
+            "decode_cpu_seconds": {
+              "max": 0.00411664600000039,
+              "median": 0.004024350500000051,
+              "min": 0.003932054999999712
+            },
+            "decode_wall_seconds": {
+              "max": 0.004115859999728855,
+              "median": 0.004017017999871086,
+              "min": 0.003918176000013318
+            },
+            "duplicate_tokens": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "encoded_line_bytes": {
+              "max": 65828,
+              "median": 65822.0,
+              "min": 65816
+            },
+            "expand_cpu_seconds": {
+              "max": 7.900200000010571e-05,
+              "median": 7.209250000006495e-05,
+              "min": 6.51830000000242e-05
+            },
+            "expand_wall_seconds": {
+              "max": 7.303100005628949e-05,
+              "median": 6.595100006734356e-05,
+              "min": 5.887100007839763e-05
+            },
+            "json_bytes": {
+              "max": 65814,
+              "median": 65808.0,
+              "min": 65802
+            },
+            "logical_nodes": {
+              "max": 3156,
+              "median": 3156.0,
+              "min": 3156
+            },
+            "metrics": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "packets": {
+              "max": 14,
+              "median": 14.0,
+              "min": 14
+            },
+            "privacy_cpu_seconds": {
+              "max": 0.002443185000000847,
+              "median": 0.002429303000000327,
+              "min": 0.0024154209999998066
+            },
+            "privacy_wall_seconds": {
+              "max": 0.0024354949999860764,
+              "median": 0.0024166519999653246,
+              "min": 0.002397808999944573
+            }
+          },
+          "syntax/java": {
+            "decode_cpu_seconds": {
+              "max": 0.049940014,
+              "median": 0.045856748999999995,
+              "min": 0.04177348399999999
+            },
+            "decode_wall_seconds": {
+              "max": 0.0502402820000043,
+              "median": 0.0461744229999681,
+              "min": 0.0421085639999319
+            },
+            "duplicate_tokens": {
+              "max": 6410,
+              "median": 6410.0,
+              "min": 6410
+            },
+            "encoded_line_bytes": {
+              "max": 490207,
+              "median": 490207.0,
+              "min": 490207
+            },
+            "json_bytes": {
+              "max": 490183,
+              "median": 490183.0,
+              "min": 490183
+            },
+            "logical_nodes": {
+              "max": 26107,
+              "median": 26107.0,
+              "min": 26107
+            },
+            "metrics": {
+              "max": 158,
+              "median": 158.0,
+              "min": 158
+            },
+            "packets": {
+              "max": 24,
+              "median": 24.0,
+              "min": 24
+            },
+            "privacy_cpu_seconds": {
+              "max": 0.020762106000000002,
+              "median": 0.018874062500000007,
+              "min": 0.016986019000000012
+            },
+            "privacy_wall_seconds": {
+              "max": 0.020946592000314013,
+              "median": 0.019076039500077968,
+              "min": 0.017205486999841924
+            }
+          },
+          "syntax/typescript": {
+            "decode_cpu_seconds": {
+              "max": 0.05777062999999997,
+              "median": 0.05745776799999998,
+              "min": 0.05714490599999999
+            },
+            "decode_wall_seconds": {
+              "max": 0.05844995899974492,
+              "median": 0.05789468099985129,
+              "min": 0.057339402999957656
+            },
+            "duplicate_tokens": {
+              "max": 9778,
+              "median": 9778.0,
+              "min": 9778
+            },
+            "encoded_line_bytes": {
+              "max": 660309,
+              "median": 660308.5,
+              "min": 660308
+            },
+            "json_bytes": {
+              "max": 660277,
+              "median": 660276.5,
+              "min": 660276
+            },
+            "logical_nodes": {
+              "max": 36621,
+              "median": 36621.0,
+              "min": 36621
+            },
+            "metrics": {
+              "max": 171,
+              "median": 171.0,
+              "min": 171
+            },
+            "packets": {
+              "max": 32,
+              "median": 32.0,
+              "min": 32
+            },
+            "privacy_cpu_seconds": {
+              "max": 0.024106151000000048,
+              "median": 0.023181337000000017,
+              "min": 0.02225652299999999
+            },
+            "privacy_wall_seconds": {
+              "max": 0.024185990999967544,
+              "median": 0.023534701499954735,
+              "min": 0.022883411999941927
+            }
+          }
+        }
+      },
+      "warm": {
+        "baseline": {
+          "iac/dockerfile": {
+            "decode_cpu_seconds": {
+              "max": 5.6831999999999716e-05,
+              "median": 4.4579500000000057e-05,
+              "min": 3.23270000000004e-05
+            },
+            "decode_wall_seconds": {
+              "max": 5.651999998690371e-05,
+              "median": 4.4402999975545754e-05,
+              "min": 3.2285999964187795e-05
+            },
+            "duplicate_tokens": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "encoded_line_bytes": {
+              "max": 362,
+              "median": 361.5,
+              "min": 361
+            },
+            "json_bytes": {
+              "max": 361,
+              "median": 360.5,
+              "min": 360
+            },
+            "logical_nodes": {
+              "max": 10,
+              "median": 10.0,
+              "min": 10
+            },
+            "metrics": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "packets": {
+              "max": 1,
+              "median": 1.0,
+              "min": 1
+            },
+            "privacy_cpu_seconds": {
+              "max": 1.9308e-05,
+              "median": 1.7866000000000062e-05,
+              "min": 1.6424000000000126e-05
+            },
+            "privacy_wall_seconds": {
+              "max": 1.8790000012813834e-05,
+              "median": 1.7412500000091313e-05,
+              "min": 1.6034999987368792e-05
+            }
+          },
+          "iac/yaml": {
+            "decode_cpu_seconds": {
+              "max": 0.00044071400000000004,
+              "median": 0.00039757650000000035,
+              "min": 0.00035443900000000066
+            },
+            "decode_wall_seconds": {
+              "max": 0.00044032499982904483,
+              "median": 0.00039717399997130087,
+              "min": 0.0003540230001135569
+            },
+            "duplicate_tokens": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "encoded_line_bytes": {
+              "max": 4040,
+              "median": 4038.0,
+              "min": 4036
+            },
+            "json_bytes": {
+              "max": 4030,
+              "median": 4028.0,
+              "min": 4026
+            },
+            "logical_nodes": {
+              "max": 100,
+              "median": 100.0,
+              "min": 100
+            },
+            "metrics": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "packets": {
+              "max": 10,
+              "median": 10.0,
+              "min": 10
+            },
+            "privacy_cpu_seconds": {
+              "max": 0.0003029419999999983,
+              "median": 0.00026094699999999944,
+              "min": 0.00021895200000000056
+            },
+            "privacy_wall_seconds": {
+              "max": 0.0002946960000826948,
+              "median": 0.00025338950004538674,
+              "min": 0.00021208300000807867
+            }
+          },
+          "native/dockerfile": {
+            "decode_cpu_seconds": {
+              "max": 0.00010508399999942242,
+              "median": 0.00010318650000007423,
+              "min": 0.00010128900000072605
+            },
+            "decode_wall_seconds": {
+              "max": 0.00010498599999664293,
+              "median": 0.00010313800001426898,
+              "min": 0.00010129000003189503
+            },
+            "duplicate_tokens": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "encoded_line_bytes": {
+              "max": 1491,
+              "median": 1489.5,
+              "min": 1488
+            },
+            "expand_cpu_seconds": {
+              "max": 2.8939999996424604e-06,
+              "median": 2.7864999996296547e-06,
+              "min": 2.678999999616849e-06
+            },
+            "expand_wall_seconds": {
+              "max": 2.698000002965273e-06,
+              "median": 2.5484999923719442e-06,
+              "min": 2.3989999817786156e-06
+            },
+            "json_bytes": {
+              "max": 1490,
+              "median": 1488.5,
+              "min": 1487
+            },
+            "logical_nodes": {
+              "max": 64,
+              "median": 64.0,
+              "min": 64
+            },
+            "metrics": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "packets": {
+              "max": 1,
+              "median": 1.0,
+              "min": 1
+            },
+            "privacy_cpu_seconds": {
+              "max": 7.322999999992419e-05,
+              "median": 6.944549999987615e-05,
+              "min": 6.566099999982811e-05
+            },
+            "privacy_wall_seconds": {
+              "max": 7.266000000072381e-05,
+              "median": 6.891050000490395e-05,
+              "min": 6.516100000908409e-05
+            }
+          },
+          "native/yaml": {
+            "decode_cpu_seconds": {
+              "max": 0.0012579109999997229,
+              "median": 0.0012436944999998367,
+              "min": 0.0012294779999999506
+            },
+            "decode_wall_seconds": {
+              "max": 0.001257601000077102,
+              "median": 0.0012426099999629514,
+              "min": 0.0012276189998488007
+            },
+            "duplicate_tokens": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "encoded_line_bytes": {
+              "max": 15766,
+              "median": 15758.0,
+              "min": 15750
+            },
+            "expand_cpu_seconds": {
+              "max": 4.2312000001487604e-05,
+              "median": 4.169850000046438e-05,
+              "min": 4.108499999944115e-05
+            },
+            "expand_wall_seconds": {
+              "max": 3.769399995690037e-05,
+              "median": 3.73204999277732e-05,
+              "min": 3.694699989864603e-05
+            },
+            "json_bytes": {
+              "max": 15756,
+              "median": 15748.0,
+              "min": 15740
+            },
+            "logical_nodes": {
+              "max": 640,
+              "median": 640.0,
+              "min": 640
+            },
+            "metrics": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "packets": {
+              "max": 10,
+              "median": 10.0,
+              "min": 10
+            },
+            "privacy_cpu_seconds": {
+              "max": 0.0008152539999990438,
+              "median": 0.0007890674999999625,
+              "min": 0.0007628810000008812
+            },
+            "privacy_wall_seconds": {
+              "max": 0.000807645999941542,
+              "median": 0.0007822085000555035,
+              "min": 0.000756771000169465
+            }
+          }
+        },
+        "candidate": {
+          "iac/dockerfile": {
+            "decode_cpu_seconds": {
+              "max": 3.335300000000029e-05,
+              "median": 3.31855000000002e-05,
+              "min": 3.301800000000011e-05
+            },
+            "decode_wall_seconds": {
+              "max": 3.333600000132719e-05,
+              "median": 3.308899999865389e-05,
+              "min": 3.2841999995980586e-05
+            },
+            "duplicate_tokens": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "encoded_line_bytes": {
+              "max": 362,
+              "median": 362.0,
+              "min": 362
+            },
+            "json_bytes": {
+              "max": 361,
+              "median": 361.0,
+              "min": 361
+            },
+            "logical_nodes": {
+              "max": 10,
+              "median": 10.0,
+              "min": 10
+            },
+            "metrics": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "packets": {
+              "max": 1,
+              "median": 1.0,
+              "min": 1
+            },
+            "privacy_cpu_seconds": {
+              "max": 1.8525999999999612e-05,
+              "median": 1.770449999999985e-05,
+              "min": 1.688300000000009e-05
+            },
+            "privacy_wall_seconds": {
+              "max": 1.802000002726345e-05,
+              "median": 1.717500001063854e-05,
+              "min": 1.6329999994013633e-05
+            }
+          },
+          "iac/yaml": {
+            "decode_cpu_seconds": {
+              "max": 0.00041676500000000036,
+              "median": 0.00040172250000000036,
+              "min": 0.00038668000000000036
+            },
+            "decode_wall_seconds": {
+              "max": 0.0004137020000598568,
+              "median": 0.0003999624999835305,
+              "min": 0.0003862229999072042
+            },
+            "duplicate_tokens": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "encoded_line_bytes": {
+              "max": 4054,
+              "median": 4049.0,
+              "min": 4044
+            },
+            "json_bytes": {
+              "max": 4044,
+              "median": 4039.0,
+              "min": 4034
+            },
+            "logical_nodes": {
+              "max": 100,
+              "median": 100.0,
+              "min": 100
+            },
+            "metrics": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "packets": {
+              "max": 10,
+              "median": 10.0,
+              "min": 10
+            },
+            "privacy_cpu_seconds": {
+              "max": 0.0002686150000000005,
+              "median": 0.00024674650000000033,
+              "min": 0.0002248780000000002
+            },
+            "privacy_wall_seconds": {
+              "max": 0.00025972399998863693,
+              "median": 0.00023893450003242833,
+              "min": 0.00021814500007621973
+            }
+          },
+          "native/dockerfile": {
+            "decode_cpu_seconds": {
+              "max": 0.00010693699999997364,
+              "median": 0.00010601799999987449,
+              "min": 0.00010509899999977534
+            },
+            "decode_wall_seconds": {
+              "max": 0.00010677500000610962,
+              "median": 0.00010570300000267707,
+              "min": 0.00010463099999924452
+            },
+            "duplicate_tokens": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "encoded_line_bytes": {
+              "max": 1495,
+              "median": 1491.5,
+              "min": 1488
+            },
+            "expand_cpu_seconds": {
+              "max": 3.04900000003272e-06,
+              "median": 2.9600000002183435e-06,
+              "min": 2.871000000403967e-06
+            },
+            "expand_wall_seconds": {
+              "max": 2.8270000029806397e-06,
+              "median": 2.72400001222195e-06,
+              "min": 2.62100002146326e-06
+            },
+            "json_bytes": {
+              "max": 1494,
+              "median": 1490.5,
+              "min": 1487
+            },
+            "logical_nodes": {
+              "max": 64,
+              "median": 64.0,
+              "min": 64
+            },
+            "metrics": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "packets": {
+              "max": 1,
+              "median": 1.0,
+              "min": 1
+            },
+            "privacy_cpu_seconds": {
+              "max": 6.74140000000989e-05,
+              "median": 6.609500000021029e-05,
+              "min": 6.477600000032169e-05
+            },
+            "privacy_wall_seconds": {
+              "max": 6.680899997490997e-05,
+              "median": 6.541849998598082e-05,
+              "min": 6.402799999705167e-05
+            }
+          },
+          "native/yaml": {
+            "decode_cpu_seconds": {
+              "max": 0.0015483939999993979,
+              "median": 0.0013553045000009867,
+              "min": 0.0011622150000025755
+            },
+            "decode_wall_seconds": {
+              "max": 0.0015411460001359956,
+              "median": 0.0013510779999990064,
+              "min": 0.0011610099998620171
+            },
+            "duplicate_tokens": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "encoded_line_bytes": {
+              "max": 15758,
+              "median": 15755.0,
+              "min": 15752
+            },
+            "expand_cpu_seconds": {
+              "max": 5.5350999998537986e-05,
+              "median": 4.9565499999459917e-05,
+              "min": 4.378000000038185e-05
+            },
+            "expand_wall_seconds": {
+              "max": 4.979600009846763e-05,
+              "median": 4.4799000022521795e-05,
+              "min": 3.980199994657596e-05
+            },
+            "json_bytes": {
+              "max": 15748,
+              "median": 15745.0,
+              "min": 15742
+            },
+            "logical_nodes": {
+              "max": 640,
+              "median": 640.0,
+              "min": 640
+            },
+            "metrics": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "packets": {
+              "max": 10,
+              "median": 10.0,
+              "min": 10
+            },
+            "privacy_cpu_seconds": {
+              "max": 0.0010136380000007605,
+              "median": 0.0009251330000030755,
+              "min": 0.0008366280000053905
+            },
+            "privacy_wall_seconds": {
+              "max": 0.0009987360002696732,
+              "median": 0.0009127495001450825,
+              "min": 0.0008267630000204917
+            }
+          }
+        }
+      }
+    },
+    "scope_projections": {
+      "cold": {
+        "artifact_sha256": "f48beb636b9c262a4c50b72e353c9af99c3bb569de5cbe868eca8bd30994fd7b",
+        "claim_count": 29,
+        "duplicate_delivery_identical": true,
+        "evidence_count": 128,
+        "finding_count": 48,
+        "ordered_evidence_sha256": "069de445d0d19345c862cc3a0e562122cbbcb5c5c222e7a975050efd0eff8d37",
+        "semantic_sha256": "8560d08211a08123faf161c5ec832a1d88df67a124e0a8b910335589f79c3903",
+        "state": "PARTIAL"
+      },
+      "warm": {
+        "artifact_sha256": "f48beb636b9c262a4c50b72e353c9af99c3bb569de5cbe868eca8bd30994fd7b",
+        "claim_count": 29,
+        "duplicate_delivery_identical": true,
+        "evidence_count": 128,
+        "finding_count": 48,
+        "ordered_evidence_sha256": "069de445d0d19345c862cc3a0e562122cbbcb5c5c222e7a975050efd0eff8d37",
+        "semantic_sha256": "a2c7c69527eab4324128fca53f1116a372d14b26f21021655effe40fb267e09d",
+        "state": "PARTIAL"
+      }
+    },
+    "timing_baseline_then_candidate": {
+      "cold": {
+        "allocation": [
+          38869207,
+          38868838
+        ],
+        "control": {
+          "cpu": [
+            13.579193,
+            12.592384500000001
+          ],
+          "parse": [
+            4.3607445,
+            3.6322900000000002
+          ],
+          "scope_peak": [
+            163262464.0,
+            161273856.0
+          ],
+          "wall": [
+            13.461709060000004,
+            13.221565568499983
+          ]
+        },
+        "counted": {
+          "cache_write": [
+            0.0644115,
+            0.0660565
+          ],
+          "commit_wall": [
+            0.07767512799995302,
+            0.06106981799999289
+          ],
+          "database_bytes": [
+            15921900.0,
+            15925960.0
+          ],
+          "end_anon": [
+            127211520.0,
+            126052352.0
+          ],
+          "end_file": [
+            17346560.0,
+            17358848.0
+          ],
+          "gc_count": [
+            68.5,
+            68.5
+          ],
+          "gc_pause_wall": [
+            0.061037248000133104,
+            0.06275706850047413
+          ],
+          "iac_worker_transport": [
+            1.3811427889999948,
+            0.5032492579999825
+          ],
+          "job_device_rbytes": [
+            0.0,
+            0.0
+          ],
+          "job_device_wbytes": [
+            43096064.0,
+            43104256.0
+          ],
+          "job_io_full_us": [
+            1910723.5,
+            1276458.0
+          ],
+          "job_memory_full_us": [
+            0.0,
+            0.0
+          ],
+          "job_pgsteal_delta": [
+            0.0,
+            0.0
+          ],
+          "max_events": [
+            0.0,
+            0.0
+          ],
+          "native_packet_gate_cpu": [
+            0.3013930735,
+            0.3105536915
+          ],
+          "native_packet_gate_wall": [
+            0.30367469650002477,
+            0.31323767800000724
+          ],
+          "outer_partition_wall": [
+            4.669595350000009,
+            3.8731136680000304
+          ],
+          "parse": [
+            4.378410000000001,
+            3.59797
+          ],
+          "partition_worker_cpu": [
+            4.491073,
+            3.555601
+          ],
+          "pgscan": [
+            0.0,
+            0.0
+          ],
+          "scope_partition_throttled_usec": [
+            4349.0,
+            1448.5
+          ],
+          "scope_sample_peak": [
+            163231744.0,
+            160491520.0
+          ],
+          "spill": [
+            0.1421345,
+            0.141677
+          ],
+          "worker_transport_wall_union": [
+            3.9745775270000365,
+            3.105678295999951
+          ]
+        }
+      },
+      "warm": {
+        "allocation": [
+          11915849,
+          11915233
+        ],
+        "control": {
+          "cpu": [
+            10.5884145,
+            9.84886
+          ],
+          "parse": [
+            2.7038375,
+            1.9594235
+          ],
+          "scope_peak": [
+            219219968.0,
+            193306624.0
+          ],
+          "wall": [
+            11.196625138500025,
+            10.501515114
+          ]
+        },
+        "counted": {
+          "cache_write": [
+            0.004082,
+            0.003959
+          ],
+          "commit_wall": [
+            0.020050758500019583,
+            0.04167831600005911
+          ],
+          "database_bytes": [
+            26168832.0,
+            26201660.0
+          ],
+          "end_anon": [
+            153860096.0,
+            152803328.0
+          ],
+          "end_file": [
+            27680768.0,
+            27721728.0
+          ],
+          "gc_count": [
+            52.0,
+            52.0
+          ],
+          "gc_pause_wall": [
+            0.009616218000104482,
+            0.009657909500191408
+          ],
+          "iac_worker_transport": [
+            1.3669163854999908,
+            0.41805107450002765
+          ],
+          "job_device_rbytes": [
+            0.0,
+            0.0
+          ],
+          "job_device_wbytes": [
+            55791616.0,
+            55713792.0
+          ],
+          "job_io_full_us": [
+            2881345.5,
+            3869996.5
+          ],
+          "job_memory_full_us": [
+            0.0,
+            0.0
+          ],
+          "job_pgsteal_delta": [
+            0.0,
+            0.0
+          ],
+          "max_events": [
+            0.0,
+            0.0
+          ],
+          "native_packet_gate_cpu": [
+            0.002392374999999891,
+            0.0026771934999993974
+          ],
+          "native_packet_gate_wall": [
+            0.002393765500016798,
+            0.002672521000050665
+          ],
+          "outer_partition_wall": [
+            2.9233928664999667,
+            1.9979766004998964
+          ],
+          "parse": [
+            2.740425,
+            1.7936135000000002
+          ],
+          "partition_worker_cpu": [
+            2.6405469999999998,
+            1.6930749999999999
+          ],
+          "pgscan": [
+            0.0,
+            0.0
+          ],
+          "scope_partition_throttled_usec": [
+            0.0,
+            0.0
+          ],
+          "scope_sample_peak": [
+            217487360.0,
+            192407552.0
+          ],
+          "spill": [
+            0.1373875,
+            0.1377535
+          ],
+          "worker_transport_wall_union": [
+            2.642674491999969,
+            1.692017633000063
+          ]
+        }
+      }
+    }
+  },
+  "checkpoint": "200905bb4b7fcf8ab5e42c07c9f7f6c2c280a617",
+  "date": "2026-11-08",
+  "disposition": {
+    "commercial_v1": "DEVELOPMENT IN PROGRESS",
+    "full_release_attempt": "Insufficient case for a stand-alone full rerun based on routing alone.",
+    "next": "Prepare qualification-only fixed route-launch and stage-aligned packet/cgroup counters for the next authorized full diagnostic run.",
+    "runtime_delta_this_milestone": [],
+    "scale001": "NOT QUALIFIED"
+  },
+  "evidence_sha256": {
+    "checks/final-test-source.json": "0f374c8f6b44dd902a3b5fb6397192f74dee0c7442c94cbed7e7eac369a4e15b",
+    "decoder-gc-diagnostic.json": "6c7af0b025d788ff2b638c42c4d9fa6bc785e15c1eb41f6417c7b056490378ce",
+    "inferred-full-routing.json": "850c5cf28d089992886c2b9fec662410cefbd71ce922b31157c7639a8854c197",
+    "matched-benchmarks.json": "b1ec89f22c7707de97f52ce96385bfff93856b5cfe72a9281927cf0a7a05731e",
+    "observed-route-matrix.json": "625355c7edde5d46a22a495bb1ea038e210e3f7431bd0e5d12c5239ea9b24452",
+    "packet-type-admission.json": "d3631d89d2aecfaad06d0182f1f8921b218a3f84243ab68437acd45f1df0aec7",
+    "security/runtime.json": "7444dbf9407eb0d7cfeb3cb19313441a73b81c123b949e10aa19ee219b9f08ba",
+    "security/sec002.json": "ba184e2801c928abf040689fd620418e5d6101d76ae37e27e37bf4cf1c43a2b9",
+    "slice-manifest.json": "07e5a1174581a4da08f86d8b44597a65a5f710525d7053b25edfc184877a9573"
+  },
+  "full_reconstruction": {
+    "archive_sha256": "95747f22ebf3d01232b1592551bc2bc1866b9bbe7322dd3bf1a97028b0592257",
+    "artifact_sha256": "41168429c8cb394b012fae8a4bfbe178d111b7a408c39e649a79483f6ddd5735",
+    "commit": "b1fab2bc21c63335dead4daaaa28194c9878e9bf",
+    "inferred": {
+      "iac_file_types": {
+        "dockerfile": 26,
+        "json": 24,
+        "yaml": 333
+      },
+      "iac_launches": 34,
+      "iac_mixed": 0,
+      "iac_requested_files": 383,
+      "iac_requires_hcl": 0,
+      "iac_skip_hcl": 34,
+      "logical_partitions": 199,
+      "native_files": 18859,
+      "native_launches": 199,
+      "syntax_files": 12586,
+      "syntax_launches": 138
+    },
+    "manifest_sha256": "081071ce099d103270175ab53ef12842586d7b0f1ee0c58dadbc3654a2246a89",
+    "observed_historical": {
+      "cache_hits": 0,
+      "iac_file_reports": 383,
+      "native_files_read": 18859,
+      "native_transport_spans": 199,
+      "partitions": 199,
+      "syntax_file_reports": 12586,
+      "syntax_transport_spans": 138
+    },
+    "reconciliation": {
+      "iac_files_vs_packet_reports": true,
+      "logical_partitions": true,
+      "native_files": true,
+      "native_launches_vs_transport_spans": true,
+      "syntax_files_vs_packet_reports": true,
+      "syntax_launches_vs_transport_spans": true
+    }
+  },
+  "image": {
+    "exit_code": 0,
+    "image": "sha256:e0a86ce946c874d6e4e2ab200e0f18c471531aea09995f70bfcfa14135a1db8e",
+    "proof": {
+      "mismatches": [],
+      "runtime_files": 196
+    },
+    "runtime_sha256": "a7e1f78ef6d2735c731cbab9d84e05ce8d0b0c40f958fd72b3fdb5f68330298f"
+  },
+  "matched_images": {
+    "baseline": {
+      "image": "sha256:a74fb7a5e158103100da5c77730e0052919d9276e5b7c592d650560d1f378512",
+      "runtime_sha256": "cf6483000222ce22abf18b5315684fce5e0359736932cc21285e41760d0ce56d"
+    },
+    "candidate": {
+      "image": "sha256:e0a86ce946c874d6e4e2ab200e0f18c471531aea09995f70bfcfa14135a1db8e",
+      "runtime_sha256": "a7e1f78ef6d2735c731cbab9d84e05ce8d0b0c40f958fd72b3fdb5f68330298f"
+    }
+  },
+  "observed_bounded_routes": {
+    "baseline_non_terraform_iac": 6,
+    "candidate_hcl": 0,
+    "candidate_no_hcl": 8,
+    "instrumented_only": true,
+    "owned_terraform_fixture": "separate required routing tests"
+  },
+  "resource_comparison": {
+    "local": {
+      "Architecture": "x86_64",
+      "CgroupDriver": "cgroupfs",
+      "CgroupVersion": "2",
+      "Driver": "overlayfs",
+      "KernelVersion": "6.18.54.1-microsoft-standard-WSL2",
+      "OperatingSystem": "Docker Desktop",
+      "ServerVersion": "29.9.2"
+    },
+    "numeric_cgroup_match": true,
+    "reclaim_equivalence": "NOT EQUIVALENT",
+    "retained_runner": {
+      "arch": "amd64",
+      "configured": {
+        "CgroupnsMode": "private",
+        "Memory": 768000000,
+        "MemorySwap": 768000000,
+        "NetworkMode": "none",
+        "PidsLimit": 64
+      },
+      "docker": "29.4.2",
+      "host_storage_backing": null,
+      "kernel": "7.0.0-1019-azure",
+      "platform": "Linux-7.0.0-1019-azure-x86_64-with-glibc2.41",
+      "python": "3.14.10 (main, Nov  5 2026, 07:57:36) [GCC 14.2.0]"
+    },
+    "runner_interval": {
+      "cpu_seconds": 1759.326236,
+      "end": 1987.124,
+      "file_bytes_start_end": [
+        355262464,
+        208883712
+      ],
+      "io_bytes_and_ops": {
+        "dbytes": 0,
+        "dios": 0,
+        "rbytes": 271818752,
+        "rios": 26241,
+        "wbytes": 3071856640,
+        "wios": 120929
+      },
+      "memory_max_events": 9619,
+      "page_scans": 469585,
+      "pressure_us": {
+        "full": 34226761,
+        "some": 34232378
+      },
+      "start": 218.296
+    }
+  },
+  "schema": "projecttrace-scale001-iac-routing-reclaim-v1",
+  "sec002": [
+    {
+      "envelope": {
+        "CapDrop": [
+          "ALL"
+        ],
+        "Memory": 768000000,
+        "MemorySwap": 768000000,
+        "NanoCpus": 2000000000,
+        "NetworkMode": "none",
+        "PidsLimit": 64,
+        "ReadonlyRootfs": true,
+        "SecurityOpt": [
+          "no-new-privileges"
+        ]
+      },
+      "exit_code": 0,
+      "image": "sha256:e0a86ce946c874d6e4e2ab200e0f18c471531aea09995f70bfcfa14135a1db8e",
+      "kind": "existing",
+      "oom": false
+    },
+    {
+      "envelope": {
+        "CapDrop": [
+          "ALL"
+        ],
+        "Memory": 768000000,
+        "MemorySwap": 768000000,
+        "NanoCpus": 2000000000,
+        "NetworkMode": "none",
+        "PidsLimit": 64,
+        "ReadonlyRootfs": true,
+        "SecurityOpt": [
+          "no-new-privileges"
+        ]
+      },
+      "exit_code": 0,
+      "image": "sha256:e0a86ce946c874d6e4e2ab200e0f18c471531aea09995f70bfcfa14135a1db8e",
+      "kind": "supplement",
+      "oom": false
+    }
+  ],
+  "slice_source": {
+    "archive_sha256": "95747f22ebf3d01232b1592551bc2bc1866b9bbe7322dd3bf1a97028b0592257",
+    "cases": {
+      "large": {
+        "bytes": 480724,
+        "files": 128,
+        "input_sha256": "b80a3b668d809ac9feb53e980d04e5a231da1a373cf04b18e89d1c2c33d8aa48",
+        "type_mix": {
+          "dockerfile": 6,
+          "java": 24,
+          "json": 20,
+          "python": 32,
+          "typescript": 32,
+          "yaml": 14
+        }
+      },
+      "small": {
+        "bytes": 82883,
+        "files": 24,
+        "input_sha256": "f7aa733477e4e61a3c45ea5c0b8e1cb2c42fa2f0d8548f3708b6a7359017797a",
+        "type_mix": {
+          "dockerfile": 2,
+          "java": 4,
+          "json": 4,
+          "python": 6,
+          "typescript": 4,
+          "yaml": 4
+        }
+      }
+    },
+    "commit": "b1fab2bc21c63335dead4daaaa28194c9878e9bf",
+    "tree": "98be740cd54db8653ce735946b6fd6bd5986e5e3"
+  },
+  "tests": {
+    "compile-verified": {
+      "elapsed_seconds": 0.0647566679999727,
+      "exit_code": 0,
+      "mode": "development"
+    },
+    "development-verified": {
+      "counts": {
+        "errors": 0,
+        "failures": 0,
+        "passed": 143,
+        "skipped": 0,
+        "tests": 143
+      },
+      "elapsed_seconds": 142.63322422399995,
+      "exit_code": 0,
+      "mode": "development",
+      "warnings": 1
+    },
+    "prior_portable_original_required": {
+      "exit_code": 1,
+      "sole_output_difference": "parser_signature"
+    },
+    "required-routing": {
+      "counts": {
+        "errors": 0,
+        "failures": 0,
+        "passed": 12,
+        "skipped": 0,
+        "tests": 12
+      },
+      "elapsed_seconds": 11.212979218999997,
+      "exit_code": 0,
+      "mode": "required",
+      "warnings": 0
+    },
+    "required-verified": {
+      "counts": {
+        "errors": 0,
+        "failures": 0,
+        "passed": 134,
+        "skipped": 0,
+        "tests": 134
+      },
+      "elapsed_seconds": 82.97775308799999,
+      "exit_code": 0,
+      "mode": "required",
+      "warnings": 1
+    },
+    "ruff-verified": {
+      "elapsed_seconds": 0.06462984700010566,
+      "exit_code": 0,
+      "mode": "development"
+    }
+  }
+}

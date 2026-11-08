@@ -1,0 +1,1518 @@
+{
+  "artifact_local_zip": {
+    "excluded_decoy_count": 15,
+    "members": [
+      {
+        "bytes": 442,
+        "path": "candidate/container-envelope.json",
+        "sha256": "7189c3fa300625d7a1a39e6794b6fe938ae0aa2ef4e3cb322c4f17b9a297cdd6"
+      },
+      {
+        "bytes": 27895,
+        "path": "candidate/memory.jsonl",
+        "sha256": "d490a8f82b117e7b82df7f7ae2e54858fbd8a50df226e2b0c23f83c388c08f74"
+      },
+      {
+        "bytes": 0,
+        "path": "candidate/operation-memory.jsonl",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 300,
+        "path": "candidate/post-exit-integrity.json",
+        "sha256": "ed0d6ecc5c017bedeb7118ffce4eaed0118a9877bbd2a03410a164e3875fa11a"
+      },
+      {
+        "bytes": 11074,
+        "path": "candidate/qualification.json",
+        "sha256": "e5c1d860bf5e0b1138a0a0277e26ade4820c6f4f8c9106ffa29b8a9b848e8166"
+      },
+      {
+        "bytes": 3464,
+        "path": "diagnostic-export/receipts/scale-diagnostic-native.json",
+        "sha256": "62c65d2f2b9f32adf07104940ff9f516352dcb610b897b2b208d6652462b1582"
+      },
+      {
+        "bytes": 12398,
+        "path": "diagnostic-export/receipts/scale-diagnostic-resources.json",
+        "sha256": "d1434e0096edc7d6badeb927660d90a5ba03303110e82788304b3d0b0d9f80e2"
+      },
+      {
+        "bytes": 271,
+        "path": "manifest/manifest.jsonl",
+        "sha256": "723f5c9a8c3c14cab9d7988503b85e12f493189a3e2167762df618ede46bcdc3"
+      }
+    ],
+    "scope": "LOCAL ZIP USING CHECKED-IN ALLOWLIST AFTER CONTAINER REMOVAL",
+    "sha256": "e26c7e7d55c331d15becdddffa4c0cb2a8c7d6ecf16cda7a1256515c9671305b"
+  },
+  "checkpoint": "200905bb4b7fcf8ab5e42c07c9f7f6c2c280a617",
+  "date": "2026-11-08",
+  "disposition": {
+    "backup": "READY FOR EXPLICIT APPROVAL",
+    "commercial_v1": "DEVELOPMENT IN PROGRESS",
+    "runner_reclaim_equivalence": "NOT EQUIVALENT",
+    "scale001": "NOT QUALIFIED"
+  },
+  "failure_matrix": {
+    "checkpoint": {
+      "container_exit": 1,
+      "export": {
+        "bytes": {
+          "scale-diagnostic-native.json": 4103,
+          "scale-diagnostic-resources.json": 17070
+        },
+        "container_started": true,
+        "elapsed_seconds": 0.6450406449994261,
+        "exit_code": 0
+      },
+      "image": "sha256:68a254470cd491f66eb6fa76bcb8048294413f7204aae721addf714c3e9a9146",
+      "legacy": {
+        "checkpoint_diagnostic": {
+          "cleanup": "ATTEMPT_REMOVED",
+          "configured_limit_bytes": 64000000,
+          "logical_v1_bytes": null,
+          "logical_v1_size_reason": "V1_ENVELOPE_NOT_SERIALIZED",
+          "measured_bytes": 32000002,
+          "measurement": "RAW_UTF8_PREFIX_BYTES",
+          "measurement_exact": false,
+          "schema": "projecttrace-checkpoint-rejection-v1",
+          "site": "ROW_ENCODING",
+          "site_limit_bytes": 31995904,
+          "stage": "GLOBAL_CHECKPOINT",
+          "staged_page_count": 22,
+          "storage_schema": "projecttrace-analysis-checkpoint-v2"
+        },
+        "error_code": "GLOBAL_CHECKPOINT_BUDGET",
+        "error_type": "IntakeError",
+        "failed_stage": "VERIFYING",
+        "scenarios": {
+          "cancellation": "NOT_RUN",
+          "cold": "FAILED",
+          "concurrent_tenants": "NOT_RUN",
+          "exhaustion_recovery": "NOT_RUN",
+          "fresh_worker_recovery": "NOT_RUN",
+          "multi_file_change": "NOT_RUN",
+          "one_file_change": "NOT_RUN",
+          "warm": "NOT_RUN"
+        },
+        "verdict": "BLOCKED"
+      },
+      "oom": false,
+      "phases": {
+        "cold": {
+          "capture": "TERMINAL",
+          "failure_code": "GLOBAL_CHECKPOINT_BUDGET",
+          "stage": "VERIFYING",
+          "state": "FAILED"
+        },
+        "warm": {
+          "capture": "MISSING",
+          "failure_code": null,
+          "stage": null,
+          "state": null
+        }
+      },
+      "post_exit_integrity": {
+        "checkpoint_rows": 0,
+        "foreign_key_violations": 0,
+        "jobs": [
+          {
+            "error_code": "GLOBAL_CHECKPOINT_BUDGET",
+            "stage": "VERIFYING",
+            "state": "FAILED"
+          }
+        ],
+        "published_generations": 0,
+        "published_pointers": 0,
+        "sqlite_integrity": "ok",
+        "staged_checkpoint_pages": 0
+      },
+      "raw_receipt_bytes": {
+        "scale-diagnostic-cold.json": 20399
+      },
+      "removed": true
+    },
+    "collector": {
+      "container_exit": 1,
+      "export": {
+        "bytes": {
+          "scale-diagnostic-native.json": 6923,
+          "scale-diagnostic-resources.json": 50453
+        },
+        "container_started": true,
+        "elapsed_seconds": 0.6331805540003188,
+        "exit_code": 0
+      },
+      "image": "sha256:68a254470cd491f66eb6fa76bcb8048294413f7204aae721addf714c3e9a9146",
+      "legacy": {
+        "checkpoint_diagnostic": null,
+        "error_code": null,
+        "error_type": "RuntimeError",
+        "failed_stage": "COMPLETED",
+        "scenarios": {
+          "cancellation": "NOT_RUN",
+          "cold": "COMPLETED",
+          "concurrent_tenants": "NOT_RUN",
+          "exhaustion_recovery": "NOT_RUN",
+          "fresh_worker_recovery": "NOT_RUN",
+          "multi_file_change": "NOT_RUN",
+          "one_file_change": "NOT_RUN",
+          "warm": "COMPLETED"
+        },
+        "verdict": "PARTIALLY QUALIFIED"
+      },
+      "oom": false,
+      "phases": {
+        "cold": {
+          "capture": "INCOMPLETE",
+          "failure_code": null,
+          "stage": "OTHER",
+          "state": "RUNNING"
+        },
+        "warm": {
+          "capture": "TERMINAL",
+          "failure_code": null,
+          "stage": "OTHER",
+          "state": "COMPLETED"
+        }
+      },
+      "post_exit_integrity": {
+        "checkpoint_rows": 0,
+        "foreign_key_violations": 0,
+        "jobs": [
+          {
+            "error_code": null,
+            "stage": "COMPLETED",
+            "state": "COMPLETED"
+          },
+          {
+            "error_code": null,
+            "stage": "COMPLETED",
+            "state": "COMPLETED"
+          }
+        ],
+        "published_generations": 2,
+        "published_pointers": 2,
+        "sqlite_integrity": "ok",
+        "staged_checkpoint_pages": 0
+      },
+      "raw_receipt_bytes": {
+        "scale-diagnostic-cold.json": 28056,
+        "scale-diagnostic-warm.json": 28238
+      },
+      "removed": true
+    },
+    "deadline": {
+      "container_exit": 1,
+      "export": {
+        "bytes": {
+          "scale-diagnostic-native.json": 3464,
+          "scale-diagnostic-resources.json": 12398
+        },
+        "container_started": true,
+        "elapsed_seconds": 0.7178848479998123,
+        "exit_code": 0
+      },
+      "image": "sha256:68a254470cd491f66eb6fa76bcb8048294413f7204aae721addf714c3e9a9146",
+      "legacy": {
+        "checkpoint_diagnostic": null,
+        "error_code": null,
+        "error_type": "TimeoutError",
+        "failed_stage": "ANALYZING",
+        "scenarios": {
+          "cancellation": "NOT_RUN",
+          "cold": "FAILED",
+          "concurrent_tenants": "NOT_RUN",
+          "exhaustion_recovery": "NOT_RUN",
+          "fresh_worker_recovery": "NOT_RUN",
+          "multi_file_change": "NOT_RUN",
+          "one_file_change": "NOT_RUN",
+          "warm": "NOT_RUN"
+        },
+        "verdict": "BLOCKED"
+      },
+      "oom": false,
+      "phases": {
+        "cold": {
+          "capture": "TERMINAL",
+          "failure_code": "OTHER",
+          "stage": "ANALYZING",
+          "state": "FAILED"
+        },
+        "warm": {
+          "capture": "MISSING",
+          "failure_code": null,
+          "stage": null,
+          "state": null
+        }
+      },
+      "post_exit_integrity": {
+        "checkpoint_rows": 0,
+        "foreign_key_violations": 0,
+        "jobs": [
+          {
+            "error_code": "ANALYSIS_TIME_BUDGET",
+            "stage": "ANALYZING",
+            "state": "FAILED"
+          }
+        ],
+        "published_generations": 0,
+        "published_pointers": 0,
+        "sqlite_integrity": "ok",
+        "staged_checkpoint_pages": 0
+      },
+      "raw_receipt_bytes": {
+        "scale-diagnostic-cold.json": 15107
+      },
+      "removed": true
+    },
+    "early": {
+      "container_exit": 1,
+      "export": {
+        "bytes": {},
+        "container_started": false,
+        "elapsed_seconds": null,
+        "exit_code": 0
+      },
+      "image": "sha256:68a254470cd491f66eb6fa76bcb8048294413f7204aae721addf714c3e9a9146",
+      "oom": false,
+      "raw_receipt_bytes": {},
+      "removed": true
+    },
+    "interrupt": {
+      "container_exit": 75,
+      "export": {
+        "bytes": {
+          "scale-diagnostic-native.json": 1096,
+          "scale-diagnostic-resources.json": 7693
+        },
+        "container_started": true,
+        "elapsed_seconds": 0.6221650349998527,
+        "exit_code": 0
+      },
+      "image": "sha256:68a254470cd491f66eb6fa76bcb8048294413f7204aae721addf714c3e9a9146",
+      "legacy": {
+        "checkpoint_diagnostic": null,
+        "error_code": null,
+        "error_type": null,
+        "failed_stage": null,
+        "scenarios": {
+          "cancellation": "NOT_RUN",
+          "cold": "RUNNING",
+          "concurrent_tenants": "NOT_RUN",
+          "exhaustion_recovery": "NOT_RUN",
+          "fresh_worker_recovery": "NOT_RUN",
+          "multi_file_change": "NOT_RUN",
+          "one_file_change": "NOT_RUN",
+          "warm": "NOT_RUN"
+        },
+        "verdict": "BLOCKED"
+      },
+      "oom": false,
+      "phases": {
+        "cold": {
+          "capture": "INCOMPLETE",
+          "failure_code": null,
+          "stage": "ANALYZING",
+          "state": "RUNNING"
+        },
+        "warm": {
+          "capture": "MISSING",
+          "failure_code": null,
+          "stage": null,
+          "state": null
+        }
+      },
+      "post_exit_integrity": {
+        "checkpoint_rows": 0,
+        "foreign_key_violations": 0,
+        "jobs": [
+          {
+            "error_code": null,
+            "stage": "ANALYZING",
+            "state": "ANALYZING"
+          }
+        ],
+        "published_generations": 0,
+        "published_pointers": 0,
+        "sqlite_integrity": "ok",
+        "staged_checkpoint_pages": 0
+      },
+      "raw_receipt_bytes": {
+        "scale-diagnostic-cold.json": 8033
+      },
+      "removed": true
+    },
+    "off": {
+      "container_exit": 1,
+      "export": {
+        "bytes": {},
+        "container_started": false,
+        "elapsed_seconds": null,
+        "exit_code": 0
+      },
+      "image": "sha256:68a254470cd491f66eb6fa76bcb8048294413f7204aae721addf714c3e9a9146",
+      "legacy": {
+        "checkpoint_diagnostic": null,
+        "error_code": null,
+        "error_type": "RuntimeError",
+        "failed_stage": "COMPLETED",
+        "scenarios": {
+          "cancellation": "NOT_RUN",
+          "cold": "COMPLETED",
+          "concurrent_tenants": "NOT_RUN",
+          "exhaustion_recovery": "NOT_RUN",
+          "fresh_worker_recovery": "NOT_RUN",
+          "multi_file_change": "NOT_RUN",
+          "one_file_change": "NOT_RUN",
+          "warm": "COMPLETED"
+        },
+        "verdict": "PARTIALLY QUALIFIED"
+      },
+      "oom": false,
+      "post_exit_integrity": {
+        "checkpoint_rows": 0,
+        "foreign_key_violations": 0,
+        "jobs": [
+          {
+            "error_code": null,
+            "stage": "COMPLETED",
+            "state": "COMPLETED"
+          },
+          {
+            "error_code": null,
+            "stage": "COMPLETED",
+            "state": "COMPLETED"
+          }
+        ],
+        "published_generations": 2,
+        "published_pointers": 2,
+        "sqlite_integrity": "ok",
+        "staged_checkpoint_pages": 0
+      },
+      "raw_receipt_bytes": {},
+      "removed": true
+    },
+    "worker": {
+      "container_exit": 1,
+      "export": {
+        "bytes": {
+          "scale-diagnostic-native.json": 1150,
+          "scale-diagnostic-resources.json": 2994
+        },
+        "container_started": true,
+        "elapsed_seconds": 0.6201106580001579,
+        "exit_code": 0
+      },
+      "image": "sha256:68a254470cd491f66eb6fa76bcb8048294413f7204aae721addf714c3e9a9146",
+      "legacy": {
+        "checkpoint_diagnostic": null,
+        "error_code": "HELPER_PROCESS_LIMIT",
+        "error_type": "SandboxFailure",
+        "failed_stage": "CAPTURING",
+        "scenarios": {
+          "cancellation": "NOT_RUN",
+          "cold": "FAILED",
+          "concurrent_tenants": "NOT_RUN",
+          "exhaustion_recovery": "NOT_RUN",
+          "fresh_worker_recovery": "NOT_RUN",
+          "multi_file_change": "NOT_RUN",
+          "one_file_change": "NOT_RUN",
+          "warm": "NOT_RUN"
+        },
+        "verdict": "BLOCKED"
+      },
+      "oom": false,
+      "phases": {
+        "cold": {
+          "capture": "TERMINAL",
+          "failure_code": "HELPER_PROCESS_LIMIT",
+          "stage": "START",
+          "state": "FAILED"
+        },
+        "warm": {
+          "capture": "MISSING",
+          "failure_code": null,
+          "stage": null,
+          "state": null
+        }
+      },
+      "post_exit_integrity": {
+        "checkpoint_rows": 0,
+        "foreign_key_violations": 0,
+        "jobs": [],
+        "published_generations": 0,
+        "published_pointers": 0,
+        "sqlite_integrity": "ok",
+        "staged_checkpoint_pages": 0
+      },
+      "raw_receipt_bytes": {
+        "scale-diagnostic-cold.json": 3379
+      },
+      "removed": true
+    }
+  },
+  "hashes": {
+    "artifact-allowlist-verification.json": "890a81a494f46f3354debb11205dd2a4894ca51ee7729c7c51ca1b58825fd9fc",
+    "checks/linux-source-manifest.json": "18605492e28f8b0cff10b6e1e56c01c2df9236371496f714ccb69b6d4eb8a80b",
+    "failure-matrix.json": "1eb24363541107e777adbd5db9d153eaa995ef481f39c0d28cd691cb24e6dbb1",
+    "matched-performance.json": "6bcd6d7e9e951b8e533cdbd030ef14fa4327917cedf6d220c221d70964203162",
+    "runtime-manifest.json": "5f7323b26b6b75218682926a8d5eb54d2e65cdaf0faf9df8bf7ce0006cafa91b",
+    "security/sec002.json": "c06329bfa71a9a2508e3d2e8910f1b728a059908bb60281adf116f904ced3a93",
+    "slice-manifest.json": "07e5a1174581a4da08f86d8b44597a65a5f710525d7053b25edfc184877a9573",
+    "workflow-validation.json": "96e0778b6abf9a9392fded213c7e5ddfd4453a15bb092fa208ce8f4651c1aa9a"
+  },
+  "historical_full_ci": {
+    "baseline": {
+      "classification": "VERIFIED_RESOURCE_OOM_FAILURE",
+      "container_exit": 137,
+      "job_id": 128406463091,
+      "memory": {
+        "final_events": null,
+        "kernel_enforcement_verified": true,
+        "last_current_bytes": 313585664,
+        "limit_bytes": 768000000,
+        "oom_killed": true,
+        "peak_bytes": 768000000,
+        "swap_limit_bytes": 0
+      },
+      "publication": {
+        "foreign_key_violations": 0,
+        "published_generations": 0,
+        "published_pointers": 0,
+        "sqlite_integrity": "ok"
+      }
+    },
+    "candidate": {
+      "error_code": "ANALYSIS_TIME_BUDGET",
+      "memory": {
+        "final_events": {
+          "max": 15160,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        "kernel_enforcement_verified": true,
+        "last_current_bytes": 749096960,
+        "limit_bytes": 768000000,
+        "oom_killed": false,
+        "peak_bytes": 768000000,
+        "swap_limit_bytes": 0
+      },
+      "publication": {
+        "foreign_key_violations": 0,
+        "published_generations": 0,
+        "published_pointers": 0,
+        "sqlite_integrity": "ok"
+      },
+      "stage": "EXTRACTING_CLAIMS"
+    },
+    "run_id": 42373565217
+  },
+  "image": {
+    "build_exit": 0,
+    "docker": "29.9.2",
+    "files": 199,
+    "image": "sha256:68a254470cd491f66eb6fa76bcb8048294413f7204aae721addf714c3e9a9146",
+    "kernel": "6.18.54.1-microsoft-standard-WSL2",
+    "parent": "sha256:72de9fd98468610286407cd51b55bbe9e94eac471924f52300649881bfc06a31",
+    "runtime_sha256": "c45a40760c9b0d29863f6bc55534238908f012ca03492fc69214e801dc49dc02"
+  },
+  "matched_timing": {
+    "export_runs": [
+      {
+        "bytes": {
+          "scale-diagnostic-native.json": 12403,
+          "scale-diagnostic-resources.json": 53112
+        },
+        "container_started": true,
+        "elapsed_seconds": 0.6312187579997044,
+        "exit_code": 0
+      },
+      {
+        "bytes": {
+          "scale-diagnostic-native.json": 12401,
+          "scale-diagnostic-resources.json": 53048
+        },
+        "container_started": true,
+        "elapsed_seconds": 0.7226890189995174,
+        "exit_code": 0
+      },
+      {
+        "bytes": {
+          "scale-diagnostic-native.json": 13398,
+          "scale-diagnostic-resources.json": 53292
+        },
+        "container_started": true,
+        "elapsed_seconds": 0.6049148060001244,
+        "exit_code": 0
+      },
+      {
+        "bytes": {
+          "scale-diagnostic-native.json": 13393,
+          "scale-diagnostic-resources.json": 53256
+        },
+        "container_started": true,
+        "elapsed_seconds": 0.6546044380002058,
+        "exit_code": 0
+      }
+    ],
+    "snapshot_probe": {
+      "count": 128,
+      "max_ns": 644934,
+      "median_ns": 265035.0
+    },
+    "timing": {
+      "large": {
+        "cold": {
+          "matched_projection": {
+            "artifact_rows": 117,
+            "artifact_sha256": "f48beb636b9c262a4c50b72e353c9af99c3bb569de5cbe868eca8bd30994fd7b",
+            "claim_count": 29,
+            "duplicate_delivery_identical": true,
+            "evidence_count": 128,
+            "finding_count": 48,
+            "gate": "REVIEW_REQUIRED",
+            "ordered_evidence_sha256": "069de445d0d19345c862cc3a0e562122cbbcb5c5c222e7a975050efd0eff8d37",
+            "published_pointers": 1,
+            "published_states": [
+              [
+                "PUBLISHED",
+                1
+              ]
+            ],
+            "retained_checkpoints": 0,
+            "semantic_sha256": "8560d08211a08123faf161c5ec832a1d88df67a124e0a8b910335589f79c3903",
+            "state": "PARTIAL"
+          },
+          "medians": {
+            "delta": {
+              "ceiling_events": 0.0,
+              "cgroup_cpu_seconds": 0.4288705000000004,
+              "child_cpu_seconds": 0.051056999999999686,
+              "end_bytes": -649216.0,
+              "helper_calls": 0.0,
+              "helper_wall_sum_ns": 2139619.0,
+              "helper_wall_union_ns": -21506465.0,
+              "native_gate_seconds": 0.011459000000000025,
+              "parent_cpu_seconds": 0.37743224750000026,
+              "parse_seconds": 0.04330900000000004,
+              "peak_bytes": -765952.0,
+              "reclaim_scans": 0.0,
+              "wall_seconds": 0.4298115599999619
+            },
+            "off": {
+              "ceiling_events": 0.0,
+              "cgroup_cpu_seconds": 11.803194999999999,
+              "child_cpu_seconds": 5.4759340000000005,
+              "end_bytes": 147902464.0,
+              "helper_calls": 12.0,
+              "helper_wall_sum_ns": 5539360948.5,
+              "helper_wall_union_ns": 5083337770.5,
+              "native_gate_seconds": 0.279661,
+              "parent_cpu_seconds": 6.3247465755,
+              "parse_seconds": 3.4149364999999996,
+              "peak_bytes": 160997376.0,
+              "reclaim_scans": 0.0,
+              "wall_seconds": 12.023478416000216
+            },
+            "on": {
+              "ceiling_events": 0.0,
+              "cgroup_cpu_seconds": 12.232065500000001,
+              "child_cpu_seconds": 5.526991,
+              "end_bytes": 147253248.0,
+              "gc_observed_wall_ns": 349567345.5,
+              "helper_calls": 12.0,
+              "helper_wall_sum_ns": 5541500567.5,
+              "helper_wall_union_ns": 5061831305.5,
+              "native_gate_observed_ns": 290655045.0,
+              "native_gate_seconds": 0.29112000000000005,
+              "parent_cpu_seconds": 6.702178823000001,
+              "parse_seconds": 3.4582455,
+              "peak_bytes": 160231424.0,
+              "reclaim_scans": 0.0,
+              "wall_seconds": 12.453289976000178
+            }
+          },
+          "pairs": [
+            {
+              "delta": {
+                "ceiling_events": 0,
+                "cgroup_cpu_seconds": 0.7707670000000011,
+                "child_cpu_seconds": 0.010065000000000879,
+                "end_bytes": -1605632,
+                "helper_calls": 0,
+                "helper_wall_sum_ns": -44862096,
+                "helper_wall_union_ns": -50650805,
+                "native_gate_seconds": 0.012025000000000008,
+                "parent_cpu_seconds": 0.7594330029999998,
+                "parse_seconds": 0.022148000000000057,
+                "peak_bytes": -1400832,
+                "reclaim_scans": 0,
+                "wall_seconds": 0.812147042000106
+              },
+              "off": {
+                "ceiling_events": 0,
+                "cgroup_cpu_seconds": 11.73462,
+                "child_cpu_seconds": 5.446883,
+                "end_bytes": 148389888,
+                "gc_count_by_generation": [
+                  375,
+                  34,
+                  3
+                ],
+                "helper_calls": 12,
+                "helper_wall_sum_ns": 5514916376,
+                "helper_wall_union_ns": 5058772991,
+                "native_gate_seconds": 0.277393,
+                "parent_cpu_seconds": 6.286088563,
+                "parse_seconds": 3.403189,
+                "peak_bytes": 161501184,
+                "reclaim_scans": 0,
+                "wall_seconds": 11.997782960000222
+              },
+              "on": {
+                "ceiling_events": 0,
+                "cgroup_cpu_seconds": 12.505387,
+                "child_cpu_seconds": 5.456948000000001,
+                "end_bytes": 146784256,
+                "gc_count_by_generation": [
+                  375,
+                  34,
+                  3
+                ],
+                "gc_observed_wall_ns": 360613675,
+                "helper_calls": 12,
+                "helper_wall_sum_ns": 5470054280,
+                "helper_wall_union_ns": 5008122186,
+                "native_gate_observed_ns": 288958677,
+                "native_gate_seconds": 0.289418,
+                "parent_cpu_seconds": 7.045521566,
+                "parse_seconds": 3.425337,
+                "peak_bytes": 160100352,
+                "reclaim_scans": 0,
+                "wall_seconds": 12.809930002000328
+              },
+              "pair": 1
+            },
+            {
+              "delta": {
+                "ceiling_events": 0,
+                "cgroup_cpu_seconds": 0.08697399999999966,
+                "child_cpu_seconds": 0.0920489999999985,
+                "end_bytes": 307200,
+                "helper_calls": 0,
+                "helper_wall_sum_ns": 49141334,
+                "helper_wall_union_ns": 7637875,
+                "native_gate_seconds": 0.010893000000000042,
+                "parent_cpu_seconds": -0.004568507999999305,
+                "parse_seconds": 0.06447000000000003,
+                "peak_bytes": -131072,
+                "reclaim_scans": 0,
+                "wall_seconds": 0.04747607799981779
+              },
+              "off": {
+                "ceiling_events": 0,
+                "cgroup_cpu_seconds": 11.87177,
+                "child_cpu_seconds": 5.5049850000000005,
+                "end_bytes": 147415040,
+                "gc_count_by_generation": [
+                  375,
+                  34,
+                  3
+                ],
+                "helper_calls": 12,
+                "helper_wall_sum_ns": 5563805521,
+                "helper_wall_union_ns": 5107902550,
+                "native_gate_seconds": 0.281929,
+                "parent_cpu_seconds": 6.363404588,
+                "parse_seconds": 3.426684,
+                "peak_bytes": 160493568,
+                "reclaim_scans": 0,
+                "wall_seconds": 12.04917387200021
+              },
+              "on": {
+                "ceiling_events": 0,
+                "cgroup_cpu_seconds": 11.958744,
+                "child_cpu_seconds": 5.597033999999999,
+                "end_bytes": 147722240,
+                "gc_count_by_generation": [
+                  375,
+                  34,
+                  3
+                ],
+                "gc_observed_wall_ns": 338521016,
+                "helper_calls": 12,
+                "helper_wall_sum_ns": 5612946855,
+                "helper_wall_union_ns": 5115540425,
+                "native_gate_observed_ns": 292351413,
+                "native_gate_seconds": 0.292822,
+                "parent_cpu_seconds": 6.358836080000001,
+                "parse_seconds": 3.491154,
+                "peak_bytes": 160362496,
+                "reclaim_scans": 0,
+                "wall_seconds": 12.096649950000028
+              },
+              "pair": 2
+            }
+          ]
+        },
+        "warm": {
+          "matched_projection": {
+            "artifact_rows": 117,
+            "artifact_sha256": "f48beb636b9c262a4c50b72e353c9af99c3bb569de5cbe868eca8bd30994fd7b",
+            "claim_count": 29,
+            "duplicate_delivery_identical": true,
+            "evidence_count": 128,
+            "finding_count": 48,
+            "gate": "REVIEW_REQUIRED",
+            "ordered_evidence_sha256": "069de445d0d19345c862cc3a0e562122cbbcb5c5c222e7a975050efd0eff8d37",
+            "published_pointers": 1,
+            "published_states": [
+              [
+                "PUBLISHED",
+                2
+              ]
+            ],
+            "retained_checkpoints": 0,
+            "semantic_sha256": "a2c7c69527eab4324128fca53f1116a372d14b26f21021655effe40fb267e09d",
+            "state": "PARTIAL"
+          },
+          "medians": {
+            "delta": {
+              "ceiling_events": 0.0,
+              "cgroup_cpu_seconds": 0.02677299999999949,
+              "child_cpu_seconds": 0.07636199999999871,
+              "end_bytes": -430080.0,
+              "helper_calls": 0.0,
+              "helper_wall_sum_ns": 74203578.5,
+              "helper_wall_union_ns": 74203578.5,
+              "native_gate_seconds": 0.00048400000000000027,
+              "parent_cpu_seconds": -0.04649629300000058,
+              "parse_seconds": 0.00962150000000006,
+              "peak_bytes": -231424.0,
+              "reclaim_scans": 0.0,
+              "wall_seconds": 0.07855913299954409
+            },
+            "off": {
+              "ceiling_events": 0.0,
+              "cgroup_cpu_seconds": 9.574293,
+              "child_cpu_seconds": 3.7904590000000007,
+              "end_bytes": 184987648.0,
+              "helper_calls": 9.0,
+              "helper_wall_sum_ns": 3809091626.0,
+              "helper_wall_union_ns": 3809091626.0,
+              "native_gate_seconds": 0.0022045,
+              "parent_cpu_seconds": 5.77877997,
+              "parse_seconds": 1.7877455,
+              "peak_bytes": 192995328.0,
+              "reclaim_scans": 0.0,
+              "wall_seconds": 10.344193300999905
+            },
+            "on": {
+              "ceiling_events": 0.0,
+              "cgroup_cpu_seconds": 9.601066,
+              "child_cpu_seconds": 3.8668209999999994,
+              "end_bytes": 184557568.0,
+              "gc_observed_wall_ns": 312401531.5,
+              "helper_calls": 9.0,
+              "helper_wall_sum_ns": 3883295204.5,
+              "helper_wall_union_ns": 3883295204.5,
+              "native_gate_observed_ns": 2636205.0,
+              "native_gate_seconds": 0.0026885,
+              "parent_cpu_seconds": 5.732283677,
+              "parse_seconds": 1.797367,
+              "peak_bytes": 192763904.0,
+              "reclaim_scans": 0.0,
+              "wall_seconds": 10.422752433999449
+            }
+          },
+          "pairs": [
+            {
+              "delta": {
+                "ceiling_events": 0,
+                "cgroup_cpu_seconds": 0.10108999999999924,
+                "child_cpu_seconds": 0.051781999999996664,
+                "end_bytes": -1036288,
+                "helper_calls": 0,
+                "helper_wall_sum_ns": 48620693,
+                "helper_wall_union_ns": 48620693,
+                "native_gate_seconds": 0.0004530000000000003,
+                "parent_cpu_seconds": 0.054984875999998906,
+                "parse_seconds": 0.0005570000000001407,
+                "peak_bytes": -851968,
+                "reclaim_scans": 0,
+                "wall_seconds": 0.16316602000006242
+              },
+              "off": {
+                "ceiling_events": 0,
+                "cgroup_cpu_seconds": 9.587431,
+                "child_cpu_seconds": 3.7903580000000012,
+                "end_bytes": 185315328,
+                "gc_count_by_generation": [
+                  314,
+                  28,
+                  2
+                ],
+                "helper_calls": 9,
+                "helper_wall_sum_ns": 3809916809,
+                "helper_wall_union_ns": 3809916809,
+                "native_gate_seconds": 0.002116,
+                "parent_cpu_seconds": 5.790965889000001,
+                "parse_seconds": 1.798781,
+                "peak_bytes": 193339392,
+                "reclaim_scans": 0,
+                "wall_seconds": 10.339669303999472
+              },
+              "on": {
+                "ceiling_events": 0,
+                "cgroup_cpu_seconds": 9.688521,
+                "child_cpu_seconds": 3.842139999999998,
+                "end_bytes": 184279040,
+                "gc_count_by_generation": [
+                  314,
+                  27,
+                  2
+                ],
+                "gc_observed_wall_ns": 319850843,
+                "helper_calls": 9,
+                "helper_wall_sum_ns": 3858537502,
+                "helper_wall_union_ns": 3858537502,
+                "native_gate_observed_ns": 2517960,
+                "native_gate_seconds": 0.002569,
+                "parent_cpu_seconds": 5.8459507649999995,
+                "parse_seconds": 1.799338,
+                "peak_bytes": 192487424,
+                "reclaim_scans": 0,
+                "wall_seconds": 10.502835323999534
+              },
+              "pair": 1
+            },
+            {
+              "delta": {
+                "ceiling_events": 0,
+                "cgroup_cpu_seconds": -0.04754400000000025,
+                "child_cpu_seconds": 0.10094200000000075,
+                "end_bytes": 176128,
+                "helper_calls": 0,
+                "helper_wall_sum_ns": 99786464,
+                "helper_wall_union_ns": 99786464,
+                "native_gate_seconds": 0.0005150000000000003,
+                "parent_cpu_seconds": -0.14797746200000006,
+                "parse_seconds": 0.01868599999999998,
+                "peak_bytes": 389120,
+                "reclaim_scans": 0,
+                "wall_seconds": -0.006047754000974237
+              },
+              "off": {
+                "ceiling_events": 0,
+                "cgroup_cpu_seconds": 9.561155,
+                "child_cpu_seconds": 3.79056,
+                "end_bytes": 184659968,
+                "gc_count_by_generation": [
+                  314,
+                  28,
+                  2
+                ],
+                "helper_calls": 9,
+                "helper_wall_sum_ns": 3808266443,
+                "helper_wall_union_ns": 3808266443,
+                "native_gate_seconds": 0.002293,
+                "parent_cpu_seconds": 5.766594050999999,
+                "parse_seconds": 1.77671,
+                "peak_bytes": 192651264,
+                "reclaim_scans": 0,
+                "wall_seconds": 10.348717298000338
+              },
+              "on": {
+                "ceiling_events": 0,
+                "cgroup_cpu_seconds": 9.513611,
+                "child_cpu_seconds": 3.891502000000001,
+                "end_bytes": 184836096,
+                "gc_count_by_generation": [
+                  314,
+                  27,
+                  2
+                ],
+                "gc_observed_wall_ns": 304952220,
+                "helper_calls": 9,
+                "helper_wall_sum_ns": 3908052907,
+                "helper_wall_union_ns": 3908052907,
+                "native_gate_observed_ns": 2754450,
+                "native_gate_seconds": 0.002808,
+                "parent_cpu_seconds": 5.618616588999999,
+                "parse_seconds": 1.795396,
+                "peak_bytes": 193040384,
+                "reclaim_scans": 0,
+                "wall_seconds": 10.342669543999364
+              },
+              "pair": 2
+            }
+          ]
+        }
+      },
+      "small": {
+        "cold": {
+          "matched_projection": {
+            "artifact_rows": 19,
+            "artifact_sha256": "a6277bae319a519ec47fd2b82fbaf27881587d6fd31e86c8d79ba357751c95b6",
+            "claim_count": 5,
+            "duplicate_delivery_identical": true,
+            "evidence_count": 24,
+            "finding_count": 2,
+            "gate": "REVIEW_REQUIRED",
+            "ordered_evidence_sha256": "02870bd42c38ff1023a67fbb945cbc59a7e78cdc286ccfafbc6b3cf1aa0c1c29",
+            "published_pointers": 1,
+            "published_states": [
+              [
+                "PUBLISHED",
+                1
+              ]
+            ],
+            "retained_checkpoints": 0,
+            "semantic_sha256": "0f65cf3ff2338e9bab6185d5ea41580005dcf923de2ffee097a9595fe9049b05",
+            "state": "PARTIAL"
+          },
+          "medians": {
+            "delta": {
+              "ceiling_events": 0.0,
+              "cgroup_cpu_seconds": -0.08578399999999942,
+              "child_cpu_seconds": -0.09602200000000005,
+              "end_bytes": -1165312.0,
+              "helper_calls": 0.0,
+              "helper_wall_sum_ns": -80040775.0,
+              "helper_wall_union_ns": -71589906.0,
+              "native_gate_seconds": 0.0022705000000000017,
+              "parent_cpu_seconds": 0.010513763999999926,
+              "parse_seconds": -0.034658500000000037,
+              "peak_bytes": -1880064.0,
+              "reclaim_scans": 0.0,
+              "wall_seconds": -0.06373847000031674
+            },
+            "off": {
+              "ceiling_events": 0.0,
+              "cgroup_cpu_seconds": 6.253197999999999,
+              "child_cpu_seconds": 3.4896089999999997,
+              "end_bytes": 116236288.0,
+              "helper_calls": 8.0,
+              "helper_wall_sum_ns": 3489229226.0,
+              "helper_wall_union_ns": 3028036806.0,
+              "native_gate_seconds": 0.080702,
+              "parent_cpu_seconds": 2.760799676,
+              "parse_seconds": 1.4526555,
+              "peak_bytes": 159021056.0,
+              "reclaim_scans": 0.0,
+              "wall_seconds": 6.206016368500059
+            },
+            "on": {
+              "ceiling_events": 0.0,
+              "cgroup_cpu_seconds": 6.167414000000001,
+              "child_cpu_seconds": 3.393587,
+              "end_bytes": 115070976.0,
+              "gc_observed_wall_ns": 213365566.0,
+              "helper_calls": 8.0,
+              "helper_wall_sum_ns": 3409188451.0,
+              "helper_wall_union_ns": 2956446900.0,
+              "native_gate_observed_ns": 82853731.0,
+              "native_gate_seconds": 0.0829725,
+              "parent_cpu_seconds": 2.77131344,
+              "parse_seconds": 1.417997,
+              "peak_bytes": 157140992.0,
+              "reclaim_scans": 0.0,
+              "wall_seconds": 6.142277898499742
+            }
+          },
+          "pairs": [
+            {
+              "delta": {
+                "ceiling_events": 0,
+                "cgroup_cpu_seconds": -0.1856219999999995,
+                "child_cpu_seconds": -0.19758599999999982,
+                "end_bytes": -2965504,
+                "helper_calls": 0,
+                "helper_wall_sum_ns": -163134923,
+                "helper_wall_union_ns": -124086358,
+                "native_gate_seconds": 0.002803,
+                "parent_cpu_seconds": 0.012460761000000264,
+                "parse_seconds": -0.06336999999999993,
+                "peak_bytes": -3768320,
+                "reclaim_scans": 0,
+                "wall_seconds": -0.030368810000254598
+              },
+              "off": {
+                "ceiling_events": 0,
+                "cgroup_cpu_seconds": 6.374415,
+                "child_cpu_seconds": 3.60832,
+                "end_bytes": 118218752,
+                "gc_count_by_generation": [
+                  161,
+                  14,
+                  2
+                ],
+                "helper_calls": 8,
+                "helper_wall_sum_ns": 3591754665,
+                "helper_wall_union_ns": 3100021123,
+                "native_gate_seconds": 0.080343,
+                "parent_cpu_seconds": 2.7631686749999997,
+                "parse_seconds": 1.494101,
+                "peak_bytes": 160882688,
+                "reclaim_scans": 0,
+                "wall_seconds": 6.253604229000302
+              },
+              "on": {
+                "ceiling_events": 0,
+                "cgroup_cpu_seconds": 6.188793,
+                "child_cpu_seconds": 3.410734,
+                "end_bytes": 115253248,
+                "gc_count_by_generation": [
+                  161,
+                  14,
+                  2
+                ],
+                "gc_observed_wall_ns": 214923451,
+                "helper_calls": 8,
+                "helper_wall_sum_ns": 3428619742,
+                "helper_wall_union_ns": 2975934765,
+                "native_gate_observed_ns": 83013413,
+                "native_gate_seconds": 0.083146,
+                "parent_cpu_seconds": 2.775629436,
+                "parse_seconds": 1.430731,
+                "peak_bytes": 157114368,
+                "reclaim_scans": 0,
+                "wall_seconds": 6.223235419000048
+              },
+              "pair": 1
+            },
+            {
+              "delta": {
+                "ceiling_events": 0,
+                "cgroup_cpu_seconds": 0.014054000000000677,
+                "child_cpu_seconds": 0.005541999999999714,
+                "end_bytes": 634880,
+                "helper_calls": 0,
+                "helper_wall_sum_ns": 3053373,
+                "helper_wall_union_ns": -19093454,
+                "native_gate_seconds": 0.0017380000000000034,
+                "parent_cpu_seconds": 0.008566766999999587,
+                "parse_seconds": -0.005947000000000147,
+                "peak_bytes": 8192,
+                "reclaim_scans": 0,
+                "wall_seconds": -0.09710813000037888
+              },
+              "off": {
+                "ceiling_events": 0,
+                "cgroup_cpu_seconds": 6.131981,
+                "child_cpu_seconds": 3.370898,
+                "end_bytes": 114253824,
+                "gc_count_by_generation": [
+                  161,
+                  14,
+                  2
+                ],
+                "helper_calls": 8,
+                "helper_wall_sum_ns": 3386703787,
+                "helper_wall_union_ns": 2956052489,
+                "native_gate_seconds": 0.081061,
+                "parent_cpu_seconds": 2.758430677,
+                "parse_seconds": 1.41121,
+                "peak_bytes": 157159424,
+                "reclaim_scans": 0,
+                "wall_seconds": 6.158428507999815
+              },
+              "on": {
+                "ceiling_events": 0,
+                "cgroup_cpu_seconds": 6.146035,
+                "child_cpu_seconds": 3.3764399999999997,
+                "end_bytes": 114888704,
+                "gc_count_by_generation": [
+                  161,
+                  14,
+                  2
+                ],
+                "gc_observed_wall_ns": 211807681,
+                "helper_calls": 8,
+                "helper_wall_sum_ns": 3389757160,
+                "helper_wall_union_ns": 2936959035,
+                "native_gate_observed_ns": 82694049,
+                "native_gate_seconds": 0.082799,
+                "parent_cpu_seconds": 2.766997444,
+                "parse_seconds": 1.405263,
+                "peak_bytes": 157167616,
+                "reclaim_scans": 0,
+                "wall_seconds": 6.0613203779994365
+              },
+              "pair": 2
+            }
+          ]
+        },
+        "warm": {
+          "matched_projection": {
+            "artifact_rows": 19,
+            "artifact_sha256": "a6277bae319a519ec47fd2b82fbaf27881587d6fd31e86c8d79ba357751c95b6",
+            "claim_count": 5,
+            "duplicate_delivery_identical": true,
+            "evidence_count": 24,
+            "finding_count": 2,
+            "gate": "PASS",
+            "ordered_evidence_sha256": "02870bd42c38ff1023a67fbb945cbc59a7e78cdc286ccfafbc6b3cf1aa0c1c29",
+            "published_pointers": 1,
+            "published_states": [
+              [
+                "PUBLISHED",
+                2
+              ]
+            ],
+            "retained_checkpoints": 0,
+            "semantic_sha256": "24ed9aaa27705aaea812b436fb01d4c9e72343cbc6aab7d775deab6e54e20a31",
+            "state": "PARTIAL"
+          },
+          "medians": {
+            "delta": {
+              "ceiling_events": 0.0,
+              "cgroup_cpu_seconds": -0.03278950000000025,
+              "child_cpu_seconds": -0.044499000000000066,
+              "end_bytes": -1198080.0,
+              "helper_calls": 0.0,
+              "helper_wall_sum_ns": -34359408.5,
+              "helper_wall_union_ns": -34359408.5,
+              "native_gate_seconds": 0.00017599999999999994,
+              "parent_cpu_seconds": 0.011963998000000142,
+              "parse_seconds": 0.012163000000000146,
+              "peak_bytes": -1880064.0,
+              "reclaim_scans": 0.0,
+              "wall_seconds": 0.0018583609999041073
+            },
+            "off": {
+              "ceiling_events": 0.0,
+              "cgroup_cpu_seconds": 5.295731,
+              "child_cpu_seconds": 2.9703910000000002,
+              "end_bytes": 122923008.0,
+              "helper_calls": 7.0,
+              "helper_wall_sum_ns": 2970760017.0,
+              "helper_wall_union_ns": 2970760017.0,
+              "native_gate_seconds": 0.0012275,
+              "parent_cpu_seconds": 2.3237207819999997,
+              "parse_seconds": 1.28261,
+              "peak_bytes": 159021056.0,
+              "reclaim_scans": 0.0,
+              "wall_seconds": 5.630136944500009
+            },
+            "on": {
+              "ceiling_events": 0.0,
+              "cgroup_cpu_seconds": 5.2629415,
+              "child_cpu_seconds": 2.925892,
+              "end_bytes": 121724928.0,
+              "gc_observed_wall_ns": 156354813.0,
+              "helper_calls": 7.0,
+              "helper_wall_sum_ns": 2936400608.5,
+              "helper_wall_union_ns": 2936400608.5,
+              "native_gate_observed_ns": 1362591.0,
+              "native_gate_seconds": 0.0014035,
+              "parent_cpu_seconds": 2.3356847800000002,
+              "parse_seconds": 1.2947730000000002,
+              "peak_bytes": 157140992.0,
+              "reclaim_scans": 0.0,
+              "wall_seconds": 5.631995305499913
+            }
+          },
+          "pairs": [
+            {
+              "delta": {
+                "ceiling_events": 0,
+                "cgroup_cpu_seconds": -0.0036000000000004917,
+                "child_cpu_seconds": -0.030196000000001,
+                "end_bytes": -3006464,
+                "helper_calls": 0,
+                "helper_wall_sum_ns": -19325257,
+                "helper_wall_union_ns": -19325257,
+                "native_gate_seconds": 0.00013999999999999993,
+                "parent_cpu_seconds": 0.027331607000000258,
+                "parse_seconds": 0.03376100000000015,
+                "peak_bytes": -3768320,
+                "reclaim_scans": 0,
+                "wall_seconds": 0.08118334399932792
+              },
+              "off": {
+                "ceiling_events": 0,
+                "cgroup_cpu_seconds": 5.25145,
+                "child_cpu_seconds": 2.9498170000000004,
+                "end_bytes": 124850176,
+                "gc_count_by_generation": [
+                  108,
+                  10,
+                  1
+                ],
+                "helper_calls": 7,
+                "helper_wall_sum_ns": 2951777212,
+                "helper_wall_union_ns": 2951777212,
+                "native_gate_seconds": 0.00118,
+                "parent_cpu_seconds": 2.2996929949999996,
+                "parse_seconds": 1.243917,
+                "peak_bytes": 160882688,
+                "reclaim_scans": 0,
+                "wall_seconds": 5.5360817780001526
+              },
+              "on": {
+                "ceiling_events": 0,
+                "cgroup_cpu_seconds": 5.24785,
+                "child_cpu_seconds": 2.9196209999999994,
+                "end_bytes": 121843712,
+                "gc_count_by_generation": [
+                  108,
+                  10,
+                  1
+                ],
+                "gc_observed_wall_ns": 155461362,
+                "helper_calls": 7,
+                "helper_wall_sum_ns": 2932451955,
+                "helper_wall_union_ns": 2932451955,
+                "native_gate_observed_ns": 1276591,
+                "native_gate_seconds": 0.00132,
+                "parent_cpu_seconds": 2.327024602,
+                "parse_seconds": 1.277678,
+                "peak_bytes": 157114368,
+                "reclaim_scans": 0,
+                "wall_seconds": 5.6172651219994805
+              },
+              "pair": 1
+            },
+            {
+              "delta": {
+                "ceiling_events": 0,
+                "cgroup_cpu_seconds": -0.061979000000000006,
+                "child_cpu_seconds": -0.05880199999999913,
+                "end_bytes": 610304,
+                "helper_calls": 0,
+                "helper_wall_sum_ns": -49393560,
+                "helper_wall_union_ns": -49393560,
+                "native_gate_seconds": 0.00021199999999999995,
+                "parent_cpu_seconds": -0.003403610999999973,
+                "parse_seconds": -0.00943499999999986,
+                "peak_bytes": 8192,
+                "reclaim_scans": 0,
+                "wall_seconds": -0.0774666219995197
+              },
+              "off": {
+                "ceiling_events": 0,
+                "cgroup_cpu_seconds": 5.340012,
+                "child_cpu_seconds": 2.990965,
+                "end_bytes": 120995840,
+                "gc_count_by_generation": [
+                  108,
+                  10,
+                  1
+                ],
+                "helper_calls": 7,
+                "helper_wall_sum_ns": 2989742822,
+                "helper_wall_union_ns": 2989742822,
+                "native_gate_seconds": 0.001275,
+                "parent_cpu_seconds": 2.347748569,
+                "parse_seconds": 1.321303,
+                "peak_bytes": 157159424,
+                "reclaim_scans": 0,
+                "wall_seconds": 5.724192110999866
+              },
+              "on": {
+                "ceiling_events": 0,
+                "cgroup_cpu_seconds": 5.278033,
+                "child_cpu_seconds": 2.932163000000001,
+                "end_bytes": 121606144,
+                "gc_count_by_generation": [
+                  108,
+                  10,
+                  1
+                ],
+                "gc_observed_wall_ns": 157248264,
+                "helper_calls": 7,
+                "helper_wall_sum_ns": 2940349262,
+                "helper_wall_union_ns": 2940349262,
+                "native_gate_observed_ns": 1448591,
+                "native_gate_seconds": 0.001487,
+                "parent_cpu_seconds": 2.344344958,
+                "parse_seconds": 1.311868,
+                "peak_bytes": 157167616,
+                "reclaim_scans": 0,
+                "wall_seconds": 5.646725489000346
+              },
+              "pair": 2
+            }
+          ]
+        }
+      }
+    }
+  },
+  "receipts": {
+    "max_each_bytes": 196608,
+    "max_observed_bytes": 53292,
+    "native": {
+      "file": "scale-diagnostic-native.json",
+      "schema": "projecttrace-scale-native-diagnostic-v1"
+    },
+    "resources": {
+      "file": "scale-diagnostic-resources.json",
+      "schema": "projecttrace-scale-resource-diagnostic-v1"
+    }
+  },
+  "runtime_proof": {
+    "exit_code": 0,
+    "image": "sha256:68a254470cd491f66eb6fa76bcb8048294413f7204aae721addf714c3e9a9146",
+    "proof": {
+      "mismatches": [],
+      "runtime_files": 199
+    },
+    "runtime_sha256": "c45a40760c9b0d29863f6bc55534238908f012ca03492fc69214e801dc49dc02"
+  },
+  "schema": "projecttrace-scale001-diagnostic-activation-v1",
+  "sec002": [
+    {
+      "envelope": {
+        "CapDrop": [
+          "ALL"
+        ],
+        "Memory": 768000000,
+        "MemorySwap": 768000000,
+        "NanoCpus": 2000000000,
+        "NetworkMode": "none",
+        "PidsLimit": 64,
+        "ReadonlyRootfs": true,
+        "SecurityOpt": [
+          "no-new-privileges"
+        ]
+      },
+      "exit_code": 0,
+      "image": "sha256:68a254470cd491f66eb6fa76bcb8048294413f7204aae721addf714c3e9a9146",
+      "kind": "existing",
+      "oom": false
+    },
+    {
+      "envelope": {
+        "CapDrop": [
+          "ALL"
+        ],
+        "Memory": 768000000,
+        "MemorySwap": 768000000,
+        "NanoCpus": 2000000000,
+        "NetworkMode": "none",
+        "PidsLimit": 64,
+        "ReadonlyRootfs": true,
+        "SecurityOpt": [
+          "no-new-privileges"
+        ]
+      },
+      "exit_code": 0,
+      "image": "sha256:68a254470cd491f66eb6fa76bcb8048294413f7204aae721addf714c3e9a9146",
+      "kind": "supplement",
+      "oom": false
+    }
+  ],
+  "tests": {
+    "artifact_diagnostic": {
+      "exit_code": 0,
+      "failures": 0,
+      "passed": 23,
+      "skips": 0,
+      "warnings": 1
+    },
+    "development": {
+      "counts": {
+        "errors": 0,
+        "failures": 0,
+        "passed": 143,
+        "skipped": 0,
+        "tests": 143
+      },
+      "elapsed_seconds": 144.844292235,
+      "exit_code": 0,
+      "warnings": 1
+    },
+    "initial_attempts": {
+      "docker_from_image_id_build_exit": 1,
+      "fixture_missing_app_import_path_exit": 1,
+      "fixture_missing_required_mode_env_exit": 1,
+      "near_cap_fixture_exceeded_intended_size_exit": 1,
+      "source_review_expected_old_workflow_in_linux_copy_exit": 1
+    },
+    "required": {
+      "counts": {
+        "errors": 0,
+        "failures": 0,
+        "passed": 134,
+        "skipped": 0,
+        "tests": 134
+      },
+      "elapsed_seconds": 85.61790459799977,
+      "exit_code": 0,
+      "warnings": 1
+    },
+    "required-routing": {
+      "counts": {
+        "errors": 0,
+        "failures": 0,
+        "passed": 12,
+        "skipped": 0,
+        "tests": 12
+      },
+      "elapsed_seconds": 11.368010572999992,
+      "exit_code": 0,
+      "warnings": 0
+    },
+    "static": {
+      "compile_exit": 0,
+      "git_whitespace_exit": 0,
+      "ruff_exit": 0
+    }
+  },
+  "workflow": {
+    "actions_sha_pinned": true,
+    "activation": {
+      "baseline": {
+        "diagnostic_options": [],
+        "original_arguments_preserved": true
+      },
+      "candidate": {
+        "diagnostic_options": [
+          "--diagnostic",
+          "candidate",
+          "1704560102fb3e2656a0acafafbbda0e8f925af75e263d939c5e98c72b4bb6d2"
+        ],
+        "original_arguments_preserved": true
+      }
+    },
+    "added_allowlist": [
+      "${{ runner.temp }}/scale/diagnostic-export/receipts/scale-diagnostic-native.json",
+      "${{ runner.temp }}/scale/diagnostic-export/receipts/scale-diagnostic-resources.json"
+    ],
+    "always_on_upload": true,
+    "empty_export_exit": 0,
+    "exact_previous_triggers": {
+      "pull_request": {
+        "branches": [
+          "codex/linux-parser-isolation"
+        ]
+      },
+      "push": {
+        "branches": [
+          "codex/scale-001-memory-containment",
+          "codex/scale-001-local-continuation"
+        ]
+      },
+      "workflow_dispatch": ""
+    },
+    "export_mounts_verified": 3,
+    "matrix": {
+      "revision": [
+        "baseline",
+        "candidate"
+      ]
+    },
+    "permissions": {
+      "contents": "read"
+    },
+    "previous_probe_steps_equal": true,
+    "retention_days": "7",
+    "symlink_export_exit": 1,
+    "workflow_path": ".github/workflows/scale-qualification.yml",
+    "wrong_checkout_exit": 1,
+    "yaml_and_bash_syntax": "PASS"
+  }
+}

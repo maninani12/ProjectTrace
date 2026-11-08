@@ -334,13 +334,17 @@ def dispatch(operation, value, engine, sandbox, *, iac_loads=None):
                 sys.stdout.buffer.flush()
                 os._exit(73)
         return STREAMED
-    if operation == "iac":
-        from analyzers.infrastructure import _structured_iac
-        if iac_loads is None:
-            raise SandboxFailure("IAC_PARSER_NOT_PREPARED")
+    if operation in {"iac", "iac_without_hcl"}:
+        from analyzers.infrastructure import _structured_iac, needs_hcl_parser
+
         files = value["files"]
         if len(files) > 100 or sum(len(s.encode()) for s in files.values()) > 2_000_000:
             raise ValueError("Infrastructure batch budget")
+        if operation == "iac":
+            if iac_loads is None:
+                raise SandboxFailure("IAC_PARSER_NOT_PREPARED")
+        elif any(needs_hcl_parser(path) for path in files):
+            raise SandboxFailure("IAC_PARSER_NOT_PREPARED")
         total = 0
         for path, source in files.items():
             if len(source.encode()) > 512_000:

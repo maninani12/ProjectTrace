@@ -42,10 +42,49 @@ jobs:
           cp analyzers/observation_store.py baseline/analyzers/
           docker build -t projecttrace-scale-baseline -f baseline/infrastructure/Dockerfile baseline
       - name: Full source capture, verification and publication under actual cgroup limit
+        id: workload
+        shell: bash
         env:
           REVISION: ${{ matrix.revision }}
         run: |
-          python3 -m scripts.run_scale_cgroup --image "projecttrace-scale-$REVISION" --archive "$RUNNER_TEMP/openmetadata.zip" --output "$RUNNER_TEMP/scale/$REVISION"
+          diagnostic=()
+          if [[ "$REVISION" == candidate ]]; then
+            [[ "$(git rev-parse HEAD)" == "$GITHUB_SHA" ]]
+            source_sum="$(git archive --format=tar "$GITHUB_SHA" | sha256sum)"
+            source_sha="${source_sum%% *}"
+            printf 'source_sha256=%s\n' "$source_sha" >> "$GITHUB_OUTPUT"
+            diagnostic=(--diagnostic candidate "$source_sha")
+          fi
+          python3 -m scripts.run_scale_cgroup --image "projecttrace-scale-$REVISION" --archive "$RUNNER_TEMP/openmetadata.zip" --output "$RUNNER_TEMP/scale/$REVISION" "${diagnostic[@]}"
+      - name: Validate and export fixed candidate diagnostic receipts
+        if: always() && matrix.revision == 'candidate'
+        shell: bash
+        env:
+          SOURCE_SHA256: ${{ steps.workload.outputs.source_sha256 }}
+        run: |
+          inputs=()
+          for phase in cold warm; do
+            snapshot="$RUNNER_TEMP/scale/candidate/scale-diagnostic-$phase.json"
+            if [[ -L "$snapshot" || ( -e "$snapshot" && ! -f "$snapshot" ) ]]; then
+              echo "Candidate diagnostic input must be a regular file." >&2
+              exit 1
+            fi
+            if [[ -f "$snapshot" ]]; then
+              inputs+=(--mount "type=bind,src=$snapshot,dst=/scale-diagnostic-$phase.json,readonly")
+            fi
+          done
+          if (( ${#inputs[@]} == 0 )); then
+            exit 0
+          fi
+          image="$(docker image inspect --format '{{.Id}}' projecttrace-scale-candidate)"
+          output="$RUNNER_TEMP/scale/diagnostic-export"
+          mkdir -- "$output"
+          docker run --rm --read-only --network none --cap-drop ALL --security-opt no-new-privileges \
+            --memory 768000000 --memory-swap 768000000 --cpus 2 --pids-limit 64 --cgroupns private \
+            --user "$(id -u):$(id -g)" "${inputs[@]}" \
+            --mount "type=bind,src=$PWD/docs/evidence/SCALE001_DIAGNOSTIC_SCHEMA_V1.json,dst=/receipt-schema.json,readonly" \
+            --mount "type=bind,src=$output,dst=/diagnostic-export" \
+            "$image" python -B -m scripts.export_scale_diagnostics "$SOURCE_SHA256" "${image#sha256:}"
       - name: Retain only sanitized receipts and resource evidence (no DB, source or keys)
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -60,5 +99,7 @@ jobs:
             ${{ runner.temp }}/scale/**/container-envelope.json
             ${{ runner.temp }}/scale/**/post-exit-integrity.json
             ${{ runner.temp }}/scale/**/resource-probe.json
+            ${{ runner.temp }}/scale/diagnostic-export/receipts/scale-diagnostic-native.json
+            ${{ runner.temp }}/scale/diagnostic-export/receipts/scale-diagnostic-resources.json
           if-no-files-found: error
           retention-days: 7

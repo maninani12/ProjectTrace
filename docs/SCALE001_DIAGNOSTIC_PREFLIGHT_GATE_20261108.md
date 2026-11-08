@@ -1,0 +1,11 @@
+# SCALE-001 diagnostic telemetry preflight
+
+November 8, 2026 · Commercial V1 **DEVELOPMENT IN PROGRESS** · SCALE-001 **NOT QUALIFIED**
+
+The preflight adds opt-in qualification scripts and a fixed aggregate receipt. The installed parser and its limits retain their existing behavior. The real child process reaper supplies launch and CPU counts. The attested IaC child reports whether its trusted HCL grammar is prepared. The native gate reports frame, validated and admitted counts, structural guard time, privacy traversal and materialization. Monotonic helper windows distinguish overlapping transport from wall time. GC totals are stratified by generation and phase. Fixed cgroup keys use null for unavailable values. [Receipt schema](evidence/SCALE001_DIAGNOSTIC_SCHEMA_V1.json)
+
+Ten matched Docker containers completed on the same verified 198-file image. Eleven diagnostic receipts passed schema validation. Telemetry on and off preserved output projections, artifact identities, duplicate delivery, checkpoint disposition and published generation counts. The 128-file cold and warm median cgroup CPU deltas were +0.052 and +0.067 seconds. The largest receipt was 34,382 bytes. Both SEC-002 probes passed, and the original required-mode selection passed all 134 cases. [Sanitized preflight receipt](evidence/SCALE001_DIAGNOSTIC_PREFLIGHT_20261108.json)
+
+**YES for a separately authorized diagnostic CI attempt after activation and artifact review.** Use the verified candidate image and explicit diagnostic flag. Retain only the two fixed candidate diagnostic JSON receipts, existing constrained resource and failure receipts, and the read-only post-exit integrity summary. A killed job may leave a RUNNING snapshot at the last durable boundary. Use the container exit, OOM and job status for terminal classification. Keep the historical baseline on its existing harness. No change to workflow activation is included here.
+
+The Azure runner's reclaim remains **NOT EQUIVALENT** to the bounded WSL experiment. The retained baseline OOM and candidate analysis deadline remain open. The candidate may time out again before checkpoint admission. A successful future local or CI diagnostic receipt does not award release qualification. [Prior IaC and reclaim qualification](SCALE001_IAC_ROUTING_RECLAIM_GATE_20261108.md)

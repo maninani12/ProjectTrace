@@ -1,0 +1,4157 @@
+{
+  "$defs": {
+    "cgroupResource": {
+      "additionalProperties": false,
+      "properties": {
+        "delta": {
+          "additionalProperties": false,
+          "properties": {
+            "cpu.pressure": {
+              "additionalProperties": false,
+              "properties": {
+                "full": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "some": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "some",
+                "full"
+              ],
+              "type": "object"
+            },
+            "cpu.stat": {
+              "additionalProperties": false,
+              "properties": {
+                "nr_throttled": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "system_usec": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "throttled_usec": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "usage_usec": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "user_usec": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "usage_usec",
+                "user_usec",
+                "system_usec",
+                "nr_throttled",
+                "throttled_usec"
+              ],
+              "type": "object"
+            },
+            "io.pressure": {
+              "additionalProperties": false,
+              "properties": {
+                "full": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "some": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "some",
+                "full"
+              ],
+              "type": "object"
+            },
+            "io.stat": {
+              "additionalProperties": false,
+              "properties": {
+                "rbytes": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "rios": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "wbytes": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "wios": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "rbytes",
+                "wbytes",
+                "rios",
+                "wios"
+              ],
+              "type": "object"
+            },
+            "memory.events": {
+              "additionalProperties": false,
+              "properties": {
+                "high": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "low": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "max": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "oom": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "oom_kill": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "low",
+                "high",
+                "max",
+                "oom",
+                "oom_kill"
+              ],
+              "type": "object"
+            },
+            "memory.events.local": {
+              "additionalProperties": false,
+              "properties": {
+                "high": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "low": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "max": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "oom": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "oom_kill": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "low",
+                "high",
+                "max",
+                "oom",
+                "oom_kill"
+              ],
+              "type": "object"
+            },
+            "memory.pressure": {
+              "additionalProperties": false,
+              "properties": {
+                "full": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "some": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "some",
+                "full"
+              ],
+              "type": "object"
+            },
+            "memory.stat": {
+              "additionalProperties": false,
+              "properties": {
+                "pgmajfault": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "pgscan": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "pgscan_direct": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "pgsteal": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "pgsteal_direct": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workingset_refault_file": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "pgscan",
+                "pgsteal",
+                "pgscan_direct",
+                "pgsteal_direct",
+                "workingset_refault_file",
+                "pgmajfault"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "memory.stat",
+            "memory.events",
+            "memory.events.local",
+            "cpu.stat",
+            "io.stat",
+            "memory.pressure",
+            "cpu.pressure",
+            "io.pressure"
+          ],
+          "type": "object"
+        },
+        "end": {
+          "additionalProperties": false,
+          "properties": {
+            "cpu.max": {
+              "anyOf": [
+                {
+                  "pattern": "^(?:max|[0-9]+) [0-9]+$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "cpu.pressure": {
+              "additionalProperties": false,
+              "properties": {
+                "full": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "some": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "some",
+                "full"
+              ],
+              "type": "object"
+            },
+            "cpu.stat": {
+              "additionalProperties": false,
+              "properties": {
+                "nr_throttled": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "system_usec": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "throttled_usec": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "usage_usec": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "user_usec": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "usage_usec",
+                "user_usec",
+                "system_usec",
+                "nr_throttled",
+                "throttled_usec"
+              ],
+              "type": "object"
+            },
+            "io.pressure": {
+              "additionalProperties": false,
+              "properties": {
+                "full": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "some": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "some",
+                "full"
+              ],
+              "type": "object"
+            },
+            "io.stat": {
+              "additionalProperties": false,
+              "properties": {
+                "rbytes": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "rios": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "wbytes": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "wios": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "rbytes",
+                "wbytes",
+                "rios",
+                "wios"
+              ],
+              "type": "object"
+            },
+            "memory.current": {
+              "anyOf": [
+                {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "memory.events": {
+              "additionalProperties": false,
+              "properties": {
+                "high": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "low": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "max": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "oom": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "oom_kill": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "low",
+                "high",
+                "max",
+                "oom",
+                "oom_kill"
+              ],
+              "type": "object"
+            },
+            "memory.events.local": {
+              "additionalProperties": false,
+              "properties": {
+                "high": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "low": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "max": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "oom": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "oom_kill": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "low",
+                "high",
+                "max",
+                "oom",
+                "oom_kill"
+              ],
+              "type": "object"
+            },
+            "memory.max": {
+              "anyOf": [
+                {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                {
+                  "const": "max"
+                }
+              ]
+            },
+            "memory.peak": {
+              "anyOf": [
+                {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "memory.pressure": {
+              "additionalProperties": false,
+              "properties": {
+                "full": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "some": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "some",
+                "full"
+              ],
+              "type": "object"
+            },
+            "memory.stat": {
+              "additionalProperties": false,
+              "properties": {
+                "anon": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "file": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "kernel": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "pgmajfault": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "pgscan": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "pgscan_direct": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "pgsteal": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "pgsteal_direct": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "shmem": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workingset_refault_file": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "anon",
+                "file",
+                "kernel",
+                "shmem",
+                "pgscan",
+                "pgsteal",
+                "pgscan_direct",
+                "pgsteal_direct",
+                "workingset_refault_file",
+                "pgmajfault"
+              ],
+              "type": "object"
+            },
+            "memory.swap.current": {
+              "anyOf": [
+                {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "memory.swap.max": {
+              "anyOf": [
+                {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                {
+                  "const": "max"
+                }
+              ]
+            },
+            "pids.current": {
+              "anyOf": [
+                {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "pids.max": {
+              "anyOf": [
+                {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                {
+                  "const": "max"
+                }
+              ]
+            },
+            "rss": {
+              "additionalProperties": false,
+              "properties": {
+                "child_rss_bytes": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "coordinator_rss_bytes": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "namespace_rss_complete": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "coordinator_rss_bytes",
+                "child_rss_bytes",
+                "namespace_rss_complete"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "memory.stat",
+            "memory.events",
+            "memory.events.local",
+            "cpu.stat",
+            "io.stat",
+            "memory.pressure",
+            "cpu.pressure",
+            "io.pressure",
+            "memory.current",
+            "memory.peak",
+            "memory.max",
+            "memory.swap.current",
+            "memory.swap.max",
+            "pids.current",
+            "pids.max",
+            "cpu.max",
+            "rss"
+          ],
+          "type": "object"
+        },
+        "intervals": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "start": {
+          "additionalProperties": false,
+          "properties": {
+            "cpu.max": {
+              "anyOf": [
+                {
+                  "pattern": "^(?:max|[0-9]+) [0-9]+$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "cpu.pressure": {
+              "additionalProperties": false,
+              "properties": {
+                "full": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "some": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "some",
+                "full"
+              ],
+              "type": "object"
+            },
+            "cpu.stat": {
+              "additionalProperties": false,
+              "properties": {
+                "nr_throttled": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "system_usec": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "throttled_usec": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "usage_usec": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "user_usec": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "usage_usec",
+                "user_usec",
+                "system_usec",
+                "nr_throttled",
+                "throttled_usec"
+              ],
+              "type": "object"
+            },
+            "io.pressure": {
+              "additionalProperties": false,
+              "properties": {
+                "full": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "some": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "some",
+                "full"
+              ],
+              "type": "object"
+            },
+            "io.stat": {
+              "additionalProperties": false,
+              "properties": {
+                "rbytes": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "rios": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "wbytes": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "wios": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "rbytes",
+                "wbytes",
+                "rios",
+                "wios"
+              ],
+              "type": "object"
+            },
+            "memory.current": {
+              "anyOf": [
+                {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "memory.events": {
+              "additionalProperties": false,
+              "properties": {
+                "high": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "low": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "max": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "oom": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "oom_kill": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "low",
+                "high",
+                "max",
+                "oom",
+                "oom_kill"
+              ],
+              "type": "object"
+            },
+            "memory.events.local": {
+              "additionalProperties": false,
+              "properties": {
+                "high": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "low": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "max": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "oom": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "oom_kill": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "low",
+                "high",
+                "max",
+                "oom",
+                "oom_kill"
+              ],
+              "type": "object"
+            },
+            "memory.max": {
+              "anyOf": [
+                {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                {
+                  "const": "max"
+                }
+              ]
+            },
+            "memory.peak": {
+              "anyOf": [
+                {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "memory.pressure": {
+              "additionalProperties": false,
+              "properties": {
+                "full": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "some": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "some",
+                "full"
+              ],
+              "type": "object"
+            },
+            "memory.stat": {
+              "additionalProperties": false,
+              "properties": {
+                "anon": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "file": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "kernel": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "pgmajfault": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "pgscan": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "pgscan_direct": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "pgsteal": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "pgsteal_direct": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "shmem": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "workingset_refault_file": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "anon",
+                "file",
+                "kernel",
+                "shmem",
+                "pgscan",
+                "pgsteal",
+                "pgscan_direct",
+                "pgsteal_direct",
+                "workingset_refault_file",
+                "pgmajfault"
+              ],
+              "type": "object"
+            },
+            "memory.swap.current": {
+              "anyOf": [
+                {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "memory.swap.max": {
+              "anyOf": [
+                {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                {
+                  "const": "max"
+                }
+              ]
+            },
+            "pids.current": {
+              "anyOf": [
+                {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "pids.max": {
+              "anyOf": [
+                {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                {
+                  "const": "max"
+                }
+              ]
+            },
+            "rss": {
+              "additionalProperties": false,
+              "properties": {
+                "child_rss_bytes": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "coordinator_rss_bytes": {
+                  "anyOf": [
+                    {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "namespace_rss_complete": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "coordinator_rss_bytes",
+                "child_rss_bytes",
+                "namespace_rss_complete"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "memory.stat",
+            "memory.events",
+            "memory.events.local",
+            "cpu.stat",
+            "io.stat",
+            "memory.pressure",
+            "cpu.pressure",
+            "io.pressure",
+            "memory.current",
+            "memory.peak",
+            "memory.max",
+            "memory.swap.current",
+            "memory.swap.max",
+            "pids.current",
+            "pids.max",
+            "cpu.max",
+            "rss"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "start",
+        "end",
+        "intervals",
+        "delta"
+      ],
+      "type": "object"
+    },
+    "packet": {
+      "additionalProperties": false,
+      "properties": {
+        "admitted": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "decode_cpu_ns": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "decode_wall_ns": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "decoder_guard_wall_ns": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "expand_wall_ns": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "frames": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "gc_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "gc_cpu_ns": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "gc_wall_ns": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "guard_observations": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "json_bytes": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "logical_nodes": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "node_samples": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "privacy_cpu_ns": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "privacy_wall_ns": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "validated": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "logical_nodes"
+      ],
+      "type": "object"
+    },
+    "route": {
+      "additionalProperties": false,
+      "properties": {
+        "admitted_packets": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "attestation_ns": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "containment_ns": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "failed": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "gate_rejected": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "grammar_observations": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "grammars_prepared": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "invoke_wall_ns": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "prepare_ns": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "reaped": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "rejected": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "requested_files": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "requests": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "starts": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "worker_cpu_ns": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "worker_rss_bytes_sum": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "worker_wall_ns": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "grammar_observations",
+        "grammars_prepared"
+      ],
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Fixed aggregate labels. Times are monotonic nanoseconds except Linux PSI and CPU microseconds. An absent counter group has no observations. Null means unavailable. A receipt is atomically replaced at known boundaries, with an application size limit of 196608 bytes.",
+  "properties": {
+    "cgroup": {
+      "additionalProperties": false,
+      "properties": {
+        "ANALYZING": {
+          "$ref": "#/$defs/cgroupResource"
+        },
+        "BUILDING_EVIDENCE": {
+          "$ref": "#/$defs/cgroupResource"
+        },
+        "CORRELATING": {
+          "$ref": "#/$defs/cgroupResource"
+        },
+        "EXTRACTING_CLAIMS": {
+          "$ref": "#/$defs/cgroupResource"
+        },
+        "FINALIZING": {
+          "$ref": "#/$defs/cgroupResource"
+        },
+        "NATIVE_PARTITION": {
+          "$ref": "#/$defs/cgroupResource"
+        },
+        "OTHER": {
+          "$ref": "#/$defs/cgroupResource"
+        },
+        "PARSING": {
+          "$ref": "#/$defs/cgroupResource"
+        },
+        "START": {
+          "$ref": "#/$defs/cgroupResource"
+        },
+        "VALIDATING": {
+          "$ref": "#/$defs/cgroupResource"
+        },
+        "VERIFYING": {
+          "$ref": "#/$defs/cgroupResource"
+        }
+      },
+      "required": [],
+      "type": "object"
+    },
+    "cgroup_scope": {
+      "enum": [
+        "PROCESS_CGROUP_V2",
+        null
+      ]
+    },
+    "counts": {
+      "additionalProperties": false,
+      "properties": {
+        "cache_only_partitions": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "iac_starts": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "native_partitions": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "partitions_without_iac_launch": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "write_errors": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [],
+      "type": "object"
+    },
+    "elapsed_ns": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "failure_code": {
+      "enum": [
+        null,
+        "ANALYSIS_TIME_BUDGET",
+        "CANCELLED",
+        "GLOBAL_CHECKPOINT_BUDGET",
+        "HELPER_PROCESS_LIMIT",
+        "HELPER_TIMEOUT",
+        "IAC_PARSER_NOT_PREPARED",
+        "ISOLATION_NOT_ATTESTED",
+        "ISOLATION_STARTUP",
+        "OTHER"
+      ]
+    },
+    "gc": {
+      "additionalProperties": false,
+      "properties": {
+        "ANALYZING/0": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "ANALYZING/1": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "ANALYZING/2": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "BUILDING_EVIDENCE/0": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "BUILDING_EVIDENCE/1": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "BUILDING_EVIDENCE/2": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "COORDINATOR_MATERIALIZE/0": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "COORDINATOR_MATERIALIZE/1": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "COORDINATOR_MATERIALIZE/2": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "CORRELATING/0": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "CORRELATING/1": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "CORRELATING/2": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "DB_COMMIT/0": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "DB_COMMIT/1": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "DB_COMMIT/2": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "EXTRACTING_CLAIMS/0": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "EXTRACTING_CLAIMS/1": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "EXTRACTING_CLAIMS/2": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "FINALIZING/0": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "FINALIZING/1": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "FINALIZING/2": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "IAC_DECODE/0": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "IAC_DECODE/1": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "IAC_DECODE/2": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "IAC_GATE/0": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "IAC_GATE/1": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "IAC_GATE/2": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "IAC_PRIVACY/0": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "IAC_PRIVACY/1": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "IAC_PRIVACY/2": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "NATIVE_DECODE/0": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "NATIVE_DECODE/1": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "NATIVE_DECODE/2": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "NATIVE_GATE/0": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "NATIVE_GATE/1": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "NATIVE_GATE/2": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "NATIVE_PARTITION/0": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "NATIVE_PARTITION/1": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "NATIVE_PARTITION/2": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "NATIVE_PRIVACY/0": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "NATIVE_PRIVACY/1": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "NATIVE_PRIVACY/2": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "OTHER/0": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "OTHER/1": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "OTHER/2": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "PARSING/0": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "PARSING/1": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "PARSING/2": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "START/0": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "START/1": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "START/2": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "SYNTAX_DECODE/0": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "SYNTAX_DECODE/1": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "SYNTAX_DECODE/2": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "SYNTAX_GATE/0": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "SYNTAX_GATE/1": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "SYNTAX_GATE/2": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "SYNTAX_PRIVACY/0": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "SYNTAX_PRIVACY/1": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "SYNTAX_PRIVACY/2": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "VALIDATING/0": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "VALIDATING/1": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "VALIDATING/2": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "VERIFYING/0": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "VERIFYING/1": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        },
+        "VERIFYING/2": {
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "count",
+            "wall_ns",
+            "thread_cpu_ns"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [],
+      "type": "object"
+    },
+    "identity": {
+      "additionalProperties": false,
+      "properties": {
+        "cache": {
+          "enum": [
+            "cold",
+            "fixture",
+            "warm"
+          ]
+        },
+        "image_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "revision": {
+          "enum": [
+            "baseline",
+            "candidate"
+          ]
+        },
+        "slice_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "source_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "revision",
+        "cache",
+        "source_sha256",
+        "slice_sha256",
+        "image_sha256"
+      ],
+      "type": "object"
+    },
+    "overhead": {
+      "additionalProperties": false,
+      "properties": {
+        "external_matched_control_required": {
+          "const": true
+        }
+      },
+      "required": [
+        "external_matched_control_required"
+      ],
+      "type": "object"
+    },
+    "packets": {
+      "additionalProperties": false,
+      "properties": {
+        "IAC/DOCKERFILE": {
+          "$ref": "#/$defs/packet"
+        },
+        "IAC/JAVA": {
+          "$ref": "#/$defs/packet"
+        },
+        "IAC/JAVASCRIPT": {
+          "$ref": "#/$defs/packet"
+        },
+        "IAC/JSON": {
+          "$ref": "#/$defs/packet"
+        },
+        "IAC/OTHER": {
+          "$ref": "#/$defs/packet"
+        },
+        "IAC/PYTHON": {
+          "$ref": "#/$defs/packet"
+        },
+        "IAC/TERRAFORM": {
+          "$ref": "#/$defs/packet"
+        },
+        "IAC/TYPESCRIPT": {
+          "$ref": "#/$defs/packet"
+        },
+        "IAC/YAML": {
+          "$ref": "#/$defs/packet"
+        },
+        "NATIVE/DOCKERFILE": {
+          "$ref": "#/$defs/packet"
+        },
+        "NATIVE/JAVA": {
+          "$ref": "#/$defs/packet"
+        },
+        "NATIVE/JAVASCRIPT": {
+          "$ref": "#/$defs/packet"
+        },
+        "NATIVE/JSON": {
+          "$ref": "#/$defs/packet"
+        },
+        "NATIVE/OTHER": {
+          "$ref": "#/$defs/packet"
+        },
+        "NATIVE/PYTHON": {
+          "$ref": "#/$defs/packet"
+        },
+        "NATIVE/TERRAFORM": {
+          "$ref": "#/$defs/packet"
+        },
+        "NATIVE/TYPESCRIPT": {
+          "$ref": "#/$defs/packet"
+        },
+        "NATIVE/YAML": {
+          "$ref": "#/$defs/packet"
+        },
+        "SYNTAX/DOCKERFILE": {
+          "$ref": "#/$defs/packet"
+        },
+        "SYNTAX/JAVA": {
+          "$ref": "#/$defs/packet"
+        },
+        "SYNTAX/JAVASCRIPT": {
+          "$ref": "#/$defs/packet"
+        },
+        "SYNTAX/JSON": {
+          "$ref": "#/$defs/packet"
+        },
+        "SYNTAX/OTHER": {
+          "$ref": "#/$defs/packet"
+        },
+        "SYNTAX/PYTHON": {
+          "$ref": "#/$defs/packet"
+        },
+        "SYNTAX/TERRAFORM": {
+          "$ref": "#/$defs/packet"
+        },
+        "SYNTAX/TYPESCRIPT": {
+          "$ref": "#/$defs/packet"
+        },
+        "SYNTAX/YAML": {
+          "$ref": "#/$defs/packet"
+        }
+      },
+      "required": [],
+      "type": "object"
+    },
+    "routes": {
+      "additionalProperties": false,
+      "properties": {
+        "HCL_MIXED": {
+          "$ref": "#/$defs/route"
+        },
+        "HCL_TERRAFORM": {
+          "$ref": "#/$defs/route"
+        },
+        "HCL_UNNEEDED": {
+          "$ref": "#/$defs/route"
+        },
+        "IDENTITY": {
+          "$ref": "#/$defs/route"
+        },
+        "LEXICAL": {
+          "$ref": "#/$defs/route"
+        },
+        "NATIVE": {
+          "$ref": "#/$defs/route"
+        },
+        "NO_HCL_CONFIG_MIXED": {
+          "$ref": "#/$defs/route"
+        },
+        "NO_HCL_DOCKERFILE": {
+          "$ref": "#/$defs/route"
+        },
+        "NO_HCL_JSON": {
+          "$ref": "#/$defs/route"
+        },
+        "NO_HCL_MISROUTE": {
+          "$ref": "#/$defs/route"
+        },
+        "NO_HCL_YAML": {
+          "$ref": "#/$defs/route"
+        },
+        "OPENAPI": {
+          "$ref": "#/$defs/route"
+        },
+        "OTHER": {
+          "$ref": "#/$defs/route"
+        },
+        "RUNTIME_PROBE": {
+          "$ref": "#/$defs/route"
+        },
+        "SYNTAX": {
+          "$ref": "#/$defs/route"
+        }
+      },
+      "required": [],
+      "type": "object"
+    },
+    "schema": {
+      "const": "projecttrace-scale-diagnostic-v1"
+    },
+    "spans": {
+      "additionalProperties": false,
+      "properties": {
+        "CACHE_LOOKUP": {
+          "additionalProperties": false,
+          "properties": {
+            "bytes": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "calls": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [],
+          "type": "object"
+        },
+        "CACHE_WRITE": {
+          "additionalProperties": false,
+          "properties": {
+            "bytes": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "calls": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [],
+          "type": "object"
+        },
+        "COORDINATOR_MATERIALIZE": {
+          "additionalProperties": false,
+          "properties": {
+            "bytes": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "calls": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [],
+          "type": "object"
+        },
+        "DB_COMMIT": {
+          "additionalProperties": false,
+          "properties": {
+            "bytes": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "calls": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [],
+          "type": "object"
+        },
+        "IAC_GATE": {
+          "additionalProperties": false,
+          "properties": {
+            "bytes": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "calls": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [],
+          "type": "object"
+        },
+        "NATIVE_GATE": {
+          "additionalProperties": false,
+          "properties": {
+            "bytes": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "calls": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [],
+          "type": "object"
+        },
+        "NATIVE_HELPER_TRANSPORT": {
+          "additionalProperties": false,
+          "properties": {
+            "bytes": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "calls": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [],
+          "type": "object"
+        },
+        "OBSERVATION_SPILL": {
+          "additionalProperties": false,
+          "properties": {
+            "bytes": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "calls": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [],
+          "type": "object"
+        },
+        "PARSER_INVOKE_SUM": {
+          "additionalProperties": false,
+          "properties": {
+            "bytes": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "calls": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [],
+          "type": "object"
+        },
+        "PARSER_INVOKE_UNION": {
+          "additionalProperties": false,
+          "properties": {
+            "bytes": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "calls": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [],
+          "type": "object"
+        },
+        "PARTITION_PARSE": {
+          "additionalProperties": false,
+          "properties": {
+            "bytes": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "calls": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [],
+          "type": "object"
+        },
+        "SYNTAX_GATE": {
+          "additionalProperties": false,
+          "properties": {
+            "bytes": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "calls": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [],
+          "type": "object"
+        },
+        "SYNTAX_HELPER_TRANSPORT": {
+          "additionalProperties": false,
+          "properties": {
+            "bytes": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "calls": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "thread_cpu_ns": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "wall_ns": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [],
+          "type": "object"
+        }
+      },
+      "required": [],
+      "type": "object"
+    },
+    "stage": {
+      "enum": [
+        "ANALYZING",
+        "BUILDING_EVIDENCE",
+        "CORRELATING",
+        "EXTRACTING_CLAIMS",
+        "FINALIZING",
+        "NATIVE_PARTITION",
+        "OTHER",
+        "PARSING",
+        "START",
+        "VALIDATING",
+        "VERIFYING"
+      ]
+    },
+    "stage_wall_ns": {
+      "additionalProperties": false,
+      "properties": {
+        "ANALYZING": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "BUILDING_EVIDENCE": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "CORRELATING": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "EXTRACTING_CLAIMS": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "FINALIZING": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "NATIVE_PARTITION": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "OTHER": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "PARSING": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "START": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "VALIDATING": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "VERIFYING": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [],
+      "type": "object"
+    },
+    "state": {
+      "enum": [
+        "COMPLETED",
+        "FAILED",
+        "RUNNING"
+      ]
+    }
+  },
+  "required": [
+    "schema",
+    "identity",
+    "stage",
+    "elapsed_ns",
+    "state",
+    "failure_code",
+    "routes",
+    "packets",
+    "spans",
+    "gc",
+    "counts",
+    "stage_wall_ns",
+    "cgroup",
+    "cgroup_scope",
+    "overhead"
+  ],
+  "title": "ProjectTrace bounded SCALE-001 diagnostics",
+  "type": "object"
+}

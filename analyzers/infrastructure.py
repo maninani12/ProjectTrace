@@ -140,6 +140,10 @@ def structured_iac(path, source, make_finding, settings=None):
         )
 
 
+def needs_hcl_parser(path):
+    return PurePosixPath(path).suffix.lower() == ".tf" or path.endswith(".tf.json")
+
+
 def structured_iac_batch(files, make_finding, settings=None, *, performance=None):
     """Reuse one bounded owned process per partition; retain per-file failures."""
     result, batch, size = {}, {}, 0
@@ -148,7 +152,8 @@ def structured_iac_batch(files, make_finding, settings=None, *, performance=None
         if not batch:
             return
         if sandbox.required():
-            output, failure = sandbox.invoke("iac", {"files": batch, "settings": settings or {}},
+            operation = "iac" if any(needs_hcl_parser(path) for path in batch) else "iac_without_hcl"
+            output, failure = sandbox.invoke(operation, {"files": batch, "settings": settings or {}},
                                               seconds=15, maximum=8 * 1024 * 1024, input_maximum=13_000_000)
             parsed = completed_packets(output, batch, 8 * 1024 * 1024, performance, "IAC")
             if failure and set(parsed) == set(batch):
@@ -296,7 +301,7 @@ def _structured_iac(path, source, make_finding, settings=None, *, hcl_loads=None
                 )
 
     try:
-        if suffix == ".tf" or path.endswith(".tf.json"):
+        if needs_hcl_parser(path):
             if path.endswith(".tf.json"):
                 document = json.loads(source)
                 parsed = {
