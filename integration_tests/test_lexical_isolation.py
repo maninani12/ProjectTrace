@@ -268,3 +268,78 @@ def test_lexical_overhead_is_recorded_on_identical_owned_inputs(monkeypatch):
     target.mkdir(parents=True, exist_ok=True)
     (target / "lexical-overhead.json").write_text(json.dumps(elapsed))
     (target / "diff-overhead.json").write_text(json.dumps(diff_elapsed))
+
+def test_metadata_classifier_runs_without_parser_dependencies(monkeypatch):
+    import subprocess
+    import sys
+
+    script = """
+import importlib.abc
+import runpy
+import sys
+
+class BlockParsers(importlib.abc.MetaPathFinder):
+    def find_spec(self, fullname, path=None, target=None):
+        if fullname in {"analyzers.engine", "analyzers.parser_protocol", "analyzers.languages",
+                        "analyzers.code_quality.coverage", "hcl2", "yaml", "lark"} or fullname.startswith("tree_sitter"):
+            raise ImportError("Parser dependency entered metadata-only worker")
+sys.meta_path.insert(0, BlockParsers())
+worker, operation = sys.argv[1:]
+sys.argv = [worker, operation]
+runpy.run_path(worker, run_name="__main__")
+"""
+    popen = subprocess.Popen
+
+    def isolated(command, *args, **kwargs):
+        if command[-1] == "lexical_classify":
+            command = [sys.executable, "-I", "-B", "-c", script, *command[-2:]]
+        return popen(command, *args, **kwargs)
+
+    monkeypatch.setattr(subprocess, "Popen", isolated)
+    rows = sandbox.call("lexical_classify", {"rows": [{
+        "path": "src/λ.py",
+        "metadata": {"source_language": "Python", "generated_header": False, "bytes": 8, "physical_lines": 1},
+        "diagnostic": None,
+    }], "scope": {"test_paths": ["**/λ.py"]}})
+    assert rows == [{"path": "src/λ.py", "kind": "TEST", "language": "Python",
+                     "reason": "Recognized test path/filename; separate quality treatment.", "bytes": 8,
+                     "physical_lines": 1}]
+
+
+@pytest.mark.parametrize(("field", "value", "code"), [
+    ("path", "other.py", "CLASSIFICATION_SCOPE"),
+    ("language", "unapproved-language", "CLASSIFICATION_SCHEMA"),
+    ("kind", "unapproved-kind", "CLASSIFICATION_SCHEMA"),
+    ("bytes", -1, "CLASSIFICATION_COUNTS"),
+    ("physical_lines", 30, "CLASSIFICATION_COUNTS"),
+    ("unexpected", "forged", "CLASSIFICATION_SCHEMA"),
+])
+def test_metadata_classifier_rejects_forged_result(monkeypatch, field, value, code):
+    call = sandbox.call
+
+    def altered(operation, payload, **limits):
+        rows = call(operation, payload, **limits)
+        if operation == "lexical_classify":
+            rows[0][field] = value
+        return rows
+
+    monkeypatch.setattr(sandbox, "call", altered)
+    with pytest.raises(sandbox.SandboxFailure, match=code):
+        classify({"owned.py": "pass\n"}, {})
+
+
+def test_metadata_classifier_rejects_result_reordering(monkeypatch):
+    call = sandbox.call
+
+    def reversed_rows(operation, payload, **limits):
+        rows = call(operation, payload, **limits)
+        return list(reversed(rows)) if operation == "lexical_classify" else rows
+
+    monkeypatch.setattr(sandbox, "call", reversed_rows)
+    with pytest.raises(sandbox.SandboxFailure, match="CLASSIFICATION_SCOPE"):
+        classify({"a.py": "pass\n", "b.py": "pass\n"}, {})
+
+
+def test_attested_malformed_metadata_packet_has_no_result():
+    result, failure = sandbox.invoke("lexical_classify", {"rows": [{"path": "owned.py"}], "scope": {}})
+    assert result == b"" and failure == "HELPER_PROCESS_LIMIT"

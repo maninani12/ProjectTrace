@@ -24,7 +24,7 @@ SOURCE_INVALID = object()
 DENIAL_RESULTS = []
 
 
-def prepare(operation):
+def prepare_parsers(operation):
     # Preload trusted code and lazy parser resources before the deny-by-default
     # syscall filter. Installed runtime code must be immutable and contain no secrets.
     import hcl2
@@ -35,9 +35,8 @@ def prepare(operation):
     import yaml
 
     import analyzers.performance  # noqa: F401 -- preload before the syscall boundary
-    from analyzers import engine, languages, sandbox
+    from analyzers import engine, languages
     from analyzers.code_quality import coverage
-    from backend.process_limits import self_limits
 
     if operation.startswith("lexical_"):
         import analyzers.lexical_worker  # noqa: F401 -- fixed trusted module before enforcement
@@ -73,6 +72,24 @@ def prepare(operation):
     yaml.safe_load("{}")
     ast.parse("")
     coverage.ET.fromstring("<probe/>")
+    import lark
+    return engine, (hcl2, yaml, tree_sitter, tree_sitter_java, tree_sitter_javascript, tree_sitter_typescript, lark), iac_loads
+
+
+def prepare(operation):
+    from analyzers import sandbox
+    from backend.process_limits import self_limits
+
+    if operation == "lexical_classify":
+        # Scope classification needs only installed metadata and glob logic.
+        # Preload the imports used by lexical_worker.classify before enforcement.
+        from analyzers import lexical_worker  # noqa: F401 -- trusted dispatch module
+        from analyzers.code_quality import classification  # noqa: F401 -- trusted classifier
+
+        engine, packages, iac_loads = None, (), None
+    else:
+        engine, packages, iac_loads = prepare_parsers(operation)
+
     # Hold the handle: dlopen cannot load a new library after Landlock.
     seccomp = ctypes.CDLL("libseccomp.so.2")
     read_paths = {str(Path(__file__).resolve().parent)}
@@ -80,10 +97,8 @@ def prepare(operation):
         path = getattr(module, "__file__", None)
         if path and os.path.isfile(path):
             read_paths.add(os.path.realpath(path))
-    for package in (hcl2, yaml, tree_sitter, tree_sitter_java, tree_sitter_javascript, tree_sitter_typescript):
+    for package in packages:
         read_paths.add(str(Path(package.__file__).resolve().parent))
-    import lark
-    read_paths.add(str(Path(lark.__file__).resolve().parent))
     with open("/proc/self/maps") as stream:
         for line in stream:
             path = line.split()[-1]
@@ -169,6 +184,11 @@ def main():
 
 
 def dispatch(operation, value, engine, sandbox, *, iac_loads=None):
+    if operation == "lexical_classify":
+        from analyzers import lexical_worker
+
+        return lexical_worker.classify(value)
+
     from analyzers.parser_protocol import emit_packet, native_artifact
 
     if operation.startswith("lexical_"):
@@ -190,8 +210,6 @@ def dispatch(operation, value, engine, sandbox, *, iac_loads=None):
             return [[{"path": "other-tenant/package.json"}], []]
         if operation == "lexical_describe":
             return lexical_worker.describe(value["rows"])
-        if operation == "lexical_classify":
-            return lexical_worker.classify(value)
         if operation == "lexical_ownership":
             return lexical_worker.ownership(value)
         if operation == "lexical_diff":
